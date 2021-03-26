@@ -6,6 +6,7 @@ const spin = keyframes({
 });
 
 const Svg = styled('svg', {
+  // @ts-ignore
   animationName: spin,
   animationDuration: '5000ms',
   animationIterationCount: 'infinite',

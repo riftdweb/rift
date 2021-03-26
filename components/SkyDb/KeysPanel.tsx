@@ -1,4 +1,5 @@
-import { Box, Subheading, Tabs, TabsList, TabsPanel, TabsTab, Text } from '@modulz/design-system'
+import { Box, Tabs, TabsList, TabsPanel, TabsTab, Text } from '@modulz/design-system'
+import { useRouter } from 'next/router'
 import { KeyEditor } from './KeyEditor'
 
 type Props = {
@@ -7,9 +8,13 @@ type Props = {
 }
 
 export function KeysPanel({ seed, keys }: Props) {
+  const { push, query } = useRouter()
+  const dataKey = query.dataKey as string
   return (
     <Box>
       <Tabs
+        onValueChange={(key) => push(`/skydb/${seed}/${key}`)}
+        value={dataKey}
         defaultValue={keys.length ? keys[0] : undefined}
         orientation="vertical">
         <TabsList>
@@ -21,6 +26,7 @@ export function KeysPanel({ seed, keys }: Props) {
               css={{
                 maxWidth: '300px',
               }}
+              key={key}
               value={key}>
               <Box
                 css={{
@@ -34,7 +40,9 @@ export function KeysPanel({ seed, keys }: Props) {
           )}
         </TabsList>
         {keys.map((key) =>
-          <TabsPanel value={key}>
+          <TabsPanel
+            key={key}
+            value={key}>
             <KeyEditor
               seed={seed}
               dataKey={key} />

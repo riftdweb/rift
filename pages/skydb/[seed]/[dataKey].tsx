@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const SkyDbViewSeed = dynamic(() => import('../../components/SkyDb/ViewSeed'), {
+const SkyDbViewSeed = dynamic(() => import('../../../components/SkyDb/ViewSeed'), {
   ssr: false,
 })
 

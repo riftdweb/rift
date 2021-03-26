@@ -27,18 +27,16 @@ export function Nav({ seed }: Props) {
         <Link href="/skydb">Seeds</Link>
         {seed && <Text>/</Text>}
         {seed && (
-          <Tooltip content={seed}>
-            <Link
-              css={{
-                flex: 1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}
-              href={`/skydb/${seed}`}>
-              {seed}
-            </Link>
-          </Tooltip>
+          <Link
+            css={{
+              flex: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+            href={`/skydb/${seed}`}>
+            {seed}
+          </Link>
         )}
         {!seed && <Box css={{ flex: 1 }} />}
         {seed && (

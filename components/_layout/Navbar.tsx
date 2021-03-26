@@ -16,7 +16,7 @@ export default function Navbar({ toggleTheme }: Props) {
     <Box css={{ borderBottom: '1px solid $gray200'}}>
       <Container size="3">
         <Flex css={{ py: '$3', alignItems: 'center' }}>
-          <Tooltip content="Fully decentralized tools and services on Skynet">
+          <Tooltip content="Tools and services for the decentralized web">
             <Heading css={{ mr: '$3', fontWeight: 'bold' }}>
               <Flex>
                 <Link href="/">rift</Link>
@@ -26,7 +26,7 @@ export default function Navbar({ toggleTheme }: Props) {
           <Box css={{ flex: 1 }}>
             {/* <Searchbar /> */}
           </Box>
-          <Flex css={{ gap: '$1', color: '$gray600' }}>
+          <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
             <Tooltip content="Switch Skynet Portals">
               <div>
                 <Select

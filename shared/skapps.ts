@@ -23,4 +23,9 @@ export const skapps = [{
   title: 'SkyBrain',
   description: 'The place where magic happens and you are able to store/manage memories and emotions, like happens in the human brain.',
   tags: ['Social media']
+}, {
+  hnsDomain: 'marstorage.hns',
+  title: 'MarStorage',
+  description: 'Own your data. The 100% decentralized “Dropbox” and “Google Drive” alternative.',
+  tags: ['File storage']
 }]

@@ -1,5 +1,4 @@
 import { Box, Card, Subheading, Badge, Tooltip, Button } from '@modulz/design-system'
-import { ExitIcon, TrashIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { useSeedKeys } from '../../hooks/useSeedKeys'
 
@@ -33,7 +32,7 @@ export function HomeCard({ seed }) {
             }}>
             {seed}
           </Subheading>
-          <Tooltip content={`Rift is currently tracking ${keys.length} data keys`}>
+          <Tooltip content={`Currently tracking ${keys.length} data keys`}>
             <Badge
               size="1"
               key={seed}>{keys.length} data keys</Badge>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Box, Flex, TabLink, styled } from '@modulz/design-system'
+import { Box, Flex, TabLink } from '@modulz/design-system'
 import { ActivityLogIcon, BarChartIcon, FilePlusIcon, HomeIcon } from '@radix-ui/react-icons';
 
 export function TabNav() {
@@ -15,14 +15,15 @@ export function TabNav() {
             Home
         </TabLink>
       </Link>
-      <Link href="/skyfiles" passHref>
-        <TabLink active={route.split('/')[1] === 'skyfiles'}>
+      {/* <Link href="/skyfiles" passHref>
+        <TabLink
+          active={route.split('/')[1] === 'skyfiles'}>
             <Box css={{ mr: '$1' }}>
               <FilePlusIcon />
             </Box>
             Skyfiles
         </TabLink>
-      </Link>
+      </Link> */}
       <Link href="/skydb" passHref>
         <TabLink active={route.split('/')[1] === 'skydb'}>
           <Box css={{ mr: '$1' }}>

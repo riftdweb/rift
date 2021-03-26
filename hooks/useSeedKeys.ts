@@ -8,7 +8,7 @@ const useSeedKeyMap = createLocalStorageStateHook('v0/keys', {})
 export const useSeedKeys = (seed: string) => {
   const [seedKeyMap, setSeedKeyMap] = useSeedKeyMap()
 
-  const addKey = useCallback((key) => {
+  const addKey = useCallback((key: string) => {
     if (!key) {
       return
     }
@@ -25,7 +25,7 @@ export const useSeedKeys = (seed: string) => {
     })
   }, [seed, seedKeyMap, setSeedKeyMap])
 
-  const removeKey = useCallback((key) => {
+  const removeKey = useCallback((key: string) => {
     if (!key) {
       return
     }

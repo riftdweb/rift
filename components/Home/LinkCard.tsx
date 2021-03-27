@@ -8,7 +8,7 @@ type Props = {
 
 export const LinkCard = ({ url, title, description }: Props) =>
   <Box>
-    <Card as="a" href={url} target="__blank" css={{ p: '$3' }} variant="interactive">
+    <Card as="a" href={url} target="_blank" css={{ p: '$3' }} variant="interactive">
       <Subheading>
         {title}
       </Subheading>

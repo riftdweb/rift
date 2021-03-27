@@ -1,8 +1,10 @@
-import { Flex, Box, Link, Heading, Select, Tooltip, Button, Container } from '@modulz/design-system'
+import { Flex, Box, Heading, Select, Tooltip, Button, Container, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, ControlGroup } from '@modulz/design-system'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { portals } from '../../shared/portals'
 import { Searchbar } from './Searchbar'
-import { SunIcon } from '@radix-ui/react-icons'
+import NLink from 'next/link'
+import { Link } from '../_shared/Link'
+import { PlusIcon, SunIcon, TriangleDownIcon } from '@radix-ui/react-icons'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 
 type Props = {
@@ -27,9 +29,38 @@ export default function Navbar({ toggleTheme }: Props) {
             {/* <Searchbar /> */}
           </Box>
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
+            <ControlGroup>
+              <Link href="/skyfiles" as="button" content="Upload files">
+                <PlusIcon />
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger as={Button}>
+                  <TriangleDownIcon />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <NLink href="/skyfiles" passHref>
+                    <DropdownMenuItem as="a" css={{ textDecoration: 'none', cursor: 'pointer' }}>
+                      Upload files
+                    </DropdownMenuItem>
+                  </NLink>
+                  <NLink href="/skydb" passHref>
+                    <DropdownMenuItem as="a" css={{ textDecoration: 'none', cursor: 'pointer' }}>
+                      Add seed
+                    </DropdownMenuItem>
+                  </NLink>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </ControlGroup>
+            <ControlGroup>
+            <Tooltip content="Visit Portal">
+              <Button as="a" href={`https://${selectedPortal}`} target="_blank">
+                <SkynetIcon />
+              </Button>
+            </Tooltip>
             <Tooltip content="Switch Skynet Portals">
               <div>
                 <Select
+                  css={{ padding: '0 $1', borderRadius: '0 $2 $2 0 !important' }}
                   onChange={(e) => setSelectedPortal(e.target.value)}
                   value={selectedPortal}>
                   {portals.map(portal =>
@@ -40,11 +71,7 @@ export default function Navbar({ toggleTheme }: Props) {
                 </Select>
               </div>
             </Tooltip>
-            <Tooltip content="Visit Portal">
-              <Button as="a" href={`https://${selectedPortal}`} target="__blank">
-                <SkynetIcon />
-              </Button>
-            </Tooltip>
+            </ControlGroup>
             <Tooltip content="Toggle theme">
               <Button
                 onClick={toggleTheme}

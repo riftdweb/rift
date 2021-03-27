@@ -10,7 +10,7 @@ type Props = {
 
 export const SkappCard = ({ portal, hnsDomain, title, description, tags }: Props) =>
   <Box>
-    <Card as="a" href={`https://${hnsDomain}.${portal}`} target="__blank" css={{ p: '$3' }} variant="interactive">
+    <Card as="a" href={`https://${hnsDomain}.${portal}`} target="_blank" css={{ p: '$3' }} variant="interactive">
       <Subheading>
         {title}
       </Subheading>

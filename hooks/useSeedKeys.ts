@@ -39,5 +39,9 @@ export const useSeedKeys = (seed: string) => {
   }, [seed, seedKeyMap, setSeedKeyMap])
   const keys = useMemo(() => seedKeyMap[seed] || [], [seed, seedKeyMap])
 
-  return [keys, addKey, removeKey]
+  return {
+    keys,
+    addKey,
+    removeKey
+  }
 }

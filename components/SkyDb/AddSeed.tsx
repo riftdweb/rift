@@ -4,7 +4,7 @@ import { useSeeds } from '../../hooks/useSeeds'
 import { Pencil2Icon } from '@radix-ui/react-icons';
 
 export function AddSeed() {
-  const [_seeds, addSeed, _removeSeed] = useSeeds()
+  const { addSeed } = useSeeds()
   const [newSeed, setNewSeed] = useState<string>();
 
   const saveSeed = useCallback((e) => {

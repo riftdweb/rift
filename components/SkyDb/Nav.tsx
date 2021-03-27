@@ -1,5 +1,5 @@
-import { Flex, Text, Heading, Tooltip, Button, Box } from '@modulz/design-system'
-import { TrashIcon } from '@radix-ui/react-icons'
+import { Flex, Text, Heading, Button, Box, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem } from '@modulz/design-system'
+import { GearIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { useSeeds } from '../../hooks/useSeeds'
@@ -11,7 +11,7 @@ type Props = {
 
 export function Nav({ seed }: Props) {
   const { push } = useRouter()
-  const [_seeds, _addSeed, removeSeed] = useSeeds()
+  const { removeSeed } = useSeeds()
 
   const removeSeedAndNav = useCallback(() => {
     if (!seed) {
@@ -40,9 +40,18 @@ export function Nav({ seed }: Props) {
         )}
         {!seed && <Box css={{ flex: 1 }} />}
         {seed && (
-          <Tooltip content="Remove seed">
-            <Button onClick={removeSeedAndNav}><TrashIcon /></Button>
-          </Tooltip>
+          <DropdownMenu>
+            <DropdownMenuTrigger as={Button}>
+              <GearIcon />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuItem as="button" onClick={removeSeedAndNav}>
+                  Delete Seed
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </Flex>
     </Heading>

@@ -20,7 +20,7 @@ export function KeyEditor({ seed, dataKey }) {
   const [revision, setRevision] = useState<number>(0)
   const [isFetching, setIsFetching] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
-  const [keys, _setKey, removeKey] = useSeedKeys(seed)
+  const { keys, removeKey } = useSeedKeys(seed)
   const { data } = useSWR(dataKey, () => getJSON(selectedPortal, seed, dataKey))
 
   const removeKeyAndRoute = useCallback(() => {

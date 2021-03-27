@@ -28,5 +28,9 @@ export const useSeeds = () => {
     setSeeds(filter(seeds, (item) => item !== seed))
   }, [seeds, setSeeds])
 
-  return [seeds, addSeed, removeSeed]
+  return {
+    seeds,
+    addSeed,
+    removeSeed
+  }
 }

@@ -1,4 +1,4 @@
-import { Box, Subheading } from '@modulz/design-system'
+import { Box, Heading } from '@modulz/design-system'
 import { LinkCard } from './LinkCard'
 import { SkappCard } from './SkappCard'
 import { Grid } from '../_shared/Grid'
@@ -9,9 +9,9 @@ import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 export function Home() {
   const [selectedPortal] = useSelectedPortal()
   return (
-    <Box css={{ my: '$3', position: 'relative' }}>
+    <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
-        <Subheading css={{ py: '$3' }}>Top Apps</Subheading>
+        <Heading css={{ py: '$3' }}>Top Apps</Heading>
         <Grid>
           {skapps.map(({ hnsDomain, title, description, tags }) =>
             <SkappCard
@@ -23,7 +23,7 @@ export function Home() {
               tags={tags} />
           )}
         </Grid>
-        <Subheading css={{ py: '$3' }}>Top Resources</Subheading>
+        <Heading css={{ py: '$3' }}>Top Resources</Heading>
         <Grid>
           {links.map(({ url, title, description }) =>
             <LinkCard

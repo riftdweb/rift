@@ -41,6 +41,7 @@ function App({ Component, pageProps }) {
         <Head>
           <title>Rift</title>
           <link rel="icon" href="/favicon.ico" />
+          <meta httpEquiv="Content-Type" content="text/html; charset=utf-8"/>
           {/* <link rel="stylesheet" href="https://develop.modulz.app/fonts/fonts.css" /> */}
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </Head>

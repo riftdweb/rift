@@ -15,7 +15,7 @@ export function TabNav() {
             Home
         </TabLink>
       </Link>
-      {/* <Link href="/skyfiles" passHref>
+      <Link href="/skyfiles" passHref>
         <TabLink
           active={route.split('/')[1] === 'skyfiles'}>
             <Box css={{ mr: '$1' }}>
@@ -23,7 +23,7 @@ export function TabNav() {
             </Box>
             Skyfiles
         </TabLink>
-      </Link> */}
+      </Link>
       <Link href="/skydb" passHref>
         <TabLink active={route.split('/')[1] === 'skydb'}>
           <Box css={{ mr: '$1' }}>

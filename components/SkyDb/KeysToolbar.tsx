@@ -1,5 +1,5 @@
-import { Box, Button, ControlGroup, Flex, Text, Tooltip } from '@modulz/design-system'
-import { CrumpledPaperIcon, MagicWandIcon, ReloadIcon, SymbolIcon, ThickArrowUpIcon, TrashIcon } from '@radix-ui/react-icons'
+import { Box, Button, ControlGroup, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Flex, Text, Tooltip } from '@modulz/design-system'
+import { GearIcon, RulerHorizontalIcon, SymbolIcon, ThickArrowUpIcon } from '@radix-ui/react-icons'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   formatCode: () => void
   refreshKey: () => void
   saveChanges: () => void
-  removeKey: (key: string) => void
+  removeKey: () => void
 }
 
 export function KeysToolbar({
@@ -42,7 +42,6 @@ export function KeysToolbar({
         Revision {revision}
       </Button>
       <Text
-        disabled
         size="1"
         css={{ flex: 1, color: '$gray500', ml: '$2' }}>
         {message}
@@ -69,21 +68,10 @@ export function KeysToolbar({
             css={{
               mr: '$1',
             }}>
-            <CrumpledPaperIcon />
+            <RulerHorizontalIcon />
           </Box>
           Format
         </Button>
-        <Tooltip content="Delete data key - note that this does not actually delete the key or data">
-          <Button onClick={removeKey}>
-            <Box
-              css={{
-                mr: '$1',
-              }}>
-              <CrumpledPaperIcon />
-            </Box>
-            Delete
-          </Button>
-        </Tooltip>
         <Button
           disabled={isDataLatest || !isValid}
           onClick={saveChanges}>
@@ -95,6 +83,22 @@ export function KeysToolbar({
             </Box>
           Save
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger as={Button}>
+            <GearIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                css={{ width: '100%' }}
+                onSelect={removeKey}>
+                <Tooltip content="Delete data key - note that this only deletes locally">
+                  <Box css={{ width: '100%' }}>
+                    Delete
+                  </Box>
+                </Tooltip>
+              </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </ControlGroup>
     </Flex>
   )

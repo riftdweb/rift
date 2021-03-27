@@ -1,17 +1,12 @@
-import { Avatar, Box, Card, Flex, Heading, Input, Subheading, Text } from '@modulz/design-system'
+import { Box } from '@modulz/design-system'
+import { Formatter } from './Formatter'
+import { Uploader } from './Uploader'
 
 export function Skyfiles() {
   return (
-    <Box css={{ my: '$3' }}>
-      <Input
-        size="3"
-        variant="ghost"
-        autoFocus
-        css={{ ':focus': { outline: 'none !important', border: 'none !important' } }}
-        placeholder="Search files" />
-      <Box css={{ my: '$3' }}>
-        <Subheading>Recent files</Subheading>
-      </Box>
+    <Box css={{ py: '$3' }}>
+      <Uploader />
+      <Formatter />
     </Box>
   )
 }

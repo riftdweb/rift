@@ -7,7 +7,7 @@ import { Pencil2Icon } from '@radix-ui/react-icons'
 export function AddKey({ seed }) {
   const { push } = useRouter()
   const [newKey, setNewKey] = useState<string>()
-  const [_keys, addKey] = useSeedKeys(seed)
+  const { addKey } = useSeedKeys(seed)
 
   const saveKey = useCallback((e) => {
     e.preventDefault()

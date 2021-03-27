@@ -7,7 +7,7 @@ type Props = {
 }
 
 export function HomeCard({ seed }) {
-  const [keys] = useSeedKeys(seed)
+  const { keys } = useSeedKeys(seed)
   return (
     <Box
       css={{

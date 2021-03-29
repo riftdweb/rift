@@ -1,5 +1,7 @@
 export const portals = [{
-  domain: "siasky.net",
+  domain: 'siasky.net',
 }, {
-  domain: "skyportal.xyz",
+  domain: 'skyportal.xyz',
+}, {
+  domain: 'skydrain.net'
 }]

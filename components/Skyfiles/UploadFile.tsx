@@ -1,92 +1,228 @@
-import React, { useState, useRef, useEffect } from "react";
-// import "./UploadFile.scss";
-import SpinnerIcon from "../_icons/SpinnerIcon";
-import { CheckIcon, CopyIcon, Cross2Icon, FileIcon } from "@radix-ui/react-icons";
-import { Box, Button, Card, Flex, Subheading, Text } from "@modulz/design-system";
+import React, { useState, useCallback, useMemo } from 'react';
+import SpinnerIcon from '../_icons/SpinnerIcon';
+import { ClipboardCopyIcon, Cross2Icon, ExternalLinkIcon, FileIcon, TriangleDownIcon } from '@radix-ui/react-icons';
+import { Box, Button, Flex, Link, Text, Tooltip } from '@modulz/design-system';
+import FolderIcon from '../_icons/FolderIcon';
+import { formatDistance, parseISO } from 'date-fns'
+import * as clipboard from 'clipboard-polyfill/text';
+import { decodeBase64, encodeBase32 } from '../../shared/base'
+import bytes from 'bytes'
+
+type DirectoryFile = {
+  name: string
+  lastModified: number
+  path: string
+  webkitRelativePath: string
+  size: number
+  type: string
+}
 
 type Props = {
+  selectedPortal: string
   file: {
     name: string
+    directory?: boolean
+    lastModified?: number
+    path?: string
+    webkitRelativePath?: string
+    size?: number
+    type?: string
+    files?: DirectoryFile[]
   }
   status: string
   url?: string
-  progress?: number,
+  uploadedAt: string
+  portal?: string
+  skylink?: string
+  progress?: number
   error?: string
 }
 
-export function UploadFile({ file, url, status, progress, error }: Props) {
-  const [copied, setCopied] = useState(false);
-  const urlRef = useRef(null);
-
-  useEffect(() => {
-    if (copied) {
-      const timeoutId = setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [copied, setCopied]);
+export function UploadFile({ selectedPortal, file, skylink, uploadedAt, portal, status, progress, error }: Props) {
+  const [isHovering, setIsHovering] = useState<boolean>(false)
 
   const getIcon = () => {
-    if (status === "uploading" || status === "processing") {
-      return <FileIcon />;
-    } else if (status === "error") {
+    if (status === 'complete') {
+      return file.directory ? <FolderIcon /> : <FileIcon />
+    }
+    if (status === 'uploading' || status === 'processing') {
+      return <SpinnerIcon />;
+    } else if (status === 'error') {
       return <Cross2Icon />;
     } else {
-      return <CheckIcon />;
+      return null;
     }
   };
 
-  const copyToClipboard = (e) => {
-    urlRef.current.select();
-    document.execCommand("copy");
-    e.target.focus();
-    setCopied(true);
-  };
+  const subdomainSkylink = useMemo(() => {
+    if (!skylink) {
+      return ''
+    }
+    const value = skylink.replace('sia:', '')
+    const decoded = decodeBase64(value)
+    const base32 = encodeBase32(decoded)
+    return `https://${base32}.${selectedPortal}`
+  }, [skylink, selectedPortal])
 
-  const copyText = copied ? "Copied!" : "Copy to clipboard";
+  const pathSkylink = useMemo(() => {
+    if (!skylink) {
+      return ''
+    }
+    const value = skylink.replace('sia:', '')
+    return `https://${selectedPortal}/${value}`
+  }, [skylink, selectedPortal])
+
+  const copyToClipboard = useCallback(() => {
+  }, [])
+
+  const isApp = useMemo(() => {
+    return file.directory && file.files.find(f => ['index.html', 'index.htm'].includes(f.name))
+  }, [file])
+
   const getProgressText = (progress) => {
     if (progress === -1) {
-      return "Waiting...";
+      return 'Waiting...';
     } else if (progress > 0) {
       return `Uploading ${Math.round(progress * 100)}%`;
     }
-    return "Uploading...";
+    return 'Uploading...';
   };
 
   return (
-    <Card>
-      <Box className="upload-file-icon">{getIcon()}</Box>
-      <Flex className="upload-file-text">
-        <Subheading css={{ margin: '$2 0' }}>{file.name}</Subheading>
-        <Text css={{ margin: '$2 0' }}>
-          {status === "uploading" && getProgressText(progress)}
-          {status === "processing" && "Processing..."}
-          {status === "error" && <span className="red-text">{error || "Upload failed."}</span>}
-          {status === "complete" && (
-            <a href={url} className="url green-text" target="_blank" rel="noopener noreferrer">
-              {url}
-            </a>
-          )}
+    <Flex
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      css={{
+        position: 'relative',
+        borderBottom: '1px solid $gray300',
+        '&:last-of-type': {
+          borderBottom: 'none'
+        },
+        alignItems: 'center',
+        gap: '$1',
+        padding: '$2 $3',
+        '&:hover': {
+          backgroundColor: '$gray100'
+        }
+      }}>
+      <Box css={{ color: '$gray900' }}>
+        {getIcon()}
+      </Box>
+      <Box css={{ flex: 2, overflow: 'hidden' }}>
+          <Text
+            size="3"
+            css={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              '&:hover': {
+                textDecoration: 'underline',
+              }
+            }}>
+            <Link
+              target="_blank"
+              css={{ outline: 'none' }}
+              href={isApp ? subdomainSkylink : pathSkylink}>
+              {file.name}
+            </Link>
         </Text>
-      </Flex>
-      {(status === "uploading" || status === "processing") && (
-        <Box className="upload-file-loading">
-          <SpinnerIcon />
-        </Box>
-      )}
+      </Box>
+      <Box css={{
+        flex: 1,
+        display: 'none',
+        when: {
+          bp1: {
+            display: 'block'
+          }
+        }
+      }}>
+        {skylink && (
+          <Text size="2" css={{ color: '$gray900', fontFamily: '$mono' }}>
+            {skylink.replace('sia:', '').slice(0, 10)}...
+          </Text>
+        )}
+      </Box>
+      <Box css={{
+        flex: 1,
+        display: 'none',
+        when: {
+          bp1: {
+            display: 'block'
+          }
+        }
+      }}>
+        {status === 'complete' && (
+          <Text css={{ color: '$gray900' }}>
+            {bytes(file.size, {unitSeparator: ' ', decimalPlaces: '1' })}
+          </Text>
+        )}
+      </Box>
+      <Box css={{
+        flex: 1,
+        display: 'none',
+        when: {
+          bp2: {
+            display: 'block'
+          }
+        }
+      }}>
+        {portal && (
+          <Text css={{ color: '$gray800' }}>
+            {portal}
+          </Text>
+        )}
+      </Box>
+        {status === 'complete' ? (
+      <Box css={{
+        flex: 1,
+        color: '$gray700',
+      }}>
+          <Text css={{ color: '$gray900', textAlign: 'right' }}>
+            {uploadedAt && (
+              formatDistance(parseISO(uploadedAt), new Date(), { addSuffix: true })
+            )}
+          </Text>
+      </Box>
+        ) : (
+          <Text css={{ color: '$gray900', textAlign: 'right' }}>
+            {status === 'uploading' && getProgressText(progress)}
+            {status === 'processing' && 'Processing...'}
+            {status === 'error' && <Text css={{ color: '$red900' }}>{error || 'Upload failed.'}</Text>}
+          </Text>
+        )}
+      {status === 'complete' && (
+        <Flex css={{
+          position: 'absolute',
+          right: '10px',
+          height: '100%',
+          backgroundColor: '$loContrast',
+          display: isHovering ? 'flex' : 'none',
+          alignItems: 'center',
+          paddingLeft: '50px'
+        }}>
 
-      {status === "complete" && (
-        <Button onClick={copyToClipboard}>
-          <p className="upload-file-copy-tooltip">{copyText}</p>
-          <div className="upload-file-copy-button">
-            Copy Link
-            <CopyIcon />
-          </div>
-          <textarea value={url} ref={urlRef} readOnly={true} />
-        </Button>
+          <Tooltip content='Open skylink'>
+            <Button
+              variant="ghost"
+              as="a"
+              href={isApp ? subdomainSkylink : pathSkylink}
+              target='_blank'><ExternalLinkIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip content='Copy to clipboard'>
+            <Button
+              variant="ghost"
+              onClick={() => clipboard.writeText(subdomainSkylink)}>
+              <ClipboardCopyIcon />
+            </Button>
+          </Tooltip>
+          <Button
+            variant="ghost"
+            onClick={copyToClipboard}>
+            <TriangleDownIcon />
+          </Button>
+        </Flex>
       )}
-    </Card>
+    </Flex>
   );
 }

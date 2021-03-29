@@ -1,10 +1,10 @@
 import { Box } from '@modulz/design-system'
-import { Uploader } from './Uploader'
+import { Formatter } from './Formatter'
 
-export function Skyfiles() {
+export function Tools() {
   return (
     <Box css={{ py: '$3' }}>
-      <Uploader />
+      <Formatter />
     </Box>
   )
 }

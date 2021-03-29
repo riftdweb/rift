@@ -1,4 +1,4 @@
-import { Box, Card, Subheading, Badge, Tooltip, Button } from '@modulz/design-system'
+import { Badge, Box, Card, Subheading, Tooltip } from '@modulz/design-system'
 import Link from 'next/link'
 import { useSeedKeys } from '../../hooks/useSeedKeys'
 

@@ -1,9 +1,9 @@
-import { Box, Subheading, Text } from '@modulz/design-system'
-import { AddSeed } from './AddSeed'
-import { Nav } from './Nav';
+import { Box, Subheading, Text } from '@modulz/design-system';
+import { useSeeds } from '../../hooks/useSeeds';
 import { Grid } from '../_shared/Grid';
-import { useSeeds } from '../../hooks/useSeeds'
-import { HomeCard } from './HomeCard'
+import { AddSeed } from './AddSeed';
+import { HomeCard } from './HomeCard';
+import { Nav } from './Nav';
 
 export function SkyDbHome() {
   const { seeds } = useSeeds()

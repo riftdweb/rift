@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react'
-import { Button, Input, ControlGroup, Box } from '@modulz/design-system'
-import { useSeeds } from '../../hooks/useSeeds'
+import { Box, Button, ControlGroup, Input } from '@modulz/design-system';
 import { Pencil2Icon } from '@radix-ui/react-icons';
+import { useCallback, useState } from 'react';
+import { useSeeds } from '../../hooks/useSeeds';
 
 export function AddSeed() {
   const { addSeed } = useSeeds()
@@ -23,20 +23,20 @@ export function AddSeed() {
   return (
     <form>
       <ControlGroup css={{ margin: '$3 0' }}>
-          <Input
-            value={newSeed}
-            onChange={(e) => setNewSeed(e.target.value)}
-            placeholder="Enter seed to track and manage data keys" />
-          <Button
-            onClick={saveSeed}>
-            <Box
-              css={{
-                mr: '$1',
-              }}>
-              <Pencil2Icon />
-            </Box>
-            Add Seed
-          </Button>
+        <Input
+          value={newSeed}
+          onChange={(e) => setNewSeed(e.target.value)}
+          placeholder="Enter seed to track and manage data keys" />
+        <Button
+          onClick={saveSeed}>
+          <Box
+            css={{
+              mr: '$1',
+            }}>
+            <Pencil2Icon />
+          </Box>
+          Add Seed
+        </Button>
       </ControlGroup>
     </form>
   )

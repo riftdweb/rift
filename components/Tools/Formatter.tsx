@@ -1,9 +1,9 @@
-import { Box, Button, ControlGroup, Input, Subheading, Tooltip } from '@modulz/design-system'
-import { useCallback, useState } from 'react'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
-import { ClipboardCopyIcon, ExternalLinkIcon } from '@radix-ui/react-icons'
+import { Box, Button, ControlGroup, Input, Subheading, Tooltip } from '@modulz/design-system';
+import { ClipboardCopyIcon, ExternalLinkIcon } from '@radix-ui/react-icons';
 import * as clipboard from 'clipboard-polyfill/text';
-import { decodeBase64, encodeBase32 } from '../../shared/base'
+import { useCallback, useState } from 'react';
+import { useSelectedPortal } from '../../hooks/useSelectedPortal';
+import { decodeBase64, encodeBase32 } from '../../shared/base';
 
 export function Formatter() {
   const [selectedPortal] = useSelectedPortal()
@@ -18,6 +18,7 @@ export function Formatter() {
     setSkylink(value)
     setBase32Value(encoded)
   }, [setSkylink, setBase32Value])
+
   const subdomainSkylink = skylink && `https://${base32Value}.${selectedPortal}`
   const pathSkylink = skylink && `https://${selectedPortal}/${skylink}`
 
@@ -37,13 +38,13 @@ export function Formatter() {
           placeholder={`https://<base32>.${selectedPortal}`}
           css={{ color: '$hiContrast !important' }}
           value={subdomainSkylink}
-          />
-          <Tooltip content='Open skylink'>
-            <Button as='a' href={subdomainSkylink} target='_blank'><ExternalLinkIcon /></Button>
-          </Tooltip>
-          <Tooltip content='Copy to clipboard'>
-            <Button onClick={() => clipboard.writeText(subdomainSkylink)}><ClipboardCopyIcon /></Button>
-          </Tooltip>
+        />
+        <Tooltip content='Open skylink'>
+          <Button as='a' href={subdomainSkylink} target='_blank'><ExternalLinkIcon /></Button>
+        </Tooltip>
+        <Tooltip content='Copy to clipboard'>
+          <Button onClick={() => clipboard.writeText(subdomainSkylink)}><ClipboardCopyIcon /></Button>
+        </Tooltip>
       </ControlGroup>
       <ControlGroup css={{ margin: '$1 0' }}>
         <Button css={{ width: '150px' }}>Path link</Button>
@@ -52,13 +53,13 @@ export function Formatter() {
           placeholder={`https://${selectedPortal}/<skylink>`}
           css={{ color: '$hiContrast !important' }}
           value={pathSkylink}
-          />
-          <Tooltip content='Open skylink'>
-            <Button as='a' href={pathSkylink} target='_blank'><ExternalLinkIcon /></Button>
-          </Tooltip>
-          <Tooltip content='Copy to clipboard'>
-            <Button onClick={() => clipboard.writeText(pathSkylink)}><ClipboardCopyIcon /></Button>
-          </Tooltip>
+        />
+        <Tooltip content='Open skylink'>
+          <Button as='a' href={pathSkylink} target='_blank'><ExternalLinkIcon /></Button>
+        </Tooltip>
+        <Tooltip content='Copy to clipboard'>
+          <Button onClick={() => clipboard.writeText(pathSkylink)}><ClipboardCopyIcon /></Button>
+        </Tooltip>
       </ControlGroup>
     </Box>
   )

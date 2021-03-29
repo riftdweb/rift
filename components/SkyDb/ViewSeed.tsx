@@ -1,9 +1,9 @@
 import { Box, Subheading, Text } from '@modulz/design-system'
-import { Nav } from './Nav'
 import { useRouter } from 'next/router'
-import { AddKey } from './AddKey'
 import { useSeedKeys } from '../../hooks/useSeedKeys'
+import { AddKey } from './AddKey'
 import { KeysPanel } from './KeysPanel'
+import { Nav } from './Nav'
 
 export default function SkyDbViewSeed() {
   const { query } = useRouter()

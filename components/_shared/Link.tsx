@@ -1,4 +1,4 @@
-import { Link as MLink, Button, Tooltip } from '@modulz/design-system'
+import { Button, Link as MLink, Tooltip } from '@modulz/design-system'
 import NextLink from 'next/link'
 
 type Props = {

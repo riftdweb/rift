@@ -1,4 +1,4 @@
-import { css, keyframes, styled } from '@modulz/design-system'
+import { keyframes, styled } from '@modulz/design-system';
 
 const spin = keyframes({
   'from': { transform: 'rotate(0deg)' },

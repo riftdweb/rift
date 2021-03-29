@@ -1,10 +1,10 @@
 import { Box, Heading } from '@modulz/design-system'
+import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { links } from '../../shared/links'
+import { skapps } from '../../shared/skapps'
+import { Grid } from '../_shared/Grid'
 import { LinkCard } from './LinkCard'
 import { SkappCard } from './SkappCard'
-import { Grid } from '../_shared/Grid'
-import { skapps } from '../../shared/skapps'
-import { links } from '../../shared/links'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 
 export function Home() {
   const [selectedPortal] = useSelectedPortal()

@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import SpinnerIcon from '../_icons/SpinnerIcon';
-import { ClipboardCopyIcon, Cross2Icon, ExternalLinkIcon, FileIcon, TriangleDownIcon } from '@radix-ui/react-icons';
 import { Box, Button, Flex, Link, Text, Tooltip } from '@modulz/design-system';
-import FolderIcon from '../_icons/FolderIcon';
-import { formatDistance, parseISO } from 'date-fns'
+import { ClipboardCopyIcon, Cross2Icon, ExternalLinkIcon, FileIcon, TriangleDownIcon } from '@radix-ui/react-icons';
+import bytes from 'bytes';
 import * as clipboard from 'clipboard-polyfill/text';
-import { decodeBase64, encodeBase32 } from '../../shared/base'
-import bytes from 'bytes'
+import { formatDistance, parseISO } from 'date-fns';
+import React, { useCallback, useMemo, useState } from 'react';
+import { decodeBase64, encodeBase32 } from '../../shared/base';
+import FolderIcon from '../_icons/FolderIcon';
+import SpinnerIcon from '../_icons/SpinnerIcon';
 
 type DirectoryFile = {
   name: string
@@ -109,22 +109,22 @@ export function UploadFile({ selectedPortal, file, skylink, uploadedAt, portal, 
         {getIcon()}
       </Box>
       <Box css={{ flex: 2, overflow: 'hidden' }}>
-          <Text
-            size="3"
-            css={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              '&:hover': {
-                textDecoration: 'underline',
-              }
-            }}>
-            <Link
-              target="_blank"
-              css={{ outline: 'none' }}
-              href={isApp ? subdomainSkylink : pathSkylink}>
-              {file.name}
-            </Link>
+        <Text
+          size="3"
+          css={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            '&:hover': {
+              textDecoration: 'underline',
+            }
+          }}>
+          <Link
+            target="_blank"
+            css={{ outline: 'none' }}
+            href={isApp ? subdomainSkylink : pathSkylink}>
+            {file.name}
+          </Link>
         </Text>
       </Box>
       <Box css={{
@@ -153,7 +153,7 @@ export function UploadFile({ selectedPortal, file, skylink, uploadedAt, portal, 
       }}>
         {status === 'complete' && (
           <Text css={{ color: '$gray900' }}>
-            {bytes(file.size, {unitSeparator: ' ', decimalPlaces: '1' })}
+            {bytes(file.size, { unitSeparator: ' ', decimalPlaces: '1' })}
           </Text>
         )}
       </Box>
@@ -172,24 +172,24 @@ export function UploadFile({ selectedPortal, file, skylink, uploadedAt, portal, 
           </Text>
         )}
       </Box>
-        {status === 'complete' ? (
-      <Box css={{
-        flex: 1,
-        color: '$gray700',
-      }}>
+      {status === 'complete' ? (
+        <Box css={{
+          flex: 1,
+          color: '$gray700',
+        }}>
           <Text css={{ color: '$gray900', textAlign: 'right' }}>
             {uploadedAt && (
               formatDistance(parseISO(uploadedAt), new Date(), { addSuffix: true })
             )}
           </Text>
-      </Box>
-        ) : (
-          <Text css={{ color: '$gray900', textAlign: 'right' }}>
-            {status === 'uploading' && getProgressText(progress)}
-            {status === 'processing' && 'Processing...'}
-            {status === 'error' && <Text css={{ color: '$red900' }}>{error || 'Upload failed.'}</Text>}
-          </Text>
-        )}
+        </Box>
+      ) : (
+        <Text css={{ color: '$gray900', textAlign: 'right' }}>
+          {status === 'uploading' && getProgressText(progress)}
+          {status === 'processing' && 'Processing...'}
+          {status === 'error' && <Text css={{ color: '$red900' }}>{error || 'Upload failed.'}</Text>}
+        </Text>
+      )}
       {status === 'complete' && (
         <Flex css={{
           position: 'absolute',

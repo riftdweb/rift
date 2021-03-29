@@ -1,5 +1,5 @@
-import { styled } from '@modulz/design-system'
-import * as RadixScrollArea from '@radix-ui/react-scroll-area'
+import { styled } from '@modulz/design-system';
+import * as RadixScrollArea from '@radix-ui/react-scroll-area';
 
 const { SCROLL_AREA_CSS_PROPS } = RadixScrollArea;
 const StyledScrollArea = styled(RadixScrollArea.Root, {

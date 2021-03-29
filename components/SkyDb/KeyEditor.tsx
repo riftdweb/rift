@@ -1,17 +1,17 @@
-import { getJSON, setJSON } from '../../shared/skynet'
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Box } from '@modulz/design-system'
-import useSWR from 'swr'
-import findIndex from 'lodash/findIndex'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal';
-import AceEditor from "react-ace";
-import { useRouter } from 'next/router';
-import { KeysToolbar } from './KeysToolbar';
-import { useSeedKeys } from '../../hooks/useSeedKeys';
-
-import "ace-builds/src-noconflict/mode-json"
 // import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-min-noconflict/theme-solarized_dark"
+import "ace-builds/src-noconflict/mode-json"
+import findIndex from 'lodash/findIndex'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import AceEditor from "react-ace"
+import useSWR from 'swr'
+import { useSeedKeys } from '../../hooks/useSeedKeys'
+import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { getJSON, setJSON } from '../../shared/skynet'
+import { KeysToolbar } from './KeysToolbar'
+
 
 export function KeyEditor({ seed, dataKey }) {
   const { push } = useRouter()

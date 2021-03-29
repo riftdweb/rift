@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react'
-import { Button, Input, ControlGroup, Box } from '@modulz/design-system'
-import { useSeedKeys } from '../../hooks/useSeedKeys'
-import { useRouter } from 'next/router'
+import { Box, Button, ControlGroup, Input } from '@modulz/design-system'
 import { Pencil2Icon } from '@radix-ui/react-icons'
+import { useRouter } from 'next/router'
+import { useCallback, useState } from 'react'
+import { useSeedKeys } from '../../hooks/useSeedKeys'
 
 export function AddKey({ seed }) {
   const { push } = useRouter()

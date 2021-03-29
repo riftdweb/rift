@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Code, Container, Flex, Input, Radio, RadioGroup, Subheading, Text } from '@modulz/design-system';
 import bytes from 'bytes';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import path from 'path-browserify';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadFile } from './UploadFile';
-import { Box, Container, Code, Flex, Radio, RadioGroup, Subheading, Text, Input, Card } from '@modulz/design-system';
 import { parseSkylink } from 'skynet-js';
-import { useSelectedPortal } from '../../hooks/useSelectedPortal';
-import { getSkylinkUrl, uploadDirectory, uploadFile, openFile } from '../../shared/skynet';
 import useLocalStorageState from 'use-local-storage-state';
+import { useSelectedPortal } from '../../hooks/useSelectedPortal';
+import { uploadDirectory, uploadFile } from '../../shared/skynet';
+import { UploadFile } from './UploadFile';
 
 const isValidSkylink = (skylink) => {
   try {
@@ -197,9 +197,9 @@ export function Uploader() {
                   cursor: 'pointer'
                 },
                 ...(isDragActive ? {
-                    backgroundColor: '$blue100',
-                    border: '1px solid $blue500',
-                  } : {})
+                  backgroundColor: '$blue100',
+                  border: '1px solid $blue500',
+                } : {})
               }}
               {...getRootProps()}
             >

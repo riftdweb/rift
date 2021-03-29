@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { Box, Code, Container, Flex, Radio, RadioGroup, Subheading, Text } from "@modulz/design-system";
+import { ArrowDownIcon } from "@radix-ui/react-icons";
 import bytes from "bytes";
 import classNames from "classnames";
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
 import path from "path-browserify";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { UploadFile } from "./UploadFile";
-import { Box, Button, Container, Code, ControlGroup, Flex, Paragraph, Radio, RadioGroup, Subheading, Switch, Text } from "@modulz/design-system";
 // import "./HomeUpload.scss";
 import { parseSkylink } from "skynet-js";
 import { useSelectedPortal } from "../../hooks/useSelectedPortal";
-import { getSkylinkUrl, uploadDirectory, uploadFile, openFile } from "../../shared/skynet";
-import { ArrowDownIcon, CardStackPlusIcon, ContainerIcon } from "@radix-ui/react-icons";
+import { getSkylinkUrl, openFile, uploadDirectory, uploadFile } from "../../shared/skynet";
+import { UploadFile } from "./UploadFile";
 
 const isValidSkylink = (skylink) => {
   try {
@@ -194,9 +194,9 @@ export function Uploader() {
                   cursor: 'pointer'
                 },
                 ...(isDragActive ? {
-                    backgroundColor: '$green500',
-                    border: '1px solid $green500',
-                  } : {})
+                  backgroundColor: '$green500',
+                  border: '1px solid $green500',
+                } : {})
               }}
               {...getRootProps()}
             >

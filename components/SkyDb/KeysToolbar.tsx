@@ -28,7 +28,7 @@ export function KeysToolbar({
     message = 'Fetching latest data...'
   } else {
     if (!isValid) {
-      message= 'Invalid JSON'
+      message = 'Invalid JSON'
     } else if (isDataLatest) {
       message = 'Showing latest data'
     } else {
@@ -75,12 +75,12 @@ export function KeysToolbar({
         <Button
           disabled={isDataLatest || !isValid}
           onClick={saveChanges}>
-            <Box
-              css={{
-                mr: '$1',
-              }}>
-              <ThickArrowUpIcon />
-            </Box>
+          <Box
+            css={{
+              mr: '$1',
+            }}>
+            <ThickArrowUpIcon />
+          </Box>
           Save
         </Button>
         <DropdownMenu>
@@ -88,15 +88,15 @@ export function KeysToolbar({
             <GearIcon />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                css={{ width: '100%' }}
-                onSelect={removeKey}>
-                <Tooltip content="Delete data key - note that this only deletes locally">
-                  <Box css={{ width: '100%' }}>
-                    Delete
-                  </Box>
-                </Tooltip>
-              </DropdownMenuItem>
+            <DropdownMenuItem
+              css={{ width: '100%' }}
+              onSelect={removeKey}>
+              <Tooltip content="Delete data key - note that this only deletes locally">
+                <Box css={{ width: '100%' }}>
+                  Delete
+                </Box>
+              </Tooltip>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </ControlGroup>

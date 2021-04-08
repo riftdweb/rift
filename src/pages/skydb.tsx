@@ -1,5 +1,9 @@
-import { SkyDbHome } from '../components/SkyDb/Home'
+import dynamic from 'next/dynamic'
 
-export default function SkyDbPage() {
-  return <SkyDbHome />
+const SeedList = dynamic(() => import('../components/SkyDb/SeedList'), {
+  ssr: false,
+})
+
+export default function SeedListPage() {
+  return <SeedList />
 }

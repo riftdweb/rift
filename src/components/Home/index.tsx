@@ -6,7 +6,7 @@ import { Grid } from '../_shared/Grid'
 import { LinkCard } from './LinkCard'
 import { SkappCard } from './SkappCard'
 
-export function Home() {
+export default function Home() {
   const [selectedPortal] = useSelectedPortal()
   return (
     <Box css={{ py: '$3', position: 'relative' }}>

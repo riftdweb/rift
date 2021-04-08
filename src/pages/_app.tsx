@@ -1,25 +1,29 @@
-import { useCallback, useEffect } from 'react'
-import Head from 'next/head'
-import '../styles.css'
 import { Box, Container, darkTheme } from '@modulz/design-system'
+import { IdProvider } from '@radix-ui/react-id'
+import dynamic from 'next/dynamic'
+import Head from 'next/head'
+import { useCallback, useEffect } from 'react'
+import useLocalStorageState from 'use-local-storage-state'
 import { DesignSystemProvider } from '../components/_layout/DesignSystemProvider'
 import Footer from '../components/_layout/Footer'
-import { IdProvider } from '@radix-ui/react-id'
 import { TabNav } from '../components/_layout/TabNav'
-import dynamic from 'next/dynamic'
-import useLocalStorageState from 'use-local-storage-state'
+import { Providers } from '../hooks/_providers'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import '../styles.css'
+import '../toast.css'
 
 const Navbar = dynamic(() => import('../components/_layout/Navbar'), {
   ssr: false,
 })
 
-function SafeHydrate({ children }) {
-  return (
-    <div suppressHydrationWarning>
-      {typeof window === 'undefined' ? null : children}
-    </div>
-  )
-}
+// function SafeHydrate({ children }) {
+//   return (
+//     <div suppressHydrationWarning>
+//       {typeof window === 'undefined' ? null : children}
+//     </div>
+//   )
+// }
 
 function App({ Component, pageProps }) {
   const [themeConfig, setThemeConfig] = useLocalStorageState('v0/themeConfig', {
@@ -40,6 +44,16 @@ function App({ Component, pageProps }) {
     })
   }, [themeConfig, setThemeConfig])
 
+  // const [uploads, setUploads] = useUploads()
+
+  // // Clean stale uploads on app load
+  // useEffect(() => {
+  //   const cleanUploads = uploads.filter(
+  //     (upload) => upload.status === 'complete'
+  //   )
+  //   setUploads(cleanUploads)
+  // }, [])
+
   return (
     <DesignSystemProvider>
       <div>
@@ -54,22 +68,26 @@ function App({ Component, pageProps }) {
           />
         </Head>
         <IdProvider>
-          <Box
-            css={{
-              bc: '$loContrast',
-              height: '100vh',
-              overflowY: 'auto',
-            }}
-          >
-            <Navbar toggleTheme={toggleTheme} />
-            <Container size="3" css={{ minHeight: '60vh', marginTop: '20px' }}>
-              <TabNav />
-              <SafeHydrate>
+          <Providers>
+            <ToastContainer />
+            <Box
+              css={{
+                bc: '$loContrast',
+                height: '100vh',
+                overflowY: 'auto',
+              }}
+            >
+              <Navbar toggleTheme={toggleTheme} />
+              <Container
+                size="3"
+                css={{ minHeight: '60vh', marginTop: '20px' }}
+              >
+                <TabNav />
                 <Component {...pageProps} />
-              </SafeHydrate>
-            </Container>
-            <Footer />
-          </Box>
+              </Container>
+              <Footer />
+            </Box>
+          </Providers>
         </IdProvider>
       </div>
     </DesignSystemProvider>

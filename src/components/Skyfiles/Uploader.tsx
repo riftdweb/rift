@@ -12,28 +12,19 @@ import {
 import bytes from 'bytes'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import path from 'path-browserify'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { parseSkylink } from 'skynet-js'
-import useLocalStorageState from 'use-local-storage-state'
+import { v4 as uuid } from 'uuid'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { uploadDirectory, uploadFile } from '../../shared/skynet'
-import { UploadFile } from './UploadFile'
+import { Upload, UploadFile } from '../../shared/types'
+import { getSize } from '../../shared/uploads'
 
-const isValidSkylink = (skylink) => {
-  try {
-    parseSkylink(skylink) // try to parse the skylink, it will throw on error
-  } catch (error) {
-    return false
-  }
+const getFilePath = (uploadFile: UploadFile): string =>
+  uploadFile.webkitRelativePath || uploadFile.path || uploadFile.name
 
-  return true
-}
-
-const getFilePath = (file) => file.webkitRelativePath || file.path || file.name
-
-const getRelativeFilePath = (file) => {
-  const filePath = getFilePath(file)
+const getRelativeFilePath = (uploadFile: UploadFile): string => {
+  const filePath = getFilePath(uploadFile)
   const { root, dir, base } = path.parse(filePath)
   const relative = path
     .normalize(dir)
@@ -44,8 +35,8 @@ const getRelativeFilePath = (file) => {
   return path.join(...relative, base)
 }
 
-const getRootDirectory = (file) => {
-  const filePath = getFilePath(file)
+const getRootDirectory = (uploadFile: UploadFile): string => {
+  const filePath = getFilePath(uploadFile)
   const { root, dir } = path.parse(filePath)
 
   return path.normalize(dir).slice(root.length).split(path.sep)[0]
@@ -79,8 +70,12 @@ const createUploadErrorMessage = (error) => {
   return `Critical error, please refresh the application and try again. ${error.message}`
 }
 
-export function Uploader() {
-  const [files, setFiles] = useLocalStorageState('v0/skyfiles', [])
+type Props = {
+  addUploads: (uploads: Upload[]) => void
+  updateUpload: (state: Partial<Upload>) => void
+}
+
+export function Uploader({ addUploads, updateUpload }: Props) {
   const [directoryMode, setDirectoryMode] = useState(false)
   const [selectedPortal] = useSelectedPortal()
 
@@ -92,9 +87,9 @@ export function Uploader() {
     }
   }, [directoryMode])
 
-  const handleDrop = async (acceptedFiles) => {
+  const handleDrop = async (droppedFiles) => {
     // Make File data serializable
-    acceptedFiles = acceptedFiles.map((file) => ({
+    let newUploadFiles: UploadFile[] = droppedFiles.map((file) => ({
       name: file.name,
       path: file.path,
       size: file.size,
@@ -104,58 +99,76 @@ export function Uploader() {
       file,
     }))
 
-    if (directoryMode && acceptedFiles.length) {
-      const rootDir = getRootDirectory(acceptedFiles[0]) // get the file path from the first file
+    // get the file path from the first file
+    const rootDir = getRootDirectory(newUploadFiles[0])
 
-      acceptedFiles = [{ name: rootDir, directory: true, files: acceptedFiles }]
+    // Files dropped without a directory
+    if (directoryMode && rootDir === '.') {
+      return
     }
 
-    setFiles((previousFiles) => [
-      ...acceptedFiles.map((file) => ({ file, status: 'uploading' })),
-      ...previousFiles,
-    ])
+    // Warning: dropping multiple directories is possible and has wonky behaviour
+    // File picker does not allow, otherwise no general way to handle.
+    // Maybe check for whether root Dirs variations is greater than 1?
 
-    const onFileStateChange = (file, state) => {
-      setFiles((previousFiles) => {
-        const index = previousFiles.findIndex((f) => f.file === file)
+    let newUploads: Upload[] =
+      directoryMode && newUploadFiles.length
+        ? [
+            {
+              id: uuid(),
+              status: 'uploading',
+              uploadDirectory: {
+                name: rootDir,
+                uploadFiles: newUploadFiles,
+              },
+            },
+          ]
+        : newUploadFiles.map((uploadFile) => ({
+            id: uuid(),
+            status: 'uploading',
+            uploadFile,
+          }))
 
-        return [
-          ...previousFiles.slice(0, index),
-          {
-            ...previousFiles[index],
-            ...state,
-          },
-          ...previousFiles.slice(index + 1),
-        ]
+    addUploads(newUploads)
+
+    const onFileStateChange = (upload, state) => {
+      updateUpload({
+        ...state,
+        id: upload.id,
       })
     }
 
-    acceptedFiles.forEach((file) => {
+    newUploads.forEach((upload: Upload) => {
       const onUploadProgress = (progress) => {
         const status = progress === 1 ? 'processing' : 'uploading'
 
-        onFileStateChange(file, { status, progress })
+        onFileStateChange(upload, { status, progress })
       }
 
       // Reject files larger than our hard limit of 1 GB with proper message
-      if (file.size > bytes('1 GB')) {
-        onFileStateChange(file, {
+      if (getSize(upload) > bytes('1 GB')) {
+        onFileStateChange(upload, {
           status: 'error',
-          error: 'This file size exceeds the maximum allowed size of 1 GB.',
+          error: 'This upload size exceeds the maximum allowed size of 1 GB.',
         })
 
         return
       }
 
-      const upload = async () => {
+      const startUpload = async () => {
         try {
           let response
 
-          if (file.directory) {
-            const directory = file.files.reduce(
-              (acc, file) => ({
+          // Set the portal before upload initiates
+          onFileStateChange(upload, {
+            portal: selectedPortal,
+          })
+
+          if (upload.uploadDirectory) {
+            const directory = upload.uploadDirectory.uploadFiles.reduce(
+              (acc, uploadFile: UploadFile) => ({
                 ...acc,
-                [getRelativeFilePath(file)]: file.file,
+                [getRelativeFilePath(uploadFile)]: uploadFile.file,
               }),
               {}
             )
@@ -163,41 +176,44 @@ export function Uploader() {
             response = await uploadDirectory(
               selectedPortal,
               directory,
-              encodeURIComponent(file.name),
+              encodeURIComponent(upload.uploadDirectory.name),
               { onUploadProgress }
             )
           } else {
-            response = await uploadFile(selectedPortal, file.file, {
-              onUploadProgress,
-            })
+            response = await uploadFile(
+              selectedPortal,
+              upload.uploadFile.file,
+              {
+                onUploadProgress,
+              }
+            )
           }
 
-          onFileStateChange(file, {
+          onFileStateChange(upload, {
             status: 'complete',
             skylink: response.skylink,
             uploadedAt: new Date().toISOString(),
-            portal: selectedPortal,
           })
         } catch (error) {
           if (
             error.response &&
             error.response.status === StatusCodes.TOO_MANY_REQUESTS
           ) {
-            onFileStateChange(file, { progress: -1 })
+            onFileStateChange(upload, { progress: -1 })
 
             return new Promise((resolve) =>
-              setTimeout(() => resolve(upload()), 3000)
+              setTimeout(() => resolve(startUpload()), 3000)
             )
           }
 
-          onFileStateChange(file, {
+          onFileStateChange(upload, {
             status: 'error',
             error: createUploadErrorMessage(error),
           })
         }
       }
 
-      upload()
+      startUpload()
     })
   }
 
@@ -217,162 +233,78 @@ export function Uploader() {
   )
 
   return (
-    <Box>
-      <Box className="home-upload-white">
-        <Box className="home-upload-split">
-          <Box
+    <Box
+      css={{
+        border: '1px dashed $gray500',
+        borderRadius: '$3',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        '&:hover': {
+          backgroundColor: '$gray100',
+          transition: 'all .1s',
+        },
+      }}
+    >
+      <Flex
+        css={{
+          height: '200px',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          outline: 'none',
+          '&:hover': {
+            backgroundcolor: 'rgba(0, 0, 0, 0.03)',
+            cursor: 'pointer',
+          },
+          ...(isDragActive
+            ? {
+                backgroundColor: '$blue100',
+                border: '1px solid $blue500',
+              }
+            : {}),
+        }}
+        {...getRootProps()}
+      >
+        <Subheading>
+          Upload {directoryMode ? 'a directory' : 'files'}
+        </Subheading>
+        <Container size="1">
+          <Text
+            size="3"
             css={{
-              border: '1px dashed $gray500',
-              borderRadius: '$3',
-              overflow: 'hidden',
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '$gray100',
-                transition: 'all .1s',
-              },
+              color: '$gray900',
+              margin: '$1 0 $3',
+              lineHeight: '22px',
             }}
           >
-            <Flex
-              css={{
-                height: '200px',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                outline: 'none',
-                '&:hover': {
-                  backgroundcolor: 'rgba(0, 0, 0, 0.03)',
-                  cursor: 'pointer',
-                },
-                ...(isDragActive
-                  ? {
-                      backgroundColor: '$blue100',
-                      border: '1px solid $blue500',
-                    }
-                  : {}),
-              }}
-              {...getRootProps()}
-            >
-              <Subheading>
-                Upload {directoryMode ? 'a directory' : 'files'}
-              </Subheading>
-              <Container size="1">
-                <Text
-                  size="3"
-                  css={{
-                    color: '$gray900',
-                    margin: '$1 0 $3',
-                    lineHeight: '22px',
-                  }}
-                >
-                  Drop {directoryMode ? 'a directory' : 'files'} here or click
-                  to browse. Files will be uploaded to{' '}
-                  <Code>{selectedPortal}</Code>. Files will be pinned according
-                  to the portal's policies on retention.
-                </Text>
-              </Container>
-              <Flex css={{ gap: '$3', alignItems: 'center' }}>
-                <RadioGroup
-                  value={directoryMode ? 'directory' : 'files'}
-                  onClick={stopPropagation}
-                  onChange={toggleDirectoryModeRadio}
-                  defaultValue={directoryMode ? 'directory' : 'files'}
-                >
-                  <Flex css={{ gap: '$2' }}>
-                    <Flex
-                      css={{ gap: '$1' }}
-                      onClick={() => setDirectoryMode(false)}
-                    >
-                      <Text>files</Text>
-                      <Radio value="files" />
-                    </Flex>
-                    <Flex
-                      css={{ gap: '$1' }}
-                      onClick={() => setDirectoryMode(true)}
-                    >
-                      <Text>directory</Text>
-                      <Radio value="directory" />
-                    </Flex>
-                  </Flex>
-                </RadioGroup>
+            Drop {directoryMode ? 'a directory' : 'files'} here or click to
+            browse. Files will be uploaded to <Code>{selectedPortal}</Code>.
+            Files will be pinned according to the portal's policies on
+            retention.
+          </Text>
+        </Container>
+        <Flex css={{ gap: '$3', alignItems: 'center' }}>
+          <RadioGroup
+            value={directoryMode ? 'directory' : 'files'}
+            onClick={stopPropagation}
+            onChange={toggleDirectoryModeRadio}
+            defaultValue={directoryMode ? 'directory' : 'files'}
+          >
+            <Flex css={{ gap: '$2' }}>
+              <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(false)}>
+                <Text>files</Text>
+                <Radio value="files" />
+              </Flex>
+              <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(true)}>
+                <Text>directory</Text>
+                <Radio value="directory" />
               </Flex>
             </Flex>
-            <Input {...getInputProps()} />
-          </Box>
-        </Box>
-
-        {files.length > 0 && (
-          <Box
-            css={{
-              margin: '$3 0',
-              border: '1px solid $gray500',
-              backgroundColor: '$panel',
-              borderRadius: '$3',
-              overflow: 'hidden',
-            }}
-          >
-            <Flex
-              css={{
-                padding: '$2 $3',
-                gap: '$1',
-                borderBottom: '1px solid $gray300',
-                color: '$gray900',
-                fontSize: '14px',
-                height: '44px',
-                alignItems: 'center',
-              }}
-            >
-              <Box css={{ width: '15px' }} />
-              <Box css={{ flex: 2 }}>File</Box>
-              <Box
-                css={{
-                  flex: 1,
-                  display: 'none',
-                  when: {
-                    bp1: {
-                      display: 'block',
-                    },
-                  },
-                }}
-              >
-                Skylink
-              </Box>
-              <Box
-                css={{
-                  flex: 1,
-                  display: 'none',
-                  when: {
-                    bp1: {
-                      display: 'block',
-                    },
-                  },
-                }}
-              >
-                Size
-              </Box>
-              <Box
-                css={{
-                  flex: 1,
-                  display: 'none',
-                  when: {
-                    bp2: {
-                      display: 'block',
-                    },
-                  },
-                }}
-              >
-                Ingress
-              </Box>
-              <Box css={{ flex: 1, textAlign: 'right' }}>Time</Box>
-            </Flex>
-            {files.map((file, i) => {
-              return (
-                <UploadFile key={i} selectedPortal={selectedPortal} {...file} />
-              )
-            })}
-          </Box>
-        )}
-      </Box>
+          </RadioGroup>
+        </Flex>
+      </Flex>
+      <Input {...getInputProps()} />
     </Box>
   )
 }

@@ -1,5 +1,9 @@
-import { Box } from '@modulz/design-system'
+import dynamic from 'next/dynamic'
 
-export default function Settings() {
-  return <Box>Settings</Box>
+const Settings = dynamic(() => import('../components/Settings'), {
+  ssr: false,
+})
+
+export default function SettingsPage() {
+  return <Settings />
 }

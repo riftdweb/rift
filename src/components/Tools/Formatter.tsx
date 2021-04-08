@@ -2,29 +2,31 @@ import {
   Box,
   Button,
   ControlGroup,
+  Heading,
   Input,
-  Subheading,
   Tooltip,
 } from '@modulz/design-system'
-import { ClipboardCopyIcon, ExternalLinkIcon } from '@radix-ui/react-icons'
-import * as clipboard from 'clipboard-polyfill/text'
+import { ClipboardIcon, ExternalLinkIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
+import { convertSkylinkToBase32 } from 'skynet-js/dist/utils'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
-import { decodeBase64, encodeBase32 } from '../../shared/base'
+import { copyToClipboard } from '../../shared/clipboard'
 
 export function Formatter() {
   const [selectedPortal] = useSelectedPortal()
-  const [skylink, setSkylink] = useState<string>()
-  const [base32Value, setBase32Value] = useState<string>()
+  const [skylink, setSkylink] = useState<string>('')
+  const [base32Value, setBase32Value] = useState<string>('')
 
   const onChange = useCallback(
     (e) => {
       const value = e.target.value.replace('sia://', '')
-      const decoded = decodeBase64(value)
-      const encoded = encodeBase32(decoded)
-
-      setSkylink(value)
-      setBase32Value(encoded)
+      if (!value) {
+        setSkylink('')
+        setBase32Value('')
+      } else {
+        setSkylink(value)
+        setBase32Value(convertSkylinkToBase32(value))
+      }
     },
     [setSkylink, setBase32Value]
   )
@@ -34,8 +36,8 @@ export function Formatter() {
 
   return (
     <Box>
-      <Box css={{ margin: '50px 0 $3' }}>
-        <Subheading>Skylink Formatter</Subheading>
+      <Box css={{ margin: '$3 0 $3' }}>
+        <Heading>Skylink Formatter</Heading>
       </Box>
       <Input
         css={{ marginBottom: '$2' }}
@@ -56,8 +58,12 @@ export function Formatter() {
           </Button>
         </Tooltip>
         <Tooltip content="Copy to clipboard">
-          <Button onClick={() => clipboard.writeText(subdomainSkylink)}>
-            <ClipboardCopyIcon />
+          <Button
+            onClick={() =>
+              copyToClipboard(subdomainSkylink, 'subdomain skylink')
+            }
+          >
+            <ClipboardIcon />
           </Button>
         </Tooltip>
       </ControlGroup>
@@ -75,8 +81,8 @@ export function Formatter() {
           </Button>
         </Tooltip>
         <Tooltip content="Copy to clipboard">
-          <Button onClick={() => clipboard.writeText(pathSkylink)}>
-            <ClipboardCopyIcon />
+          <Button onClick={() => copyToClipboard(pathSkylink, 'path skylink')}>
+            <ClipboardIcon />
           </Button>
         </Tooltip>
       </ControlGroup>

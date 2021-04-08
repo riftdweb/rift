@@ -13,11 +13,14 @@ import {
 import { GearIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
-import { useSeeds } from '../../hooks/useSeeds'
-import { Link } from '../_shared/Link'
+import { useSeeds } from '../../../hooks/useSeeds'
+import { Seed } from '../../../shared/types'
+import { Link } from '../../_shared/Link'
+import { SeedContextMenu } from './SeedContextMenu'
+import { AddSeed } from './AddSeed'
 
 type Props = {
-  seed?: string
+  seed?: Seed
 }
 
 export function Nav({ seed }: Props) {
@@ -28,7 +31,7 @@ export function Nav({ seed }: Props) {
     if (!seed) {
       return
     }
-    removeSeed(seed)
+    removeSeed(seed.id)
     push('/skydb')
   }, [seed, removeSeed, push])
 
@@ -45,26 +48,14 @@ export function Nav({ seed }: Props) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
-            href={`/skydb/${seed}`}
+            href={`/skydb/${seed.name}`}
           >
-            {seed}
+            {seed.name}
           </Link>
         )}
         {!seed && <Box css={{ flex: 1 }} />}
-        {seed && (
-          <DropdownMenu>
-            <DropdownMenuTrigger as={Button}>
-              <GearIcon />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuGroup>
-                <DropdownMenuItem as="button" onClick={removeSeedAndNav}>
-                  Delete Seed
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        {!seed && <AddSeed />}
+        {seed && <SeedContextMenu seed={seed} variant="gray" size="2" />}
       </Flex>
     </Heading>
   )

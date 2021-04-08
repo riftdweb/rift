@@ -18,6 +18,7 @@ import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
+import { Searchbar } from './Searchbar'
 
 type Props = {
   toggleTheme: () => void
@@ -31,13 +32,22 @@ export default function Navbar({ toggleTheme }: Props) {
       <Container size="3">
         <Flex css={{ py: '$3', alignItems: 'center' }}>
           <Tooltip content="Tools and services for the decentralized web">
-            <Heading css={{ mr: '$3', fontWeight: 'bold' }}>
+            <Heading
+              css={{
+                mr: '$3',
+                fontWeight: 'bold',
+                top: '-1px',
+                position: 'relative',
+              }}
+            >
               <Flex>
-                <Link href="/">rift</Link>
+                <Link href="/" css={{ textDecoration: 'none' }}>
+                  rift
+                </Link>
               </Flex>
             </Heading>
           </Tooltip>
-          <Box css={{ flex: 1 }}>{/* <Searchbar /> */}</Box>
+          <Searchbar />
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
             <ControlGroup>
               <Link href="/skyfiles" as="button" content="Upload files">

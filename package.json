@@ -11,16 +11,16 @@
   },
   "dependencies": {
     "@modulz/design-system": "^0.0.32",
+    "@radix-ui/react-dismissable-layer": "^0.0.6",
     "@radix-ui/react-icons": "^1.0.2",
     "@radix-ui/react-id": "^0.0.1",
     "@radix-ui/react-scroll-area": "^0.0.9",
     "ace-builds": "^1.4.12",
-    "base32-encode": "^1.1.1",
-    "base64-js": "^1.5.1",
     "bytes": "^3.1.0",
     "classnames": "^2.2.6",
     "clipboard-polyfill": "^3.0.2",
     "date-fns": "^2.19.0",
+    "formik": "^2.2.6",
     "http-status-codes": "^2.1.4",
     "lodash": "^4.17.21",
     "next": "^10.0.0",
@@ -29,9 +29,13 @@
     "react-ace": "^9.3.0",
     "react-dom": "17.0.1",
     "react-dropzone": "^11.3.2",
+    "react-toastify": "^7.0.3",
+    "sia-js": "github:dawe35/sia-js",
     "skynet-js": "^3.0.0",
     "swr": "^0.5.4",
-    "use-local-storage-state": "^9.0.2"
+    "use-local-storage-state": "^9.0.2",
+    "uuid": "^8.3.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/node": "^14.14.35",

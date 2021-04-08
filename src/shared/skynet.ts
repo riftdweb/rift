@@ -47,6 +47,15 @@ export function uploadFile(
   return client.uploadFile(file, customOptions)
 }
 
+export function getMetadata(
+  portal: string,
+  skylink: string,
+  customOptions?: CustomDownloadOptions
+) {
+  const client = new SkynetClient(`https://${portal}`)
+  return client.getMetadata(skylink, customOptions)
+}
+
 export function getSkylinkUrl(
   portal: string,
   skylinkUrl: string,

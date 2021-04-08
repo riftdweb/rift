@@ -2,6 +2,7 @@ import { Box, Flex, TabLink } from '@modulz/design-system'
 import {
   ActivityLogIcon,
   FilePlusIcon,
+  GearIcon,
   HomeIcon,
   MixIcon,
 } from '@radix-ui/react-icons'
@@ -52,14 +53,14 @@ export function TabNav() {
           Portals
         </TabLink>
       </Link> */}
-      {/* <Link href="/settings" passHref>
-        <TabLink active={route === '/settings'}>
+      <Link href="/settings" passHref>
+        <TabLink active={route.split('/')[1] === 'settings'}>
           <Box css={{ mr: '$1' }}>
             <GearIcon />
           </Box>
           Settings
         </TabLink>
-      </Link> */}
+      </Link>
     </Flex>
   )
 }

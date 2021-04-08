@@ -9,10 +9,13 @@ import {
 // Turn into a context with portal prepopulated
 // Explore hooks with status state built in: https://github.com/dghelm/skynet-encode-hackathon
 
+const WRITE_TIMEOUT = 20
+const READ_TIMEOUT = 5
+
 export function getJSON(portal: string, seed: string, dataKey: string) {
   const client = new SkynetClient(`https://${portal}`)
   const { publicKey } = genKeyPairFromSeed(seed)
-  return client.db.getJSON(publicKey, dataKey, { timeout: 20 })
+  return client.db.getJSON(publicKey, dataKey, { timeout: READ_TIMEOUT })
 }
 
 export function setJSON(
@@ -24,7 +27,7 @@ export function setJSON(
   const client = new SkynetClient(`https://${portal}`)
   const { privateKey } = genKeyPairFromSeed(seed)
   return client.db.setJSON(privateKey, dataKey, json, undefined, {
-    timeout: 20,
+    timeout: WRITE_TIMEOUT,
   })
 }
 

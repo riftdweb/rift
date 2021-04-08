@@ -142,7 +142,7 @@ export function AddSeed() {
                 </Flex>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                   <Flex>
-                    <Text>Parent seed</Text>
+                    <Text>Seed</Text>
                     {formik.errors.parentSeed && (
                       <Text
                         css={{ color: '$red900', flex: 1, textAlign: 'right' }}
@@ -157,7 +157,7 @@ export function AddSeed() {
                       value={formik.values.parentSeed}
                       onChange={formik.handleChange}
                       size="3"
-                      placeholder="seed phrase"
+                      placeholder="Seed value"
                     />
                     <Tooltip content="Generate random seed">
                       <Button
@@ -210,7 +210,7 @@ export function AddSeed() {
               >
                 Cancel
               </Button>
-              <Button size="2" type="submit" onClick={formik.handleSubmit}>
+              <Button size="2" type="submit">
                 <Box
                   css={{
                     mr: '$1',

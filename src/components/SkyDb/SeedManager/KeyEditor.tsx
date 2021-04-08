@@ -1,4 +1,4 @@
-import { Box } from '@modulz/design-system'
+import { Flex } from '@modulz/design-system'
 import findIndex from 'lodash/findIndex'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -60,7 +60,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
       if (data && data.data) {
         const newValue = JSON.stringify(data.data, null, 1)
         setValue(newValue)
-        setRevision(Number(data.revision))
+        setRevision(Number(data.revision) || revision)
 
         if (!editingValue) {
           setEditingValue(newValue)
@@ -75,7 +75,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
         }
       }
     },
-    [setValue, setRevision, editingValue, setEditingValue]
+    [setValue, setRevision, editingValue, setEditingValue, revision]
   )
 
   // Initialize state after data is first fetched
@@ -147,10 +147,11 @@ export function KeyEditor({ seed, dataKey }: Props) {
     seed,
     dataKey,
     editingValue,
+    revision,
   ])
 
   return (
-    <Box>
+    <Flex css={{ flexDirection: 'column', height: '100%' }}>
       <KeysToolbar
         isDataLatest={isDataLatest}
         revision={revision}
@@ -165,7 +166,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
       />
       {configFilesLoaded && (
         <AceEditor
-          style={{ width: '100%' }}
+          style={{ width: '100%', flex: 1 }}
           key={dataKey}
           value={editingValue}
           mode="json"
@@ -175,6 +176,6 @@ export function KeyEditor({ seed, dataKey }: Props) {
           editorProps={{ $blockScrolling: true }}
         />
       )}
-    </Box>
+    </Flex>
   )
 }

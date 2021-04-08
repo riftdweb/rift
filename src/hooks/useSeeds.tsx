@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 import uniq from 'lodash/uniq'
 import useSWR from 'swr'
@@ -25,6 +26,7 @@ type State = {
   addKey: (seedId: string, key: string) => boolean
   removeKey: (seedId: string, key: string) => boolean
   isValidating: boolean
+  userHasNoSeeds: boolean
 }
 
 const SeedsContext = createContext({} as State)
@@ -42,12 +44,23 @@ const debouncedMutate = debounce((mutate) => {
 export function SeedsProvider({ children }: Props) {
   const [selectedPortal] = useSelectedPortal()
   const { localRootSeed } = useLocalRootSeed()
+  const [hasValidated, setHasValidated] = useState<boolean>(false)
+  const [userHasNoSeeds, setUserHasNoSeeds] = useState<boolean>(false)
   const { push } = useRouter()
 
-  const { data, mutate, isValidating } = useSWR<{ data: Seed[] }>(
+  const { data, mutate, isValidating, error } = useSWR<{ data: Seed[] }>(
     [localRootSeed, appResourceDataKey],
     () => getJSON(selectedPortal, localRootSeed, appResourceDataKey)
   )
+
+  // Track whether the user has no seeds yet so that we can adjust
+  // how data validating states are handled
+  useEffect(() => {
+    if (!hasValidated && data) {
+      setHasValidated(true)
+      setUserHasNoSeeds(!data.data || !data.data.length)
+    }
+  }, [data, hasValidated, setHasValidated, setUserHasNoSeeds])
 
   const seeds = useMemo(() => (data && data.data ? data.data : []), [data])
 
@@ -161,6 +174,7 @@ export function SeedsProvider({ children }: Props) {
     addKey,
     removeKey,
     isValidating,
+    userHasNoSeeds,
   }
 
   return <SeedsContext.Provider value={value}>{children}</SeedsContext.Provider>

@@ -1,7 +1,7 @@
 import { Box, Subheading, Text } from '@modulz/design-system'
 import { useRouter } from 'next/router'
 import { AddKey } from './AddKey'
-import { KeysPanel } from './KeysPanel'
+import { KeysWorkspace } from './KeysWorkspace'
 import { Nav } from '../_shared/Nav'
 import { useSeeds } from '../../../hooks/useSeeds'
 
@@ -25,7 +25,7 @@ export default function SeedManager() {
       <Box css={{ my: '$3' }}>
         <AddKey seed={seed} />
         {seed.keys.length ? (
-          <KeysPanel seed={seed} />
+          <KeysWorkspace seed={seed} />
         ) : (
           <Box css={{ textAlign: 'center', padding: '$3 0' }}>
             <Subheading css={{ margin: '$2 0' }}>

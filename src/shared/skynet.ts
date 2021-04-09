@@ -10,13 +10,13 @@ import { CustomHnsDownloadOptions } from 'skynet-js/dist/download'
 // Turn into a context with portal prepopulated
 // Explore hooks with status state built in: https://github.com/dghelm/skynet-encode-hackathon
 
-const WRITE_TIMEOUT = 20
-const READ_TIMEOUT = 5
+// const WRITE_TIMEOUT = 20
+// const READ_TIMEOUT = 5
 
 export function getJSON(portal: string, seed: string, dataKey: string) {
   const client = new SkynetClient(`https://${portal}`)
   const { publicKey } = genKeyPairFromSeed(seed)
-  return client.db.getJSON(publicKey, dataKey, { timeout: READ_TIMEOUT })
+  return client.db.getJSON(publicKey, dataKey)
 }
 
 export function setJSON(
@@ -27,9 +27,7 @@ export function setJSON(
 ) {
   const client = new SkynetClient(`https://${portal}`)
   const { privateKey } = genKeyPairFromSeed(seed)
-  return client.db.setJSON(privateKey, dataKey, json, undefined, {
-    timeout: WRITE_TIMEOUT,
-  })
+  return client.db.setJSON(privateKey, dataKey, json)
 }
 
 export function uploadDirectory(

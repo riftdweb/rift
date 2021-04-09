@@ -3,6 +3,7 @@ import {
   Button,
   ControlGroup,
   DropdownMenu,
+  Code,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -17,10 +18,11 @@ import {
   SymbolIcon,
   ThickArrowUpIcon,
 } from '@radix-ui/react-icons'
+import { copyToClipboard } from '../../../shared/clipboard'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 
 type Props = {
-  revision: number
+  skylink: string
   isDataLatest: boolean
   isValid: boolean
   isValidating: boolean
@@ -33,7 +35,7 @@ type Props = {
 }
 
 export function KeysToolbar({
-  revision,
+  skylink,
   saveChanges,
   refreshKey,
   revertChanges,
@@ -60,7 +62,18 @@ export function KeysToolbar({
   }
   return (
     <Flex css={{ margin: '$2 0 $2', alignItems: 'center', width: '100%' }}>
-      <Button disabled>Revision {revision}</Button>
+      <Tooltip align="start" content="Data key value Skylink">
+        <Code
+          css={{
+            lineHeight: '20px',
+            cursor: 'pointer',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+          onClick={() => copyToClipboard(skylink, 'skylink')}
+        >
+          {skylink.slice(0, 10)}...
+        </Code>
+      </Tooltip>
       <Text size="1" css={{ flex: 1, color: '$gray900', ml: '$2' }}>
         {message}
       </Text>

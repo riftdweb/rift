@@ -1,8 +1,17 @@
+.Toastify__toast-container--bottom-right {
+  bottom: 20px;
+  right: 36px;
+}
+
 .Toastify__toast--default {
   background: var(--colors-loContrast);
   min-height: inherit;
   /* box-shadow: 0 1px 10px 0 var(--colors-shadowLight),
     0 2px 15px 0 var(--colors-shadowLight); */
+}
+
+.Toastify__toast:last-of-type {
+  margin-bottom: 0;
 }
 
 .Toastify__toast--body {

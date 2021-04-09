@@ -34,7 +34,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
   )
   const [editingValue, setEditingValue] = useState<string>()
   const [value, setValue] = useState<string>()
-  const [revision, setRevision] = useState<number>(0)
+  const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
   const { removeKey } = useSeeds()
@@ -60,7 +60,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
       if (data && data.data) {
         const newValue = JSON.stringify(data.data, null, 1)
         setValue(newValue)
-        setRevision(Number(data.revision) || revision)
+        setSkylink(data.skylink)
 
         if (!editingValue) {
           setEditingValue(newValue)
@@ -68,14 +68,14 @@ export function KeyEditor({ seed, dataKey }: Props) {
       } else if (data && !data.data) {
         const newValue = '{}'
         setValue(newValue)
-        setRevision(0)
+        setSkylink('')
 
         if (!editingValue) {
           setEditingValue(newValue)
         }
       }
     },
-    [setValue, setRevision, editingValue, setEditingValue, revision]
+    [setValue, setSkylink, editingValue, setEditingValue, skylink]
   )
 
   // Initialize state after data is first fetched
@@ -125,9 +125,8 @@ export function KeyEditor({ seed, dataKey }: Props) {
       setIsSaving(true)
       try {
         const newData = JSON.parse(editingValue)
-        const newRevision = BigInt(revision + 1)
         // Update cache immediately
-        mutate({ data: newData, revision: newRevision }, false)
+        mutate({ data: newData, skylink }, false)
         // Save changes to SkyDB
         await setJSON(selectedPortal, seed.id, dataKey, newData)
         // Sync latest, will likely be the same
@@ -145,14 +144,14 @@ export function KeyEditor({ seed, dataKey }: Props) {
     seed,
     dataKey,
     editingValue,
-    revision,
+    skylink,
   ])
 
   return (
     <Flex css={{ flexDirection: 'column', height: '100%' }}>
       <KeysToolbar
         isDataLatest={isDataLatest}
-        revision={revision}
+        skylink={skylink}
         isValidating={isValidating}
         isSaving={isSaving}
         isValid={isValid}

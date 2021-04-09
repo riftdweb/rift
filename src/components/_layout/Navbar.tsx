@@ -31,7 +31,7 @@ export default function Navbar({ toggleTheme }: Props) {
     <Box css={{ borderBottom: '1px solid $gray200' }}>
       <Container size="3">
         <Flex css={{ py: '$3', alignItems: 'center' }}>
-          <Tooltip content="Tools and services for the decentralized web">
+          <Tooltip content="Tools for the decentralized web">
             <Heading
               css={{
                 mr: '$3',

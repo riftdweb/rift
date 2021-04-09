@@ -5,20 +5,16 @@ import {
   ExternalLinkIcon,
   FileIcon,
   MagnifyingGlassIcon,
-  TriangleDownIcon,
 } from '@radix-ui/react-icons'
 import bytes from 'bytes'
 import { formatDistance, parseISO } from 'date-fns'
 import React, { useMemo, useRef, useState } from 'react'
-import { convertSkylinkToBase32 } from 'skynet-js/dist/utils'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
-import { Upload } from '../../shared/types'
+import { Skyfile } from '../../shared/types'
 import { getSize } from '../../shared/uploads'
 import FolderIcon from '../_icons/FolderIcon'
 import SpinnerIcon from '../_icons/SpinnerIcon'
-import { SkylinkContextMenu } from '../_shared/SkylinkContextMenu'
 
 const getProgressText = (progress) => {
   if (progress === -1) {
@@ -30,28 +26,23 @@ const getProgressText = (progress) => {
 }
 
 type Props = {
-  upload: Upload
+  skyfile: Skyfile
   setFilterValue: (value: string) => void
 }
 
-export function UploadItem({ upload, setFilterValue }: Props) {
+export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   const {
-    id,
-    uploadFile,
-    uploadDirectory,
+    metadata,
     skylink: rawSkylink,
-    uploadedAt,
-    portal,
-    status,
-    progress,
-    error,
-  } = upload
+    isDirectory,
+    upload: { uploadedAt, ingressPortals, status, progress, error },
+  } = skyfile
+  const portal = ingressPortals.length ? ingressPortals[0] : ''
   const [isHovering, setIsHovering] = useState<boolean>(false)
-  const [selectedPortal] = useSelectedPortal()
 
   const iconElement = useMemo(() => {
     if (status === 'complete') {
-      return uploadDirectory ? <FolderIcon /> : <FileIcon />
+      return isDirectory ? <FolderIcon /> : <FileIcon />
     }
     if (status === 'uploading' || status === 'processing') {
       return <SpinnerIcon />
@@ -62,17 +53,14 @@ export function UploadItem({ upload, setFilterValue }: Props) {
     }
   }, [status])
 
-  const { skylink, weblink, weblinkSubdomain, weblinkPath, isApp } = useSkylink(
-    rawSkylink,
-    true
-  )
+  const { skylink, weblink } = useSkylink(rawSkylink, true)
 
   const size = useMemo(() => {
-    return bytes(getSize(upload), {
+    return bytes(getSize(skyfile), {
       unitSeparator: ' ',
       decimalPlaces: '1',
     })
-  }, [upload])
+  }, [skyfile])
 
   const menuRef = useRef()
 
@@ -108,7 +96,7 @@ export function UploadItem({ upload, setFilterValue }: Props) {
           }}
         >
           <Link target="_blank" css={{ outline: 'none' }} href={weblink}>
-            {uploadFile ? uploadFile.name : uploadDirectory.name}
+            {metadata.filename}
           </Link>
         </Text>
       </Box>
@@ -219,11 +207,7 @@ export function UploadItem({ upload, setFilterValue }: Props) {
         >
           <Tooltip content="Filter by name">
             <Button
-              onClick={() =>
-                setFilterValue(
-                  uploadFile ? uploadFile.name : uploadDirectory.name
-                )
-              }
+              onClick={() => setFilterValue(metadata.filename)}
               variant="ghost"
             >
               <MagnifyingGlassIcon />

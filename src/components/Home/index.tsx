@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
-        <Heading css={{ py: '$3' }}>Top Apps</Heading>
+        <Heading css={{ py: '$3' }}>Apps</Heading>
         <Grid>
           {skapps.map(({ hnsDomain, title, description, tags }) => (
             <SkappCard
@@ -24,7 +24,7 @@ export default function Home() {
             />
           ))}
         </Grid>
-        <Heading css={{ py: '$3' }}>Top Resources</Heading>
+        <Heading css={{ py: '$3' }}>Resources</Heading>
         <Grid>
           {links.map(({ url, title, description }) => (
             <LinkCard

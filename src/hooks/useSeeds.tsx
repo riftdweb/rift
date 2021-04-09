@@ -37,7 +37,6 @@ type Props = {
 }
 
 const debouncedMutate = debounce((mutate) => {
-  console.log('calling useSeeds mutate')
   return mutate()
 }, 5000)
 
@@ -98,7 +97,6 @@ export function SeedsProvider({ children }: Props) {
         ? deriveChildSeed(cleanParentSeed, cleanChildSeed)
         : cleanParentSeed
 
-      console.log(seedId)
       const cleanSeed: Seed = {
         id: seedId,
         parentSeed: cleanParentSeed,

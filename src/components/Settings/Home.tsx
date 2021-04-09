@@ -25,7 +25,7 @@ export function Home() {
       parentSeed: localRootSeed,
       childSeed: '',
       addedAt: new Date().toISOString(),
-      keys: ['uploads', 'seeds'],
+      keys: ['skyfiles', 'seeds'],
     })
   }, [localRootSeed])
 

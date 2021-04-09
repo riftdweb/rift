@@ -10,22 +10,21 @@ import {
   Text,
 } from '@modulz/design-system'
 import bytes from 'bytes'
+import values from 'lodash/values'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import path from 'path-browserify'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { v4 as uuid } from 'uuid'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { uploadDirectory, uploadFile } from '../../shared/skynet'
-import { Upload, UploadFile } from '../../shared/types'
+import { Skyfile } from '../../shared/types'
 import { getSize } from '../../shared/uploads'
+import useLocalStorageState from 'use-local-storage-state'
+import { useBeforeunload } from 'react-beforeunload'
 
-const getFilePath = (uploadFile: UploadFile): string =>
-  uploadFile.webkitRelativePath || uploadFile.path || uploadFile.name
-
-const getRelativeFilePath = (uploadFile: UploadFile): string => {
-  const filePath = getFilePath(uploadFile)
-  const { root, dir, base } = path.parse(filePath)
+const getRelativeFilePath = (filepath: string): string => {
+  const { root, dir, base } = path.parse(filepath)
   const relative = path
     .normalize(dir)
     .slice(root.length)
@@ -35,9 +34,8 @@ const getRelativeFilePath = (uploadFile: UploadFile): string => {
   return path.join(...relative, base)
 }
 
-const getRootDirectory = (uploadFile: UploadFile): string => {
-  const filePath = getFilePath(uploadFile)
-  const { root, dir } = path.parse(filePath)
+const getRootDirectory = (skyfile: Skyfile): string => {
+  const { root, dir } = path.parse(skyfile.metadata!.path)
 
   return path.normalize(dir).slice(root.length).split(path.sep)[0]
 }
@@ -70,14 +68,33 @@ const createUploadErrorMessage = (error) => {
   return `Critical error, please refresh the application and try again. ${error.message}`
 }
 
+const UPLOAD_STATE_CACHE = {}
+// window.UPLOAD_STATE_CACHE = UPLOAD_STATE_CACHE
+
 type Props = {
-  addUploads: (uploads: Upload[]) => void
-  updateUpload: (state: Partial<Upload>) => void
+  addSkyfiles: (skyfiles: Skyfile[]) => void
+  updateSkyfile: (id: string, state: Partial<Skyfile>) => void
+  updateSkyfileUpload: (id: string, state: Partial<Skyfile['upload']>) => void
+  areUploadsInProgress: boolean
 }
 
-export function Uploader({ addUploads, updateUpload }: Props) {
-  const [directoryMode, setDirectoryMode] = useState(false)
+export function Uploader({
+  addSkyfiles,
+  updateSkyfile,
+  updateSkyfileUpload,
+  areUploadsInProgress,
+}: Props) {
+  const [directoryMode, setDirectoryMode] = useLocalStorageState<boolean>(
+    'directoryMode',
+    false
+  )
   const [selectedPortal] = useSelectedPortal()
+
+  useBeforeunload((e) => {
+    if (areUploadsInProgress) {
+      e.preventDefault()
+    }
+  })
 
   useEffect(() => {
     if (directoryMode) {
@@ -89,14 +106,33 @@ export function Uploader({ addUploads, updateUpload }: Props) {
 
   const handleDrop = async (droppedFiles) => {
     // Make File data serializable
-    let newUploadFiles: UploadFile[] = droppedFiles.map((file) => ({
-      name: file.name,
-      path: file.path,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      webkitRelativePath: file.webkitRelativePath,
-      file,
+    let newUploadFiles: Skyfile[] = droppedFiles.map((file) => ({
+      id: uuid(),
+      contentType: file.type,
+      metadata: {
+        filename: file.name,
+        length: file.size,
+        subfiles: {
+          [file.name]: {
+            contenttype: file.type,
+            filename: file.name,
+            len: file.size,
+            path: file.path,
+          },
+        },
+        lastModified: file.lastModified,
+        path: file.webkitRelativePath || file.path || file.name,
+      },
+      skylink: '',
+      isDirectory: false,
+      upload: {
+        status: 'uploading',
+        uploadedAt: undefined,
+        ingressPortals: [],
+        progress: undefined,
+        error: undefined,
+      },
+      fileHandle: file,
     }))
 
     // get the file path from the first file
@@ -111,43 +147,83 @@ export function Uploader({ addUploads, updateUpload }: Props) {
     // File picker does not allow, otherwise no general way to handle.
     // Maybe check for whether root Dirs variations is greater than 1?
 
-    let newUploads: Upload[] =
+    let newSkyfiles: Skyfile[] =
       directoryMode && newUploadFiles.length
         ? [
             {
               id: uuid(),
-              status: 'uploading',
-              uploadDirectory: {
-                name: rootDir,
-                uploadFiles: newUploadFiles,
+              contentType: newUploadFiles.find(
+                (skyfile) => skyfile.metadata.filename === 'index.html'
+              )
+                ? 'text/html'
+                : 'application/zip',
+              metadata: {
+                filename: rootDir,
+                length: newUploadFiles.reduce(
+                  (acc, skyfile) => acc + skyfile.metadata.length,
+                  0
+                ),
+                subfiles: newUploadFiles.reduce(
+                  (acc, skyfile) => ({
+                    ...acc,
+                    [skyfile.metadata.filename]: {
+                      contenttype: skyfile.contentType,
+                      filename: skyfile.metadata.filename,
+                      len: skyfile.metadata.length,
+                      path: skyfile.metadata.path,
+                      fileHandle: skyfile.fileHandle,
+                    },
+                  }),
+                  {}
+                ),
+              },
+              skylink: '',
+              isDirectory: true,
+              upload: {
+                status: 'uploading',
+                uploadedAt: undefined,
+                ingressPortals: [],
+                progress: undefined,
+                error: undefined,
               },
             },
           ]
-        : newUploadFiles.map((uploadFile) => ({
-            id: uuid(),
-            status: 'uploading',
-            uploadFile,
-          }))
+        : newUploadFiles
 
-    addUploads(newUploads)
+    addSkyfiles(newSkyfiles)
 
-    const onFileStateChange = (upload, state) => {
-      updateUpload({
+    const onUploadStateChange = (
+      id: string,
+      state: Partial<Skyfile['upload']>
+    ) => {
+      updateSkyfileUpload(id, {
         ...state,
-        id: upload.id,
+        updatedAt: new Date().toISOString(),
       })
     }
 
-    newUploads.forEach((upload: Upload) => {
+    newSkyfiles.forEach((skyfile: Skyfile) => {
       const onUploadProgress = (progress) => {
         const status = progress === 1 ? 'processing' : 'uploading'
 
-        onFileStateChange(upload, { status, progress })
+        const cache = UPLOAD_STATE_CACHE[skyfile.id] || {}
+
+        if (status === cache.status && progress === cache.progress) {
+          return
+        }
+
+        const state = {
+          status,
+          progress,
+        }
+
+        onUploadStateChange(skyfile.id, state)
+        UPLOAD_STATE_CACHE[skyfile.id] = state
       }
 
       // Reject files larger than our hard limit of 1 GB with proper message
-      if (getSize(upload) > bytes('1 GB')) {
-        onFileStateChange(upload, {
+      if (getSize(skyfile) > bytes('1 GB')) {
+        onUploadStateChange(skyfile.id, {
           status: 'error',
           error: 'This upload size exceeds the maximum allowed size of 1 GB.',
         })
@@ -160,53 +236,61 @@ export function Uploader({ addUploads, updateUpload }: Props) {
           let response
 
           // Set the portal before upload initiates
-          onFileStateChange(upload, {
-            portal: selectedPortal,
+          onUploadStateChange(skyfile.id, {
+            ingressPortals: [selectedPortal],
           })
 
-          if (upload.uploadDirectory) {
-            const directory = upload.uploadDirectory.uploadFiles.reduce(
-              (acc, uploadFile: UploadFile) => ({
+          if (skyfile.isDirectory) {
+            const fileHandleMap = values(skyfile.metadata.subfiles).reduce(
+              (acc, subfile) => ({
                 ...acc,
-                [getRelativeFilePath(uploadFile)]: uploadFile.file,
+                [getRelativeFilePath(subfile.path)]: subfile.fileHandle,
               }),
-              {}
+              {} as {
+                [path: string]: File
+              }
             )
 
             response = await uploadDirectory(
               selectedPortal,
-              directory,
-              encodeURIComponent(upload.uploadDirectory.name),
+              fileHandleMap,
+              encodeURIComponent(skyfile.metadata.filename),
               { onUploadProgress }
             )
           } else {
-            response = await uploadFile(
-              selectedPortal,
-              upload.uploadFile.file,
-              {
-                onUploadProgress,
-              }
-            )
+            response = await uploadFile(selectedPortal, skyfile.fileHandle, {
+              onUploadProgress,
+            })
           }
 
-          onFileStateChange(upload, {
+          onUploadStateChange(skyfile.id, {
             status: 'complete',
-            skylink: response.skylink,
             uploadedAt: new Date().toISOString(),
+          })
+          updateSkyfile(skyfile.id, {
+            skylink: response.skylink,
           })
         } catch (error) {
           if (
             error.response &&
             error.response.status === StatusCodes.TOO_MANY_REQUESTS
           ) {
-            onFileStateChange(upload, { progress: -1 })
+            const cache = UPLOAD_STATE_CACHE[skyfile.id] || {}
+
+            if (cache.progress !== -1) {
+              onUploadStateChange(skyfile.id, { progress: -1 })
+              UPLOAD_STATE_CACHE[skyfile.id] = {
+                ...cache,
+                progress: -1,
+              }
+            }
 
             return new Promise((resolve) =>
               setTimeout(() => resolve(startUpload()), 3000)
             )
           }
 
-          onFileStateChange(upload, {
+          onUploadStateChange(skyfile.id, {
             status: 'error',
             error: createUploadErrorMessage(error),
           })

@@ -12,9 +12,7 @@ export default function Footer() {
       }}
     >
       <Heading css={{ fontWeight: 'bold', marginBottom: '$2' }}>rift</Heading>
-      <Text css={{ color: '$gray800' }}>
-        We build tools and services for the decentralized web.
-      </Text>
+      <Text css={{ color: '$gray800' }}>Tools for the decentralized web.</Text>
     </Box>
   )
 }

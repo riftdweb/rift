@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 import { SeedsProvider } from './useSeeds'
-import { UploadsProvider } from './useUploads'
+import { SkyfilesProvider } from './useSkyfiles'
 
 // const UploadsProvider = dynamic(() => import('../hooks/UploadsProvider'), {
 //   ssr: false,
@@ -9,7 +9,7 @@ import { UploadsProvider } from './useUploads'
 export function Providers({ children }) {
   return (
     <SeedsProvider>
-      <UploadsProvider>{children}</UploadsProvider>
+      <SkyfilesProvider>{children}</SkyfilesProvider>
     </SeedsProvider>
   )
 }

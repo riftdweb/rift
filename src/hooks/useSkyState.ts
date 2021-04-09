@@ -8,12 +8,12 @@ import { useLocalRootSeed } from './useLocalRootSeed'
 // TODO make this parent hook instance-specific
 const throttledSyncState = throttle(async (portal, seed, dataKey, state) => {
   try {
-    console.log('syncing start', dataKey, state)
+    // console.log('syncing start', dataKey, state)
     await setJSON(portal, seed, dataKey, state)
-    console.log('syncing success', dataKey, state)
+    // console.log('syncing success', dataKey, state)
   } catch (e) {
     console.log(e)
-    console.log('syncing failed', dataKey, state)
+    // console.log('syncing failed', dataKey, state)
   }
 }, 5000)
 

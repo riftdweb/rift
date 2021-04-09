@@ -114,9 +114,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
   }, [editingValue, setEditingValue])
 
   const debouncedMutate = useMemo(() => {
-    console.log('creating debouncced mtuate')
     return debounce((mutate) => {
-      console.log('calling KeyEditor mutate')
       return mutate()
     }, 5000)
   }, [])

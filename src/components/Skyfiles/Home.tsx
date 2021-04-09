@@ -13,12 +13,17 @@ import {
   Cross2Icon,
 } from '@radix-ui/react-icons'
 import React, { Fragment, useCallback, useMemo, useState } from 'react'
-import { useUploads } from '../../hooks/useUploads'
-import { UploadItem } from './UploadItem'
+import { useSkyfiles } from '../../hooks/useSkyfiles'
+import { SkyfileItem } from './SkyfileItem'
 import { Uploader } from './Uploader'
 
 export function Home() {
-  const { uploads, addUploads, updateUpload } = useUploads()
+  const {
+    skyfiles,
+    addSkyfiles,
+    updateSkyfile,
+    updateSkyfileUpload,
+  } = useSkyfiles()
 
   const [limit] = useState<number>(20)
   const [skip, setSkip] = useState<number>(0)
@@ -32,38 +37,38 @@ export function Home() {
     [_setFilterValue, setSkip]
   )
 
-  const filteredUploads = useMemo(() => {
+  const filteredSkyfiles = useMemo(() => {
     if (!filterValue) {
-      return uploads
+      return skyfiles
     }
-    return uploads.filter((upload) => {
-      if (upload.uploadFile) {
-        return upload.uploadFile.name.includes(filterValue)
-      }
-      if (upload.uploadDirectory) {
-        return upload.uploadDirectory.name.includes(filterValue)
-      }
-      return false
+    return skyfiles.filter((skyfile) => {
+      return skyfile.metadata.filename.includes(filterValue)
     })
-  }, [uploads, filterValue])
+  }, [skyfiles, filterValue])
 
-  const paginatedUploads = useMemo(
-    () => filteredUploads.slice(skip, skip + limit),
-    [filteredUploads, skip, limit]
+  const paginatedSkyfiles = useMemo(
+    () => filteredSkyfiles.slice(skip, skip + limit),
+    [filteredSkyfiles, skip, limit]
   )
 
   const page = useMemo(() => skip / limit + 1, [skip, limit])
 
   const completedUploadCount = useMemo(
-    () => uploads.filter((upload) => upload.status === 'complete').length,
-    [uploads]
+    () =>
+      skyfiles.filter((skyfile) => skyfile.upload.status === 'complete').length,
+    [skyfiles]
   )
 
   return (
     <Box>
-      <Uploader updateUpload={updateUpload} addUploads={addUploads} />
+      <Uploader
+        updateSkyfile={updateSkyfile}
+        updateSkyfileUpload={updateSkyfileUpload}
+        areUploadsInProgress={completedUploadCount < skyfiles.length}
+        addSkyfiles={addSkyfiles}
+      />
 
-      {uploads.length > 0 && (
+      {skyfiles.length > 0 && (
         <Fragment>
           <ControlGroup css={{ margin: '$3 0' }}>
             <Button size="2">Filter</Button>
@@ -71,7 +76,7 @@ export function Home() {
               value={filterValue}
               onChange={(e) => setFilterValue(e.target.value)}
               size="3"
-              placeholder="Filter uploads by name"
+              placeholder="Filter skyfiles by name"
             />
             {filterValue && (
               <Button
@@ -85,8 +90,8 @@ export function Home() {
           </ControlGroup>
           <Flex css={{ alignItems: 'center', gap: '$1' }}>
             <Text css={{ color: '$gray900' }}>Pages</Text>
-            {uploads.length > 0 && (
-              <Flex css={{ alignItems: 'center', gap: '$1' }}>
+            {skyfiles.length > 0 && (
+              <Flex css={{ alignItems: 'center', gap: '$2' }}>
                 <Tooltip content="Previous page">
                   <Button
                     disabled={skip === 0}
@@ -106,7 +111,7 @@ export function Home() {
                 </Tooltip>
                 <Tooltip content="Next page">
                   <Button
-                    disabled={skip + 20 >= filteredUploads.length}
+                    disabled={skip + 20 >= filteredSkyfiles.length}
                     css={{
                       '&:disabled': {
                         boxShadow: 'none',
@@ -114,7 +119,7 @@ export function Home() {
                     }}
                     onClick={() =>
                       setSkip(
-                        skip + 20 >= filteredUploads.length ? skip : skip + 20
+                        skip + 20 >= filteredSkyfiles.length ? skip : skip + 20
                       )
                     }
                     variant="ghost"
@@ -127,13 +132,10 @@ export function Home() {
             <Box css={{ flex: 1 }} />
             <Text css={{ color: '$gray900' }}>
               {filterValue
-                ? `${filteredUploads.length} / ${uploads.length} results`
-                : completedUploadCount === uploads.length
-                ? `${uploads.length} files`
-                : `${
-                    uploads.filter((upload) => upload.status === 'complete')
-                      .length
-                  } / ${uploads.length} complete`}
+                ? `${filteredSkyfiles.length} results`
+                : completedUploadCount === skyfiles.length
+                ? `${skyfiles.length} files`
+                : `${completedUploadCount} / ${skyfiles.length} complete`}
             </Text>
           </Flex>
 
@@ -200,11 +202,11 @@ export function Home() {
               </Box>
               <Box css={{ flex: 1, textAlign: 'right' }}>Time</Box>
             </Flex>
-            {paginatedUploads.map((upload) => {
+            {paginatedSkyfiles.map((skyfile) => {
               return (
-                <UploadItem
-                  key={upload.id}
-                  upload={upload}
+                <SkyfileItem
+                  key={skyfile.id}
+                  skyfile={skyfile}
                   setFilterValue={setFilterValue}
                 />
               )

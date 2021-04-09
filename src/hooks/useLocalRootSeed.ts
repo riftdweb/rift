@@ -1,9 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { createLocalStorageStateHook } from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
-import { useUploads } from './useUploads'
-
-// let hasSetValue = false
 
 const defaultValue = {
   uuid: uuid(),

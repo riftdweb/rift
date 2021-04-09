@@ -4,6 +4,7 @@ import {
   CustomUploadOptions,
   CustomDownloadOptions,
 } from 'skynet-js'
+import { CustomHnsDownloadOptions } from 'skynet-js/dist/download'
 
 // TODO
 // Turn into a context with portal prepopulated
@@ -66,6 +67,15 @@ export function getSkylinkUrl(
 ) {
   const client = new SkynetClient(`https://${portal}`)
   return client.getSkylinkUrl(skylinkUrl, customOptions)
+}
+
+export function getFileContentHns(
+  portal: string,
+  hnsDomain: string,
+  customOptions?: CustomHnsDownloadOptions
+) {
+  const client = new SkynetClient(`https://${portal}`)
+  return client.getFileContentHns(hnsDomain, customOptions)
 }
 
 export function openFile(

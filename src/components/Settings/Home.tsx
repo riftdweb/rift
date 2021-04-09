@@ -20,7 +20,6 @@ export function Home() {
 
   const addLocalRootSeedToSkyDbTool = useCallback(() => {
     addSeed({
-      id: '',
       name: 'Rift',
       parentSeed: localRootSeed,
       childSeed: '',

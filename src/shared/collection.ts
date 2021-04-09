@@ -2,8 +2,12 @@ type Item = {
   id: string
 }
 
-export const mergeItem = <T extends Item>(col: T[], item: T): T[] => {
-  const index = col.findIndex((f) => f.id === item.id)
+export const mergeItem = <T extends Item>(
+  col: T[],
+  item: T,
+  matchKey: string = 'id'
+): T[] => {
+  const index = col.findIndex((f) => f[matchKey] === item[matchKey])
 
   if (!~index) {
     return col
@@ -19,8 +23,12 @@ export const mergeItem = <T extends Item>(col: T[], item: T): T[] => {
   ]
 }
 
-export const upsertItem = <T extends Item>(col: T[], item: T): T[] => {
-  const index = col.findIndex((f) => f.id === item.id)
+export const upsertItem = <T extends Item>(
+  col: T[],
+  item: T,
+  matchKey: string = 'id'
+): T[] => {
+  const index = col.findIndex((f) => f[matchKey] === item[matchKey])
 
   if (!~index) {
     return col.concat(item)

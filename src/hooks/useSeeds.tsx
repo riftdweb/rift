@@ -17,11 +17,11 @@ import { deriveChildSeed } from 'skynet-js'
 import { useRouter } from 'next/router'
 import debounce from 'lodash/debounce'
 
-const appResourceDataKey = 'seeds'
+const RESOURCE_DATA_KEY = 'seeds'
 
 type State = {
   seeds: Seed[]
-  addSeed: (seed: Seed) => boolean
+  addSeed: (seed: Partial<Seed>) => boolean
   removeSeed: (seedId: string, redirect?: boolean) => void
   addKey: (seedId: string, key: string) => boolean
   removeKey: (seedId: string, key: string) => boolean
@@ -47,9 +47,9 @@ export function SeedsProvider({ children }: Props) {
   const [userHasNoSeeds, setUserHasNoSeeds] = useState<boolean>(false)
   const { push } = useRouter()
 
-  const { data, mutate, isValidating, error } = useSWR<{ data: Seed[] }>(
-    [localRootSeed, appResourceDataKey],
-    () => getJSON(selectedPortal, localRootSeed, appResourceDataKey)
+  const { data, mutate, isValidating } = useSWR<{ data: Seed[] }>(
+    [localRootSeed, RESOURCE_DATA_KEY],
+    () => getJSON(selectedPortal, localRootSeed, RESOURCE_DATA_KEY)
   )
 
   // Track whether the user has no seeds yet so that we can adjust
@@ -69,7 +69,7 @@ export function SeedsProvider({ children }: Props) {
         // Update cache immediately
         mutate({ data: seeds }, false)
         // Save changes to SkyDB
-        await setJSON(selectedPortal, localRootSeed, appResourceDataKey, seeds)
+        await setJSON(selectedPortal, localRootSeed, RESOURCE_DATA_KEY, seeds)
         // Sync latest, will likely be the same
         await debouncedMutate(mutate)
       }
@@ -79,7 +79,7 @@ export function SeedsProvider({ children }: Props) {
   )
 
   const addSeed = useCallback(
-    (seed: Seed): boolean => {
+    (seed: Partial<Seed>): boolean => {
       if (!seed.parentSeed || !seed.name) {
         return false
       }
@@ -103,7 +103,7 @@ export function SeedsProvider({ children }: Props) {
         name: cleanSeedName,
         childSeed: cleanChildSeed,
         addedAt: new Date().toISOString(),
-        keys: seed.keys,
+        keys: seed.keys || [],
       }
 
       setSeeds(upsertItem(seeds, cleanSeed))

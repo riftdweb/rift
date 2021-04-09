@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Flex,
-  Heading,
-  Text,
-} from '@modulz/design-system'
-import { GearIcon } from '@radix-ui/react-icons'
+import { Box, Flex, Heading, Text } from '@modulz/design-system'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { useSeeds } from '../../../hooks/useSeeds'

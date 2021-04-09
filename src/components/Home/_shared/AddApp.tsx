@@ -1,4 +1,5 @@
 import {
+  Textarea,
   Dialog,
   DialogContent,
   DialogTrigger,
@@ -11,34 +12,64 @@ import {
   ControlGroup,
   Tooltip,
 } from '@modulz/design-system'
-import { Pencil2Icon, SymbolIcon } from '@radix-ui/react-icons'
+import {
+  Pencil2Icon,
+  ExclamationTriangleIcon,
+  CheckIcon,
+} from '@radix-ui/react-icons'
 import { useCallback, useMemo, useState } from 'react'
-import { useSeeds } from '../../../hooks/useSeeds'
-import { Seed } from '../../../shared/types'
-import { v4 as uuid } from 'uuid'
+import { useApps } from '../../../hooks/useApps'
+import { App } from '../../../shared/types'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { getFileContentHns } from '../../../shared/skynet'
+import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
+import debounce from 'lodash/debounce'
+import { skapps } from '../../../shared/skapps'
+import SpinnerIcon from '../../_icons/SpinnerIcon'
 
-const defaultSeedValues: Partial<Seed> = {
-  parentSeed: '',
+const defaultAppValues: Partial<App> = {
   name: '',
-  childSeed: '',
+  description: '',
+  hnsDomain: '',
+  tags: [],
 }
 
-const buildSeedSchema = (names: string[]) =>
+const dGetHnsData = debounce(
+  async (portal: string, hnsDomain: string, resolve: any) => {
+    try {
+      await getFileContentHns(portal, hnsDomain)
+      resolve(true)
+    } catch (e) {
+      resolve(false)
+    }
+  },
+  1000
+)
+
+const buildSchema = (portal: string, hnsDomains: string[] = []) =>
   Yup.object().shape({
     name: Yup.string()
       .min(1, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Required')
-      .notOneOf(names, 'Name is taken'),
-    parentSeed: Yup.string().min(1, 'Too Short!').required('Required'),
-    childSeed: Yup.string().min(1, 'Too Short!'),
+      .notOneOf(hnsDomains, 'Name is taken'),
+    hnsDomain: Yup.string()
+      .min(1, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required')
+      .notOneOf([], 'App already added')
+      .test(
+        'check exists',
+        'App does not exist',
+        (val) => new Promise((resolve) => dGetHnsData(portal, val, resolve))
+      ),
   })
 
-export function AddSeed() {
+export function AddApp() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { seeds, addSeed } = useSeeds()
+  const { addApp } = useApps()
+  const [portal] = useSelectedPortal()
 
   const openDialog = useCallback(() => {
     setIsOpen(true)
@@ -64,28 +95,31 @@ export function AddSeed() {
   const onSubmit = useCallback(
     (vals) => {
       const newSeed = {
-        ...defaultSeedValues,
+        ...defaultAppValues,
         ...vals,
       }
-      if (addSeed(newSeed)) {
+      if (addApp(newSeed)) {
         formik.resetForm()
         setIsOpen(false)
       }
     },
-    [addSeed, setIsOpen]
+    [addApp, setIsOpen]
   )
 
-  const existingNames = useMemo(() => seeds.map((seed) => seed.name), [seeds])
-
-  const validationSchema = useMemo(() => buildSeedSchema(existingNames), [
-    existingNames,
+  const existingHnsDomains = useMemo(() => skapps.map((app) => app.hnsDomain), [
+    skapps,
   ])
+
+  const validationSchema = useMemo(
+    () => buildSchema(portal, existingHnsDomains),
+    [portal, existingHnsDomains]
+  )
 
   const formik = useFormik({
     initialValues: {
-      parentSeed: '',
       name: '',
-      childSeed: '',
+      hnsDomain: '',
+      description: '',
     },
     validationSchema,
     onSubmit,
@@ -93,16 +127,11 @@ export function AddSeed() {
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
-      <DialogTrigger size="2" as={Button} onClick={openDialog}>
-        <Box
-          css={{
-            mr: '$1',
-          }}
-        >
+      <Tooltip align="end" content="Add App">
+        <DialogTrigger size="2" as={Button} onClick={openDialog}>
           <Pencil2Icon />
-        </Box>
-        Add Seed
-      </DialogTrigger>
+        </DialogTrigger>
+      </Tooltip>
       <DialogContent
         css={{
           minWidth: '400px',
@@ -115,7 +144,7 @@ export function AddSeed() {
               gap: '$3',
             }}
           >
-            <Subheading>Add Seed</Subheading>
+            <Subheading>Add App</Subheading>
             <Box css={{ mt: '$2' }}>
               <Flex css={{ flexDirection: 'column', gap: '$3' }}>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -134,44 +163,56 @@ export function AddSeed() {
                     value={formik.values.name}
                     onChange={formik.handleChange}
                     size="3"
-                    placeholder="human readable name"
+                    placeholder="eg: SkyFeed"
                   />
                 </Flex>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                   <Flex>
-                    <Text>Seed</Text>
-                    {formik.errors.parentSeed && (
+                    <Text>HNS Domain</Text>
+                    {formik.errors.hnsDomain && (
                       <Text
                         css={{ color: '$red900', flex: 1, textAlign: 'right' }}
                       >
-                        {formik.errors.parentSeed}
+                        {formik.errors.hnsDomain}
                       </Text>
                     )}
                   </Flex>
                   <ControlGroup>
                     <Input
-                      name="parentSeed"
-                      value={formik.values.parentSeed}
+                      name="hnsDomain"
+                      value={formik.values.hnsDomain}
                       onChange={formik.handleChange}
                       size="3"
-                      placeholder="Seed value"
+                      placeholder="eg: skyfeed"
                     />
-                    <Tooltip content="Generate random seed">
-                      <Button
-                        onClick={() => {
-                          formik.setFieldValue('parentSeed', uuid(), false)
-                        }}
-                        size="2"
+                    {formik.isValidating ? (
+                      <Tooltip
+                        align="end"
+                        content="Checking HNS domain for app"
                       >
-                        <SymbolIcon />
-                      </Button>
-                    </Tooltip>
+                        <Button size="2">
+                          <SpinnerIcon />
+                        </Button>
+                      </Tooltip>
+                    ) : formik.errors.hnsDomain ? (
+                      <Tooltip align="end" content="No app found at HNS domain">
+                        <Button size="2" css={{ color: '$red900' }}>
+                          <ExclamationTriangleIcon />
+                        </Button>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip align="end" content="App found at HNS domain">
+                        <Button size="2" css={{ color: '$green900' }}>
+                          <CheckIcon />
+                        </Button>
+                      </Tooltip>
+                    )}
                   </ControlGroup>
                 </Flex>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                   <Flex>
-                    <Text>Child seed</Text>
-                    {formik.errors.childSeed ? (
+                    <Text>Description</Text>
+                    {formik.errors.description ? (
                       <Text
                         css={{ color: '$red900', flex: 1, textAlign: 'right' }}
                       >
@@ -185,15 +226,15 @@ export function AddSeed() {
                       </Text>
                     )}
                   </Flex>
-                  <Input
-                    name="childSeed"
-                    value={formik.values.childSeed}
+                  <Textarea
+                    name="description"
+                    value={formik.values.description}
                     onChange={formik.handleChange}
                     size="3"
-                    placeholder="Child seed, eg: 'MyApp'"
+                    placeholder="This app is great for sharing photos."
                   />
-                  {formik.errors.childSeed && (
-                    <Text>{formik.errors.childSeed}</Text>
+                  {formik.errors.description && (
+                    <Text>{formik.errors.description}</Text>
                   )}
                 </Flex>
               </Flex>

@@ -1,17 +1,3 @@
-export type UploadDirectory = {
-  name: string
-  uploadFiles: UploadFile[]
-}
-export type UploadFile = {
-  name: string
-  path: string
-  webkitRelativePath: string
-  size: number
-  lastModified: number
-  type: string
-  file: File
-}
-
 // The following is the Skynet Skyfile metadata structure
 // Skyfile {
 //   contentType: string
@@ -68,19 +54,6 @@ export type Skyfile = {
   fileHandle?: File
 }
 
-export type Upload = {
-  id: string
-  status: string
-  url?: string
-  uploadedAt?: string
-  portal?: string
-  skylink?: string
-  progress?: number
-  error?: string
-  uploadFile?: UploadFile
-  uploadDirectory?: UploadDirectory
-}
-
 export type Seed = {
   // id is the actual master seed concatenated with the child seed
   id: string
@@ -89,4 +62,21 @@ export type Seed = {
   childSeed?: string
   addedAt: string
   keys: string[]
+}
+
+export type AppRevision = {
+  skyfile: string
+  addedAt: string
+}
+
+export type App = {
+  id: string
+  name: string
+  hnsDomain: string
+  description: string
+  addedAt: string
+  tags: string[]
+  // Revision's Skyfile
+  lockedOn?: string
+  revisions: AppRevision[]
 }

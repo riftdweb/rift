@@ -37,14 +37,14 @@ export function TabNav() {
           SkyDB
         </TabLink>
       </Link>
-      {/* <Link href="/tools" passHref>
+      <Link href="/tools" passHref>
         <TabLink active={route.split('/')[1] === 'tools'}>
           <Box css={{ mr: '$1' }}>
             <MixIcon />
           </Box>
           Tools
         </TabLink>
-      </Link> */}
+      </Link>
       {/* <Link href="/portals" passHref>
         <TabLink active={route.split('/')[1] === 'portals'}>
           <Box css={{ mr: '$1' }}>

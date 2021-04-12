@@ -15,7 +15,7 @@ export function Link({ as, href, target, children, css, content }: Props) {
     if (content) {
       return (
         <NextLink href={href} passHref>
-          <Button css={css} as="a" target={target}>
+          <Button variant="ghost" css={css} as="a" target={target}>
             <Tooltip content={content}>
               <Box>{children}</Box>
             </Tooltip>
@@ -25,7 +25,7 @@ export function Link({ as, href, target, children, css, content }: Props) {
     }
     return (
       <NextLink href={href} passHref>
-        <Button css={css} as="a" target={target}>
+        <Button variant="ghost" css={css} as="a" target={target}>
           {children}
         </Button>
       </NextLink>

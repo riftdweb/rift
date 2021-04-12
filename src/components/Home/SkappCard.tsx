@@ -40,7 +40,7 @@ export function SkappCard({
             {name}
           </Subheading>
           <Box css={{ flex: 1 }} />
-          <Link as="Button" href={`/apps/${id}`}>
+          <Link href={`/apps/${id}`}>
             <Box
               css={{
                 color: lockedOn ? '$gray900' : '$gray600',

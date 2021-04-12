@@ -2,17 +2,18 @@ import { useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js/dist/utils/skylink'
 import useSWR from 'swr'
-import { getMetadata } from '../shared/skynet'
 import { useSelectedPortal } from './useSelectedPortal'
+import { useSkynet } from './skynet'
 
 export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
   const [portal] = useSelectedPortal()
+  const { Api } = useSkynet()
 
   const skylink = rawSkylink ? parseSkylink(rawSkylink) : null
 
   const { data, isValidating } = useSWR(
     !skipFetch && skylink ? [skylink, 'metadata'] : null,
-    () => getMetadata(portal, skylink),
+    () => Api.getMetadata(skylink),
     {
       dedupingInterval: 10000,
       revalidateOnFocus: false,

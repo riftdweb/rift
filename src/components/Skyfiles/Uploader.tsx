@@ -22,6 +22,7 @@ import { Skyfile } from '../../shared/types'
 import { getSize } from '../../shared/uploads'
 import useLocalStorageState from 'use-local-storage-state'
 import { useBeforeunload } from 'react-beforeunload'
+import { useSkynet } from '../../hooks/skynet'
 
 const getRelativeFilePath = (filepath: string): string => {
   const { root, dir, base } = path.parse(filepath)
@@ -89,6 +90,7 @@ export function Uploader({
     false
   )
   const [selectedPortal] = useSelectedPortal()
+  const { Api } = useSkynet()
 
   useBeforeunload((e) => {
     if (areUploadsInProgress) {
@@ -128,6 +130,7 @@ export function Uploader({
       upload: {
         status: 'uploading',
         uploadedAt: undefined,
+        updatedAt: new Date().toISOString(),
         ingressPortals: [],
         progress: undefined,
         error: undefined,
@@ -140,6 +143,7 @@ export function Uploader({
 
     // Files dropped without a directory
     if (directoryMode && rootDir === '.') {
+      alert('Directory mode is selected and dropped files are not a directory.')
       return
     }
 
@@ -182,6 +186,7 @@ export function Uploader({
               upload: {
                 status: 'uploading',
                 uploadedAt: undefined,
+                updatedAt: new Date().toISOString(),
                 ingressPortals: [],
                 progress: undefined,
                 error: undefined,
@@ -251,14 +256,13 @@ export function Uploader({
               }
             )
 
-            response = await uploadDirectory(
-              selectedPortal,
+            response = await Api.uploadDirectory(
               fileHandleMap,
               encodeURIComponent(skyfile.metadata.filename),
               { onUploadProgress }
             )
           } else {
-            response = await uploadFile(selectedPortal, skyfile.fileHandle, {
+            response = await Api.uploadFile(skyfile.fileHandle, {
               onUploadProgress,
             })
           }

@@ -1,12 +1,7 @@
-import { toast } from 'react-toastify'
 import * as clipboard from 'clipboard-polyfill/text'
+import { triggerToast } from './toast'
 
 export const copyToClipboard = (text: string, entity: string) => {
-  toast(`Copied ${entity} to clipboard`, {
-    position: 'bottom-right',
-    hideProgressBar: true,
-    autoClose: 5000,
-    // closeOnClick: false,
-  })
+  triggerToast(`Copied ${entity} to clipboard`)
   clipboard.writeText(text)
 }

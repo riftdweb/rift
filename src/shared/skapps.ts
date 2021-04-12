@@ -6,7 +6,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'skyfeed.hns',
     name: 'SkyFeed',
-    childKey: 'SkyFeed',
+    addedAt: new Date().toISOString(),
     description:
       'Decentralized SkyDB-based alternative to Twitter, YouTube and Instagram with a native iOS, Android and web app.',
     tags: ['Social media', 'Video'],
@@ -17,7 +17,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'skysend.hns',
     name: 'SkySend',
-    childKey: 'SkySend',
+    addedAt: new Date().toISOString(),
     description:
       'An open source, highly secure, private and decentralized way to send and share your files.',
     tags: ['Secure', 'File sharing'],
@@ -28,7 +28,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'hackerpaste.hns',
     name: 'Hacker Paste',
-    childKey: 'HackerPaste',
+    addedAt: new Date().toISOString(),
     description:
       'A paste bin for Skynet. Hacker Paste is a one-of-a-kind text snippet sharing tool, secure by design and built for the decentralized web.',
     tags: ['Pastebin', 'File sharing'],
@@ -39,7 +39,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'skygallery.hns',
     name: 'SkyGallery',
-    childKey: 'SkyGallery',
+    addedAt: new Date().toISOString(),
     description:
       'SkyGallery is a basic media gallery Skapp that aims to provide an decentralized and opensource alternative to Imgur.',
     tags: ['Image sharing', 'Galleries'],
@@ -50,7 +50,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'skybrain.hns',
     name: 'SkyBrain',
-    childKey: 'SkyBrain',
+    addedAt: new Date().toISOString(),
     description:
       'The place where magic happens and you are able to store/manage memories and emotions, like happens in the human brain.',
     tags: ['Social media'],
@@ -61,7 +61,7 @@ export const skapps: App[] = [
     id: uuid(),
     hnsDomain: 'marstorage.hns',
     name: 'MarStorage',
-    childKey: 'MarStorage',
+    addedAt: new Date().toISOString(),
     description:
       'Own your data. The 100% decentralized “Dropbox” and “Google Drive” alternative.',
     tags: ['File storage'],

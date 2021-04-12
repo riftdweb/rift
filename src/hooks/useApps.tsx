@@ -8,13 +8,11 @@ import {
 } from 'react'
 import { v4 as uuid } from 'uuid'
 import useSWR from 'swr'
-import { getJSON, setJSON } from '../shared/skynet'
-import { useSelectedPortal } from './useSelectedPortal'
-import { useLocalRootSeed } from './useLocalRootSeed'
 import { App } from '../shared/types'
 import { upsertItem } from '../shared/collection'
 import { useRouter } from 'next/router'
 import debounce from 'lodash/debounce'
+import { useSkynet } from './skynet'
 
 const RESOURCE_DATA_KEY = 'apps'
 
@@ -38,15 +36,19 @@ const debouncedMutate = debounce((mutate) => {
 }, 5000)
 
 export function AppsProvider({ children }: Props) {
-  const [selectedPortal] = useSelectedPortal()
-  const { localRootSeed } = useLocalRootSeed()
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
+  const { Api, identityKey } = useSkynet()
   const { push } = useRouter()
 
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
-    [localRootSeed, RESOURCE_DATA_KEY],
-    () => getJSON(selectedPortal, localRootSeed, RESOURCE_DATA_KEY)
+    [identityKey, RESOURCE_DATA_KEY],
+    () =>
+      (Api.getJSON({
+        dataKey: RESOURCE_DATA_KEY,
+      }) as unknown) as Promise<{
+        data: App[]
+      }>
   )
 
   // Track whether the user has no apps yet so that we can adjust
@@ -66,13 +68,16 @@ export function AppsProvider({ children }: Props) {
         // Update cache immediately
         mutate({ data: apps }, false)
         // Save changes to SkyDB
-        await setJSON(selectedPortal, localRootSeed, RESOURCE_DATA_KEY, apps)
+        await Api.setJSON({
+          dataKey: RESOURCE_DATA_KEY,
+          json: apps,
+        })
         // Sync latest, will likely be the same
         await debouncedMutate(mutate)
       }
       func()
     },
-    [mutate]
+    [Api, mutate]
   )
 
   const addApp = useCallback(

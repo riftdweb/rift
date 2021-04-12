@@ -7,9 +7,9 @@ import useSWR from 'swr'
 import debounce from 'lodash/debounce'
 import { useSeeds } from '../../../hooks/useSeeds'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
-import { getJSON, setJSON } from '../../../shared/skynet'
 import { Seed } from '../../../shared/types'
 import { KeysToolbar } from './KeysToolbar'
+import { useSkynet } from '../../../hooks/skynet'
 
 const importConfigFiles = () => {
   return Promise.all([
@@ -37,9 +37,13 @@ export function KeyEditor({ seed, dataKey }: Props) {
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
+  const { Api } = useSkynet()
   const { removeKey } = useSeeds()
   const { data, isValidating, mutate } = useSWR([seed.id, dataKey], () =>
-    getJSON(selectedPortal, seed.id, dataKey)
+    Api.getJSON({
+      seed: seed.id,
+      dataKey,
+    })
   )
 
   const removeKeyAndRoute = useCallback(() => {
@@ -128,7 +132,11 @@ export function KeyEditor({ seed, dataKey }: Props) {
         // Update cache immediately
         mutate({ data: newData, skylink }, false)
         // Save changes to SkyDB
-        await setJSON(selectedPortal, seed.id, dataKey, newData)
+        await Api.setJSON({
+          seed: seed.id,
+          dataKey,
+          json: newData,
+        })
         // Sync latest, will likely be the same
         await debouncedMutate(mutate)
       } finally {
@@ -137,6 +145,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
     }
     func()
   }, [
+    Api,
     mutate,
     formatCode,
     setIsSaving,

@@ -8,7 +8,7 @@ import {
 } from '@modulz/design-system'
 import { ClipboardIcon, ExternalLinkIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
-import { convertSkylinkToBase32 } from 'skynet-js/dist/utils'
+import { convertSkylinkToBase32 } from 'skynet-js/dist/utils/skylink'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { copyToClipboard } from '../../shared/clipboard'
 

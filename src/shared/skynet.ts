@@ -58,15 +58,6 @@ export function getMetadata(
   return client.getMetadata(skylink, customOptions)
 }
 
-export function getSkylinkUrl(
-  portal: string,
-  skylinkUrl: string,
-  customOptions?: CustomDownloadOptions
-) {
-  const client = new SkynetClient(`https://${portal}`)
-  return client.getSkylinkUrl(skylinkUrl, customOptions)
-}
-
 export function getFileContentHns(
   portal: string,
   hnsDomain: string,
@@ -74,18 +65,4 @@ export function getFileContentHns(
 ) {
   const client = new SkynetClient(`https://${portal}`)
   return client.getFileContentHns(hnsDomain, customOptions)
-}
-
-export function openFile(
-  portal: string,
-  skylinkUrl: string,
-  customOptions?: CustomDownloadOptions
-) {
-  const client = new SkynetClient(`https://${portal}`)
-  return client.openFile(skylinkUrl, customOptions)
-}
-
-export function downloadFile(portal: string, skylink: string) {
-  const client = new SkynetClient(`https://${portal}`)
-  return client.downloadFile(skylink)
 }

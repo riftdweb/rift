@@ -22,11 +22,10 @@ import { useApps } from '../../../hooks/useApps'
 import { App } from '../../../shared/types'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { getFileContentHns } from '../../../shared/skynet'
-import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 import debounce from 'lodash/debounce'
 import { skapps } from '../../../shared/skapps'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useSkynet } from '../../../hooks/skynet'
 
 const defaultAppValues: Partial<App> = {
   name: '',
@@ -36,9 +35,9 @@ const defaultAppValues: Partial<App> = {
 }
 
 const dGetHnsData = debounce(
-  async (portal: string, hnsDomain: string, resolve: any) => {
+  async (Api: any, hnsDomain: string, resolve: any) => {
     try {
-      await getFileContentHns(portal, hnsDomain)
+      await Api.getFileContentHns(hnsDomain)
       resolve(true)
     } catch (e) {
       resolve(false)
@@ -47,7 +46,7 @@ const dGetHnsData = debounce(
   1000
 )
 
-const buildSchema = (portal: string, hnsDomains: string[] = []) =>
+const buildSchema = (Api: any, hnsDomains: string[] = []) =>
   Yup.object().shape({
     name: Yup.string()
       .min(1, 'Too Short!')
@@ -62,14 +61,14 @@ const buildSchema = (portal: string, hnsDomains: string[] = []) =>
       .test(
         'check exists',
         'App does not exist',
-        (val) => new Promise((resolve) => dGetHnsData(portal, val, resolve))
+        (val) => new Promise((resolve) => dGetHnsData(Api, val, resolve))
       ),
   })
 
 export function AddApp() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { addApp } = useApps()
-  const [portal] = useSelectedPortal()
+  const { Api } = useSkynet()
 
   const openDialog = useCallback(() => {
     setIsOpen(true)
@@ -110,10 +109,10 @@ export function AddApp() {
     skapps,
   ])
 
-  const validationSchema = useMemo(
-    () => buildSchema(portal, existingHnsDomains),
-    [portal, existingHnsDomains]
-  )
+  const validationSchema = useMemo(() => buildSchema(Api, existingHnsDomains), [
+    Api,
+    existingHnsDomains,
+  ])
 
   const formik = useFormik({
     initialValues: {

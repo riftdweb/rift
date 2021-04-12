@@ -8,7 +8,9 @@ import { DesignSystemProvider } from '../components/_layout/DesignSystemProvider
 import Footer from '../components/_layout/Footer'
 import { TabNav } from '../components/_layout/TabNav'
 import { Providers } from '../hooks/_providers'
+import { Root } from '../hooks/_root'
 import { ToastContainer } from 'react-toastify'
+import { Init } from '../components/Init'
 import 'react-toastify/dist/ReactToastify.css'
 import '../styles.css'
 import '../toast.css'
@@ -44,16 +46,6 @@ function App({ Component, pageProps }) {
     })
   }, [themeConfig, setThemeConfig])
 
-  // const [uploads, setUploads] = useUploads()
-
-  // // Clean stale uploads on app load
-  // useEffect(() => {
-  //   const cleanUploads = uploads.filter(
-  //     (upload) => upload.status === 'complete'
-  //   )
-  //   setUploads(cleanUploads)
-  // }, [])
-
   return (
     <DesignSystemProvider>
       <div>
@@ -68,26 +60,29 @@ function App({ Component, pageProps }) {
           />
         </Head>
         <IdProvider>
-          <Providers>
-            <ToastContainer />
-            <Box
-              css={{
-                bc: '$loContrast',
-                height: '100vh',
-                overflowY: 'auto',
-              }}
-            >
-              <Navbar toggleTheme={toggleTheme} />
-              <Container
-                size="3"
-                css={{ minHeight: '60vh', marginTop: '20px' }}
+          <Root>
+            <Providers>
+              <Init />
+              <ToastContainer />
+              <Box
+                css={{
+                  bc: '$loContrast',
+                  height: '100vh',
+                  overflowY: 'auto',
+                }}
               >
-                <TabNav />
-                <Component {...pageProps} />
-              </Container>
-              <Footer />
-            </Box>
-          </Providers>
+                <Navbar toggleTheme={toggleTheme} />
+                <Container
+                  size="3"
+                  css={{ minHeight: '60vh', marginTop: '20px' }}
+                >
+                  <TabNav />
+                  <Component {...pageProps} />
+                </Container>
+                <Footer />
+              </Box>
+            </Providers>
+          </Root>
         </IdProvider>
       </div>
     </DesignSystemProvider>

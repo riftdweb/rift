@@ -1,9 +1,9 @@
 import { useCallback, createContext, useContext, useEffect } from 'react'
 import { mergeItem } from '../shared/collection'
 import { Skyfile } from '../shared/types'
-import { useLocalRootSeed } from './useLocalRootSeed'
-import { useSkyState } from './useSkyState'
+import { useSkyfilesState } from './useSkyfilesState'
 import { sub, parseISO } from 'date-fns'
+import { useSkynet } from './skynet'
 
 type State = {
   skyfiles: Skyfile[]
@@ -22,17 +22,14 @@ type Props = {
 let hasCheckedOnce = false
 
 export function SkyfilesProvider({ children }: Props) {
-  const { localRootSeed } = useLocalRootSeed()
+  const { skyfiles, setSkyfiles, refetchSkyfiles } = useSkyfilesState()
 
-  const {
-    state: skyfiles,
-    setState: setSkyfiles,
-    refetch: refetchSkyfiles,
-  } = useSkyState<Skyfile[]>(localRootSeed, 'skyfiles', [])
+  // const { identityKey } = useSkynet()
 
   // On app init, clean up stalled out uploads
   useEffect(() => {
     const stallPeriod = sub(new Date(), { minutes: 1 })
+    console.log(hasCheckedOnce, skyfiles.length)
     if (!hasCheckedOnce && skyfiles.length) {
       setSkyfiles(
         skyfiles.filter(
@@ -44,6 +41,7 @@ export function SkyfilesProvider({ children }: Props) {
         )
       )
       hasCheckedOnce = true
+      console.log(hasCheckedOnce, skyfiles.length)
     }
   }, [skyfiles, setSkyfiles])
 

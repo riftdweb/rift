@@ -1,5 +1,5 @@
 {
-  "name": "learn-starter",
+  "name": "rift",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,11 +15,13 @@
     "@radix-ui/react-icons": "^1.0.2",
     "@radix-ui/react-id": "^0.0.1",
     "@radix-ui/react-scroll-area": "^0.0.9",
+    "@skynethq/content-record-library": "^0.2.1",
     "ace-builds": "^1.4.12",
     "bytes": "^3.1.0",
     "classnames": "^2.2.6",
     "clipboard-polyfill": "^3.0.2",
     "date-fns": "^2.19.0",
+    "feed-dac-library": "^0.1.0",
     "formik": "^2.2.6",
     "http-status-codes": "^2.1.4",
     "lodash": "^4.17.21",

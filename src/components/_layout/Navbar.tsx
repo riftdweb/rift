@@ -19,13 +19,33 @@ import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
 import { Searchbar } from './Searchbar'
+import { IdentityContextMenu } from './IdentityContextMenu'
+import { useRouter } from 'next/router'
+import { extractDomainForPortal } from 'skynet-js'
+import { useCallback } from 'react'
 
 type Props = {
   toggleTheme: () => void
 }
 
 export default function Navbar({ toggleTheme }: Props) {
+  const router = useRouter()
   const [selectedPortal, setSelectedPortal] = useSelectedPortal()
+
+  const handleChangePortal = useCallback(
+    (newPortal: string) => {
+      const hostname = window.location.hostname
+      const origin = window.location.origin
+      setSelectedPortal(newPortal)
+      if (hostname === 'localhost') {
+        router.reload()
+      } else {
+        const subdomain = extractDomainForPortal(origin, hostname)
+        router.push(`https://${subdomain}.${newPortal}`)
+      }
+    },
+    [setSelectedPortal]
+  )
 
   return (
     <Box css={{ borderBottom: '1px solid $gray200' }}>
@@ -94,7 +114,7 @@ export default function Navbar({ toggleTheme }: Props) {
                       padding: '0 $1',
                       borderRadius: '0 $2 $2 0 !important',
                     }}
-                    onChange={(e) => setSelectedPortal(e.target.value)}
+                    onChange={(e) => handleChangePortal(e.target.value)}
                     value={selectedPortal}
                   >
                     {portals.map((portal) => (
@@ -111,6 +131,7 @@ export default function Navbar({ toggleTheme }: Props) {
                 <SunIcon />
               </Button>
             </Tooltip>
+            <IdentityContextMenu />
           </Flex>
         </Flex>
       </Container>

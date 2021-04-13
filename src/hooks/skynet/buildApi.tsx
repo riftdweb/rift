@@ -25,7 +25,7 @@ export const buildApi = ({
   function getJSON({ seed, dataKey }: { seed?: string; dataKey: string }) {
     if (seed) {
       console.log(`getJSON ${dataKey}`)
-      console.log('\texplicit tseed')
+      console.log('\texplicit seed')
       const { publicKey } = genKeyPairFromSeed(seed)
       return client.db.getJSON(publicKey, dataKey)
     }
@@ -51,7 +51,7 @@ export const buildApi = ({
   }) {
     if (seed) {
       console.log(`setJSON ${dataKey}`)
-      console.log('\texplicit tseed')
+      console.log('\texplicit seed')
       const { privateKey } = genKeyPairFromSeed(seed)
       return client.db.setJSON(privateKey, dataKey, json)
     }

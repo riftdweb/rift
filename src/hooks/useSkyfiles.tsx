@@ -1,4 +1,10 @@
-import { useCallback, createContext, useContext, useEffect } from 'react'
+import {
+  useCallback,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { mergeItem } from '../shared/collection'
 import { Skyfile } from '../shared/types'
 import { useSkyfilesState } from './useSkyfilesState'
@@ -19,29 +25,32 @@ type Props = {
   children: React.ReactNode
 }
 
-let hasCheckedOnce = false
-
 export function SkyfilesProvider({ children }: Props) {
   const { skyfiles, setSkyfiles, refetchSkyfiles } = useSkyfilesState()
+  const [hasCleanedData, setHasCleanedData] = useState<boolean>(false)
+  const { identityKey } = useSkynet()
 
-  // const { identityKey } = useSkynet()
-
-  // On app init, clean up stalled out uploads
+  // When identity changes reset data cleaning flag
   useEffect(() => {
-    const stallPeriod = sub(new Date(), { minutes: 1 })
-    console.log(hasCheckedOnce, skyfiles.length)
-    if (!hasCheckedOnce && skyfiles.length) {
+    setHasCleanedData(false)
+  }, [identityKey])
+
+  // On identity init, clean up stalled out uploads.
+  // DANGER: this function deletes user data.
+  useEffect(() => {
+    const stallBefore = sub(new Date(), { minutes: 1 })
+    if (!hasCleanedData && skyfiles.length) {
       setSkyfiles(
         skyfiles.filter(
           (skyfile) =>
-            // Remove uploads that have stalled out for a period of time
+            // Keep uploads that are newer than the stallBefore date
             (skyfile.upload.updatedAt &&
-              parseISO(skyfile.upload.updatedAt) > stallPeriod) ||
+              parseISO(skyfile.upload.updatedAt) > stallBefore) ||
+            // Or ones that have successfully completed
             skyfile.upload.status === 'complete'
         )
       )
-      hasCheckedOnce = true
-      console.log(hasCheckedOnce, skyfiles.length)
+      setHasCleanedData(true)
     }
   }, [skyfiles, setSkyfiles])
 

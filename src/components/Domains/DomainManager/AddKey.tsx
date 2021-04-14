@@ -2,17 +2,17 @@ import { Box, Button, ControlGroup, Input } from '@modulz/design-system'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
-import { useSeeds } from '../../../hooks/useSeeds'
-import { Seed } from '../../../shared/types'
+import { useDomains } from '../../../hooks/domains'
+import { Domain } from '../../../shared/types'
 
 type Props = {
-  seed: Seed
+  domain: Domain
 }
 
-export function AddKey({ seed }: Props) {
+export function AddKey({ domain }: Props) {
   const { push } = useRouter()
   const [newKey, setNewKey] = useState<string>()
-  const { addKey } = useSeeds()
+  const { addKey } = useDomains()
 
   const saveKey = useCallback(
     (e) => {
@@ -22,13 +22,17 @@ export function AddKey({ seed }: Props) {
         return
       }
 
-      addKey(seed.id, newKey)
+      addKey(domain.id, newKey)
 
       setNewKey('')
 
-      push(`/skydb/${seed.name}/${encodeURIComponent(newKey)}`)
+      push(
+        `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+          newKey
+        )}`
+      )
     },
-    [push, seed, newKey, setNewKey, addKey]
+    [push, domain, newKey, setNewKey, addKey]
   )
 
   return (

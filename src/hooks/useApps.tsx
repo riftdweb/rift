@@ -19,7 +19,7 @@ const RESOURCE_DATA_KEY = 'apps'
 type State = {
   apps: App[]
   addApp: (app: Partial<App>) => Promise<boolean>
-  removeApp: (seedId: string, redirect?: boolean) => void
+  removeApp: (appId: string, redirect?: boolean) => void
   isValidating: boolean
   userHasNoApps: boolean
 }

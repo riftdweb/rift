@@ -8,14 +8,14 @@ import {
 } from 'react'
 import { SkynetClient, MySky } from 'skynet-js'
 import { useSelectedPortal } from '../useSelectedPortal'
-import { ContentRecordDAC } from '@skynethq/content-record-library'
+import { ContentRecordDAC } from '@skynetlabs/content-record-library'
 import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../useLocalRootSeed'
 import { buildApi } from './buildApi'
 // import { FeedDAC } from 'feed-dac-library'
 
 // const feedDAC = new FeedDAC()
-const contentRecord = new ContentRecordDAC()
+export const contentRecord = new ContentRecordDAC()
 
 type State = {
   isInitializing: boolean
@@ -46,7 +46,6 @@ export function SkynetProvider({ children }: Props) {
 
   const dataDomain =
     typeof window !== 'undefined' ? window.location.hostname : 'localhost'
-  // console.log('dataDomain', dataDomain)
 
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])
@@ -131,7 +130,7 @@ export function SkynetProvider({ children }: Props) {
   )
 
   // Key that can be used for SWR revalidation when identity changes
-  const identityKey = localRootSeed + '/' + userId
+  const identityKey = localRootSeed + (userId ? `/${userId}` : '')
 
   const value = {
     isInitializing,

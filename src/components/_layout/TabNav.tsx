@@ -21,20 +21,20 @@ export function TabNav() {
           Home
         </TabLink>
       </Link>
-      <Link href="/skyfiles" passHref>
-        <TabLink active={route.split('/')[1] === 'skyfiles'}>
+      <Link href="/files" passHref>
+        <TabLink active={route.split('/')[1] === 'files'}>
           <Box css={{ mr: '$1' }}>
             <FilePlusIcon />
           </Box>
-          Skyfiles
+          Files
         </TabLink>
       </Link>
-      <Link href="/skydb" passHref>
-        <TabLink active={route.split('/')[1] === 'skydb'}>
+      <Link href="/domains" passHref>
+        <TabLink active={route.split('/')[1] === 'domains'}>
           <Box css={{ mr: '$1' }}>
             <ActivityLogIcon />
           </Box>
-          SkyDB
+          Domains
         </TabLink>
       </Link>
       <Link href="/tools" passHref>

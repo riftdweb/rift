@@ -5,9 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
 import debounce from 'lodash/debounce'
-import { useSeeds } from '../../../hooks/useSeeds'
+import { useDomains } from '../../../hooks/domains'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
-import { Seed } from '../../../shared/types'
+import { Domain } from '../../../shared/types'
 import { KeysToolbar } from './KeysToolbar'
 import { useSkynet } from '../../../hooks/skynet'
 
@@ -20,13 +20,13 @@ const importConfigFiles = () => {
 }
 
 type Props = {
-  seed: Seed
+  domain: Domain
   dataKey: string
 }
 
-export function KeyEditor({ seed, dataKey }: Props) {
+export function KeyEditor({ domain, dataKey }: Props) {
   const { push } = useRouter()
-  const { keys } = seed
+  const { keys } = domain
 
   const { data: configFilesLoaded } = useSWR(
     'configFilesLoaded',
@@ -38,26 +38,37 @@ export function KeyEditor({ seed, dataKey }: Props) {
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
   const { Api } = useSkynet()
-  const { removeKey } = useSeeds()
-  const { data, isValidating, mutate } = useSWR([seed.id, dataKey], () =>
-    Api.getJSON({
-      seed: seed.id,
+  const { removeKey } = useDomains()
+  const { data, isValidating, mutate } = useSWR([domain.id, dataKey], () => {
+    // Only one of the two will be defined
+    const { seed, dataDomain } = domain
+    return Api.getJSON({
+      seed,
+      dataDomain,
       dataKey,
     })
-  )
+  })
 
   const removeKeyAndRoute = useCallback(() => {
     const dataKeyIndex = findIndex(keys, (key) => key === dataKey)
     // load previous
     if (dataKeyIndex > 0) {
-      push(`/skydb/${seed.name}/${encodeURIComponent(keys[dataKeyIndex - 1])}`)
+      push(
+        `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+          keys[dataKeyIndex - 1]
+        )}`
+      )
     }
     // load previous
-    else if (dataKeyIndex === 0 && seed.keys.length > 1) {
-      push(`/skydb/${seed.name}/${encodeURIComponent(keys[1])}`)
+    else if (dataKeyIndex === 0 && domain.keys.length > 1) {
+      push(
+        `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+          keys[1]
+        )}`
+      )
     }
-    removeKey(seed.id, dataKey)
-  }, [removeKey, seed, push])
+    removeKey(domain.id, dataKey)
+  }, [removeKey, domain, push])
 
   const setValueFromNetwork = useCallback(
     (data) => {
@@ -117,12 +128,6 @@ export function KeyEditor({ seed, dataKey }: Props) {
     } catch (e) {}
   }, [editingValue, setEditingValue])
 
-  const debouncedMutate = useMemo(() => {
-    return debounce((mutate) => {
-      return mutate()
-    }, 5000)
-  }, [])
-
   const saveChanges = useCallback(() => {
     formatCode()
     const func = async () => {
@@ -132,13 +137,18 @@ export function KeyEditor({ seed, dataKey }: Props) {
         // Update cache immediately
         mutate({ data: newData, skylink }, false)
         // Save changes to SkyDB
+
+        // Only one of the two will be defined
+        const { seed, dataDomain } = domain
         await Api.setJSON({
-          seed: seed.id,
+          seed,
+          dataDomain,
           dataKey,
           json: newData,
         })
+
         // Sync latest, will likely be the same
-        await debouncedMutate(mutate)
+        await mutate()
       } finally {
         setIsSaving(false)
       }
@@ -150,7 +160,7 @@ export function KeyEditor({ seed, dataKey }: Props) {
     formatCode,
     setIsSaving,
     selectedPortal,
-    seed,
+    domain,
     dataKey,
     editingValue,
     skylink,

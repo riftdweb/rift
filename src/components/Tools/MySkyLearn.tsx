@@ -1,69 +1,45 @@
-import { Box, Button, Heading, Input, Textarea } from '@modulz/design-system'
-import { useSkynet } from '../../hooks/skynet'
-// import { ContentRecordDAC } from '@skynethq/content-record-library'
-import { useCallback, useEffect, useState } from 'react'
-import { JsonData } from 'skynet-js'
-
-// const contentRecord = new ContentRecordDAC()
-
-const dataDomain = 'localhost'
+import { Flex, Box, Button, Heading, Input } from '@modulz/design-system'
+import { contentRecord, useSkynet } from '../../hooks/skynet'
+import { useCallback, useState } from 'react'
 
 export function MySkyLearn() {
-  const { Api, loggedIn, userId, logout, login } = useSkynet()
+  const { userId } = useSkynet()
+  const [skylink, setSkylink] = useState<string>('')
 
-  const [dataKey, setDataKey] = useState('')
-  const [data, setData] = useState<JsonData>()
-  const [filePath, setFilePath] = useState<string>()
-
-  useEffect(() => {
-    setFilePath(dataDomain + '/' + dataKey)
-  }, [dataKey])
-
-  const saveFilePath = useCallback(() => {
+  const recordNewContent = useCallback((skylink: string) => {
     const func = async () => {
-      const { data } = await Api.getJSON({
-        dataKey: filePath,
-      })
-      setData(data)
-    }
-    func()
-  }, [Api, setData])
-
-  const save = useCallback(() => {
-    const func = async () => {
-      await Api.setJSON({
-        dataKey,
-        json: data,
+      await contentRecord.recordNewContent({
+        skylink,
+        metadata: {},
       })
     }
     func()
-  }, [Api, setData])
+  }, [])
+
+  const recordInteraction = useCallback((skylink: string) => {
+    const func = async () => {
+      await contentRecord.recordInteraction({
+        skylink,
+        metadata: { action: 'updatedColorOf' },
+      })
+    }
+    func()
+  }, [])
 
   return (
     <Box>
-      <Box css={{ margin: '$3 0 $3' }}>
+      <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Heading>Learning</Heading>
-        {loggedIn ? (
-          <Button onClick={logout}>Logout</Button>
-        ) : (
-          <Button onClick={login}>Login</Button>
-        )}
-        <Button>{userId}</Button>
+        <Input onChange={(e) => setSkylink(e.target.value)} />
         <Box css={{ p: '$2 0' }}>
-          <Input onChange={(e) => setFilePath(e.target.value)} />
-          <Button onClick={saveFilePath}>Save file path</Button>
+          <Button onClick={() => recordNewContent(skylink)}>
+            Record new content
+          </Button>
+          <Button onClick={() => recordInteraction(skylink)}>
+            Record interaction
+          </Button>
         </Box>
-        <Box css={{ p: '$2 0' }}>
-          <Textarea
-            onChange={(e) =>
-              setData({
-                data: e.target.value,
-              })
-            }
-          />
-          <Button onClick={save}>Save</Button>
-        </Box>
-      </Box>
+      </Flex>
     </Box>
   )
 }

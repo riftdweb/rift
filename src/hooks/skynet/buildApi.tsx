@@ -22,20 +22,28 @@ export const buildApi = ({
 }: BuildApi) => {
   const client = new SkynetClient(`https://${portal}`)
 
-  function getJSON({ seed, dataKey }: { seed?: string; dataKey: string }) {
+  function getJSON({
+    seed,
+    dataKey,
+    dataDomain: customDataDomain,
+  }: {
+    dataKey: string
+    seed?: string
+    dataDomain?: string
+  }) {
     if (seed) {
-      console.log(`getJSON ${dataKey}`)
-      console.log('\texplicit seed')
+      // console.log(`getJSON ${dataKey}`)
+      // console.log('\texplicit seed')
       const { publicKey } = genKeyPairFromSeed(seed)
       return client.db.getJSON(publicKey, dataKey)
     }
     if (!userId) {
-      console.log(`getJSON ${dataKey}`)
-      console.log('\tlocal seed')
+      // console.log(`getJSON ${dataKey}`)
+      // console.log('\tlocal seed')
       const { publicKey } = genKeyPairFromSeed(localRootSeed)
       return client.db.getJSON(publicKey, dataKey)
     }
-    const dataPath = dataDomain + '/' + dataKey
+    const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
     console.log(`getJSON ${dataPath}`)
     console.log('\tmysky')
     return mySky.getJSON(dataPath)
@@ -43,28 +51,30 @@ export const buildApi = ({
   function setJSON({
     seed,
     dataKey,
+    dataDomain: customDataDomain,
     json,
   }: {
     seed?: string
+    dataDomain?: string
     dataKey: string
     json: {}
   }) {
     if (seed) {
-      console.log(`setJSON ${dataKey}`)
-      console.log('\texplicit seed')
+      // console.log(`setJSON ${dataKey}`)
+      // console.log('\texplicit seed')
       const { privateKey } = genKeyPairFromSeed(seed)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     if (!userId) {
-      console.log(`setJSON ${dataKey}`)
-      console.log('\tlocal seed')
+      // console.log(`setJSON ${dataKey}`)
+      // console.log('\tlocal seed')
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
       return client.db.setJSON(privateKey, dataKey, json)
     }
-    const dataPath = dataDomain + '/' + dataKey
+    const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
     console.log(`setJSON ${dataPath}`)
     console.log('\tmysky')
-    return mySky.setJSON(dataDomain + '/' + dataKey, json)
+    return mySky.setJSON(dataPath, json)
   }
   function uploadDirectory(
     directory: Record<string, File>,

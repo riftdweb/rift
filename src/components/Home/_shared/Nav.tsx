@@ -1,10 +1,9 @@
 import { Box, Flex, Heading, Text } from '@modulz/design-system'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
-import { useSeeds } from '../../../hooks/useSeeds'
+import { useDomains } from '../../../hooks/domains'
 import { App } from '../../../shared/types'
 import { Link } from '../../_shared/Link'
-import { SeedContextMenu } from './SeedContextMenu'
 import { AddApp } from './AddApp'
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 
 export function Nav({ app }: Props) {
   const { push } = useRouter()
-  // const { removeSeed } = useSeeds()
 
   const removeAppAndNav = useCallback(() => {
     if (!app) {

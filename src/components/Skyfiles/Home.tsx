@@ -76,7 +76,7 @@ export function Home() {
               value={filterValue}
               onChange={(e) => setFilterValue(e.target.value)}
               size="3"
-              placeholder="Filter skyfiles by name"
+              placeholder="Filter files by name"
             />
             {filterValue && (
               <Button

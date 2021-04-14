@@ -70,7 +70,7 @@ export default function Navbar({ toggleTheme }: Props) {
           <Searchbar />
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
             <ControlGroup>
-              <Link href="/skyfiles" as="button" content="Upload files">
+              <Link href="/files" as="button" content="Upload files">
                 <PlusIcon />
               </Link>
               <DropdownMenu>
@@ -78,7 +78,7 @@ export default function Navbar({ toggleTheme }: Props) {
                   <TriangleDownIcon />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <NLink href="/skyfiles" passHref>
+                  <NLink href="/files" passHref>
                     <DropdownMenuItem
                       as="a"
                       css={{ textDecoration: 'none', cursor: 'pointer' }}
@@ -86,12 +86,12 @@ export default function Navbar({ toggleTheme }: Props) {
                       Upload files
                     </DropdownMenuItem>
                   </NLink>
-                  <NLink href="/skydb" passHref>
+                  <NLink href="/domains" passHref>
                     <DropdownMenuItem
                       as="a"
                       css={{ textDecoration: 'none', cursor: 'pointer' }}
                     >
-                      Add seed
+                      Add data domain
                     </DropdownMenuItem>
                   </NLink>
                 </DropdownMenuContent>

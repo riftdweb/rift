@@ -1,5 +1,5 @@
 import { useSkynet } from './skynet'
-import { SeedsProvider } from './useSeeds'
+import { DomainsProvider } from './domains'
 import { AppsProvider } from './useApps'
 import { SkyfilesProvider } from './useSkyfiles'
 
@@ -14,9 +14,9 @@ export function Providers({ children }) {
 
   return (
     <AppsProvider>
-      <SeedsProvider>
+      <DomainsProvider>
         <SkyfilesProvider>{children}</SkyfilesProvider>
-      </SeedsProvider>
+      </DomainsProvider>
     </AppsProvider>
   )
 }

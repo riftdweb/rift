@@ -2,20 +2,19 @@ import { useCallback, useEffect, useState } from 'react'
 import throttle from 'lodash/throttle'
 import { useSkynet } from './skynet'
 import { Skyfile } from '../shared/types'
-
-const RESOURCE_DATA_KEY = 'skyfiles'
+import { SKYFILES_DATA_KEY } from '../shared/dataKeys'
 
 const throttledSyncState = throttle(async (Api, state) => {
   try {
-    console.log('syncing start', RESOURCE_DATA_KEY, state)
+    console.log('syncing start', SKYFILES_DATA_KEY, state)
     await Api.setJSON({
-      dataKey: RESOURCE_DATA_KEY,
+      dataKey: SKYFILES_DATA_KEY,
       json: state,
     })
-    console.log('syncing success', RESOURCE_DATA_KEY, state)
+    console.log('syncing success', SKYFILES_DATA_KEY, state)
   } catch (e) {
     console.log(e)
-    console.log('syncing failed', RESOURCE_DATA_KEY, state)
+    console.log('syncing failed', SKYFILES_DATA_KEY, state)
   }
 }, 5000)
 
@@ -27,7 +26,7 @@ export const useSkyfilesState = () => {
     const func = async () => {
       try {
         const { data }: { data?: Skyfile[] } = ((await Api.getJSON({
-          dataKey: RESOURCE_DATA_KEY,
+          dataKey: SKYFILES_DATA_KEY,
         })) as unknown) as {
           data: Skyfile[]
         }
@@ -68,7 +67,7 @@ export const useSkyfilesState = () => {
           return nextState
         })
       } else {
-        // console.log('nextState', RESOURCE_DATA_KEY, _nextState)
+        // console.log('nextState', SKYFILES_DATA_KEY, _nextState)
         setLocalState(_nextState)
         syncState(_nextState)
       }

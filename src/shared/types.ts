@@ -54,10 +54,13 @@ export type Skyfile = {
   fileHandle?: File
 }
 
-export type Seed = {
-  // id is the actual master seed concatenated with the child seed
+// Domain is either a MySky domain or an explicit seed (keypair)
+export type Domain = {
   id: string
-  parentSeed: string
+  dataDomain?: string
+  // seed is the actual master seed concatenated with the child seed
+  seed?: string
+  parentSeed?: string
   name?: string
   childSeed?: string
   addedAt: string

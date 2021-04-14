@@ -8,23 +8,23 @@ import {
   Tooltip,
 } from '@modulz/design-system'
 import Link from 'next/link'
-import { Seed } from '../../../shared/types'
+import { Domain } from '../../../shared/types'
 import { formatDistance, parseISO } from 'date-fns'
-import { SeedContextMenu } from '../_shared/SeedContextMenu'
+import { DomainContextMenu } from '../_shared/DomainContextMenu'
 
 type Props = {
-  seed: Seed
+  domain: Domain
 }
 
-export function SeedCard({ seed }: Props) {
-  const { id, name, keys = [], addedAt } = seed
+export function DomainCard({ domain }: Props) {
+  const { id, name, keys = [], addedAt } = domain
   return (
     <Box
       css={{
         overflow: 'hidden',
       }}
     >
-      <Link passHref href={`/skydb/${seed.name}`}>
+      <Link passHref href={`/domains/${encodeURIComponent(domain.name)}`}>
         <Card
           as="a"
           css={{
@@ -48,7 +48,7 @@ export function SeedCard({ seed }: Props) {
                 </Subheading>
               </Tooltip>
               <Box css={{ color: 'red' }}>
-                <SeedContextMenu seed={seed} right="-10px" />
+                <DomainContextMenu domain={domain} right="-10px" />
               </Box>
             </Flex>
             <Box>

@@ -7,27 +7,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@modulz/design-system'
-import { useSeeds } from '../../../hooks/useSeeds'
-import { Seed } from '../../../shared/types'
+import { useDomains } from '../../../hooks/domains'
+import { Domain } from '../../../shared/types'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { genKeyPairFromSeed } from 'skynet-js'
 import { copyToClipboard } from '../../../shared/clipboard'
 
 type Props = {
-  seed: Seed
+  domain: Domain
   variant?: string
   right?: string
   size?: string
 }
 
-export function SeedContextMenu({
-  seed,
+export function DomainContextMenu({
+  domain,
   variant = 'ghost',
   right = '0',
   size = '1',
 }: Props) {
-  const { removeSeed } = useSeeds()
-  const { privateKey, publicKey } = genKeyPairFromSeed(seed.id)
+  const { removeDomain } = useDomains()
+  const { privateKey, publicKey } = genKeyPairFromSeed(domain.id)
 
   return (
     <DropdownMenu>
@@ -44,23 +44,26 @@ export function SeedContextMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={() => removeSeed(seed.id, true)}>
+        <DropdownMenuItem onSelect={() => removeDomain(domain.id, true)}>
           Remove
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={() => copyToClipboard(seed.id, 'seed')}>
+        {/* TODO maybe this should be a separate field domain.seed */}
+        <DropdownMenuItem
+          onSelect={() => copyToClipboard(domain.id, 'domain ID')}
+        >
           Seed
         </DropdownMenuItem>
         <DropdownMenuItem
-          onSelect={() => copyToClipboard(seed.parentSeed, 'parent seed')}
-          disabled={!seed.parentSeed}
+          onSelect={() => copyToClipboard(domain.parentSeed, 'parent seed')}
+          disabled={!domain.parentSeed}
         >
           Parent seed
         </DropdownMenuItem>
         <DropdownMenuItem
-          onSelect={() => copyToClipboard(seed.childSeed, 'child seed')}
-          disabled={!seed.childSeed}
+          onSelect={() => copyToClipboard(domain.childSeed, 'child seed')}
+          disabled={!domain.childSeed}
         >
           Child seed
         </DropdownMenuItem>

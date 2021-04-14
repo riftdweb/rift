@@ -6,15 +6,15 @@ import { SKYFILES_DATA_KEY } from '../shared/dataKeys'
 
 const throttledSyncState = throttle(async (Api, state) => {
   try {
-    console.log('syncing start', SKYFILES_DATA_KEY, state)
+    // console.log('syncing start', SKYFILES_DATA_KEY, state)
     await Api.setJSON({
       dataKey: SKYFILES_DATA_KEY,
       json: state,
     })
-    console.log('syncing success', SKYFILES_DATA_KEY, state)
+    // console.log('syncing success', SKYFILES_DATA_KEY, state)
   } catch (e) {
     console.log(e)
-    console.log('syncing failed', SKYFILES_DATA_KEY, state)
+    // console.log('syncing failed', SKYFILES_DATA_KEY, state)
   }
 }, 5000)
 
@@ -30,7 +30,7 @@ export const useSkyfilesState = () => {
         })) as unknown) as {
           data: Skyfile[]
         }
-        console.log(data)
+        // console.log(data)
         setLocalState(data || ([] as Skyfile[]))
       } catch (e) {
         console.log(e)

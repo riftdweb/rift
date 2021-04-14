@@ -1,10 +1,8 @@
 import {
   Box,
   Button,
-  ControlGroup,
   Flex,
   Heading,
-  Input,
   Paragraph,
   Text,
   Tooltip,
@@ -15,8 +13,6 @@ import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { useDomains } from '../../hooks/domains'
 import { useSkynet } from '../../hooks/skynet'
 import { copyToClipboard } from '../../shared/clipboard'
-import { useApps } from '../../hooks/useApps'
-import { useSkyfiles } from '../../hooks/useSkyfiles'
 import { App, Domain, Skyfile } from '../../shared/types'
 import useSWR from 'swr'
 import {
@@ -80,7 +76,10 @@ export function LocalSeed() {
       parentSeed: localRootSeed,
       childSeed: '',
       addedAt: new Date().toISOString(),
-      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY],
+      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY].map((key) => ({
+        id: key,
+        key,
+      })),
     })
   }, [addDomain, localRootSeed])
 

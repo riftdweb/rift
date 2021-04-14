@@ -1,22 +1,15 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
   Box,
   Button,
   Flex,
   Input,
   Text,
-  Subheading,
-  ControlGroup,
-  Tooltip,
   Paragraph,
 } from '@modulz/design-system'
-import { Pencil2Icon, SymbolIcon } from '@radix-ui/react-icons'
-import { useCallback, useMemo, useState } from 'react'
+import { Pencil2Icon } from '@radix-ui/react-icons'
+import { useCallback, useMemo } from 'react'
 import { useDomains } from '../../../hooks/domains'
 import { Domain } from '../../../shared/types'
-import { v4 as uuid } from 'uuid'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 

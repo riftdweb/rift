@@ -54,6 +54,11 @@ export type Skyfile = {
   fileHandle?: File
 }
 
+export type DomainKey = {
+  id: string
+  key: string
+}
+
 // Domain is either a MySky domain or an explicit seed (keypair)
 export type Domain = {
   id: string
@@ -64,7 +69,7 @@ export type Domain = {
   name?: string
   childSeed?: string
   addedAt: string
-  keys: string[]
+  keys: DomainKey[]
 }
 
 export type AppRevision = {

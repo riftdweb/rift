@@ -13,20 +13,22 @@ type Props = {
 export function KeysWorkspace({ domain }: Props) {
   const { name, keys } = domain
   const { push, query } = useRouter()
-  const dataKey = query.dataKey as string
+  const dataKeyName = query.dataKeyName as string
 
   useEffect(() => {
-    if (!dataKey && keys.length) {
+    if (!dataKeyName && keys.length) {
       push(
-        `/domains/${encodeURIComponent(name)}/${encodeURIComponent(keys[0])}`
+        `/domains/${encodeURIComponent(name)}/${encodeURIComponent(
+          keys[0].key
+        )}`
       )
     }
-  }, [dataKey, keys])
+  }, [dataKeyName, keys])
 
   return (
     <Box>
       <Flex>
-        <DragSizing border="right" handlerOffset={0}>
+        <DragSizing border="right" handlerOffset={0} style={{ width: '200px' }}>
           <Box css={{ padding: '$3 $1' }}>
             <KeysTree domain={domain} keys={keys} />
           </Box>
@@ -34,9 +36,9 @@ export function KeysWorkspace({ domain }: Props) {
         <Flex css={{ flex: 1 }}>
           {keys.map((key) => (
             <Box
-              key={key}
+              key={key.id}
               css={{
-                display: key === dataKey ? 'block' : 'none',
+                display: key.key === dataKeyName ? 'block' : 'none',
                 width: '100%',
                 height: '100vh',
               }}

@@ -22,7 +22,10 @@ export function AddKey({ domain }: Props) {
         return
       }
 
-      addKey(domain.id, newKey)
+      addKey(domain.id, {
+        id: newKey,
+        key: newKey,
+      })
 
       setNewKey('')
 

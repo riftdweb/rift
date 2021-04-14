@@ -6,9 +6,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import uniq from 'lodash/uniq'
+import uniqBy from 'lodash/uniqBy'
 import useSWR from 'swr'
-import { Domain } from '../shared/types'
+import { Domain, DomainKey } from '../shared/types'
 import { upsertItem } from '../shared/collection'
 import { deriveChildSeed } from 'skynet-js'
 import { useRouter } from 'next/router'
@@ -20,8 +20,8 @@ type State = {
   domains: Domain[]
   addDomain: (domain: Partial<Domain>) => boolean
   removeDomain: (domainId: string, redirect?: boolean) => void
-  addKey: (domainId: string, key: string) => boolean
-  removeKey: (domainId: string, key: string) => boolean
+  addKey: (domainId: string, key: DomainKey) => boolean
+  removeKey: (domainId: string, keyId: string) => boolean
   isValidating: boolean
   userHasNoDomains: boolean
 }
@@ -133,7 +133,7 @@ export function DomainsProvider({ children }: Props) {
   )
 
   const addKey = useCallback(
-    (domainId: string, key: string): boolean => {
+    (domainId: string, key: DomainKey): boolean => {
       const domain = domains.find((domain) => domain.id === domainId)
 
       if (!domain) {
@@ -142,7 +142,7 @@ export function DomainsProvider({ children }: Props) {
 
       const modifiedDomain = {
         ...domain,
-        keys: uniq([...domain.keys, key]),
+        keys: uniqBy([...domain.keys, key], 'id'),
       }
 
       setDomains(upsertItem(domains, modifiedDomain))
@@ -152,7 +152,7 @@ export function DomainsProvider({ children }: Props) {
   )
 
   const removeKey = useCallback(
-    (domainId: string, key: string): boolean => {
+    (domainId: string, keyId: string): boolean => {
       const domain = domains.find((domain) => domain.id === domainId)
 
       if (!domain) {
@@ -161,7 +161,7 @@ export function DomainsProvider({ children }: Props) {
 
       const modifiedDomain = {
         ...domain,
-        keys: domain.keys.filter((k) => k !== key),
+        keys: domain.keys.filter((k) => k.id !== keyId),
       }
 
       setDomains(upsertItem(domains, modifiedDomain))

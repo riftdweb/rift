@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import debounce from 'lodash/debounce'
 import { useDomains } from '../../../hooks/domains'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
-import { Domain } from '../../../shared/types'
+import { Domain, DomainKey } from '../../../shared/types'
 import { KeysToolbar } from './KeysToolbar'
 import { useSkynet } from '../../../hooks/skynet'
 
@@ -21,7 +21,7 @@ const importConfigFiles = () => {
 
 type Props = {
   domain: Domain
-  dataKey: string
+  dataKey: DomainKey
 }
 
 export function KeyEditor({ domain, dataKey }: Props) {
@@ -39,23 +39,23 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [selectedPortal] = useSelectedPortal()
   const { Api } = useSkynet()
   const { removeKey } = useDomains()
-  const { data, isValidating, mutate } = useSWR([domain.id, dataKey], () => {
+  const { data, isValidating, mutate } = useSWR([domain.id, dataKey.id], () => {
     // Only one of the two will be defined
     const { seed, dataDomain } = domain
     return Api.getJSON({
       seed,
       dataDomain,
-      dataKey,
+      dataKey: dataKey.key,
     })
   })
 
   const removeKeyAndRoute = useCallback(() => {
-    const dataKeyIndex = findIndex(keys, (key) => key === dataKey)
+    const dataKeyIndex = findIndex(keys, (key) => key.id === dataKey.id)
     // load previous
     if (dataKeyIndex > 0) {
       push(
         `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-          keys[dataKeyIndex - 1]
+          keys[dataKeyIndex - 1].key
         )}`
       )
     }
@@ -63,11 +63,11 @@ export function KeyEditor({ domain, dataKey }: Props) {
     else if (dataKeyIndex === 0 && domain.keys.length > 1) {
       push(
         `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-          keys[1]
+          keys[1].key
         )}`
       )
     }
-    removeKey(domain.id, dataKey)
+    removeKey(domain.id, dataKey.id)
   }, [removeKey, domain, push])
 
   const setValueFromNetwork = useCallback(
@@ -143,7 +143,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
         await Api.setJSON({
           seed,
           dataDomain,
-          dataKey,
+          dataKey: dataKey.key,
           json: newData,
         })
 
@@ -183,7 +183,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       {configFilesLoaded && (
         <AceEditor
           style={{ width: '100%', flex: 1 }}
-          key={dataKey}
+          key={dataKey.id}
           value={editingValue}
           mode="json"
           theme="solarized_dark"

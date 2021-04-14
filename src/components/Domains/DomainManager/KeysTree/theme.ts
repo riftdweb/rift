@@ -1,4 +1,4 @@
-export default {
+export const theme = {
   tree: {
     base: {
       listStyle: 'none',
@@ -23,6 +23,11 @@ export default {
         whiteSpace: 'nowrap',
       },
       activeLink: {
+        background: 'var(--colors-gray500)',
+        borderRadius: '4px',
+        color: 'var(--colors-hiContrast)',
+      },
+      hoverLink: {
         background: 'var(--colors-gray500)',
         borderRadius: '4px',
         color: 'var(--colors-hiContrast)',

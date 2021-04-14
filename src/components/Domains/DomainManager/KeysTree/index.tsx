@@ -1,101 +1,115 @@
 import { Box } from '@modulz/design-system'
-import {
-  ClipboardIcon,
-  TriangleDownIcon,
-  TriangleRightIcon,
-} from '@radix-ui/react-icons'
+import { ClipboardIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/router'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Treebeard } from 'react-treebeard'
-import Decorators from 'react-treebeard/dist/components/Decorators'
-import theme from './theme'
+import { theme } from './theme'
+import { decorators } from './decorators'
+import { Domain, DomainKey } from '../../../../shared/types'
+import animations from './animations'
 
-const _data = {
-  name: 'localhost',
-  toggled: true,
-  children: [
-    {
-      name: 'newcontent',
-      children: [
-        {
-          name: (
-            <Box>
-              index.json
-              <Box css={{ position: 'absolute', right: 0, top: 0 }}>
-                <ClipboardIcon />
-              </Box>
-            </Box>
-          ),
-          key: 'localhost/newcontent/index.json',
-        },
-      ],
-    },
-    {
-      name: 'interactions',
-      children: [
-        { name: 'index.json', key: 'localhost/interactions/index.json' },
-        { name: 'page_0.json', key: 'localhost/interactions/page_0.json' },
-        { name: 'page_1.json', key: 'localhost/interactions/page_1.json' },
-      ],
-    },
-  ],
+function addNode(tree, obj, stateMap, activeKeyName) {
+  const splitpath = obj.path.replace(/^\/|\/$/g, '').split('/')
+  for (let i = 0; i < splitpath.length; i++) {
+    const name = splitpath[i]
+    let node = {
+      id: name,
+      name: name,
+      type: 'directory',
+      ...(stateMap[name] || { toggled: true }),
+    }
+    if (i == splitpath.length - 1) {
+      node = {
+        ...obj,
+        ...node,
+        name: <Box>{name}</Box>,
+        active: activeKeyName === obj.path,
+      }
+    }
+    tree[name] = tree[name] || node
+    tree[name].children = tree[name].children || {}
+    tree = tree[name].children
+  }
 }
-const decorators = {
-  ...Decorators,
-  Toggle: ({ style, onClick }) => {
-    const { height, width } = style
 
-    return (
-      <div style={style.base} onClick={onClick}>
-        <div style={style.wrapper}>
-          <svg {...{ height, width }}>
-            <TriangleRightIcon />
-          </svg>
-        </div>
-      </div>
-    )
-  },
-  Header: ({ onSelect, node, style, customStyles }) => (
-    <div style={style.base} onClick={onSelect}>
-      <div
-        style={
-          node.selected
-            ? { ...style.title, ...customStyles.header.title }
-            : style.title
-        }
-      >
-        {node.name}
-      </div>
-    </div>
-  ),
+function objectToArr(node) {
+  Object.keys(node || {}).map((k) => {
+    if (node[k].children) {
+      objectToArr(node[k])
+    }
+  })
+  if (node.children) {
+    const values = Object.values(node.children)
+    if (values.length) {
+      node.children = values
+      node.children.forEach(objectToArr)
+    } else {
+      delete node.children
+    }
+  }
+}
+
+function treeify(arr, stateMap, activeKeyName) {
+  let tree = {}
+  arr.map((i) => addNode(tree, i, stateMap, activeKeyName))
+  objectToArr(tree)
+  return tree
+}
+
+function transformKeys(
+  domain: Domain,
+  keys: DomainKey[],
+  stateMap: {},
+  activeKeyName: string
+) {
+  const node = treeify(
+    keys.map((key) => {
+      const fullPath = `${domain.name}/${key.key}`
+      return {
+        id: key.id,
+        key: key.key,
+        path: fullPath,
+      }
+    }),
+    stateMap,
+    activeKeyName
+  )[domain.name]
+  return node
 }
 
 export function KeysTree({ domain, keys }) {
-  const { push } = useRouter()
-  const [data, setData] = useState(_data)
-  const [cursor, setCursor] = useState<any>(false)
+  const { push, query } = useRouter()
+  const activeKeyName = query.dataKeyName as string
+  const activeKeyPath = `${domain.name}/${activeKeyName}`
+  const [stateMap, setStateMap] = useState({})
+
+  const data = useMemo(() => {
+    return transformKeys(domain, keys, stateMap, activeKeyPath)
+  }, [domain, keys, stateMap, activeKeyPath])
 
   const onToggle = useCallback(
     (node, toggled) => {
-      const { key, children } = node
-      if (cursor) {
-        cursor.active = false
+      let nextState = {
+        ...stateMap,
       }
+
+      const { key, children } = node
+
+      let nodeState = nextState[node.id] || {}
       if (children) {
-        node.toggled = toggled
+        nodeState.toggled = toggled
       } else {
-        node.active = true
         push(
           `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
             key
           )}`
         )
       }
-      setCursor(node)
+      nextState[node.id] = nodeState
 
-      setData(Object.assign({}, data))
+      setStateMap(nextState)
     },
-    [data, setData, cursor, setCursor, push]
+    [stateMap, setStateMap, push]
   )
 
   return (
@@ -103,6 +117,7 @@ export function KeysTree({ domain, keys }) {
       data={data}
       onToggle={onToggle}
       decorators={decorators}
+      animations={animations}
       style={theme}
     />
   )

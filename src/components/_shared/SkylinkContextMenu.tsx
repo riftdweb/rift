@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@modulz/design-system'
-import { DotsHorizontalIcon, TriangleDownIcon } from '@radix-ui/react-icons'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
 import NLink from 'next/link'

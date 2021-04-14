@@ -35,7 +35,10 @@ export function MySkyLoggedIn() {
       parentSeed: '',
       childSeed: '',
       addedAt: new Date().toISOString(),
-      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY],
+      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY].map((key) => ({
+        id: key,
+        key,
+      })),
     })
   }, [addDomain])
 

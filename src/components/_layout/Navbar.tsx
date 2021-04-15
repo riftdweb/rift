@@ -86,7 +86,7 @@ export default function Navbar({ toggleTheme }: Props) {
                       Upload files
                     </DropdownMenuItem>
                   </NLink>
-                  <NLink href="/domains" passHref>
+                  <NLink href="/data" passHref>
                     <DropdownMenuItem
                       as="a"
                       css={{ textDecoration: 'none', cursor: 'pointer' }}

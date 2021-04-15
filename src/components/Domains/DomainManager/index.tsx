@@ -1,6 +1,6 @@
 import { Box, Subheading, Text } from '@modulz/design-system'
 import { useRouter } from 'next/router'
-import { AddKey } from './AddKey'
+import { AddKeyForm } from './AddKeyForm'
 import { KeysWorkspace } from './KeysWorkspace'
 import { Nav } from '../_shared/Nav'
 import { useDomains } from '../../../hooks/domains'
@@ -22,9 +22,9 @@ export default function DomainManager() {
   return (
     <Box css={{ py: '$3' }}>
       <Nav domain={domain} />
-      <Box css={{ my: '$3' }}>
-        <AddKey domain={domain} />
-        {domain.keys.length ? (
+      <Box>
+        <KeysWorkspace domain={domain} />
+        {/* {domain.keys.length ? (
           <KeysWorkspace domain={domain} />
         ) : (
           <Box css={{ textAlign: 'center', padding: '$3 0' }}>
@@ -36,7 +36,7 @@ export default function DomainManager() {
               will bring up the current value.
             </Text>
           </Box>
-        )}
+        )} */}
       </Box>
     </Box>
   )

@@ -21,7 +21,11 @@ type State = {
   addDomain: (domain: Partial<Domain>) => boolean
   removeDomain: (domainId: string, redirect?: boolean) => void
   addKey: (domainId: string, key: DomainKey) => boolean
-  removeKey: (domainId: string, keyId: string) => boolean
+  removeKey: (
+    domainId: string,
+    keyId: string,
+    routeToNextKey?: boolean
+  ) => boolean
   isValidating: boolean
   userHasNoDomains: boolean
 }
@@ -152,11 +156,32 @@ export function DomainsProvider({ children }: Props) {
   )
 
   const removeKey = useCallback(
-    (domainId: string, keyId: string): boolean => {
+    (domainId: string, keyId: string, routeToNextKey?: boolean): boolean => {
       const domain = domains.find((domain) => domain.id === domainId)
 
       if (!domain) {
         return false
+      }
+
+      // When removing data keys in places like the editor we may want to route to another one
+      if (routeToNextKey) {
+        const dataKeyIndex = domain.keys.findIndex((key) => key.id === keyId)
+        // load previous
+        if (dataKeyIndex > 0) {
+          push(
+            `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+              domain.keys[dataKeyIndex - 1].key
+            )}`
+          )
+        }
+        // load new first
+        else if (dataKeyIndex === 0 && domain.keys.length > 1) {
+          push(
+            `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+              domain.keys[1].key
+            )}`
+          )
+        }
       }
 
       const modifiedDomain = {
@@ -167,7 +192,7 @@ export function DomainsProvider({ children }: Props) {
       setDomains(upsertItem(domains, modifiedDomain))
       return true
     },
-    [domains, setDomains]
+    [domains, setDomains, push]
   )
 
   const removeDomain = useCallback(
@@ -179,7 +204,7 @@ export function DomainsProvider({ children }: Props) {
       setDomains(domains.filter((item) => item.id !== domainId))
 
       if (redirect) {
-        push('/domains')
+        push('/data')
       }
     },
     [domains, setDomains]

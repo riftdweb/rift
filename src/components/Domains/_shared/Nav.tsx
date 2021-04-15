@@ -12,7 +12,7 @@ export function Nav({ domain }: Props) {
   return (
     <Heading css={{ my: '$5' }}>
       <Flex css={{ gap: '$1', alignItems: 'center' }}>
-        <Link href="/domains">Domains</Link>
+        <Link href="/data">Data</Link>
         {domain && <Text>/</Text>}
         {domain && (
           <Link
@@ -22,7 +22,7 @@ export function Nav({ domain }: Props) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
-            href={`/domains/${encodeURIComponent(domain.name)}`}
+            href={`/data/${encodeURIComponent(domain.name)}`}
           >
             {domain.name}
           </Link>

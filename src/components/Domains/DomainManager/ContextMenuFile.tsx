@@ -7,11 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@modulz/design-system'
-import { PlusIcon } from '@radix-ui/react-icons'
-import { copyToClipboard } from '../../shared/clipboard'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { useDomains } from '../../../hooks/domains'
+import { copyToClipboard } from '../../../shared/clipboard'
+import { TreeNodeFile } from './KeysTree/transformKeys'
 
 type Props = {
-  dataKey: string
+  treeNode: TreeNodeFile
   variant?: string
   size?: string
   right?: string
@@ -19,14 +21,16 @@ type Props = {
   onOpenChange?: (val: boolean) => void
 }
 
-export function DataKeyFolderContextMenu({
-  dataKey,
+export function ContextMenuFile({
+  treeNode,
   variant = 'ghost',
   right = '0',
   size = '1',
   color = '$gray900',
   onOpenChange,
 }: Props) {
+  const { removeKey } = useDomains()
+  const { domain } = treeNode
   return (
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
@@ -39,13 +43,22 @@ export function DataKeyFolderContextMenu({
           color,
         }}
       >
-        <PlusIcon />
+        <DotsHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          onSelect={() => removeKey(domain.id, treeNode.id, true)}
+        >
+          Remove
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={() => null}>Remove</DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => copyToClipboard(treeNode.fullKey, 'path')}
+        >
+          Path
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

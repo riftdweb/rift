@@ -1,4 +1,4 @@
-import { Flex } from '@modulz/design-system'
+import { Box, Flex } from '@modulz/design-system'
 import findIndex from 'lodash/findIndex'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -54,7 +54,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
     // load previous
     if (dataKeyIndex > 0) {
       push(
-        `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+        `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
           keys[dataKeyIndex - 1].key
         )}`
       )
@@ -62,7 +62,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
     // load previous
     else if (dataKeyIndex === 0 && domain.keys.length > 1) {
       push(
-        `/domains/${encodeURIComponent(domain.name)}/${encodeURIComponent(
+        `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
           keys[1].key
         )}`
       )
@@ -181,16 +181,18 @@ export function KeyEditor({ domain, dataKey }: Props) {
         saveChanges={saveChanges}
       />
       {configFilesLoaded && (
-        <AceEditor
-          style={{ width: '100%', flex: 1 }}
-          key={dataKey.id}
-          value={editingValue}
-          mode="json"
-          theme="solarized_dark"
-          onChange={(val) => setEditingValue(val)}
-          name="UNIQUE_ID_OF_DIV"
-          editorProps={{ $blockScrolling: true }}
-        />
+        <Box css={{ borderRadius: '6px', overflow: 'hidden', flex: 1 }}>
+          <AceEditor
+            style={{ width: '100%', height: '100%' }}
+            key={dataKey.id}
+            value={editingValue}
+            mode="json"
+            theme="solarized_dark"
+            onChange={(val) => setEditingValue(val)}
+            name="UNIQUE_ID_OF_DIV"
+            editorProps={{ $blockScrolling: true }}
+          />
+        </Box>
       )}
     </Flex>
   )

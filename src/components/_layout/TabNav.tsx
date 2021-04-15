@@ -29,12 +29,12 @@ export function TabNav() {
           Files
         </TabLink>
       </Link>
-      <Link href="/domains" passHref>
-        <TabLink active={route.split('/')[1] === 'domains'}>
+      <Link href="/data" passHref>
+        <TabLink active={route.split('/')[1] === 'data'}>
           <Box css={{ mr: '$1' }}>
             <ActivityLogIcon />
           </Box>
-          Domains
+          Data
         </TabLink>
       </Link>
       <Link href="/tools" passHref>

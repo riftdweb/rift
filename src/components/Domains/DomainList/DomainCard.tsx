@@ -24,7 +24,7 @@ export function DomainCard({ domain }: Props) {
         overflow: 'hidden',
       }}
     >
-      <Link passHref href={`/domains/${encodeURIComponent(domain.name)}`}>
+      <Link passHref href={`/data/${encodeURIComponent(domain.name)}`}>
         <Card
           as="a"
           css={{

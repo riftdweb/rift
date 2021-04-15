@@ -35,7 +35,7 @@
     "react-toastify": "^7.0.3",
     "react-treebeard": "^3.2.4",
     "sia-js": "github:dawe35/sia-js",
-    "skynet-js": "^4.0.0-beta",
+    "skynet-js": "^4.0.1-beta",
     "swr": "^0.5.4",
     "use-local-storage-state": "^9.0.2",
     "uuid": "^8.3.2",

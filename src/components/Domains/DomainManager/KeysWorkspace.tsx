@@ -18,9 +18,7 @@ export function KeysWorkspace({ domain }: Props) {
   useEffect(() => {
     if (!dataKeyName && keys.length) {
       push(
-        `/domains/${encodeURIComponent(name)}/${encodeURIComponent(
-          keys[0].key
-        )}`
+        `/data/${encodeURIComponent(name)}/${encodeURIComponent(keys[0].key)}`
       )
     }
   }, [dataKeyName, keys])
@@ -28,11 +26,33 @@ export function KeysWorkspace({ domain }: Props) {
   return (
     <Box>
       <Flex>
-        <DragSizing border="right" handlerOffset={0} style={{ width: '200px' }}>
-          <Box css={{ padding: '$3 $1' }}>
-            <KeysTree domain={domain} keys={keys} />
+        <Box
+          css={{
+            padding: '12px $2 0 0',
+            height: '100vh',
+          }}
+        >
+          <Box
+            css={{
+              height: '100%',
+              borderRadius: '6px',
+              backgroundColor: '$gray200',
+              transition: 'background-color 0.1s',
+              '&:hover': { backgroundColor: '$gray300' },
+            }}
+          >
+            <DragSizing
+              border="right"
+              handlerOffset={0}
+              style={{
+                width: '200px',
+                height: '100%',
+              }}
+            >
+              <KeysTree domain={domain} keys={keys} />
+            </DragSizing>
           </Box>
-        </DragSizing>
+        </Box>
         <Flex css={{ flex: 1 }}>
           {keys.map((key) => (
             <Box

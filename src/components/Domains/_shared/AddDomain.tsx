@@ -14,9 +14,6 @@ import {
 } from '@modulz/design-system'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
-import { useDomains } from '../../../hooks/domains'
-import { Domain } from '../../../shared/types'
-import * as Yup from 'yup'
 import { AddDomainSeed } from './AddDomainSeed'
 import { AddDomainMySky } from './AddDomainMySky'
 

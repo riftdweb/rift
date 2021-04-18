@@ -13,14 +13,14 @@ import {
   Tooltip,
 } from '@modulz/design-system'
 import { PlusIcon, SunIcon, TriangleDownIcon } from '@radix-ui/react-icons'
-import NLink from 'next/link'
+import { Link as RLink } from 'react-router-dom'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
 import { Searchbar } from './Searchbar'
 import { IdentityContextMenu } from './IdentityContextMenu'
-import { useRouter } from 'next/router'
+import { useHistory } from 'react-router-dom'
 import { extractDomainForPortal } from 'skynet-js'
 import { useCallback } from 'react'
 
@@ -29,7 +29,7 @@ type Props = {
 }
 
 export default function Navbar({ toggleTheme }: Props) {
-  const router = useRouter()
+  const history = useHistory()
   const [selectedPortal, setSelectedPortal] = useSelectedPortal()
 
   const handleChangePortal = useCallback(
@@ -38,13 +38,13 @@ export default function Navbar({ toggleTheme }: Props) {
       const origin = window.location.origin
       setSelectedPortal(newPortal)
       if (hostname === 'localhost') {
-        router.reload()
+        history.go(0)
       } else {
         const subdomain = extractDomainForPortal(origin, hostname)
-        router.push(`https://${subdomain}.${newPortal}`)
+        history.push(`https://${subdomain}.${newPortal}`)
       }
     },
-    [setSelectedPortal]
+    [history, setSelectedPortal]
   )
 
   return (
@@ -61,7 +61,7 @@ export default function Navbar({ toggleTheme }: Props) {
               }}
             >
               <Flex>
-                <Link href="/" css={{ textDecoration: 'none' }}>
+                <Link to="/" css={{ textDecoration: 'none' }}>
                   rift
                 </Link>
               </Flex>
@@ -70,7 +70,7 @@ export default function Navbar({ toggleTheme }: Props) {
           <Searchbar />
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
             <ControlGroup>
-              <Link href="/files" as="button" content="Upload files">
+              <Link to="/files" as="button" content="Upload files">
                 <PlusIcon />
               </Link>
               <DropdownMenu>
@@ -78,22 +78,20 @@ export default function Navbar({ toggleTheme }: Props) {
                   <TriangleDownIcon />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <NLink href="/files" passHref>
-                    <DropdownMenuItem
-                      as="a"
-                      css={{ textDecoration: 'none', cursor: 'pointer' }}
-                    >
-                      Upload files
-                    </DropdownMenuItem>
-                  </NLink>
-                  <NLink href="/data" passHref>
-                    <DropdownMenuItem
-                      as="a"
-                      css={{ textDecoration: 'none', cursor: 'pointer' }}
-                    >
-                      Add data domain
-                    </DropdownMenuItem>
-                  </NLink>
+                  <DropdownMenuItem
+                    as={RLink}
+                    to="/files"
+                    css={{ textDecoration: 'none', cursor: 'pointer' }}
+                  >
+                    Upload files
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    as={RLink}
+                    to="/data"
+                    css={{ textDecoration: 'none', cursor: 'pointer' }}
+                  >
+                    Add data domain
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </ControlGroup>

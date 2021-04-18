@@ -121,6 +121,10 @@ export function AddDomainSeed({ closeDialog }: Props) {
                   onChange={formik.handleChange}
                   size="3"
                   placeholder="Seed value"
+                  css={{
+                    boxShadow:
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                  }}
                 />
                 <Tooltip content="Generate random seed">
                   <Button

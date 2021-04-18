@@ -8,7 +8,7 @@ import {
   Input,
 } from '@modulz/design-system'
 import { Pencil2Icon } from '@radix-ui/react-icons'
-import { useRouter } from 'next/router'
+import { useHistory } from 'react-router-dom'
 import { useCallback, useMemo } from 'react'
 import { useDomains } from '../../../hooks/domains'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
@@ -52,7 +52,7 @@ type Props = {
 }
 
 export function AddKeyForm({ treeNode, closeDialog }: Props) {
-  const { push } = useRouter()
+  const history = useHistory()
   const { addKey } = useDomains()
   const { domain, treeKey } = treeNode
 
@@ -67,14 +67,14 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
       if (addKey(domain.id, newKey)) {
         formik.resetForm()
         closeDialog()
-        push(
+        history.push(
           `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
             newKey.key
           )}`
         )
       }
     },
-    [push, domain, addKey, closeDialog]
+    [history, domain, addKey, closeDialog]
   )
 
   const existingKeys = useMemo(() => domain.keys.map((key) => key.key), [

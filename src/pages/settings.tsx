@@ -1,8 +1,4 @@
-import dynamic from 'next/dynamic'
-
-const Settings = dynamic(() => import('../components/Settings'), {
-  ssr: false,
-})
+import { Settings } from '../components/Settings'
 
 export default function SettingsPage() {
   return <Settings />

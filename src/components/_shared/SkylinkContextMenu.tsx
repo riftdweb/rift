@@ -10,7 +10,7 @@ import {
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
-import NLink from 'next/link'
+import { Link as RLink } from 'react-router-dom'
 
 type Props = {
   skylink: string
@@ -50,15 +50,14 @@ export function SkylinkContextMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <NLink href={weblink} passHref>
-          <DropdownMenuItem
-            as="a"
-            target="_blank"
-            css={{ textDecoration: 'none', cursor: 'pointer' }}
-          >
-            Open weblink
-          </DropdownMenuItem>
-        </NLink>
+        <DropdownMenuItem
+          as="a"
+          href={weblink}
+          target="_blank"
+          css={{ textDecoration: 'none', cursor: 'pointer' }}
+        >
+          Open weblink
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
         <DropdownMenuItem

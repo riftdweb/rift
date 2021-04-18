@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { useHistory, useParams } from 'react-router-dom'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Treebeard } from 'react-treebeard'
 import { style } from './style'
@@ -7,16 +7,19 @@ import animations from './animations'
 import { transformKeys, TreeNode } from './transformKeys'
 import { Box } from '@modulz/design-system'
 import { useDomains } from '../../../../hooks/domains'
+import { useDomainParams } from '../../../../hooks/useDomainParams'
 
 type Props = {}
 
 export function KeysTree({}: Props) {
-  const { push, query } = useRouter()
+  const history = useHistory()
+  const { domain, domainKey } = useDomainParams()
   const { domains } = useDomains()
 
-  const activeDomainName = query.domainName as string
-  const activeKeyName = query.dataKeyName as string
-  const activeKeyTreeKey = `domains/discoverable/${activeDomainName}/${activeKeyName}`
+  const activeKeyTreeKey =
+    domain && domainKey
+      ? `domains/discoverable/${domain.name}/${domainKey.key}`
+      : undefined
 
   const [stateMap, setStateMap] = useState({})
 
@@ -36,7 +39,7 @@ export function KeysTree({}: Props) {
       if (children) {
         nodeState.toggled = toggled
       } else if (node.type === 'file') {
-        push(
+        history.push(
           `/data/${encodeURIComponent(node.domain.name)}/${encodeURIComponent(
             key
           )}`
@@ -46,7 +49,7 @@ export function KeysTree({}: Props) {
 
       setStateMap(nextState)
     },
-    [stateMap, setStateMap, push]
+    [stateMap, setStateMap, history]
   )
 
   return (

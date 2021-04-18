@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid'
 import useSWR from 'swr'
 import { App } from '../shared/types'
 import { upsertItem } from '../shared/collection'
-import { useRouter } from 'next/router'
+import { useHistory } from 'react-router-dom'
 import debounce from 'lodash/debounce'
 import { useSkynet } from './skynet'
 
@@ -39,7 +39,7 @@ export function AppsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
   const { Api, identityKey, dataDomain } = useSkynet()
-  const { push } = useRouter()
+  const history = useHistory()
 
   const key = [identityKey, dataDomain, RESOURCE_DATA_KEY]
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
@@ -118,10 +118,10 @@ export function AppsProvider({ children }: Props) {
       setApps(apps.filter((item) => item.id !== id))
 
       if (redirect) {
-        push('/')
+        history.push('/')
       }
     },
-    [apps, setApps]
+    [history, apps, setApps]
   )
 
   const value = {

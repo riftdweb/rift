@@ -8,8 +8,6 @@
 # testing
 /coverage
 
-# next.js
-/.next/
 /out/
 /app/
 

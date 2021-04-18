@@ -132,7 +132,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                   placeholder="eg: skyfeed"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px $blue500, inset 0 0 0 100px $blue200',
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
                   }}
                 />
                 {formik.isValidating ? (

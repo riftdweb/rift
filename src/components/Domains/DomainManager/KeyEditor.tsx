@@ -1,6 +1,6 @@
 import { Box, Flex } from '@modulz/design-system'
 import findIndex from 'lodash/findIndex'
-import { useRouter } from 'next/router'
+import { useHistory } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
@@ -24,7 +24,7 @@ type Props = {
 }
 
 export function KeyEditor({ domain, dataKey }: Props) {
-  const { push } = useRouter()
+  const history = useHistory()
   const { keys } = domain
 
   const { data: configFilesLoaded } = useSWR(
@@ -53,7 +53,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
     const dataKeyIndex = findIndex(keys, (key) => key.id === dataKey.id)
     // load previous
     if (dataKeyIndex > 0) {
-      push(
+      history.push(
         `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
           keys[dataKeyIndex - 1].key
         )}`
@@ -61,14 +61,14 @@ export function KeyEditor({ domain, dataKey }: Props) {
     }
     // load previous
     else if (dataKeyIndex === 0 && domain.keys.length > 1) {
-      push(
+      history.push(
         `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
           keys[1].key
         )}`
       )
     }
     removeKey(domain.id, dataKey.id)
-  }, [removeKey, domain, push])
+  }, [removeKey, domain, history])
 
   const setValueFromNetwork = useCallback(
     (data) => {

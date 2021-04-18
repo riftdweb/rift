@@ -1,35 +1,19 @@
-import { Box, Button, Flex, Heading, Text } from '@modulz/design-system'
-import { useRouter } from 'next/router'
-import { useEffect, useMemo } from 'react'
-import { Domain } from '../../../shared/types'
+import { Box, Flex, Heading, Text } from '@modulz/design-system'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
 import { DragSizing } from '../../_shared/DragSizing'
 import useLocalStorageState from 'use-local-storage-state'
-import { useDomains } from '../../../hooks/domains'
 import { PlusIcon } from '@radix-ui/react-icons'
 import { AddDomain } from '../_shared/AddDomain'
+import { useDomainParams } from '../../../hooks/useDomainParams'
 
 type Props = {}
 
 export function KeysWorkspace({}: Props) {
-  const { push, query } = useRouter()
-  const { domains } = useDomains()
-  const domainName = query.domainName as string
-  const dataKeyName = query.dataKeyName as string
-  const [keysTreeWidth, setKeysTreeWidth] = useLocalStorageState<string>(
+  const { domain, domainKey } = useDomainParams()
+  const [keysTreeWidth, _setKeysTreeWidth] = useLocalStorageState<string>(
     'keysTreeWidth',
     '200px'
-  )
-
-  const domain = useMemo(
-    () => domains.find((domain) => domain.name === domainName),
-    [domains, domainName]
-  )
-
-  const domainKey = useMemo(
-    () => (domain ? domain.keys.find((key) => key.key === dataKeyName) : null),
-    [domain, dataKeyName]
   )
 
   return (

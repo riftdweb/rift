@@ -1,5 +1,5 @@
 import { Box } from '@modulz/design-system'
-import { useRouter } from 'next/router'
+import { useParams } from 'react-router-dom'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { skapps } from '../../shared/skapps'
 import { Grid } from '../_shared/Grid'
@@ -8,8 +8,7 @@ import { Nav } from './_shared/Nav'
 
 export default function AppManager() {
   const [selectedPortal] = useSelectedPortal()
-  const { query } = useRouter()
-  const appId = query.appId as string
+  const { appId } = useParams()
   const isValidating = false
   const app = skapps.find((app) => app.id === appId)
 

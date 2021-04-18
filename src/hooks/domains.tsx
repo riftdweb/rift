@@ -6,12 +6,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import uniqBy from 'lodash/uniqBy'
 import useSWR from 'swr'
 import { Domain, DomainKey } from '../shared/types'
 import { upsertItem } from '../shared/collection'
 import { deriveChildSeed } from 'skynet-js'
-import { useRouter } from 'next/router'
+import { useHistory } from 'react-router-dom'
 import debounce from 'lodash/debounce'
 import { useSkynet } from './skynet'
 import { SKYDB_DATA_KEY } from '../shared/dataKeys'
@@ -45,7 +44,7 @@ export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
   const { Api, identityKey, dataDomain } = useSkynet()
-  const { push } = useRouter()
+  const history = useHistory()
 
   const key = [identityKey, dataDomain, SKYDB_DATA_KEY]
   const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
@@ -174,7 +173,7 @@ export function DomainsProvider({ children }: Props) {
         const dataKeyIndex = domain.keys.findIndex((key) => key.id === keyId)
         // load previous
         if (dataKeyIndex > 0) {
-          push(
+          history.push(
             `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
               domain.keys[dataKeyIndex - 1].key
             )}`
@@ -182,7 +181,7 @@ export function DomainsProvider({ children }: Props) {
         }
         // load new first
         else if (dataKeyIndex === 0 && domain.keys.length > 1) {
-          push(
+          history.push(
             `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
               domain.keys[1].key
             )}`
@@ -198,7 +197,7 @@ export function DomainsProvider({ children }: Props) {
       setDomains(upsertItem(domains, modifiedDomain))
       return true
     },
-    [domains, setDomains, push]
+    [domains, setDomains, history]
   )
 
   const removeDomain = useCallback(
@@ -210,10 +209,10 @@ export function DomainsProvider({ children }: Props) {
       setDomains(domains.filter((item) => item.id !== domainId))
 
       if (redirect) {
-        push('/data')
+        history.push('/data')
       }
     },
-    [domains, setDomains]
+    [history, domains, setDomains]
   )
 
   const value = {

@@ -1,12 +1,4 @@
-import {
-  Button,
-  ControlGroup,
-  Flex,
-  Box,
-  Panel,
-  Subheading,
-  Text,
-} from '@modulz/design-system'
+import { Button, Flex, Box, Panel, Text } from '@modulz/design-system'
 import { useMemo } from 'react'
 import bytes from 'bytes'
 import {

@@ -6,61 +6,47 @@ import {
   HomeIcon,
   MixIcon,
 } from '@radix-ui/react-icons'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { Link, useLocation } from 'react-router-dom'
 
 export function TabNav() {
-  const { pathname: route } = useRouter()
+  const location = useLocation()
+  const { pathname: route } = location
   return (
     <Flex css={{ borderBottom: '1px solid $slate500' }}>
-      <Link href="/" passHref>
-        <TabLink active={route.split('/')[1] === ''}>
-          <Box css={{ mr: '$1' }}>
-            <HomeIcon />
-          </Box>
-          Home
-        </TabLink>
-      </Link>
-      <Link href="/files" passHref>
-        <TabLink active={route.split('/')[1] === 'files'}>
-          <Box css={{ mr: '$1' }}>
-            <FilePlusIcon />
-          </Box>
-          Files
-        </TabLink>
-      </Link>
-      <Link href="/data" passHref>
-        <TabLink active={route.split('/')[1] === 'data'}>
-          <Box css={{ mr: '$1' }}>
-            <ActivityLogIcon />
-          </Box>
-          Data
-        </TabLink>
-      </Link>
-      <Link href="/tools" passHref>
-        <TabLink active={route.split('/')[1] === 'tools'}>
-          <Box css={{ mr: '$1' }}>
-            <MixIcon />
-          </Box>
-          Tools
-        </TabLink>
-      </Link>
-      {/* <Link href="/portals" passHref>
-        <TabLink active={route.split('/')[1] === 'portals'}>
-          <Box css={{ mr: '$1' }}>
-            <BarChartIcon />
-          </Box>
-          Portals
-        </TabLink>
-      </Link> */}
-      <Link href="/settings" passHref>
-        <TabLink active={route.split('/')[1] === 'settings'}>
-          <Box css={{ mr: '$1' }}>
-            <GearIcon />
-          </Box>
-          Settings
-        </TabLink>
-      </Link>
+      <TabLink as={Link} to="/" active={route.split('/')[1] === ''}>
+        <Box css={{ mr: '$1' }}>
+          <HomeIcon />
+        </Box>
+        Home
+      </TabLink>
+      <TabLink as={Link} to="/files" active={route.split('/')[1] === 'files'}>
+        <Box css={{ mr: '$1' }}>
+          <FilePlusIcon />
+        </Box>
+        Files
+      </TabLink>
+      <TabLink as={Link} to="/data" active={route.split('/')[1] === 'data'}>
+        <Box css={{ mr: '$1' }}>
+          <ActivityLogIcon />
+        </Box>
+        Data
+      </TabLink>
+      <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
+        <Box css={{ mr: '$1' }}>
+          <MixIcon />
+        </Box>
+        Tools
+      </TabLink>
+      <TabLink
+        as={Link}
+        to="/settings"
+        active={route.split('/')[1] === 'settings'}
+      >
+        <Box css={{ mr: '$1' }}>
+          <GearIcon />
+        </Box>
+        Settings
+      </TabLink>
     </Flex>
   )
 }

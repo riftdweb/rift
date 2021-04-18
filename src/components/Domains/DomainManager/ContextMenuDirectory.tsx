@@ -8,7 +8,6 @@ import {
   Flex,
 } from '@modulz/design-system'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { useDomains } from '../../../hooks/domains'
 import { copyToClipboard } from '../../../shared/clipboard'
 import { AddKeyDialog } from './AddKeyDialog'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
@@ -30,10 +29,9 @@ export function ContextMenuDirectory({
   color = '$gray900',
   onOpenChange,
 }: Props) {
-  const { removeKey } = useDomains()
   return (
     <Flex>
-      <AddKeyDialog domain={treeNode.domain} prefix={treeNode.treeKey} />
+      <AddKeyDialog treeNode={treeNode} />
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           as={Button}

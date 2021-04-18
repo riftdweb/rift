@@ -32,20 +32,17 @@ export const buildApi = ({
     dataDomain?: string
   }) {
     if (seed) {
-      // console.log(`getJSON ${dataKey}`)
-      // console.log('\texplicit seed')
+      console.log(`getJSON ${dataKey} explicit seed`)
       const { publicKey } = genKeyPairFromSeed(seed)
       return client.db.getJSON(publicKey, dataKey)
     }
     if (!userId) {
-      // console.log(`getJSON ${dataKey}`)
-      // console.log('\tlocal seed')
+      console.log(`getJSON ${dataKey} local seed`)
       const { publicKey } = genKeyPairFromSeed(localRootSeed)
       return client.db.getJSON(publicKey, dataKey)
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`getJSON ${dataPath}`)
-    console.log('\tmysky')
+    console.log(`getJSON ${dataKey} mysky`)
     return mySky.getJSON(dataPath)
   }
   function setJSON({
@@ -60,20 +57,17 @@ export const buildApi = ({
     json: {}
   }) {
     if (seed) {
-      // console.log(`setJSON ${dataKey}`)
-      // console.log('\texplicit seed')
+      console.log(`setJSON ${dataKey} explicit seed`)
       const { privateKey } = genKeyPairFromSeed(seed)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     if (!userId) {
-      // console.log(`setJSON ${dataKey}`)
-      // console.log('\tlocal seed')
+      console.log(`setJSON ${dataKey} local seed`)
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`setJSON ${dataPath}`)
-    console.log('\tmysky')
+    console.log(`setJSON ${dataKey} mysky`)
     return mySky.setJSON(dataPath, json)
   }
   function uploadDirectory(

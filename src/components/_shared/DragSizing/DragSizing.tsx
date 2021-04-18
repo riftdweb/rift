@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { DragHandler } from './DragHandler'
 import { DragSizingData, DragSizingProps, MEvent } from './types'
 import {
@@ -15,6 +15,7 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
     onStart,
     onEnd,
     onUpdate,
+    onChange,
     id,
     className,
     style,
@@ -77,7 +78,7 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
       const e = normalizeMEvent(_e)
       if (onEnd) onEnd(e)
     },
-    [onEnd]
+    [onEnd, onChange]
   )
 
   const handleUpdate = useCallback(
@@ -90,8 +91,15 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
       setDiffCoord(e[xy] - oldCoordRef.current)
 
       if (onUpdate) onUpdate(e)
+
+      // if (onChange) {
+      //   onChange({
+      //     width: containerStyle.width,
+      //     height: containerStyle.height,
+      //   })
+      // }
     },
-    [containerMeta, onUpdate]
+    [containerMeta, onUpdate, containerStyle]
   )
 
   return (

@@ -12,17 +12,28 @@ import {
   Subheading,
   Flex,
 } from '@modulz/design-system'
-import { Pencil2Icon } from '@radix-ui/react-icons'
+import { PlusIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
 import { AddDomainSeed } from './AddDomainSeed'
 import { AddDomainMySky } from './AddDomainMySky'
 
-export function AddDomain() {
+type Props = {
+  children?: React.ReactNode
+  variant?: string
+}
+
+export function AddDomain({ children, variant = 'ghost' }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const openDialog = useCallback(() => {
-    setIsOpen(true)
-  }, [setIsOpen])
+  const openDialog = useCallback(
+    (e?: any) => {
+      if (e) {
+        e.stopPropagation()
+      }
+      setIsOpen(true)
+    },
+    [setIsOpen]
+  )
 
   const closeDialog = useCallback(
     (e?: any) => {
@@ -41,19 +52,17 @@ export function AddDomain() {
     [openDialog, closeDialog]
   )
 
+  const stopPropagation = useCallback((e) => {
+    e.stopPropagation()
+  }, [])
+
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
-      <DialogTrigger size="2" as={Button} onClick={openDialog}>
-        <Box
-          css={{
-            mr: '$1',
-          }}
-        >
-          <Pencil2Icon />
-        </Box>
-        Add Domain
+      <DialogTrigger as={Button} variant={variant as any} onClick={openDialog}>
+        {children || <PlusIcon />}
       </DialogTrigger>
       <DialogContent
+        onClick={stopPropagation}
         css={{
           width: '400px',
         }}

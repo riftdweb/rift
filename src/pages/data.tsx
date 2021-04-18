@@ -1,9 +1,12 @@
 import dynamic from 'next/dynamic'
 
-const DomainList = dynamic(() => import('../components/Domains/DomainList'), {
-  ssr: false,
-})
+const DomainManager = dynamic(
+  () => import('../components/Domains/DomainManager'),
+  {
+    ssr: false,
+  }
+)
 
 export default function DomainsListPage() {
-  return <DomainList />
+  return <DomainManager />
 }

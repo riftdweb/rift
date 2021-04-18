@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
-import debounce from 'lodash/debounce'
 import { useDomains } from '../../../hooks/domains'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 import { Domain, DomainKey } from '../../../shared/types'
@@ -37,9 +36,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
-  const { Api } = useSkynet()
+  const { Api, identityKey } = useSkynet()
   const { removeKey } = useDomains()
-  const { data, isValidating, mutate } = useSWR([domain.id, dataKey.id], () => {
+  const key = [identityKey, domain.id, dataKey.id]
+  const { data, isValidating, mutate } = useSWR(key, () => {
     // Only one of the two will be defined
     const { seed, dataDomain } = domain
     return Api.getJSON({
@@ -75,13 +75,15 @@ export function KeyEditor({ domain, dataKey }: Props) {
       if (data && data.data) {
         const newValue = JSON.stringify(data.data, null, 1)
         setValue(newValue)
-        setSkylink(data.skylink)
+        setSkylink(data.skylink || '')
 
-        if (!editingValue) {
+        // Set editing value,
+        // or if no edits have been made by user, sync what is displayed to latest
+        if (!editingValue || editingValue === value) {
           setEditingValue(newValue)
         }
       } else if (data && !data.data) {
-        const newValue = '{}'
+        const newValue = undefined
         setValue(newValue)
         setSkylink('')
 
@@ -113,6 +115,9 @@ export function KeyEditor({ domain, dataKey }: Props) {
 
   const isValid = useMemo(() => {
     try {
+      if (!editingValue) {
+        return true
+      }
       JSON.parse(editingValue)
       return true
     } catch (e) {
@@ -167,13 +172,14 @@ export function KeyEditor({ domain, dataKey }: Props) {
   ])
 
   return (
-    <Flex css={{ flexDirection: 'column', height: '100%' }}>
+    <Flex css={{ flexDirection: 'column', height: '100%', width: '100%' }}>
       <KeysToolbar
         isDataLatest={isDataLatest}
         skylink={skylink}
         isValidating={isValidating}
         isSaving={isSaving}
         isValid={isValid}
+        isEmpty={!editingValue}
         formatCode={formatCode}
         refreshKey={refreshKey}
         revertChanges={revertChanges}

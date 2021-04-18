@@ -3,25 +3,26 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Treebeard } from 'react-treebeard'
 import { style } from './style'
 import { decorators } from './decorators'
-import { Domain, DomainKey } from '../../../../shared/types'
 import animations from './animations'
 import { transformKeys, TreeNode } from './transformKeys'
 import { Box } from '@modulz/design-system'
+import { useDomains } from '../../../../hooks/domains'
 
-type Props = {
-  domain: Domain
-  keys: DomainKey[]
-}
+type Props = {}
 
-export function KeysTree({ domain, keys }: Props) {
+export function KeysTree({}: Props) {
   const { push, query } = useRouter()
+  const { domains } = useDomains()
+
+  const activeDomainName = query.domainName as string
   const activeKeyName = query.dataKeyName as string
-  const activeKeyTreeKey = `domains/discoverable/${domain.name}/${activeKeyName}`
+  const activeKeyTreeKey = `domains/discoverable/${activeDomainName}/${activeKeyName}`
+
   const [stateMap, setStateMap] = useState({})
 
   const data = useMemo(() => {
-    return transformKeys(domain, keys, stateMap, activeKeyTreeKey)
-  }, [domain, keys, stateMap, activeKeyTreeKey])
+    return transformKeys(domains, stateMap, activeKeyTreeKey)
+  }, [domains, stateMap, activeKeyTreeKey])
 
   const onToggle = useCallback(
     (node: TreeNode, toggled: boolean) => {
@@ -34,9 +35,11 @@ export function KeysTree({ domain, keys }: Props) {
       let nodeState = nextState[node.id] || {}
       if (children) {
         nodeState.toggled = toggled
-      } else {
+      } else if (node.type === 'file') {
         push(
-          `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(key)}`
+          `/data/${encodeURIComponent(node.domain.name)}/${encodeURIComponent(
+            key
+          )}`
         )
       }
       nextState[node.id] = nodeState
@@ -45,8 +48,6 @@ export function KeysTree({ domain, keys }: Props) {
     },
     [stateMap, setStateMap, push]
   )
-
-  console.log(data)
 
   return (
     <Box

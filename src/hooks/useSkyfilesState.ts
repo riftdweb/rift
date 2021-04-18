@@ -62,7 +62,7 @@ export const useSkyfilesState = () => {
         setLocalState((_localState) => {
           // @ts-ignore
           const nextState = _nextState(_localState)
-          console.log('nextState', nextState)
+          // console.log('nextState', nextState)
           syncState(nextState)
           return nextState
         })

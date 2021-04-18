@@ -38,11 +38,12 @@ const debouncedMutate = debounce((mutate) => {
 export function AppsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
-  const { Api, identityKey } = useSkynet()
+  const { Api, identityKey, dataDomain } = useSkynet()
   const { push } = useRouter()
 
+  const key = [identityKey, dataDomain, RESOURCE_DATA_KEY]
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
-    [identityKey, RESOURCE_DATA_KEY],
+    key,
     () =>
       (Api.getJSON({
         dataKey: RESOURCE_DATA_KEY,

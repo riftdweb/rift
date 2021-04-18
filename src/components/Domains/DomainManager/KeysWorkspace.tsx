@@ -1,73 +1,134 @@
-import { Box, Flex, Text } from '@modulz/design-system'
+import { Box, Button, Flex, Heading, Text } from '@modulz/design-system'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Domain } from '../../../shared/types'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
 import { DragSizing } from '../../_shared/DragSizing'
+import useLocalStorageState from 'use-local-storage-state'
+import { useDomains } from '../../../hooks/domains'
+import { PlusIcon } from '@radix-ui/react-icons'
+import { AddDomain } from '../_shared/AddDomain'
 
-type Props = {
-  domain: Domain
-}
+type Props = {}
 
-export function KeysWorkspace({ domain }: Props) {
-  const { name, keys } = domain
+export function KeysWorkspace({}: Props) {
   const { push, query } = useRouter()
+  const { domains } = useDomains()
+  const domainName = query.domainName as string
   const dataKeyName = query.dataKeyName as string
+  const [keysTreeWidth, setKeysTreeWidth] = useLocalStorageState<string>(
+    'keysTreeWidth',
+    '200px'
+  )
 
-  useEffect(() => {
-    if (!dataKeyName && keys.length) {
-      push(
-        `/data/${encodeURIComponent(name)}/${encodeURIComponent(keys[0].key)}`
-      )
-    }
-  }, [dataKeyName, keys])
+  const domain = useMemo(
+    () => domains.find((domain) => domain.name === domainName),
+    [domains, domainName]
+  )
+
+  const domainKey = useMemo(
+    () => (domain ? domain.keys.find((key) => key.key === dataKeyName) : null),
+    [domain, dataKeyName]
+  )
 
   return (
-    <Box>
-      <Flex>
+    <Flex>
+      <Box
+        css={{
+          padding: '11px $2 0 0',
+          height: '100vh',
+        }}
+      >
         <Box
           css={{
-            padding: '12px $2 0 0',
-            height: '100vh',
+            height: '100%',
+            borderRadius: '6px',
+            border: '1px solid $gray500',
+            // backgroundColor: '$gray400',
+            backgroundColor: '$panel',
+            transition: 'background-color 0.1s',
+            overflow: 'auto',
+            '&:hover': { backgroundColor: '$slate300' },
           }}
         >
-          <Box
-            css={{
+          <DragSizing
+            border="right"
+            handlerOffset={0}
+            // TODO: saving the width in local storage, hit issues, need to finish
+            // onChange={({ width }) => setKeysTreeWidth(typeof width === 'number' ? `${width}px` : width)}
+            style={{
+              width: keysTreeWidth,
               height: '100%',
-              borderRadius: '6px',
-              backgroundColor: '$gray200',
-              transition: 'background-color 0.1s',
-              '&:hover': { backgroundColor: '$gray300' },
             }}
           >
-            <DragSizing
-              border="right"
-              handlerOffset={0}
-              style={{
-                width: '200px',
-                height: '100%',
-              }}
-            >
-              <KeysTree domain={domain} keys={keys} />
-            </DragSizing>
-          </Box>
+            <KeysTree />
+          </DragSizing>
         </Box>
-        <Flex css={{ flex: 1 }}>
-          {keys.map((key) => (
+      </Box>
+      <Flex css={{ flex: 1 }}>
+        {domainKey ? (
+          <KeyEditor key={domainKey.id} domain={domain} dataKey={domainKey} />
+        ) : (
+          <Flex
+            css={{
+              flexDirection: 'column',
+              gap: '$2',
+              height: '100%',
+              width: '100%',
+              padding: '11px 0 0',
+            }}
+          >
             <Box
-              key={key.id}
               css={{
-                display: key.key === dataKeyName ? 'block' : 'none',
-                width: '100%',
-                height: '100vh',
+                height: '25px',
+                background: '$gray200',
+                borderRadius: '4px',
+              }}
+            ></Box>
+            <Box
+              css={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '$slate100',
+                borderRadius: '4px',
               }}
             >
-              <KeyEditor domain={domain} dataKey={key} />
+              <Box
+                css={{
+                  position: 'absolute',
+                  top: '40%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <Heading css={{ textAlign: 'center', marginBottom: '$3' }}>
+                  Skynet data explorer
+                </Heading>
+                <Text
+                  css={{
+                    color: '$gray900',
+                    textAlign: 'center',
+                    marginBottom: '$3',
+                    maxWidth: '400px',
+                  }}
+                >
+                  Add a data domain to get started, and then open a file with
+                  the menu on the left.
+                </Text>
+                <Box css={{ textAlign: 'center' }}>
+                  <AddDomain variant="gray">
+                    <Box css={{ mr: '$1' }}>
+                      <PlusIcon />
+                    </Box>
+                    Add Domain
+                  </AddDomain>
+                </Box>
+              </Box>
             </Box>
-          ))}
-        </Flex>
+          </Flex>
+        )}
       </Flex>
-    </Box>
+    </Flex>
   )
 }

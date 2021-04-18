@@ -8,15 +8,14 @@ import {
 } from '@modulz/design-system'
 import { PlusIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
-import { Domain } from '../../../shared/types'
 import { AddKeyForm } from './AddKeyForm'
+import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 type Props = {
-  domain: Domain
-  prefix: string
+  treeNode: TreeNodeDirectory
 }
 
-export function AddKeyDialog({ domain, prefix }: Props) {
+export function AddKeyDialog({ treeNode }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const openDialog = useCallback(
@@ -46,8 +45,7 @@ export function AddKeyDialog({ domain, prefix }: Props) {
     [openDialog, closeDialog]
   )
 
-  const noop = useCallback((e) => {
-    e.preventDefault()
+  const stopPropagation = useCallback((e) => {
     e.stopPropagation()
   }, [])
 
@@ -57,18 +55,14 @@ export function AddKeyDialog({ domain, prefix }: Props) {
         <PlusIcon />
       </DialogTrigger>
       <DialogContent
-        onClick={noop}
+        onClick={stopPropagation}
         css={{
-          width: '800px',
+          width: '600px',
         }}
       >
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
           <Subheading css={{ mb: '$2' }}>Add Path</Subheading>
-          <AddKeyForm
-            domain={domain}
-            prefix={prefix}
-            closeDialog={closeDialog}
-          />
+          <AddKeyForm treeNode={treeNode} closeDialog={closeDialog} />
         </Flex>
       </DialogContent>
     </Dialog>

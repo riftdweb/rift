@@ -48,7 +48,7 @@ export function ContextMenuFile({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem
-          onSelect={() => removeKey(domain.id, treeNode.id, true)}
+          onSelect={() => removeKey(domain.id, treeNode.key, true)}
         >
           Remove
         </DropdownMenuItem>

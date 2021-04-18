@@ -7,6 +7,7 @@ import {
   Flex,
 } from '@modulz/design-system'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { AddDomain } from '../_shared/AddDomain'
 import { TreeNodeStatic } from './KeysTree/transformKeys'
 
 type Props = {
@@ -28,27 +29,8 @@ export function ContextMenuStatic({
 }: Props) {
   return (
     <Flex>
+      {treeNode.id === 'domains/discoverable' && <AddDomain />}
       {/* <AddKeyDialog domain={domain} prefix={path} /> */}
-      <DropdownMenu onOpenChange={onOpenChange}>
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant as any}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-            color,
-          }}
-        >
-          <DotsHorizontalIcon />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Copy</DropdownMenuLabel>
-          {/* <DropdownMenuItem onSelect={() => copyToClipboard(path, 'path')}>
-            Path
-          </DropdownMenuItem> */}
-        </DropdownMenuContent>
-      </DropdownMenu>
     </Flex>
   )
 }

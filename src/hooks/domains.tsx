@@ -44,11 +44,12 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, identityKey } = useSkynet()
+  const { Api, identityKey, dataDomain } = useSkynet()
   const { push } = useRouter()
 
+  const key = [identityKey, dataDomain, SKYDB_DATA_KEY]
   const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
-    [identityKey, SKYDB_DATA_KEY],
+    key,
     () =>
       (Api.getJSON({
         dataKey: SKYDB_DATA_KEY,
@@ -144,9 +145,14 @@ export function DomainsProvider({ children }: Props) {
         return false
       }
 
+      const cleanKey = {
+        id: key.id.trim().replace(/\/{2,}/g, '/'),
+        key: key.key.trim().replace(/\/{2,}/g, '/'),
+      }
+
       const modifiedDomain = {
         ...domain,
-        keys: uniqBy([...domain.keys, key], 'id'),
+        keys: upsertItem(domain.keys, cleanKey, 'id'),
       }
 
       setDomains(upsertItem(domains, modifiedDomain))

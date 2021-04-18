@@ -23,6 +23,7 @@ type State = {
   mySky: MySky
   loggedIn: boolean
   userId: string
+  dataDomain: string
   login: () => void
   logout: () => void
   identityKey: string
@@ -44,8 +45,10 @@ export function SkynetProvider({ children }: Props) {
   const [mySky, setMySky] = useState<MySky>()
   const [loggedIn, setLoggedIn] = useState(null)
 
-  const dataDomain =
-    typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+  const parts = hostname.split('.')
+  const subdomain = parts.slice(0, parts.length - 2).join('.')
+  const dataDomain = subdomain || 'localhost'
 
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])
@@ -57,9 +60,10 @@ export function SkynetProvider({ children }: Props) {
         console.log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
+        console.log('Data domain: ', dataDomain)
         const _mySky = await client.loadMySky(dataDomain, {
           // dev: true,
-          // debug: true,
+          debug: true,
         })
         // load necessary DACs and permissions
         await _mySky.loadDacs(contentRecord)
@@ -130,7 +134,7 @@ export function SkynetProvider({ children }: Props) {
   )
 
   // Key that can be used for SWR revalidation when identity changes
-  const identityKey = localRootSeed + (userId ? `/${userId}` : '')
+  const identityKey = userId ? userId : localRootSeed
 
   const value = {
     isInitializing,
@@ -141,6 +145,7 @@ export function SkynetProvider({ children }: Props) {
     userId,
     Api,
     identityKey,
+    dataDomain,
   }
 
   return (

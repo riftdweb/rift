@@ -25,6 +25,7 @@ type Props = {
   skylink: string
   isDataLatest: boolean
   isValid: boolean
+  isEmpty: boolean
   isValidating: boolean
   isSaving: boolean
   formatCode: () => void
@@ -42,6 +43,7 @@ export function KeysToolbar({
   removeKey,
   formatCode,
   isValid,
+  isEmpty,
   isValidating,
   isSaving,
   isDataLatest,
@@ -62,16 +64,25 @@ export function KeysToolbar({
   }
   return (
     <Flex css={{ margin: '$2 0 $2', alignItems: 'center', width: '100%' }}>
-      <Tooltip align="start" content="Data key value Skylink">
+      <Tooltip
+        align="start"
+        content={
+          !skylink && !isValidating ? 'No Skylink yet' : 'Latest Skylink'
+        }
+      >
         <Code
           css={{
             lineHeight: '20px',
             cursor: 'pointer',
-            '&:hover': { textDecoration: 'underline' },
+            border: '1px solid $gray400',
+            borderRadius: '3px',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
           }}
-          onClick={() => copyToClipboard(skylink, 'skylink')}
+          onClick={() => skylink && copyToClipboard(skylink, 'skylink')}
         >
-          {skylink.slice(0, 10)}...
+          {!skylink && !isValidating ? 'N/A' : `${skylink.slice(0, 10)}...`}
         </Code>
       </Tooltip>
       <Text size="1" css={{ flex: 1, color: '$gray900', ml: '$2' }}>
@@ -112,7 +123,10 @@ export function KeysToolbar({
           </Box>
           Format
         </Button>
-        <Button disabled={isDataLatest || !isValid} onClick={saveChanges}>
+        <Button
+          disabled={isEmpty || isDataLatest || !isValid}
+          onClick={saveChanges}
+        >
           <Box
             css={{
               mr: '$1',

@@ -21,11 +21,13 @@ import {
   SKYFILES_DATA_KEY,
 } from '../../shared/dataKeys'
 import { exportData } from './_shared/exportData'
+import { useHistory } from 'react-router-dom'
 
 export function LocalSeed() {
   const { Api, userId } = useSkynet()
   const { localRootSeed, regenerate } = useLocalRootSeed()
   const { addDomain } = useDomains()
+  const history = useHistory()
 
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
   const { data: skyDbData } = useSWR<{ data: Domain[] }>(
@@ -67,9 +69,9 @@ export function LocalSeed() {
 
   const addLocalRootSeedToDomainsTool = useCallback(() => {
     // Disabled if logged in to MySKy
-    if (userId) {
-      return
-    }
+    // if (userId) {
+    //   return
+    // }
 
     addDomain({
       name: 'Rift',
@@ -81,7 +83,8 @@ export function LocalSeed() {
         key,
       })),
     })
-  }, [addDomain, localRootSeed])
+    history.push('/data')
+  }, [addDomain, localRootSeed, history])
 
   return (
     <Box css={{ margin: '$3 0' }}>
@@ -125,10 +128,7 @@ export function LocalSeed() {
             </Button>
           </Tooltip>
           <Tooltip content="Show local seed and data keys in the Data tool">
-            <Button
-              disabled={!!userId}
-              onClick={() => addLocalRootSeedToDomainsTool()}
-            >
+            <Button onClick={() => addLocalRootSeedToDomainsTool()}>
               Add local metadata to Data
             </Button>
           </Tooltip>

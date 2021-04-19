@@ -21,25 +21,27 @@ import {
   SKYDB_DATA_KEY,
   SKYFILES_DATA_KEY,
 } from '../../shared/dataKeys'
+import { useHistory } from 'react-router-dom'
 
 export function MySkyLoggedIn() {
-  const { userId, logout } = useSkynet()
+  const { userId, logout, dataDomain: appDomain } = useSkynet()
+  const history = useHistory()
   const { domains, addDomain } = useDomains()
   const { skyfiles } = useSkyfiles()
   const { apps } = useApps()
 
   const addToSkyDBTool = useCallback(() => {
     addDomain({
-      name: 'Rift',
-      parentSeed: '',
-      childSeed: '',
+      name: appDomain,
+      dataDomain: appDomain,
       addedAt: new Date().toISOString(),
       keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY].map((key) => ({
         id: key,
         key,
       })),
     })
-  }, [addDomain])
+    history.push('/data')
+  }, [addDomain, appDomain, history])
 
   const exportAllData = useCallback(() => {
     exportData(skyfiles, domains, apps)
@@ -77,7 +79,7 @@ export function MySkyLoggedIn() {
             </Button>
           </Tooltip>
           <Tooltip content="Show MySky data in the Data tool">
-            <Button disabled onClick={() => addToSkyDBTool()}>
+            <Button onClick={() => addToSkyDBTool()}>
               Add MySky metadata to Data
             </Button>
           </Tooltip>

@@ -66,7 +66,7 @@ type Props = {
 
 export function AddDomainMySky({ closeDialog }: Props) {
   const { domains, addDomain } = useDomains()
-  const { Api } = useSkynet()
+  const { Api, userId } = useSkynet()
 
   const onSubmit = useCallback(
     (vals) => {
@@ -111,58 +111,64 @@ export function AddDomainMySky({ closeDialog }: Props) {
       >
         <Box>
           <Flex css={{ flexDirection: 'column', gap: '$3' }}>
-            <Paragraph>
-              Add any MySky data domain to view and edit the data.
+            <Paragraph css={{ color: '$gray900' }}>
+              {userId
+                ? 'Add any MySky data domain to view and edit the data.'
+                : 'Must be logged in to a MySky identity to add a data domain.'}
             </Paragraph>
-            <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-              <Flex>
-                <Text>Data domain</Text>
-                {formik.errors.dataDomain && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
-                    {formik.errors.dataDomain}
-                  </Text>
-                )}
+            {userId && (
+              <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+                <Flex>
+                  <Text>Data domain</Text>
+                  {formik.errors.dataDomain && (
+                    <Text
+                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                    >
+                      {formik.errors.dataDomain}
+                    </Text>
+                  )}
+                </Flex>
+                <ControlGroup>
+                  <Input
+                    name="dataDomain"
+                    value={formik.values.dataDomain}
+                    onChange={formik.handleChange}
+                    size="3"
+                    placeholder="eg: skyfeed"
+                    css={{
+                      boxShadow:
+                        'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                    }}
+                  />
+                  {formik.isValidating ? (
+                    <Tooltip align="end" content="Checking HNS domain for app">
+                      <Button size="2">
+                        <SpinnerIcon />
+                      </Button>
+                    </Tooltip>
+                  ) : formik.errors.dataDomain ? (
+                    <Tooltip align="end" content="No app found at HNS domain">
+                      <Button size="2" css={{ color: '$red900' }}>
+                        <ExclamationTriangleIcon />
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip align="end" content="App found at HNS domain">
+                      <Button size="2" css={{ color: '$green900' }}>
+                        <CheckIcon />
+                      </Button>
+                    </Tooltip>
+                  )}
+                </ControlGroup>
               </Flex>
-              <ControlGroup>
-                <Input
-                  name="dataDomain"
-                  value={formik.values.dataDomain}
-                  onChange={formik.handleChange}
-                  size="3"
-                  placeholder="eg: skyfeed"
-                  css={{
-                    boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
-                  }}
-                />
-                {formik.isValidating ? (
-                  <Tooltip align="end" content="Checking HNS domain for app">
-                    <Button size="2">
-                      <SpinnerIcon />
-                    </Button>
-                  </Tooltip>
-                ) : formik.errors.dataDomain ? (
-                  <Tooltip align="end" content="No app found at HNS domain">
-                    <Button size="2" css={{ color: '$red900' }}>
-                      <ExclamationTriangleIcon />
-                    </Button>
-                  </Tooltip>
-                ) : (
-                  <Tooltip align="end" content="App found at HNS domain">
-                    <Button size="2" css={{ color: '$green900' }}>
-                      <CheckIcon />
-                    </Button>
-                  </Tooltip>
-                )}
-              </ControlGroup>
-            </Flex>
+            )}
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
           <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
             Cancel
           </Button>
-          <Button size="2" type="submit" disabled={!formik.isValid}>
+          <Button size="2" type="submit" disabled={!userId || !formik.isValid}>
             <Box
               css={{
                 mr: '$1',

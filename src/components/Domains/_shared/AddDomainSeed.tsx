@@ -87,7 +87,9 @@ export function AddDomainSeed({ closeDialog }: Props) {
       >
         <Box>
           <Flex css={{ flexDirection: 'column', gap: '$3' }}>
-            <Paragraph>Add a data domain manually via explicit seed.</Paragraph>
+            <Paragraph css={{ color: '$gray900' }}>
+              Add a data domain manually via explicit seed.
+            </Paragraph>
             <Flex css={{ flexDirection: 'column', gap: '$2' }}>
               <Flex>
                 <Text>Name</Text>

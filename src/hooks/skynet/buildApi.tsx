@@ -32,17 +32,22 @@ export const buildApi = ({
     dataDomain?: string
   }) {
     if (seed) {
-      console.log(`getJSON ${dataKey} explicit seed`)
       const { publicKey } = genKeyPairFromSeed(seed)
+      console.log(`client.db.getJSON - explicit seed`)
+      console.log(`\tpublic key: ${publicKey}`)
+      console.log(`\tdata key: ${dataKey}`)
       return client.db.getJSON(publicKey, dataKey)
     }
     if (!userId) {
-      console.log(`getJSON ${dataKey} local seed`)
       const { publicKey } = genKeyPairFromSeed(localRootSeed)
+      console.log(`client.db.getJSON - local app seed`)
+      console.log(`\tpublic key: ${publicKey}`)
+      console.log(`\tdata key: ${dataKey}`)
       return client.db.getJSON(publicKey, dataKey)
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`getJSON ${dataKey} mysky`)
+    console.log(`mySky.getJSON - mysky`)
+    console.log(`\tdata path: ${dataPath}`)
     return mySky.getJSON(dataPath)
   }
   function setJSON({
@@ -57,17 +62,22 @@ export const buildApi = ({
     json: {}
   }) {
     if (seed) {
-      console.log(`setJSON ${dataKey} explicit seed`)
       const { privateKey } = genKeyPairFromSeed(seed)
+      console.log(`client.db.setJSON - explicit seed`)
+      console.log(`\tprivate key: ${privateKey}`)
+      console.log(`\tdata key: ${dataKey}`)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     if (!userId) {
-      console.log(`setJSON ${dataKey} local seed`)
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
+      console.log(`client.db.setJSON - local app seed`)
+      console.log(`\tprivate key: ${privateKey}`)
+      console.log(`\tdata key: ${dataKey}`)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`setJSON ${dataKey} mysky`)
+    console.log(`mySky.setJSON - mysky`)
+    console.log(`\tdata path: ${dataPath}`)
     return mySky.setJSON(dataPath, json)
   }
   function uploadDirectory(

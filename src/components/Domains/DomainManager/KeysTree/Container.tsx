@@ -14,6 +14,7 @@ import {
 import SeedIcon from '../../../_icons/SeedIcon'
 import { Toggle } from './Toggle'
 import { Header } from './Header'
+import { ContextMenuDomain } from '../ContextMenuDomain'
 
 type Props = {
   // customStyles?: {}
@@ -124,8 +125,17 @@ export function Container({
             }}
           />
         )}
-        {node.type === 'directory' && (
+        {node.type === 'directory' && !node.isRootDomain && (
           <ContextMenuDirectory
+            treeNode={node as TreeNodeDirectory}
+            onOpenChange={(val) => {
+              setIsMenuOpen(val)
+              setIsHovering(val)
+            }}
+          />
+        )}
+        {node.type === 'directory' && node.isRootDomain && (
+          <ContextMenuDomain
             treeNode={node as TreeNodeDirectory}
             onOpenChange={(val) => {
               setIsMenuOpen(val)

@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useDomains } from '../../../hooks/domains'
 import { App } from '../../../shared/types'
 import { Link } from '../../_shared/Link'
-import { AddApp } from './AddApp'
+// import { AddApp } from './AddApp'
 
 type Props = {
   app?: App

@@ -38,10 +38,14 @@ export default function Navbar({ toggleTheme }: Props) {
       const origin = window.location.origin
       setSelectedPortal(newPortal)
       if (hostname === 'localhost') {
-        history.go(0)
+        window.location.reload()
       } else {
-        const subdomain = extractDomainForPortal(origin, hostname)
-        history.push(`https://${subdomain}.${newPortal}`)
+        //  e.g. ("https://siasky.net", "dac.hns.siasky.net") => "dac.hns"
+        const subdomain = extractDomainForPortal(
+          `https://${selectedPortal}`,
+          hostname
+        )
+        window.location.href = `https://${subdomain}.${newPortal}`
       }
     },
     [history, setSelectedPortal]

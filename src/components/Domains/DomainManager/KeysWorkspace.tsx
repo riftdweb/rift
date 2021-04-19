@@ -65,13 +65,6 @@ export function KeysWorkspace({}: Props) {
           >
             <Box
               css={{
-                height: '25px',
-                background: '$gray200',
-                borderRadius: '4px',
-              }}
-            ></Box>
-            <Box
-              css={{
                 position: 'relative',
                 flex: 1,
                 backgroundColor: '$slate100',

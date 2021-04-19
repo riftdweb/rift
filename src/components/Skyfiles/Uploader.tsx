@@ -17,7 +17,6 @@ import React, { useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { v4 as uuid } from 'uuid'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
-import { uploadDirectory, uploadFile } from '../../shared/skynet'
 import { Skyfile } from '../../shared/types'
 import { getSize } from '../../shared/uploads'
 import useLocalStorageState from 'use-local-storage-state'
@@ -61,11 +60,9 @@ const createUploadErrorMessage = (error) => {
       return 'You are offline, please connect to the internet and try again'
     }
 
-    // TODO: We should add a note 'our team has been notified' and have some kind of notification with this error.
     return 'Server failed to respond to your request, please try again later.'
   }
 
-  // TODO: We should add a note 'our team has been notified' and have some kind of notification with this error.
   return `Critical error, please refresh the application and try again. ${error.message}`
 }
 

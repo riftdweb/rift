@@ -29,7 +29,6 @@ export function MySkyLoggedIn() {
   const { apps } = useApps()
 
   const addToSkyDBTool = useCallback(() => {
-    // TODO
     addDomain({
       name: 'Rift',
       parentSeed: '',

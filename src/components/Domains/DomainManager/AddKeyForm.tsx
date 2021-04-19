@@ -137,6 +137,10 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
                   onChange={(e) => setNewKey(e.target.value)}
                   size="3"
                   placeholder="path.json"
+                  css={{
+                    boxShadow:
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                  }}
                 />
               </ControlGroup>
             </Flex>

@@ -52,7 +52,6 @@ export function DomainContextMenu({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
-        {/* TODO maybe this should be a separate field domain.seed */}
         {domain.seed ? (
           <Fragment>
             <DropdownMenuItem

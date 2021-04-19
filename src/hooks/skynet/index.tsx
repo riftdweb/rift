@@ -94,8 +94,6 @@ export function SkynetProvider({ children }: Props) {
       }
 
       const status = await mySky.requestLoginAccess()
-      console.log(status)
-      // window.mySky = mySky
 
       // set react state
       setLoggedIn(status)
@@ -105,8 +103,6 @@ export function SkynetProvider({ children }: Props) {
         setUserId(userId)
         triggerToast(`Successfully logged in as ${userId.slice(0, 6)}...`)
       }
-
-      // TODO: refresh data
     }
     func()
   }, [isInitializing, mySky, setLoggedIn, setUserId])

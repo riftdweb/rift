@@ -105,7 +105,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
   }, [mutate])
 
   const revertChanges = useCallback(() => {
-    setEditingValue(value || '{}')
+    setEditingValue(value)
   }, [setEditingValue, value])
 
   const isDataLatest = useMemo(() => value === editingValue, [
@@ -191,7 +191,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
           <AceEditor
             style={{ width: '100%', height: '100%' }}
             key={dataKey.id}
-            value={editingValue}
+            value={editingValue || ''}
             mode="json"
             theme="solarized_dark"
             onChange={(val) => setEditingValue(val)}

@@ -1,4 +1,5 @@
 import {
+  Tooltip,
   Badge,
   Box,
   Card,
@@ -40,7 +41,8 @@ export function SkappCard({
             {name}
           </Subheading>
           <Box css={{ flex: 1 }} />
-          <Link href={`/apps/${id}`}>
+          {/* <Link href={`/apps/${id}`}> */}
+          <Tooltip content="The ability to lock app versions is coming soon">
             <Box
               css={{
                 color: lockedOn ? '$gray900' : '$gray600',
@@ -49,7 +51,8 @@ export function SkappCard({
             >
               {lockedOn ? <LockClosedIcon /> : <LockOpen2Icon />}
             </Box>
-          </Link>
+          </Tooltip>
+          {/* </Link> */}
         </Flex>
         <Flex css={{ ai: 'center', my: '$2' }}>
           <Code>{hnsDomain}</Code>

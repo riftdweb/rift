@@ -31,12 +31,12 @@ export function TabNav() {
         </Box>
         Data
       </TabLink>
-      <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
+      {/* <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
         <Box css={{ mr: '$1' }}>
           <MixIcon />
         </Box>
         Tools
-      </TabLink>
+      </TabLink> */}
       <TabLink
         as={Link}
         to="/settings"

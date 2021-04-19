@@ -124,12 +124,12 @@ export function LocalSeed() {
               Copy seed to clipboard
             </Button>
           </Tooltip>
-          <Tooltip content="Show seed and data keys in the Domains tool">
+          <Tooltip content="Show local seed and data keys in the Data tool">
             <Button
               disabled={!!userId}
               onClick={() => addLocalRootSeedToDomainsTool()}
             >
-              Add local data to Domains
+              Add local metadata to Data
             </Button>
           </Tooltip>
           <Tooltip content="Export all local user data">

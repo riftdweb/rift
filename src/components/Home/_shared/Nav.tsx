@@ -41,7 +41,7 @@ export function Nav({ app }: Props) {
           </Link>
         )}
         {!app && <Box css={{ flex: 1 }} />}
-        {!app && <AddApp />}
+        {/* {!app && <AddApp />} */}
         {/* {app && <SeedContextMenu app={app} variant="gray" size="2" />} */}
       </Flex>
     </Heading>

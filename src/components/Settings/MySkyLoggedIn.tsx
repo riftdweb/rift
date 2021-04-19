@@ -77,9 +77,9 @@ export function MySkyLoggedIn() {
               Copy user ID to clipboard
             </Button>
           </Tooltip>
-          <Tooltip content="Show MySky data in the Domains tool">
+          <Tooltip content="Show MySky data in the Data tool">
             <Button disabled onClick={() => addToSkyDBTool()}>
-              Add MySky metadata to Domains
+              Add MySky metadata to Data
             </Button>
           </Tooltip>
           <Tooltip content="Export all MySky user data">

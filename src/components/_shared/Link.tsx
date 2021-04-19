@@ -8,10 +8,20 @@ type Props = {
   href?: string
   target?: string
   content?: string
+  onClick?: () => void
   css?: {}
 }
 
-export function Link({ as, to, href, target, children, css, content }: Props) {
+export function Link({
+  as,
+  to,
+  href,
+  target,
+  children,
+  onClick,
+  css,
+  content,
+}: Props) {
   if (as === 'button') {
     if (content) {
       return (
@@ -21,6 +31,7 @@ export function Link({ as, to, href, target, children, css, content }: Props) {
           as={RLink}
           to={to}
           href={href}
+          onClick={onClick}
           target={target}
         >
           <Tooltip content={content}>
@@ -36,6 +47,7 @@ export function Link({ as, to, href, target, children, css, content }: Props) {
         as={RLink}
         to={to}
         href={href}
+        onClick={onClick}
         target={target}
       >
         {children}
@@ -45,7 +57,14 @@ export function Link({ as, to, href, target, children, css, content }: Props) {
 
   if (content) {
     return (
-      <MLink css={css} as={RLink} to={to} href={href} target={target}>
+      <MLink
+        css={css}
+        as={RLink}
+        to={to}
+        href={href}
+        onClick={onClick}
+        target={target}
+      >
         <Tooltip content={content}>
           <Box>{children}</Box>
         </Tooltip>
@@ -54,7 +73,14 @@ export function Link({ as, to, href, target, children, css, content }: Props) {
   }
 
   return (
-    <MLink css={css} as={RLink} to={to} href={href} target={target}>
+    <MLink
+      css={css}
+      as={RLink}
+      to={to}
+      href={href}
+      onClick={onClick}
+      target={target}
+    >
       {children}
     </MLink>
   )

@@ -13,6 +13,8 @@ const pathsMap = {
     '{appDomain}/interactions/page_1.json',
     '{appDomain}/interactions/page_2.json',
   ],
+  'riftapp.hns': ['apps', 'skyfiles', 'domains'],
+  localhost: ['apps', 'skyfiles', 'domains'],
 }
 
 export function getDefaultPaths(appDomain: string, domain: string) {

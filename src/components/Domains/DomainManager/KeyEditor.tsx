@@ -9,6 +9,7 @@ import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 import { Domain, DomainKey } from '../../../shared/types'
 import { KeysToolbar } from './KeysToolbar'
 import { useSkynet } from '../../../hooks/skynet'
+import { triggerToast } from '../../../shared/toast'
 
 const importConfigFiles = () => {
   return Promise.all([
@@ -36,7 +37,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [selectedPortal] = useSelectedPortal()
-  const { Api, identityKey } = useSkynet()
+  const { Api, identityKey, dataDomain: appDomain } = useSkynet()
   const { removeKey } = useDomains()
   const key = [identityKey, domain.id, dataKey.id]
   const { data, isValidating, mutate } = useSWR(key, () => {
@@ -145,12 +146,21 @@ export function KeyEditor({ domain, dataKey }: Props) {
 
         // Only one of the two will be defined
         const { seed, dataDomain } = domain
-        await Api.setJSON({
-          seed,
-          dataDomain,
-          dataKey: dataKey.key,
-          json: newData,
-        })
+        try {
+          await Api.setJSON({
+            seed,
+            dataDomain,
+            dataKey: dataKey.key,
+            json: newData,
+          })
+        } catch (e) {
+          const customMessage =
+            e.message === 'Permission was not granted'
+              ? 'Permission to edit this content has not been granted'
+              : e.message
+
+          triggerToast(customMessage, 'error')
+        }
 
         // Sync latest, will likely be the same
         await mutate()
@@ -171,6 +181,9 @@ export function KeyEditor({ domain, dataKey }: Props) {
     skylink,
   ])
 
+  const isReadOnly =
+    !domain.seed && !['cqra.hns', appDomain].includes(domain.dataDomain)
+
   return (
     <Flex css={{ flexDirection: 'column', height: '100%', width: '100%' }}>
       <KeysToolbar
@@ -179,6 +192,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
         isValidating={isValidating}
         isSaving={isSaving}
         isValid={isValid}
+        isReadOnly={isReadOnly}
         isEmpty={!editingValue}
         formatCode={formatCode}
         refreshKey={refreshKey}
@@ -190,6 +204,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
         <Box css={{ borderRadius: '6px', overflow: 'hidden', flex: 1 }}>
           <AceEditor
             style={{ width: '100%', height: '100%' }}
+            readOnly={isReadOnly}
             key={dataKey.id}
             value={editingValue || ''}
             mode="json"

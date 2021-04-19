@@ -13,6 +13,9 @@ import {
 } from '@modulz/design-system'
 import {
   DotsHorizontalIcon,
+  LockClosedIcon,
+  Pencil1Icon,
+  Pencil2Icon,
   ResetIcon,
   RulerHorizontalIcon,
   SymbolIcon,
@@ -27,6 +30,7 @@ type Props = {
   isValid: boolean
   isEmpty: boolean
   isValidating: boolean
+  isReadOnly: boolean
   isSaving: boolean
   formatCode: () => void
   refreshKey: () => void
@@ -45,6 +49,7 @@ export function KeysToolbar({
   isValid,
   isEmpty,
   isValidating,
+  isReadOnly,
   isSaving,
   isDataLatest,
 }: Props) {
@@ -85,22 +90,23 @@ export function KeysToolbar({
           {!skylink && !isValidating ? 'N/A' : `${skylink.slice(0, 10)}...`}
         </Code>
       </Tooltip>
-      <Text size="1" css={{ flex: 1, color: '$gray900', ml: '$2' }}>
+      {isReadOnly ? (
+        <Tooltip content="File permissions are read-only">
+          <Box css={{ color: '$gray900', margin: '0 $1 0 $2' }}>
+            <LockClosedIcon />
+          </Box>
+        </Tooltip>
+      ) : (
+        <Tooltip content="File permissions are read-write">
+          <Box css={{ color: '$gray900', margin: '0 $1 0 $2' }}>
+            <Pencil2Icon />
+          </Box>
+        </Tooltip>
+      )}
+      <Text size="1" css={{ flex: 1, color: '$gray900' }}>
         {message}
       </Text>
       <ControlGroup>
-        <Tooltip content="Revert all changes">
-          <Button disabled={isDataLatest} onClick={revertChanges}>
-            <Box
-              css={{
-                mr: '$1',
-              }}
-            >
-              <ResetIcon />
-            </Box>
-            Revert
-          </Button>
-        </Tooltip>
         <Tooltip content="Resync data key from network">
           <Button disabled={isSaving || isValidating} onClick={refreshKey}>
             <Box
@@ -113,7 +119,19 @@ export function KeysToolbar({
             Resync
           </Button>
         </Tooltip>
-        <Button onClick={formatCode}>
+        <Tooltip content="Revert all changes">
+          <Button disabled={isReadOnly || isDataLatest} onClick={revertChanges}>
+            <Box
+              css={{
+                mr: '$1',
+              }}
+            >
+              <ResetIcon />
+            </Box>
+            Revert
+          </Button>
+        </Tooltip>
+        <Button disabled={isReadOnly} onClick={formatCode}>
           <Box
             css={{
               mr: '$1',
@@ -124,7 +142,7 @@ export function KeysToolbar({
           Format
         </Button>
         <Button
-          disabled={isEmpty || isDataLatest || !isValid}
+          disabled={isReadOnly || isEmpty || isDataLatest || !isValid}
           onClick={saveChanges}
         >
           <Box

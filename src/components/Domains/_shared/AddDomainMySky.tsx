@@ -13,17 +13,18 @@ import {
 import {
   CheckIcon,
   ExclamationTriangleIcon,
+  LockClosedIcon,
   Pencil2Icon,
 } from '@radix-ui/react-icons'
 import { Fragment, useCallback, useMemo } from 'react'
 import { useDomains } from '../../../hooks/domains'
 import debounce from 'lodash/debounce'
-import { Domain } from '../../../shared/types'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 import { useSkynet } from '../../../hooks/skynet'
 import { getDefaultPaths } from './defaultPaths'
+import { Link } from '../../_shared/Link'
 
 const dGetHnsData = debounce(
   async (Api: any, hnsDomain: string, resolve: any) => {
@@ -108,6 +109,8 @@ export function AddDomainMySky({ closeDialog }: Props) {
 
   const defaultPaths = getDefaultPaths(appDomain, formik.values.dataDomain)
 
+  const isReadOnly = !['cqra.hns', appDomain].includes(formik.values.dataDomain)
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <Flex
@@ -143,7 +146,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                       value={formik.values.dataDomain}
                       onChange={formik.handleChange}
                       size="3"
-                      placeholder="eg: skyfeed"
+                      placeholder="eg: skyfeed.hns"
                       css={{
                         boxShadow:
                           'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
@@ -173,7 +176,53 @@ export function AddDomainMySky({ closeDialog }: Props) {
                     )}
                   </ControlGroup>
                 </Flex>
-                {defaultPaths.length && (
+                {!formik.values.dataDomain &&
+                  !existingDataDomains.includes('crqa.hns') && (
+                    <Flex
+                      css={{
+                        color: '$gray900',
+                        gap: '$1',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <Text
+                        css={{
+                          position: 'relative',
+                          top: '1px',
+                          color: '$gray900',
+                        }}
+                      >
+                        Suggestions:
+                      </Text>
+                      <Link
+                        onClick={() =>
+                          formik.setFieldValue('dataDomain', 'crqa.hns', true)
+                        }
+                      >
+                        crqa.hns
+                      </Link>
+                    </Flex>
+                  )}
+                {formik.values.dataDomain && !formik.errors.dataDomain && (
+                  <Box>
+                    {isReadOnly ? (
+                      <Flex css={{ color: '$gray900', gap: '$1' }}>
+                        <LockClosedIcon />
+                        <Text css={{ color: '$gray900' }}>
+                          File permissions will be read-only
+                        </Text>
+                      </Flex>
+                    ) : (
+                      <Flex css={{ color: '$gray900', gap: '$1' }}>
+                        <Pencil2Icon />
+                        <Text css={{ color: '$gray900' }}>
+                          File permissions will be read-write
+                        </Text>
+                      </Flex>
+                    )}
+                  </Box>
+                )}
+                {!!defaultPaths.length && (
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                     <Flex css={{ alignItems: 'center' }}>
                       <Text>Add default file paths</Text>
@@ -187,7 +236,9 @@ export function AddDomainMySky({ closeDialog }: Props) {
                     </Flex>
                     <Code>
                       {defaultPaths.map((path) => (
-                        <Box css={{ margin: '$1 0' }}>{path}</Box>
+                        <Box key={path} css={{ margin: '$1 0' }}>
+                          {path}
+                        </Box>
                       ))}
                     </Code>
                   </Flex>

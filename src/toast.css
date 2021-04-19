@@ -10,6 +10,13 @@
   /* box-shadow: 0 1px 10px 0 var(--colors-panel), 0 2px 15px 0 var(--colors-panel); */
 }
 
+.Toastify__toast--error {
+  background: var(--colors-red900);
+  border: 1px solid var(--colors-panel);
+  min-height: inherit;
+  /* box-shadow: 0 1px 10px 0 var(--colors-panel), 0 2px 15px 0 var(--colors-panel); */
+}
+
 .Toastify__toast:last-of-type {
   margin-bottom: 0;
 }

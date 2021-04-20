@@ -12,6 +12,7 @@ import { Config } from './_config'
 const Home = lazy(() => import('../pages/Home'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 const Data = lazy(() => import('../pages/Data'))
+const Dns = lazy(() => import('../pages/Dns'))
 const Tools = lazy(() => import('../pages/Tools'))
 const Settings = lazy(() => import('../pages/Settings'))
 
@@ -47,6 +48,12 @@ export function App() {
             </Route>
             <Route path="/data">
               <Data />
+            </Route>
+            <Route path="/dns/:id">
+              <Dns />
+            </Route>
+            <Route path="/dns">
+              <Dns />
             </Route>
             <Route path="/tools">
               <Tools />

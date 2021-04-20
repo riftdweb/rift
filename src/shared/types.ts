@@ -88,3 +88,11 @@ export type App = {
   lockedOn?: string
   revisions: AppRevision[]
 }
+
+export type DnsEntry = {
+  id: string
+  name: string
+  skylink: string
+  addedAt: string
+  updatedAt: string
+}

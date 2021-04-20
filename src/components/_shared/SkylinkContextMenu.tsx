@@ -10,7 +10,6 @@ import {
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
-import { Link as RLink } from 'react-router-dom'
 
 type Props = {
   skylink: string

@@ -15,6 +15,7 @@ import { Skyfile } from '../../shared/types'
 import { getSize } from '../../shared/uploads'
 import FolderIcon from '../_icons/FolderIcon'
 import SpinnerIcon from '../_icons/SpinnerIcon'
+import { SkylinkDnsMenu } from '../_shared/SkylinkDnsMenu'
 
 const getProgressText = (progress) => {
   if (progress === -1) {
@@ -39,6 +40,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   } = skyfile
   const portal = ingressPortals.length ? ingressPortals[0] : ''
   const [isHovering, setIsHovering] = useState<boolean>(false)
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
 
   const iconElement = useMemo(() => {
     if (status === 'complete') {
@@ -65,144 +67,150 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   const menuRef = useRef()
 
   return (
-    <Flex
+    <Box
       onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onMouseLeave={() => !isMenuOpen && setIsHovering(false)}
       css={{
         position: 'relative',
+        height: '40px',
         borderBottom: '1px solid $gray300',
         '&:last-of-type': {
           borderBottom: 'none',
         },
-        alignItems: 'center',
-        gap: '$1',
-        padding: '$2 $3',
         '&:hover': {
           backgroundColor: '$gray100',
         },
       }}
     >
-      <Box css={{ color: '$gray900' }}>{iconElement}</Box>
-      <Box css={{ flex: 2, overflow: 'hidden' }}>
-        <Text
-          size="3"
-          css={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          <Link target="_blank" css={{ outline: 'none' }} href={weblink}>
-            {metadata.filename}
-          </Link>
-        </Text>
-      </Box>
-      <Box
+      <Flex
         css={{
-          flex: 1,
-          display: 'none',
-          when: {
-            bp1: {
-              display: 'block',
-            },
-          },
+          width: '100%',
+          height: '100%',
+          padding: '$2 $3',
+          position: 'absolute',
+          alignItems: 'center',
+          gap: '$1',
         }}
       >
-        {skylink && (
-          <Tooltip align="start" content="Copy skylink">
-            <Text
-              size="2"
-              onClick={() => copyToClipboard(skylink, 'skylink')}
-              css={{
-                color: '$gray900',
-                background: 'none',
-                fontFamily: '$mono',
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              {skylink.slice(0, 10)}...
-            </Text>
-          </Tooltip>
-        )}
-      </Box>
-      <Box
-        css={{
-          flex: 1,
-          display: 'none',
-          when: {
-            bp1: {
-              display: 'block',
-            },
-          },
-        }}
-      >
-        <Text css={{ color: '$gray900' }}>{size}</Text>
-      </Box>
-      <Box
-        css={{
-          flex: 1,
-          display: 'none',
-          when: {
-            bp2: {
-              display: 'block',
-            },
-          },
-        }}
-      >
-        {portal && <Text css={{ color: '$gray800' }}>{portal}</Text>}
-      </Box>
-      {status === 'complete' ? (
-        <Box
-          css={{
-            flex: 1,
-            color: '$gray700',
-          }}
-        >
+        <Box css={{ color: '$gray900' }}>{iconElement}</Box>
+        <Box css={{ flex: 2, overflow: 'hidden' }}>
           <Text
+            size="3"
             css={{
-              color: '$gray900',
-              textAlign: 'right',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
             }}
           >
-            {uploadedAt &&
-              formatDistance(parseISO(uploadedAt), new Date(), {
-                addSuffix: true,
-              })}
+            <Link target="_blank" css={{ outline: 'none' }} href={weblink}>
+              {metadata.filename}
+            </Link>
           </Text>
         </Box>
-      ) : (
-        <Box css={{ color: '$gray900', flex: 1, textAlign: 'right' }}>
-          {status === 'uploading' && getProgressText(progress)}
-          {status === 'processing' && 'Processing...'}
-          {status === 'error' && (
-            <Tooltip content={error}>
-              <Link css={{ color: '$red900', textAlign: 'right' }}>
-                {'Upload failed'}
-              </Link>
+        <Box
+          css={{
+            flex: 1,
+            display: 'none',
+            when: {
+              bp1: {
+                display: 'block',
+              },
+            },
+          }}
+        >
+          {skylink && (
+            <Tooltip align="start" content="Copy skylink">
+              <Text
+                size="2"
+                onClick={() => copyToClipboard(skylink, 'skylink')}
+                css={{
+                  color: '$gray900',
+                  background: 'none',
+                  fontFamily: '$mono',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                {skylink.slice(0, 10)}...
+              </Text>
             </Tooltip>
           )}
         </Box>
-      )}
+        <Box
+          css={{
+            flex: 1,
+            display: 'none',
+            when: {
+              bp1: {
+                display: 'block',
+              },
+            },
+          }}
+        >
+          <Text css={{ color: '$gray900' }}>{size}</Text>
+        </Box>
+        <Box
+          css={{
+            flex: 1,
+            display: 'none',
+            when: {
+              bp2: {
+                display: 'block',
+              },
+            },
+          }}
+        >
+          {portal && <Text css={{ color: '$gray800' }}>{portal}</Text>}
+        </Box>
+        {status === 'complete' ? (
+          <Box
+            css={{
+              flex: 1,
+            }}
+          >
+            <Text
+              css={{
+                color: '$gray900',
+                textAlign: 'right',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {uploadedAt &&
+                formatDistance(parseISO(uploadedAt), new Date(), {
+                  addSuffix: true,
+                })}
+            </Text>
+          </Box>
+        ) : (
+          <Box css={{ color: '$gray900', flex: 1, textAlign: 'right' }}>
+            {status === 'uploading' && getProgressText(progress)}
+            {status === 'processing' && 'Processing...'}
+            {status === 'error' && (
+              <Tooltip content={error}>
+                <Link css={{ color: '$red900', textAlign: 'right' }}>
+                  {'Upload failed'}
+                </Link>
+              </Tooltip>
+            )}
+          </Box>
+        )}
+      </Flex>
       {status === 'complete' && (
         <Flex
-          ref={menuRef}
           css={{
-            position: 'absolute',
-            right: '10px',
-            height: '100%',
+            position: 'relative',
             backgroundColor: '$gray100',
-            display: isHovering ? 'flex' : 'none',
+            visibility: isHovering ? 'inherit' : 'hidden',
             alignItems: 'center',
-            paddingLeft: '100px',
+            float: 'right',
+            height: '100%',
           }}
         >
           <Tooltip content="Filter by name">
@@ -213,6 +221,13 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
               <MagnifyingGlassIcon />
             </Button>
           </Tooltip>
+          {/* <SkylinkDnsMenu
+            skylink={skylink}
+            onOpenChange={(val) => {
+              setIsMenuOpen(val)
+              setIsHovering(val)
+            }}
+          /> */}
           <Tooltip content="Open weblink">
             <Button variant="ghost" as="a" href={weblink} target="_blank">
               <ExternalLinkIcon />
@@ -228,7 +243,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           </Tooltip>
         </Flex>
       )}
-    </Flex>
+    </Box>
   )
 }
 

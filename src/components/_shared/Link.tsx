@@ -75,7 +75,7 @@ export function Link({
   return (
     <MLink
       css={css}
-      as={RLink}
+      as={to ? RLink : 'a'}
       to={to}
       href={href}
       onClick={onClick}

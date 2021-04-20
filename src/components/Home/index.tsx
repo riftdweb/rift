@@ -8,14 +8,14 @@ import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 
 export function Home() {
-  const [selectedPortal] = useSelectedPortal()
+  const [portal] = useSelectedPortal()
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
         <Nav />
         <Grid>
           {skapps.map((app) => (
-            <SkappCard key={app.id} app={app} portal={selectedPortal} />
+            <SkappCard key={app.id} app={app} portal={portal} />
           ))}
         </Grid>
         <Heading css={{ py: '$3' }}>Resources</Heading>

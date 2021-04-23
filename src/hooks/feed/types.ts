@@ -23,7 +23,7 @@ export type ProcessedPost = {
   post: Post
   score: number
   scoreDetails: {
-    relevancy: {}
+    signal: {}
     decay: number
   }
   nlp: {

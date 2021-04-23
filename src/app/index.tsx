@@ -11,7 +11,8 @@ import { Config } from './_config'
 // import Tools from '../pages/Tools'
 // import Settings from '../pages/Settings'
 const Home = lazy(() => import('../pages/Home'))
-const News = lazy(() => import('../pages/News'))
+const NewsFeed = lazy(() => import('../pages/NewsFeed'))
+const NewsInsights = lazy(() => import('../pages/NewsInsights'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 const Data = lazy(() => import('../pages/Data'))
 const Dns = lazy(() => import('../pages/Dns'))
@@ -63,8 +64,11 @@ export function App() {
             <Route path="/settings">
               <Settings />
             </Route>
+            <Route path="/news/insights">
+              <NewsInsights />
+            </Route>
             <Route path="/news">
-              <News />
+              <NewsFeed />
             </Route>
             <Route path="/">
               <Home />

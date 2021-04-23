@@ -1,0 +1,92 @@
+// import { Group } from '@visx/group'
+// import { Bar, LinePath } from '@visx/shape'
+// import { scaleLinear, scaleBand } from '@visx/scale'
+// import { ProcessedPost } from '../../../hooks/feed/types'
+// import { useFeed } from '../../../hooks/feed'
+// import { useMemo } from 'react'
+// import {
+//   AnimatedAxis,
+//   AnimatedGrid,
+//   AnimatedLineSeries,
+//   Tooltip,
+//   XYChart,
+// } from '@visx/xychart'
+// import { Box } from '@modulz/design-system'
+
+// // Define the graph dimensions and margins
+// const width = 500
+// const height = 500
+// const margin = { top: 20, bottom: 20, left: 20, right: 20 }
+
+// // Then we'll create some bounds
+// const xMax = width - margin.left - margin.right
+// const yMax = height - margin.top - margin.bottom
+
+// // We'll make some helpers to get at the data we want
+// const x = (d: ProcessedPost) => d.post.id
+// const y = (d: ProcessedPost) => d.score
+
+// // We'll make some helpers to get at the data we want
+// const accessors = {
+//   xAccessor: (d) => d.x,
+//   yAccessor: (d) => d.y,
+// }
+// const tickLabelOffset = 10
+
+// // Finally we'll embed it all in an SVG
+// export function Graph2(props) {
+//   const { rankedPosts } = useFeed()
+
+//   const posts = rankedPosts || []
+//   const data = posts.map((post) =>
+//     [0, 1, 2, 3].map((time) => ({
+//       x: time,
+//       y: post.score,
+//     }))
+//   )
+
+//   return (
+//     <Box>
+//       <XYChart
+//         height={270}
+//         margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
+//         xScale={{ type: 'time' }}
+//         yScale={{ type: 'linear' }}
+//       >
+//         <AnimatedGrid
+//           columns={false}
+//           numTicks={4}
+//           lineStyle={{
+//             stroke: '#e1e1e1',
+//             strokeLinecap: 'round',
+//             strokeWidth: 1,
+//           }}
+//           strokeDasharray="0, 4"
+//         />
+//         <AnimatedAxis
+//           hideAxisLine
+//           hideTicks
+//           orientation="bottom"
+//           tickLabelProps={() => ({ dy: tickLabelOffset })}
+//           left={30}
+//           numTicks={4}
+//         />
+//         <AnimatedAxis
+//           hideAxisLine
+//           hideTicks
+//           orientation="left"
+//           numTicks={4}
+//           tickLabelProps={() => ({ dx: -10 })}
+//         />
+//         {data.map((series) => (
+//           <AnimatedLineSeries
+//             stroke="#008561"
+//             dataKey="primary_line"
+//             data={series}
+//             {...accessors}
+//           />
+//         ))}
+//       </XYChart>
+//     </Box>
+//   )
+// }

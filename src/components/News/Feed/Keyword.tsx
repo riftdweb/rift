@@ -47,7 +47,7 @@ export function Keyword({ value, stem, debugMode, isHovering }: Props) {
         css={{
           ...textStyles,
           position: 'relative',
-          backgroundColor: intensity || (isHovering ? '$green100' : 'none'),
+          backgroundColor: intensity || (isHovering ? '$green200' : 'none'),
         }}
       >
         {value}

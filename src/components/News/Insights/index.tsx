@@ -1,13 +1,13 @@
 import { Box } from '@modulz/design-system'
-import { Nav } from './_shared/Nav'
-import { Feed } from './Feed'
+import { Nav } from '../_shared/Nav'
+import { Graph } from './Graph'
 
-export function News() {
+export function NewsInsights() {
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
         <Nav />
-        <Feed />
+        <Graph />
       </Box>
     </Box>
   )

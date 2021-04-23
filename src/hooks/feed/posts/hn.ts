@@ -8,7 +8,7 @@ export async function getStoriesHn(): Promise<Story[]> {
   }
 
   const response = await fetch(
-    'https://hacker-news.firebaseio.com/v0/newstories.json'
+    'https://hacker-news.firebaseio.com/v0/topstories.json'
   )
   const stories = await response.json()
 

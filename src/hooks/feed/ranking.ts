@@ -10,6 +10,38 @@ type ScoreData = {
   }
 }
 
+const c_weight = 0.5
+const v_weight = 0.002
+const r_weight = 0.5
+const d_weight = 0.2
+
+function calculateSignal({ p, c, v, r, d }) {
+  return p + c_weight * c + v_weight * v + r_weight * r + d_weight * d + 0.75
+}
+
+function calculateDecay({ t_c, t_i }) {
+  return 1 / (1 + Math.pow(t_c, 1.8) - Math.pow(t_c - t_i, 1.2))
+}
+
+const time_increment = 1000 * 60 * 60 * 4
+
+function calculateTimeDiff({ t, t_now }) {
+  if (t_now < t) {
+    return 0
+  }
+  return (t_now - t) / time_increment
+}
+
+function rank({ processedPost, t_now, p, c, v, r, d }) {
+  const t_c = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+  const t_i = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+
+  const signal = calculateSignal({ p, c, v, r, d })
+  const decay = calculateDecay({ t_c, t_i })
+
+  return signal * decay
+}
+
 /*
 Algorithm 
   Potential affinty metrics
@@ -26,14 +58,26 @@ Algorithm
     - User's own average time spent on author's content
 */
 
-function rankPost(
-  processedPost: Partial<ProcessedPost>,
-  { keywords, domains }: ScoreData
-): ProcessedPost {
+export function rankPost({
+  post: processedPost,
+  rankTime = new Date().getTime(),
+  scoreData: { keywords, domains },
+}: {
+  post: Partial<ProcessedPost>
+  rankTime?: number
+  scoreData: ScoreData
+}): ProcessedPost {
   const titleKeywordStems = processedPost.nlp.data.keywords.map(
     (keyword) => keyword.stem
   )
   const hostname = new URL(processedPost.post.content.link).hostname
+
+  if (rankTime < processedPost.post.ts) {
+    return {
+      ...processedPost,
+      score: 0,
+    } as ProcessedPost
+  }
 
   // p: Number of points (like upvotes or likes)
   // c: Number of comments
@@ -68,23 +112,30 @@ function rankPost(
     ([domain, count]) => hostname === domain
   )
   const d = d_data ? d_data[1] : 0
-  const t_c = 5
-  const t_i = 5
+  const t_now = rankTime
 
-  const c_weight = 0.5
-  const v_weight = 0.002
-  const r_weight = 0.5
-  const d_weight = 0.2
+  const output = rank({
+    processedPost,
+    t_now,
+    p,
+    c,
+    v,
+    r,
+    d,
+  })
 
-  const score =
-    (p + c_weight * c + v_weight * v + r_weight * r + d_weight * d + 0.75) /
-    (1 + Math.pow(t_c, 1.8) - Math.pow(t_c - t_i, 1.2))
+  const t_c = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+  const t_i = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+
+  const decay = calculateDecay({ t_c, t_i })
+
+  const score = Number((output * 100).toFixed(0))
 
   return {
     ...processedPost,
     score,
     scoreDetails: {
-      relevancy: {
+      signal: {
         points: p,
         comments: c_weight * c,
         views: v_weight * v,
@@ -92,7 +143,7 @@ function rankPost(
         keywordsList: r_data.matchWords,
         domain: d_weight * d,
       },
-      decay: 1 + Math.pow(t_c, 1.8) - Math.pow(t_c - t_i, 1.2),
+      decay,
     },
   } as ProcessedPost
 }
@@ -103,7 +154,12 @@ export async function rankPosts(
 ): Promise<ProcessedPost[]> {
   let _posts = []
   _posts = await processPosts(posts)
-  _posts = _posts.map((post) => rankPost(post, scoreData))
+  _posts = _posts.map((post) =>
+    rankPost({
+      post,
+      scoreData,
+    })
+  )
   _posts = _posts.sort((a, b) => (a.score < b.score ? 1 : -1))
 
   return _posts

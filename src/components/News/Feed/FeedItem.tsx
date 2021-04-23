@@ -85,7 +85,7 @@ export function FeedItem({ item, index }: Props) {
             position: 'absolute',
             color: '$hiContrast',
             cursor: 'pointer',
-            top: '21px',
+            top: '22px',
             transform: 'scale(1.4)',
             '&:hover': {
               transform: 'scale(1.6)',
@@ -108,7 +108,7 @@ export function FeedItem({ item, index }: Props) {
           css={{
             flexDirection: 'column',
             gap: '$1',
-            marginLeft: '30px',
+            marginLeft: '26px',
           }}
         >
           <Flex
@@ -134,9 +134,7 @@ export function FeedItem({ item, index }: Props) {
             )}
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            <Text css={{ color: '$gray900' }}>
-              {(score * 1000).toFixed(0)} points
-            </Text>
+            <Text css={{ color: '$gray900' }}>{score} points</Text>
             <Flex
               css={{
                 color: '$gray900',

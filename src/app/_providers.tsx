@@ -3,6 +3,7 @@ import { DomainsProvider } from '../hooks/domains'
 import { AppsProvider } from '../hooks/useApps'
 import { SkyfilesProvider } from '../hooks/useSkyfiles'
 import { DnsProvider } from '../hooks/useDns'
+import { FeedProvider } from '../hooks/feed'
 
 export function Providers({ children }) {
   const { isInitializing } = useSkynet()
@@ -17,7 +18,9 @@ export function Providers({ children }) {
     <AppsProvider>
       <DomainsProvider>
         <DnsProvider>
-          <SkyfilesProvider>{children}</SkyfilesProvider>
+          <FeedProvider>
+            <SkyfilesProvider>{children}</SkyfilesProvider>
+          </FeedProvider>
         </DnsProvider>
       </DomainsProvider>
     </AppsProvider>

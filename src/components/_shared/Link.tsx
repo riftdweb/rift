@@ -22,12 +22,16 @@ export function Link({
   css,
   content,
 }: Props) {
+  const _css = {
+    ...css,
+    cursor: 'pointer',
+  }
   if (as === 'button') {
     if (content) {
       return (
         <Button
           variant="ghost"
-          css={css}
+          css={_css}
           as={RLink}
           to={to}
           href={href}
@@ -43,7 +47,7 @@ export function Link({
     return (
       <Button
         variant="ghost"
-        css={css}
+        css={_css}
         as={RLink}
         to={to}
         href={href}
@@ -58,7 +62,7 @@ export function Link({
   if (content) {
     return (
       <MLink
-        css={css}
+        css={_css}
         as={RLink}
         to={to}
         href={href}
@@ -74,7 +78,7 @@ export function Link({
 
   return (
     <MLink
-      css={css}
+      css={_css}
       as={to ? RLink : 'a'}
       to={to}
       href={href}

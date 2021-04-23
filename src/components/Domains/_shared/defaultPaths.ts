@@ -5,13 +5,13 @@ const pathsMap = {
 
     // keeps track of all new content entries
     '{appDomain}/newcontent/index.json',
+    '{appDomain}/newcontent/page_0.json',
     '{appDomain}/newcontent/page_1.json',
-    '{appDomain}/newcontent/page_2.json',
 
     // // keeps track of all content interaction entries
     '{appDomain}/interactions/index.json',
+    '{appDomain}/interactions/page_0.json',
     '{appDomain}/interactions/page_1.json',
-    '{appDomain}/interactions/page_2.json',
   ],
   'riftapp.hns': ['apps', 'skyfiles', 'domains'],
   localhost: ['apps', 'skyfiles', 'domains'],

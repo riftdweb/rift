@@ -5,11 +5,13 @@ import SpinnerIcon from '../components/_icons/SpinnerIcon'
 import { Config } from './_config'
 
 // import Home from '../pages/Home'
+// import News from '../pages/News'
 // import Skyfiles from '../pages/Skyfiles'
 // import Data from '../pages/Data'
 // import Tools from '../pages/Tools'
 // import Settings from '../pages/Settings'
 const Home = lazy(() => import('../pages/Home'))
+const News = lazy(() => import('../pages/News'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 const Data = lazy(() => import('../pages/Data'))
 const Dns = lazy(() => import('../pages/Dns'))
@@ -60,6 +62,9 @@ export function App() {
             </Route>
             <Route path="/settings">
               <Settings />
+            </Route>
+            <Route path="/news">
+              <News />
             </Route>
             <Route path="/">
               <Home />

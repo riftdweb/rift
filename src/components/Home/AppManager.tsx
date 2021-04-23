@@ -7,7 +7,7 @@ import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 
 export default function AppManager() {
-  const [selectedPortal] = useSelectedPortal()
+  const [portal] = useSelectedPortal()
   const { appId } = useParams()
   const isValidating = false
   const app = skapps.find((app) => app.id === appId)
@@ -26,7 +26,7 @@ export default function AppManager() {
         <Nav app={app} />
         <Grid>
           {skapps.map((app) => (
-            <SkappCard key={app.id} app={app} portal={selectedPortal} />
+            <SkappCard key={app.id} app={app} portal={portal} />
           ))}
         </Grid>
       </Box>

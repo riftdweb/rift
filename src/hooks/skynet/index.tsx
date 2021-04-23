@@ -63,7 +63,7 @@ export function SkynetProvider({ children }: Props) {
         console.log('Data domain: ', dataDomain)
         const _mySky = await client.loadMySky(dataDomain, {
           // dev: true,
-          debug: true,
+          // debug: true,
         })
         // load necessary DACs and permissions
         await _mySky.loadDacs(contentRecord)

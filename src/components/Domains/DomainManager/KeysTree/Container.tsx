@@ -4,7 +4,12 @@ import { VelocityComponent } from 'velocity-react'
 import { ContextMenuFile } from '../ContextMenuFile'
 import { ContextMenuDirectory } from '../ContextMenuDirectory'
 import { ContextMenuStatic } from '../ContextMenuStatic'
-import { StackIcon } from '@radix-ui/react-icons'
+import {
+  LockClosedIcon,
+  LockOpen1Icon,
+  Pencil2Icon,
+  StackIcon,
+} from '@radix-ui/react-icons'
 import {
   TreeNode,
   TreeNodeDirectory,
@@ -15,6 +20,7 @@ import SeedIcon from '../../../_icons/SeedIcon'
 import { Toggle } from './Toggle'
 import { Header } from './Header'
 import { ContextMenuDomain } from '../ContextMenuDomain'
+import { useSkynet } from '../../../../hooks/skynet'
 
 type Props = {
   // customStyles?: {}
@@ -37,6 +43,7 @@ export function Container({
   animations,
   node,
 }: Props) {
+  const { dataDomain: appDomain } = useSkynet()
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const toggleElement = useMemo(() => {
@@ -53,6 +60,11 @@ export function Container({
       </VelocityComponent>
     )
   }, [animations, onClick])
+
+  const isReadOnly =
+    node.domain &&
+    !node.domain.seed &&
+    !['cqra.hns', appDomain].includes(node.domain.dataDomain)
 
   return (
     <Flex
@@ -83,28 +95,64 @@ export function Container({
         {/* {node.type === 'static' && <MarginIcon />} */}
         {node.isRootDomain &&
           (node.domain.seed ? (
-            <Tooltip align="start" content="Seed domain">
-              <Box
-                css={{
-                  position: 'relative',
-                  marginLeft: '7px',
-                }}
-              >
-                <SeedIcon />
-              </Box>
+            <Tooltip
+              align="start"
+              content={`Seed domain: ${
+                isReadOnly ? 'read-only' : 'read-write'
+              }`}
+            >
+              {!isHovering ? (
+                <Box
+                  css={{
+                    position: 'relative',
+                    top: '0px',
+                    marginLeft: '5px',
+                    marginRight: '-1px',
+                  }}
+                >
+                  {isReadOnly ? <LockClosedIcon /> : <Pencil2Icon />}
+                </Box>
+              ) : (
+                <Box
+                  css={{
+                    position: 'relative',
+                    marginLeft: '7px',
+                  }}
+                >
+                  <SeedIcon />
+                </Box>
+              )}
             </Tooltip>
           ) : (
-            <Tooltip align="start" content="MySky Data Domain">
-              <Box
-                css={{
-                  position: 'relative',
-                  top: '2px',
-                  marginLeft: '5px',
-                  marginRight: '-1px',
-                }}
-              >
-                <StackIcon />
-              </Box>
+            <Tooltip
+              align="start"
+              content={`MySky data domain: ${
+                isReadOnly ? 'read-only' : 'read-write'
+              }`}
+            >
+              {!isHovering ? (
+                <Box
+                  css={{
+                    position: 'relative',
+                    top: '0px',
+                    marginLeft: '5px',
+                    marginRight: '-1px',
+                  }}
+                >
+                  {isReadOnly ? <LockClosedIcon /> : <Pencil2Icon />}
+                </Box>
+              ) : (
+                <Box
+                  css={{
+                    position: 'relative',
+                    top: '2px',
+                    marginLeft: '5px',
+                    marginRight: '-1px',
+                  }}
+                >
+                  <StackIcon />
+                </Box>
+              )}
             </Tooltip>
           ))}
       </Box>

@@ -6,6 +6,7 @@ import {
   GlobeIcon,
   HomeIcon,
   MixIcon,
+  StackIcon,
 } from '@radix-ui/react-icons'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -20,6 +21,12 @@ export function TabNav() {
         </Box>
         Home
       </TabLink>
+      <TabLink as={Link} to="/news" active={route.split('/')[1] === 'news'}>
+        <Box css={{ mr: '$1' }}>
+          <ActivityLogIcon />
+        </Box>
+        News
+      </TabLink>
       <TabLink as={Link} to="/files" active={route.split('/')[1] === 'files'}>
         <Box css={{ mr: '$1' }}>
           <FilePlusIcon />
@@ -28,7 +35,7 @@ export function TabNav() {
       </TabLink>
       <TabLink as={Link} to="/data" active={route.split('/')[1] === 'data'}>
         <Box css={{ mr: '$1' }}>
-          <ActivityLogIcon />
+          <StackIcon />
         </Box>
         Data
       </TabLink>
@@ -38,12 +45,12 @@ export function TabNav() {
         </Box>
         DNS
       </TabLink> */}
-      {/* <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
+      <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
         <Box css={{ mr: '$1' }}>
           <MixIcon />
         </Box>
         Tools
-      </TabLink> */}
+      </TabLink>
       <TabLink
         as={Link}
         to="/settings"

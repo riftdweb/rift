@@ -38,6 +38,22 @@ export function NewsInsights() {
             </Subheading>
             <KeywordsGraph width={WIDTH} height={HEIGHT} />
           </Flex>
+          <Flex
+            css={{ flexDirection: 'column', gap: '$6', paddingBottom: '50px' }}
+          >
+            <Text
+              css={{
+                color: '$gray900',
+                textAlign: 'center',
+                margin: '0 auto',
+                maxWidth: '400px',
+              }}
+            >
+              More visualizations and interactive options will be available
+              after components such as the Social DAC are integrated, providing
+              richer data and a more complete relevancy algorithm.
+            </Text>
+          </Flex>
         </Flex>
       </Box>
     </Box>

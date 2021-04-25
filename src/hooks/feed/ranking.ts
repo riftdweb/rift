@@ -20,7 +20,7 @@ function calculateSignal({ p, c, v, r, d }) {
 }
 
 function calculateDecay({ t_c, t_i }) {
-  return 1 / (1 + Math.pow(t_c, 1.8) - Math.pow(t_c - t_i, 1.2))
+  return 1 / (1 + Math.pow(t_c, 1.9) - Math.pow(t_c - t_i, 1.3))
 }
 
 const time_increment = 1000 * 60 * 60 * 4

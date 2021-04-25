@@ -1,8 +1,4 @@
 import { Post } from '../types'
-// import { v4 as uuid } from 'uuid'
-// import { getStoriesHn } from './hn'
-// import { getStoriesReddit } from './reddit'
-// import { useSkynet } from '../../skynet'
 
 export type Story = {
   id: number

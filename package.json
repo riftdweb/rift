@@ -2,6 +2,7 @@
   "name": "rift",
   "version": "0.1.0",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

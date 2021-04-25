@@ -79,7 +79,7 @@ export function rankPost({
     } as ProcessedPost
   }
 
-  // p: Number of points (like upvotes or likes)
+  // p: Number of upvotes
   // c: Number of comments
   // v: Number of views
   // r: Number of relevant keywords
@@ -87,9 +87,9 @@ export function rankPost({
   // t_c: Time since initial creation
   // t_i: Time since last interaction
 
-  const p = 5
-  const c = 5
-  const v = 5
+  const p = 0
+  const c = 0
+  const v = 0
   const r_data = Object.entries(keywords).reduce(
     (acc, [keyword, count]) => {
       if (titleKeywordStems.includes(keyword.toLowerCase())) {

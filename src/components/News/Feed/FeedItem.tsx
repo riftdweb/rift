@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Text } from '@modulz/design-system'
+import { Badge, Box, Code, Flex, Text, Tooltip } from '@modulz/design-system'
 import { ProcessedPost } from '../../../hooks/feed/types'
 import { Link } from '../../_shared/Link'
 import { TriangleUpIcon } from '@radix-ui/react-icons'
@@ -6,6 +6,9 @@ import { formatDistance, parseISO } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
 import { Keyword } from './Keyword'
+import { copyToClipboard } from '../../../shared/clipboard'
+import { SkylinkPeek } from '../../_shared/SkylinkPeek'
+import { PostTime } from '../_shared/PostTime'
 
 const textStyles: any = {
   lineHeight: '25px',
@@ -17,16 +20,33 @@ type Props = { item: ProcessedPost; index: number }
 
 export function FeedItem({ item, index }: Props) {
   const [isHovering, setIsHovering] = useState<boolean>(false)
-  const { incrementKeywords, incrementDomain } = useFeed()
+  const { incrementKeywords, incrementDomain, isVisibilityEnabled } = useFeed()
 
-  const { post, score, scoreDetails } = item
+  const { post, score } = item
+  const { skylink: rawSkylink } = post
+  const skylink = rawSkylink.replace('sia:', '')
   const { link } = post.content
   const hostname = link ? new URL(link).hostname : undefined
 
   const keywordStems = item.nlp.data.keywords.map((k) => k.stem)
 
-  const elements = useMemo(() => {
+  const titleElements = useMemo(() => {
     let title = post.content.title
+
+    if (!isVisibilityEnabled) {
+      return (
+        <Text
+          css={{
+            ...textStyles,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {title}
+        </Text>
+      )
+    }
 
     title = item.nlp.data.keywords
       .map((k) => ({
@@ -60,7 +80,7 @@ export function FeedItem({ item, index }: Props) {
         </Text>
       )
     })
-  }, [isHovering, item])
+  }, [isVisibilityEnabled, isHovering, item])
 
   return (
     <Flex
@@ -80,33 +100,39 @@ export function FeedItem({ item, index }: Props) {
       }}
     >
       <Flex css={{ gap: '$1' }}>
-        <Box
-          css={{
-            position: 'absolute',
-            color: '$hiContrast',
-            cursor: 'pointer',
-            top: '22px',
-            transform: 'scale(1.4)',
-            '&:hover': {
-              transform: 'scale(1.6)',
-            },
-          }}
+        <Tooltip
+          align="start"
+          content="Upvotes and other content record interactions are coming soon"
         >
-          <TriangleUpIcon />
-          <Text
+          <Box
             css={{
-              textAlign: 'center',
-              position: 'relative',
-              color: '$gray800',
-              fontSize: '10px',
+              position: 'absolute',
+              color: '$hiContrast',
+              cursor: 'pointer',
+              top: '22px',
+              transform: 'scale(1.4)',
+              '&:hover': {
+                transform: 'scale(1.6)',
+              },
             }}
           >
-            {index}
-          </Text>
-        </Box>
+            <TriangleUpIcon />
+            <Text
+              css={{
+                textAlign: 'center',
+                position: 'relative',
+                color: '$gray800',
+                fontSize: '10px',
+              }}
+            >
+              {index}
+            </Text>
+          </Box>
+        </Tooltip>
         <Flex
           css={{
             flexDirection: 'column',
+            overflow: 'hidden',
             gap: '$1',
             marginLeft: '26px',
           }}
@@ -117,7 +143,18 @@ export function FeedItem({ item, index }: Props) {
               flexWrap: 'wrap',
             }}
           >
-            {elements}
+            <Link
+              target="_blank"
+              href={post.content.link}
+              css={{
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+              }}
+            >
+              {titleElements}
+            </Link>
             {post.content.link && (
               <Flex css={{ position: 'relative', marginLeft: '$1' }}>
                 {/* <Score domain={hostname} /> */}
@@ -134,7 +171,10 @@ export function FeedItem({ item, index }: Props) {
             )}
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            <Text css={{ color: '$gray900' }}>{score} points</Text>
+            <SkylinkPeek skylink={skylink} />
+            <Text size="1" css={{ color: '$gray900' }}>
+              {score} points
+            </Text>
             <Flex
               css={{
                 color: '$gray900',
@@ -147,29 +187,7 @@ export function FeedItem({ item, index }: Props) {
                 <Badge>{tag}</Badge>
               ))}
             </Flex>
-            <Text css={{ color: '$gray900' }}>
-              {post.ts &&
-                formatDistance(
-                  parseISO(new Date(post.ts).toISOString()),
-                  new Date(),
-                  {
-                    addSuffix: true,
-                  }
-                )}
-            </Text>
-            {isHovering && (
-              <Box
-                css={{
-                  position: 'absolute',
-                  backgroundColor: '$panel',
-                  width: '200px',
-                  right: 0,
-                  top: 0,
-                }}
-              >
-                {JSON.stringify(scoreDetails, null, 2)}
-              </Box>
-            )}
+            <PostTime post={post} />
           </Flex>
         </Flex>
       </Flex>

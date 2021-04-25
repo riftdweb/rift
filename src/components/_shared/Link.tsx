@@ -6,8 +6,10 @@ type Props = {
   children: React.ReactNode
   to?: string
   href?: string
+  variant?: string
   target?: string
   content?: string
+  tooltipAlign?: 'start' | 'end' | 'center'
   onClick?: () => void
   css?: {}
 }
@@ -18,6 +20,8 @@ export function Link({
   href,
   target,
   children,
+  tooltipAlign,
+  variant = 'ghost',
   onClick,
   css,
   content,
@@ -30,7 +34,7 @@ export function Link({
     if (content) {
       return (
         <Button
-          variant="ghost"
+          variant={variant as any}
           css={_css}
           as={RLink}
           to={to}
@@ -38,7 +42,7 @@ export function Link({
           onClick={onClick}
           target={target}
         >
-          <Tooltip content={content}>
+          <Tooltip content={content} align={tooltipAlign}>
             <Box>{children}</Box>
           </Tooltip>
         </Button>
@@ -46,7 +50,7 @@ export function Link({
     }
     return (
       <Button
-        variant="ghost"
+        variant={variant as any}
         css={_css}
         as={RLink}
         to={to}
@@ -69,7 +73,7 @@ export function Link({
         onClick={onClick}
         target={target}
       >
-        <Tooltip content={content}>
+        <Tooltip content={content} align={tooltipAlign}>
           <Box>{children}</Box>
         </Tooltip>
       </MLink>

@@ -24,11 +24,13 @@ export const buildApi = ({
 
   function getJSON({
     seed,
+    publicKey,
     dataKey,
     dataDomain: customDataDomain,
   }: {
     dataKey: string
     seed?: string
+    publicKey?: string
     dataDomain?: string
   }) {
     if (seed) {
@@ -48,6 +50,10 @@ export const buildApi = ({
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
     console.log(`mySky.getJSON - mysky`)
     console.log(`\tdata path: ${dataPath}`)
+    if (publicKey) {
+      console.log(`\tpublic key: ${publicKey}`)
+      return client.file.getJSON(publicKey, dataPath)
+    }
     return mySky.getJSON(dataPath)
   }
   function setJSON({

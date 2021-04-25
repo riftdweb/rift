@@ -12,30 +12,21 @@ import { localPoint } from '@visx/event'
 import { useFeed } from '../../../hooks/feed'
 import { useMemo } from 'react'
 import { rankPost } from '../../../hooks/feed/ranking'
-import { Badge, Box } from '@modulz/design-system'
+import { Box, Flex, Heading, Text } from '@modulz/design-system'
 import { format, formatDistance } from 'date-fns'
-import { throttle } from 'lodash'
+import throttle from 'lodash/throttle'
+import { SkylinkPeek } from '../../_shared/SkylinkPeek'
+import { PostTime } from '../_shared/PostTime'
 
-// Define the graph dimensions and margins
-const width = 1000
-const height = 500
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }
 
-// Then we'll create some bounds
-const xMax = width - margin.left - margin.right
-const yMax = height - margin.top - margin.bottom
-
-// We'll make some helpers to get at the data we want
 const x = (d) => d.x // d.post.id
 const y = (d) => d.y // d.score
 
-// Compose together the scale and accessor functions to get point functions
 const compose = (scale, accessor) => (data) => scale(accessor(data))
 
-const ms1hrs = 1000 * 60 * 60
-const ms4hrs = ms1hrs * 4
-
-const TIME_INCREMENT = ms1hrs
+const ms1hr = 1000 * 60 * 60
+const TIME_INCREMENT = ms1hr
 const td = (n) => new Date(new Date().getTime() + n * TIME_INCREMENT)
 
 function generateTimePoints(s, e) {
@@ -46,9 +37,16 @@ function generateTimePoints(s, e) {
   return p
 }
 
-// Finally we'll embed it all in an SVG
-export function Graph(props) {
+type Props = {
+  width: number
+  height: number
+}
+
+export function ScoreGraph({ width, height }: Props) {
   const { rankedPosts, keywords, domains } = useFeed()
+
+  const xMax = width - margin.left - margin.right
+  const yMax = height - margin.top - margin.bottom
 
   const timePoints = useMemo(() => generateTimePoints(-10, 10), [])
   const posts = rankedPosts || []
@@ -151,10 +149,12 @@ export function Graph(props) {
         <AxisBottom
           top={yMax}
           tickFormat={(value: Date) => {
+            // Closest tick to current time. Don't show a label since there is a
+            // blue line shown at the exact current time.
             if (
               Math.abs(value.getTime() - new Date().getTime()) < TIME_INCREMENT
             ) {
-              return 'now'
+              return ''
             }
             return formatDistance(value, new Date(), {
               addSuffix: true,
@@ -168,7 +168,7 @@ export function Graph(props) {
           return (
             <Group key={i}>
               <LinePath
-                stroke="#333"
+                stroke="var(--colors-hiContrast)"
                 strokeWidth={2}
                 strokeOpacity={0.6}
                 shapeRendering="geometricPrecision"
@@ -223,14 +223,65 @@ export function Graph(props) {
       </svg>
       {tooltipOpen && selectedData && (
         <TooltipWithBounds
-          // set this to random so it correctly updates with parent bounds
-          key={Math.random()}
+          key={selectedData.processedPost.post.id}
           top={tooltipTop}
           left={tooltipLeft}
         >
-          <strong>{selectedData.processedPost.post.content.title}</strong>
-          <Badge>{selectedData.score}</Badge>
-          <Badge>{format(selectedData.time, 'h:mmaaa')}</Badge>
+          <Flex
+            css={{
+              position: 'relative',
+              flexDirection: 'column',
+              gap: '$2',
+              width: '400px',
+              overflow: 'hidden',
+              padding: '$1 0',
+            }}
+          >
+            <Text size="1" css={{ paddingTop: '$2' }}>
+              <Text css={{ display: 'inline', color: '$gray900' }}>
+                At time{' '}
+              </Text>
+              <Text
+                css={{ display: 'inline', color: '$blue900', fontWeight: 600 }}
+              >
+                {format(selectedData.time, 'h:mmaaa')}
+              </Text>
+              <Text css={{ display: 'inline', color: '$gray900' }}>
+                {' '}
+                current content score is:{' '}
+              </Text>
+              <Text
+                css={{ display: 'inline', color: '$blue900', fontWeight: 600 }}
+              >
+                {selectedData.score}
+              </Text>
+            </Text>
+            <Box
+              css={{
+                paddingTop: '$1',
+                marginBottom: '$1',
+                borderBottomWidth: '1px',
+                borderBottomStyle: 'solid',
+                borderBottomColor: 'rgba(0,0,0,0.05)',
+              }}
+            />
+            <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
+              {selectedData.processedPost.post.content.title}
+            </Text>
+            <Flex css={{ alignItems: 'center', gap: '$1' }}>
+              <SkylinkPeek
+                skylink={selectedData.processedPost.post.skylink.replace(
+                  'sia:',
+                  ''
+                )}
+              />
+              <PostTime
+                post={selectedData.processedPost.post}
+                prefix="posted"
+              />
+              <Box css={{ flex: 1 }} />
+            </Flex>
+          </Flex>
         </TooltipWithBounds>
       )}
     </Box>

@@ -5,6 +5,7 @@ import { Post, ProcessedPost } from './types'
 import { useSkynet } from '../skynet'
 import { getPosts } from './posts'
 import useLocalStorageState from 'use-local-storage-state'
+import { useState } from 'react'
 
 const RESOURCE_DATA_KEY = 'feed'
 
@@ -16,6 +17,8 @@ type State = {
   setKeywordValue: (keyword: string, value: number) => void
   incrementDomain: (domain: string) => void
   decrementDomain: (domain: string) => void
+  isVisibilityEnabled: boolean
+  setIsVisibilityEnabled: (val: boolean) => void
 }
 
 const FeedContext = createContext({} as State)
@@ -26,8 +29,8 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { Api, identityKey, dataDomain } = useSkynet()
-
+  const { Api } = useSkynet()
+  const [rerenderKey, setRerendeKey] = useState<number>(Math.random())
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})
@@ -35,10 +38,9 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
-  const { data: posts } = useSWR<Post[]>('posts', getPosts)
+  const { data: posts } = useSWR<Post[]>('posts', () => getPosts(Api))
   const { data: rankedPosts } = useSWR<ProcessedPost[]>(
-    () => (posts ? [posts] : null),
-    // () => (posts ? [posts, keywords, domains] : null),
+    () => (posts ? [posts, keywords, domains] : null),
     () =>
       rankPosts(posts, {
         keywords,
@@ -103,6 +105,8 @@ export function FeedProvider({ children }: Props) {
     [setDomains]
   )
 
+  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
+
   const value = {
     rankedPosts,
     keywords,
@@ -111,6 +115,8 @@ export function FeedProvider({ children }: Props) {
     setKeywordValue,
     incrementDomain,
     decrementDomain,
+    isVisibilityEnabled,
+    setIsVisibilityEnabled,
   }
 
   return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>

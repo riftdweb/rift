@@ -9,7 +9,7 @@ export function NewsFeed() {
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
         <Nav />
-        <Box css={{ position: 'relative' }}>
+        <Box css={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
           {(rankedPosts || []).slice(0, 50).map((item, index) => (
             <FeedItem key={item.post.id} index={index + 1} item={item} />
           ))}

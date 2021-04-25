@@ -1,6 +1,7 @@
 Rift License 1.0
 
 License URL: https://github.com/riftdweb/rift/blob/main/LICENSE.md
+
 Licensor: Rift, Inc.
 
 ## Acceptance

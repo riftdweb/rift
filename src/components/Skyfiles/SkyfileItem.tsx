@@ -16,6 +16,7 @@ import { getSize } from '../../shared/uploads'
 import FolderIcon from '../_icons/FolderIcon'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { SkylinkDnsMenu } from '../_shared/SkylinkDnsMenu'
+import { SkylinkPeek } from '../_shared/SkylinkPeek'
 
 const getProgressText = (progress) => {
   if (progress === -1) {
@@ -86,7 +87,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
         css={{
           width: '100%',
           height: '100%',
-          padding: '$2 $3',
+          padding: '0 $3',
           position: 'absolute',
           alignItems: 'center',
           gap: '$1',
@@ -116,30 +117,12 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             display: 'none',
             when: {
               bp1: {
-                display: 'block',
+                display: 'flex',
               },
             },
           }}
         >
-          {skylink && (
-            <Tooltip align="start" content="Copy skylink">
-              <Text
-                size="2"
-                onClick={() => copyToClipboard(skylink, 'skylink')}
-                css={{
-                  color: '$gray900',
-                  background: 'none',
-                  fontFamily: '$mono',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
-              >
-                {skylink.slice(0, 10)}...
-              </Text>
-            </Tooltip>
-          )}
+          {skylink && <SkylinkPeek skylink={skylink} />}
         </Box>
         <Box
           css={{

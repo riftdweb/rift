@@ -74,7 +74,7 @@ export function NewsFeed() {
                 <Text size="1" css={{ color: '$gray900', lineHeight: '16px' }}>
                   The ability to follow other users is coming soon along with
                   upvotes and reactions. This will provide a much richer source
-                  of metadata. For the time being Rift news is populated by
+                  of metadata. For the time being Rift News is populated by
                   Skynet enabled RSS bots.
                 </Text>
               </Card>

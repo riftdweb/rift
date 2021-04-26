@@ -26,7 +26,7 @@ export function Link({
   css,
   content,
 }: Props) {
-  const _css = {
+  let _css: {} = {
     ...css,
     cursor: 'pointer',
   }
@@ -61,6 +61,11 @@ export function Link({
         {children}
       </Button>
     )
+  }
+
+  _css = {
+    ..._css,
+    outline: 'none !important',
   }
 
   if (content) {

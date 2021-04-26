@@ -31,10 +31,8 @@ export function Keyword({ value, stem, debugMode, isHovering }: Props) {
     intensity = '$blue400'
   } else if (score > 10) {
     intensity = '$blue300'
-  } else if (score > 5) {
-    intensity = '$blue200'
   } else if (score > 0) {
-    intensity = '$blue100'
+    intensity = '$blue200'
   }
 
   const noop = useCallback((e) => {

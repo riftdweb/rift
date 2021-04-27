@@ -19,7 +19,12 @@ export function SkylinkPeek({ skylink }) {
             textDecoration: 'underline',
           },
         }}
-        onClick={() => skylink && copyToClipboard(skylink, 'skylink')}
+        onClick={(e) => {
+          e.stopPropagation()
+          if (skylink) {
+            copyToClipboard(skylink, 'skylink')
+          }
+        }}
       >
         {`${skylink.slice(0, 10)}...`}
       </Code>

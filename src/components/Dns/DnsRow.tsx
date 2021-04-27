@@ -4,6 +4,7 @@ import { formatDistance, parseISO } from 'date-fns'
 import { useState } from 'react'
 import { copyToClipboard } from '../../shared/clipboard'
 import { DnsEntry } from '../../shared/types'
+import { SkylinkPeek } from '../_shared/SkylinkPeek'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 
 type Props = {
@@ -36,34 +37,15 @@ export function DnsRow({ dnsEntry }: Props) {
             position: 'relative',
             alignItems: 'center',
             gap: '$1',
-            padding: '$2 $3',
+            padding: '0 $3',
+            height: '40px',
           }}
         >
           <Box css={{ flex: 1 }}>
             <Text>{name}</Text>
           </Box>
-          <Box css={{ flex: 1 }}>
-            <Tooltip align="start" content="Copy skylink">
-              <Text
-                size="2"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  copyToClipboard(skylink, 'skylink')
-                }}
-                css={{
-                  display: 'inline',
-                  color: '$gray900',
-                  background: 'none',
-                  fontFamily: '$mono',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
-              >
-                {skylink.slice(0, 10)}...
-              </Text>
-            </Tooltip>
+          <Box css={{ flex: 1, display: 'flex' }}>
+            <SkylinkPeek skylink={skylink} />
           </Box>
           <Box
             css={{

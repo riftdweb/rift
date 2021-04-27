@@ -3,7 +3,7 @@ import { ProcessedPost } from '../../../hooks/feed/types'
 import { Link } from '../../_shared/Link'
 import { TriangleUpIcon } from '@radix-ui/react-icons'
 import { formatDistance, parseISO } from 'date-fns'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
 import { Keyword } from './Keyword'
 import { copyToClipboard } from '../../../shared/clipboard'
@@ -82,16 +82,17 @@ export function FeedItem({ item, index }: Props) {
     })
   }, [isVisibilityEnabled, isHovering, item])
 
+  const incrementCounters = useCallback(() => {
+    incrementKeywords(keywordStems)
+    if (hostname) {
+      incrementDomain(hostname)
+    }
+  }, [keywordStems, hostname, incrementKeywords, incrementDomain])
+
   return (
     <Flex
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      onClick={() => {
-        incrementKeywords(keywordStems)
-        if (hostname) {
-          incrementDomain(hostname)
-        }
-      }}
       css={{
         py: '$3',
         flexDirection: 'column',
@@ -145,6 +146,7 @@ export function FeedItem({ item, index }: Props) {
           >
             <Link
               target="_blank"
+              onClick={incrementCounters}
               href={post.content.link}
               css={{
                 textDecoration: 'none',
@@ -161,6 +163,7 @@ export function FeedItem({ item, index }: Props) {
                 <Text css={{ ...textStyles, color: '$gray900' }}>(</Text>
                 <Link
                   target="_blank"
+                  onClick={incrementCounters}
                   href={post.content.link}
                   css={{ ...textStyles, color: '$gray900' }}
                 >

@@ -30,7 +30,6 @@ type Props = {
 
 export function FeedProvider({ children }: Props) {
   const { Api } = useSkynet()
-  const [rerenderKey, setRerendeKey] = useState<number>(Math.random())
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})

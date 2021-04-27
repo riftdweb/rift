@@ -187,7 +187,7 @@ export function FeedItem({ item, index }: Props) {
               }}
             >
               {post.content.tags.map((tag) => (
-                <Badge>{tag}</Badge>
+                <Badge key={tag}>{tag}</Badge>
               ))}
             </Flex>
             <PostTime post={post} />

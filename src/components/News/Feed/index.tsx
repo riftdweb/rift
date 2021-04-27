@@ -103,10 +103,14 @@ export function NewsFeed() {
               >
                 <Follow name="Hacker News" section="Top" />
                 {reddit.sections.map((section) => (
-                  <Follow name="Reddit" section={section} />
+                  <Follow
+                    key={'Reddit' + section}
+                    name="Reddit"
+                    section={section}
+                  />
                 ))}
                 {cnn.sections.map((section) => (
-                  <Follow name="CNN" section={section} />
+                  <Follow key={'CNN' + section} name="CNN" section={section} />
                 ))}
               </Flex>
             </Flex>

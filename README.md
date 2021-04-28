@@ -1,3 +1,3 @@
-# Rift
+<p align="center">rift</p>
 
-Readme coming soon
+<p align="center"><strong>Tools for the decentralized web.</strong></p>

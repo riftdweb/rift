@@ -1,0 +1,18 @@
+{
+  "name": "@riftdweb/design-system",
+  "version": "1.0.0",
+  "main": "dist/riftdweb-design-system.cjs.js",
+  "module": "dist/riftdweb-design-system.esm.js",
+  "typings": "dist/riftdweb-design-system.cjs.d.ts",
+  "author": "Alex Freska",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "dependencies": {
+    "@modulz/design-system": "^0.1.9",
+    "@radix-ui/react-aspect-ratio": "^0.0.11",
+    "@radix-ui/react-polymorphic": "^0.0.10",
+    "@radix-ui/react-portal": "^0.0.11",
+    "@radix-ui/react-slot": "^0.0.9",
+    "@stitches/react": "^0.1.9"
+  }
+}

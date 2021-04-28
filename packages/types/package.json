@@ -1,0 +1,10 @@
+{
+  "name": "@riftdweb/types",
+  "version": "1.0.0",
+  "main": "dist/riftdweb-types.cjs.js",
+  "module": "dist/riftdweb-types.esm.js",
+  "typings": "dist/riftdweb-types.cjs.d.ts",
+  "author": "Alex Freska",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true
+}

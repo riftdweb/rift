@@ -14,23 +14,23 @@ export const ControlGroup = styled('div', {
       'inset 0 1px $colors$slate600, inset -1px 0 $colors$slate600, inset 0 -1px $colors$slate600',
     '&:hover': {
       boxShadow:
-        '-1px 0 $colors$slate700, inset 0 1px $colors$slate700, inset -1px 0 $colors$slate700, inset 0 -1px $colors$slate700'
+        '-1px 0 $colors$slate700, inset 0 1px $colors$slate700, inset -1px 0 $colors$slate700, inset 0 -1px $colors$slate700',
     },
     '&:focus': {
       zIndex: 1,
-      boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700'
+      boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
     },
     '&:first-child': {
       borderTopLeftRadius: '$2',
       borderBottomLeftRadius: '$2',
       boxShadow: 'inset 0 0 0 1px $colors$slate600',
       '&:hover': {
-        boxShadow: 'inset 0 0 0 1px $colors$slate700'
+        boxShadow: 'inset 0 0 0 1px $colors$slate700',
       },
       '&:focus': {
         boxShadow:
-          'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700'
-      }
+          'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+      },
     },
     '&:last-child': {
       borderTopRightRadius: '$2',
@@ -39,9 +39,9 @@ export const ControlGroup = styled('div', {
         'inset 0 1px $colors$slate600, inset -1px 0 $colors$slate600, inset 0 -1px $colors$slate600',
       '&:focus': {
         boxShadow:
-          'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700'
-      }
-    }
+          'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+      },
+    },
   },
   [`& ${Input}`]: {
     borderRadius: 0,
@@ -50,7 +50,7 @@ export const ControlGroup = styled('div', {
     '&:focus': {
       zIndex: 1,
       boxShadow:
-        'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
+        'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
     },
     '&:first-child': {
       borderTopLeftRadius: '$2',
@@ -58,8 +58,8 @@ export const ControlGroup = styled('div', {
       boxShadow: 'inset 0 0 0 1px $colors$slate600',
       '&:focus': {
         boxShadow:
-          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
-      }
+          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
+      },
     },
     '&:last-child': {
       borderTopRightRadius: '$2',
@@ -68,9 +68,9 @@ export const ControlGroup = styled('div', {
         'inset 0 1px $colors$slate600, inset -1px 0 $colors$slate600, inset 0 -1px $colors$slate600',
       '&:focus': {
         boxShadow:
-          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
-      }
-    }
+          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
+      },
+    },
   },
   [`& ${Select}`]: {
     borderRadius: 0,
@@ -78,7 +78,7 @@ export const ControlGroup = styled('div', {
       'inset 0 1px $colors$slate600, inset -1px 0 $colors$slate600, inset 0 -1px $colors$slate600',
     '&:focus-within': {
       boxShadow:
-        'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
+        'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
     },
     '&:first-child': {
       borderTopLeftRadius: '$2',
@@ -86,8 +86,8 @@ export const ControlGroup = styled('div', {
       boxShadow: 'inset 0 0 0 1px $colors$slate600',
       '&:focus-within': {
         boxShadow:
-          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
-      }
+          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
+      },
     },
     '&:last-child': {
       borderTopRightRadius: '$2',
@@ -96,8 +96,8 @@ export const ControlGroup = styled('div', {
         'inset 0 1px $colors$slate600, inset -1px 0 $colors$slate600, inset 0 -1px $colors$slate600',
       '&:focus-within': {
         boxShadow:
-          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700'
-      }
-    }
-  }
+          'inset 0px 0px 0px 1px $colors$blue700, 0px 0px 0px 1px $colors$blue700',
+      },
+    },
+  },
 })

@@ -2,7 +2,7 @@ export {
   Accordion,
   AccordionButton,
   AccordionItem,
-  AccordionPanel
+  AccordionPanel,
 } from '@modulz/design-system'
 export {
   AlertDialog,
@@ -11,7 +11,7 @@ export {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from '@modulz/design-system'
 export { Avatar, AvatarGroup, AvatarNestedItem } from '@modulz/design-system'
 export { AspectRatio } from '@radix-ui/react-aspect-ratio'
@@ -33,7 +33,7 @@ export {
   ContextMenuLabel,
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
-  ContextMenuSeparator
+  ContextMenuSeparator,
 } from '@modulz/design-system'
 export { ControlGroup } from './ControlGroup'
 export { DesignSystemProvider } from '@modulz/design-system'
@@ -41,7 +41,7 @@ export {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogTrigger
+  DialogTrigger,
 } from '@modulz/design-system'
 export {
   DropdownMenu,
@@ -53,7 +53,7 @@ export {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
 } from '@modulz/design-system'
 export { Flex } from '@modulz/design-system'
 export { Grid } from '@modulz/design-system'
@@ -71,7 +71,7 @@ export {
   MenuLabel,
   MenuRadioGroup,
   MenuRadioItem,
-  MenuSeparator
+  MenuSeparator,
 } from '@modulz/design-system'
 export { Overlay } from '@modulz/design-system'
 export { Paragraph } from '@modulz/design-system'
@@ -80,7 +80,7 @@ export {
   Popover,
   PopoverClose,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@modulz/design-system'
 // TODO
 // export { Scrollbar } from '@modulz/design-system';
@@ -118,5 +118,5 @@ export {
   darkTheme,
   getCssString,
   global,
-  keyframes
+  keyframes,
 } from '@modulz/design-system'

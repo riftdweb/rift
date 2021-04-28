@@ -1,10 +1,10 @@
-import React from 'react';
-import { styled } from '@modulz/design-system';
-import { CSS } from '@modulz/design-system/dist/stitches.config';
-import { StitchesVariants } from '@stitches/react';
+import React from 'react'
+import { styled } from '@modulz/design-system'
+import { CSS } from '@modulz/design-system/dist/stitches.config'
+import { StitchesVariants } from '@stitches/react'
 import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
-const DEFAULT_TAG = 'button';
+const DEFAULT_TAG = 'button'
 
 const StyledButton = styled(DEFAULT_TAG, {
   // Reset
@@ -75,7 +75,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           boxShadow: 'inset 0 0 0 1px $colors$slate700',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow:
+            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
           backgroundColor: '$slate300',
@@ -96,7 +97,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           boxShadow: 'inset 0 0 0 1px $colors$blue700',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
+          boxShadow:
+            'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
           backgroundColor: '$blue300',
@@ -117,7 +119,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           boxShadow: 'inset 0 0 0 1px $colors$green700',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$green700, 0 0 0 1px $colors$green700',
+          boxShadow:
+            'inset 0 0 0 1px $colors$green700, 0 0 0 1px $colors$green700',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
           backgroundColor: '$green300',
@@ -160,7 +163,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           backgroundColor: '$slate300',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow:
+            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
           backgroundColor: '$slate300',
@@ -178,7 +182,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           backgroundColor: 'hsla(0,100%,100%,.3)',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px hsla(0,100%,100%,.35), 0 0 0 1px hsla(0,100%,100%,.35)',
+          boxShadow:
+            'inset 0 0 0 1px hsla(0,100%,100%,.35), 0 0 0 1px hsla(0,100%,100%,.35)',
         },
       },
       transparentBlack: {
@@ -193,7 +198,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           backgroundColor: 'hsla(0,0%,0%,.3)',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px hsla(0,0%,0%,.35), 0 0 0 1px hsla(0,0%,0%,.35)',
+          boxShadow:
+            'inset 0 0 0 1px hsla(0,0%,0%,.35), 0 0 0 1px hsla(0,0%,0%,.35)',
         },
       },
     },
@@ -212,7 +218,8 @@ const StyledButton = styled(DEFAULT_TAG, {
           backgroundColor: '$slate400',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow:
+            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
         },
       },
       waiting: {
@@ -239,18 +246,21 @@ const StyledButton = styled(DEFAULT_TAG, {
     size: '1',
     variant: 'gray',
   },
-});
+})
 
-type ButtonCSSProp = { css?: CSS };
+type ButtonCSSProp = { css?: CSS }
 // type ButtonCSSProp = { css?: any };
 // TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>;
-type ButtonOwnProps = ButtonCSSProp & ButtonVariants & { size?: any };
+type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>
+type ButtonOwnProps = ButtonCSSProp & ButtonVariants & { size?: any }
 
-type ButtonComponent = Polymorphic.ForwardRefComponent<typeof DEFAULT_TAG, ButtonOwnProps>;
+type ButtonComponent = Polymorphic.ForwardRefComponent<
+  typeof DEFAULT_TAG,
+  ButtonOwnProps
+>
 
 export const Button = React.forwardRef((props, forwardedRef) => {
-  return <StyledButton {...props} ref={forwardedRef} />;
-}) as ButtonComponent;
+  return <StyledButton {...props} ref={forwardedRef} />
+}) as ButtonComponent
 
-Button.toString = () => `.${StyledButton.className}`;
+Button.toString = () => `.${StyledButton.className}`

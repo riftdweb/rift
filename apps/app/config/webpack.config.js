@@ -395,7 +395,8 @@ module.exports = function (webpackEnv) {
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               // AF: include all files in repo, its working but what happens to node_modules?
-              // include: paths.appSrc,
+              // include: isEnvDevelopment ? '*' : paths.appSrc,
+              include: paths.appSrc,
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(

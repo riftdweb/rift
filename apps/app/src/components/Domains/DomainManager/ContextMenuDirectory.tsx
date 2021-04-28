@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
+  ButtonVariants,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -14,7 +15,7 @@ import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 type Props = {
   treeNode: TreeNodeDirectory
-  variant?: string
+  variant?: ButtonVariants['variant']
   size?: string
   right?: string
   color?: string
@@ -35,7 +36,7 @@ export function ContextMenuDirectory({
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           as={Button}
-          variant={variant as any}
+          variant={variant}
           size={size}
           css={{
             right,

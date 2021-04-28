@@ -2,6 +2,7 @@ import { PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
+  ButtonVariants,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -27,7 +28,7 @@ const pulse = keyframes({
 })
 
 type Props = {
-  variant?: string
+  variant?: ButtonVariants['variant']
   right?: string
   size?: string
 }
@@ -46,7 +47,7 @@ export function IdentityContextMenu({
         <Tooltip align="end" content="Log in with MySky">
           <DropdownMenuTrigger
             as={Button}
-            variant={variant as any}
+            variant={variant}
             size={size}
             css={{
               right,
@@ -102,7 +103,7 @@ export function IdentityContextMenu({
       <Tooltip align="end" content="Open MySky menu">
         <DropdownMenuTrigger
           as={Button}
-          variant={variant as any}
+          variant={variant}
           size={size}
           css={{
             right,

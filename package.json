@@ -6,8 +6,10 @@
     "postinstall": "manypkg check && preconstruct dev",
     "packages:build": "preconstruct build",
     "start": "manypkg run @riftdweb/app start",
-    "build": "manypkg run @riftdweb/app build",
-    "format": "prettier --write './**/src/**/*.{ts,tsx}'"
+    "build": "yarn packages:build && manypkg run @riftdweb/app build",
+    "format": "prettier --write './**/src/**/*.{ts,tsx}'",
+    "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
+    "fresh": "yarn clean && yarn"
   },
   "workspaces": [
     "packages/*",

@@ -1,1 +1,0 @@
-/Users/alex/projects/rift/packages/design-system/src/index.ts

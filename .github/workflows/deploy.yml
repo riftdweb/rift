@@ -2,9 +2,9 @@ name: Deploy to Skynet
 on: [pull_request]
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependencies
       - uses: actions/checkout@v2
       - uses: borales/actions-yarn@v2.0.0
         with:

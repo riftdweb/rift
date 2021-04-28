@@ -35,7 +35,7 @@ export {
   ContextMenuRadioItem,
   ContextMenuSeparator
 } from '@modulz/design-system'
-export { ControlGroup } from '@modulz/design-system'
+export { ControlGroup } from './ControlGroup'
 export { DesignSystemProvider } from '@modulz/design-system'
 export {
   Dialog,

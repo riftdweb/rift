@@ -1,18 +1,7 @@
-import {
-  Box,
-  Button,
-  ControlGroup,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@riftdweb/design-system'
+import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
 import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SearchResults } from './SearchResults'
 
 export function Searchbar() {
@@ -60,7 +49,10 @@ export function Searchbar() {
           <Button
             disabled
             css={{
-              borderBottomLeftRadius: isOpen ? '0 !important' : 'inherit',
+              borderTopLeftRadius: '$2',
+              borderBottomLeftRadius: isOpen ? '0' : '$2',
+              borderTopRightRadius: '0',
+              borderBottomRightRadius: '0',
             }}
           >
             <MagnifyingGlassIcon />
@@ -78,7 +70,10 @@ export function Searchbar() {
             <Button
               onClick={() => setValue('')}
               css={{
-                borderBottomRightRadius: isOpen ? '0 !important' : 'inherit',
+                borderTopLeftRadius: '0',
+                borderBottomLeftRadius: '0',
+                borderTopRightRadius: '$2',
+                borderBottomRightRadius: isOpen ? '0' : '$2',
               }}
             >
               <Cross1Icon />

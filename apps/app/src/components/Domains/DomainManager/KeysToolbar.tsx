@@ -1,9 +1,18 @@
 import {
+  DotsHorizontalIcon,
+  LockClosedIcon,
+  Pencil2Icon,
+  ResetIcon,
+  RulerHorizontalIcon,
+  SymbolIcon,
+  ThickArrowUpIcon,
+} from '@radix-ui/react-icons'
+import {
   Box,
   Button,
+  Code,
   ControlGroup,
   DropdownMenu,
-  Code,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -11,16 +20,6 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import {
-  DotsHorizontalIcon,
-  LockClosedIcon,
-  Pencil1Icon,
-  Pencil2Icon,
-  ResetIcon,
-  RulerHorizontalIcon,
-  SymbolIcon,
-  ThickArrowUpIcon,
-} from '@radix-ui/react-icons'
 import { copyToClipboard } from '../../../shared/clipboard'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 

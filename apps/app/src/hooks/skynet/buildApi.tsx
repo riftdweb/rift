@@ -1,8 +1,8 @@
 import {
-  SkynetClient,
-  MySky,
-  genKeyPairFromSeed,
   CustomUploadOptions,
+  genKeyPairFromSeed,
+  MySky,
+  SkynetClient,
 } from 'skynet-js'
 
 type BuildApi = {

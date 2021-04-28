@@ -1,3 +1,4 @@
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuTrigger,
   Flex,
 } from '@riftdweb/design-system'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { copyToClipboard } from '../../../shared/clipboard'
 import { AddKeyDialog } from './AddKeyDialog'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'

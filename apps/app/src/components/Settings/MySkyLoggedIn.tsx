@@ -1,3 +1,4 @@
+import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -8,20 +9,19 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
 import React, { useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useDomains } from '../../hooks/domains'
 import { useSkynet } from '../../hooks/skynet'
-import { copyToClipboard } from '../../shared/clipboard'
 import { useApps } from '../../hooks/useApps'
 import { useSkyfiles } from '../../hooks/useSkyfiles'
-import { exportData } from './_shared/exportData'
+import { copyToClipboard } from '../../shared/clipboard'
 import {
   APPS_DATA_KEY,
   SKYDB_DATA_KEY,
   SKYFILES_DATA_KEY,
 } from '../../shared/dataKeys'
-import { useHistory } from 'react-router-dom'
+import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {
   const { userId, logout, dataDomain: appDomain } = useSkynet()

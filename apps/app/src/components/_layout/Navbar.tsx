@@ -1,3 +1,4 @@
+import { PlusIcon, SunIcon, TriangleDownIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -12,17 +13,15 @@ import {
   Select,
   Tooltip,
 } from '@riftdweb/design-system'
-import { PlusIcon, SunIcon, TriangleDownIcon } from '@radix-ui/react-icons'
-import { Link as RLink } from 'react-router-dom'
+import { useCallback } from 'react'
+import { Link as RLink, useHistory } from 'react-router-dom'
+import { extractDomainForPortal } from 'skynet-js'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
-import { Searchbar } from './Searchbar'
 import { IdentityContextMenu } from './IdentityContextMenu'
-import { useHistory } from 'react-router-dom'
-import { extractDomainForPortal } from 'skynet-js'
-import { useCallback } from 'react'
+import { Searchbar } from './Searchbar'
 
 type Props = {
   toggleTheme: () => void

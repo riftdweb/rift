@@ -1,3 +1,4 @@
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@riftdweb/design-system'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
 

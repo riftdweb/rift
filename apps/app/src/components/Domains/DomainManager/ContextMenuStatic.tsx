@@ -1,12 +1,4 @@
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  Flex,
-} from '@riftdweb/design-system'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { Flex } from '@riftdweb/design-system'
 import { AddDomain } from '../_shared/AddDomain'
 import { TreeNodeStatic } from './KeysTree/transformKeys'
 

@@ -7,7 +7,7 @@
     "packages:build": "preconstruct build",
     "start": "manypkg run @riftdweb/app start",
     "build": "manypkg run @riftdweb/app build",
-    "format": "prettier --write './**/src/*.{ts,tsx}'"
+    "format": "prettier --write './**/src/**/*.{ts,tsx}'"
   },
   "workspaces": [
     "packages/*",

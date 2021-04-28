@@ -1,11 +1,10 @@
-import { createContext, useCallback, useContext } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 import useSWR from 'swr'
-import { rankPosts } from './ranking'
-import { Post, ProcessedPost } from './types'
+import useLocalStorageState from 'use-local-storage-state'
 import { useSkynet } from '../skynet'
 import { getPosts } from './posts'
-import useLocalStorageState from 'use-local-storage-state'
-import { useState } from 'react'
+import { rankPosts } from './ranking'
+import { Post, ProcessedPost } from './types'
 
 const RESOURCE_DATA_KEY = 'feed'
 

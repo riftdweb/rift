@@ -1,11 +1,11 @@
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
+import useLocalStorageState from 'use-local-storage-state'
+import { useDomainParams } from '../../../hooks/useDomainParams'
+import { DragSizing } from '../../_shared/DragSizing'
+import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
-import { DragSizing } from '../../_shared/DragSizing'
-import useLocalStorageState from 'use-local-storage-state'
-import { PlusIcon } from '@radix-ui/react-icons'
-import { AddDomain } from '../_shared/AddDomain'
-import { useDomainParams } from '../../../hooks/useDomainParams'
 
 type Props = {}
 

@@ -1,3 +1,4 @@
+import { DnsEntry } from '@riftdweb/types'
 import {
   createContext,
   useCallback,
@@ -6,13 +7,12 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { v4 as uuid } from 'uuid'
-import useSWR from 'swr'
-import { DnsEntry } from '@riftdweb/types'
-import { upsertItem } from '../shared/collection'
 import { useHistory } from 'react-router-dom'
-import { useSkynet } from './skynet'
+import useSWR from 'swr'
+import { v4 as uuid } from 'uuid'
+import { upsertItem } from '../shared/collection'
 import { triggerToast } from '../shared/toast'
+import { useSkynet } from './skynet'
 
 const RESOURCE_DATA_KEY = 'dns'
 

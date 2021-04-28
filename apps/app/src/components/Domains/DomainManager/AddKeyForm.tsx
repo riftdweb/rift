@@ -1,19 +1,18 @@
+import { Pencil2Icon } from '@radix-ui/react-icons'
 import {
-  Flex,
   Box,
   Button,
-  Paragraph,
-  Text,
   ControlGroup,
+  Flex,
   Input,
+  Text,
 } from '@riftdweb/design-system'
-import { Pencil2Icon } from '@radix-ui/react-icons'
-import { useHistory } from 'react-router-dom'
+import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
+import * as Yup from 'yup'
 import { useDomains } from '../../../hooks/domains'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
 
 const getFullPath = (treeNode: TreeNodeDirectory, val: string) =>
   treeNode.key ? `${treeNode.key}/${val}` : val

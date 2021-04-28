@@ -1,8 +1,8 @@
-import { Flex, Box, Text, Subheading } from '@riftdweb/design-system'
+import { Box, Flex, Subheading, Text } from '@riftdweb/design-system'
 import { Nav } from '../_shared/Nav'
-import { ScoreGraph } from './ScoreGraph'
-import { KeywordsGraph } from './KeywordsGraph'
 import { Algorithm } from './Algorithm'
+import { KeywordsGraph } from './KeywordsGraph'
+import { ScoreGraph } from './ScoreGraph'
 
 const WIDTH = 1145
 const HEIGHT = 500

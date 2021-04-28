@@ -1,12 +1,11 @@
-import { useMemo, useState } from 'react'
-import { Bar } from '@visx/shape'
+import { Box, Flex, Text } from '@riftdweb/design-system'
+import { localPoint } from '@visx/event'
 import { Group } from '@visx/group'
 import { scaleBand, scaleLinear } from '@visx/scale'
-import { Text, Box, Flex } from '@riftdweb/design-system'
-import throttle from 'lodash/throttle'
-import { localPoint } from '@visx/event'
+import { Bar } from '@visx/shape'
 import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
-import { useCallback } from 'react'
+import throttle from 'lodash/throttle'
+import { useCallback, useMemo } from 'react'
 import { useFeed } from '../../../hooks/feed'
 
 const verticalMargin = 120

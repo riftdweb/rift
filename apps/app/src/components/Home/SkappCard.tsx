@@ -1,5 +1,5 @@
+import { LockClosedIcon, LockOpen2Icon } from '@radix-ui/react-icons'
 import {
-  Tooltip,
   Badge,
   Box,
   Card,
@@ -7,9 +7,8 @@ import {
   Flex,
   Subheading,
   Text,
+  Tooltip,
 } from '@riftdweb/design-system'
-import { LockClosedIcon, LockOpen2Icon } from '@radix-ui/react-icons'
-import { Link } from '../_shared/Link'
 import { App } from '@riftdweb/types'
 
 type Props = {

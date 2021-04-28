@@ -1,6 +1,6 @@
-import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
-import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
+import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SearchResults } from './SearchResults'
 

@@ -1,9 +1,9 @@
-import { useSkynet } from '../hooks/skynet'
 import { DomainsProvider } from '../hooks/domains'
-import { AppsProvider } from '../hooks/useApps'
-import { SkyfilesProvider } from '../hooks/useSkyfiles'
-import { DnsProvider } from '../hooks/useDns'
 import { FeedProvider } from '../hooks/feed'
+import { useSkynet } from '../hooks/skynet'
+import { AppsProvider } from '../hooks/useApps'
+import { DnsProvider } from '../hooks/useDns'
+import { SkyfilesProvider } from '../hooks/useSkyfiles'
 
 export function Providers({ children }) {
   const { isInitializing } = useSkynet()

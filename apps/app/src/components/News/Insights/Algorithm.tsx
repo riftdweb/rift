@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Subheading } from '@riftdweb/design-system'
+import { Box } from '@riftdweb/design-system'
 import { MathComponent } from 'mathjax-react'
 
 // p: Number of upvotes

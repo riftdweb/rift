@@ -1,5 +1,5 @@
-import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useDomains } from './domains'
 
 // Only for use within the data domains components under the /data route

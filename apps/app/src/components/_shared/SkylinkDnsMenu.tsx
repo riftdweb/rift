@@ -1,3 +1,4 @@
+import { GlobeIcon } from '@radix-ui/react-icons'
 import {
   Button,
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
-import { GlobeIcon } from '@radix-ui/react-icons'
 import { useDns } from '../../hooks/useDns'
 
 type Props = {

@@ -1,30 +1,30 @@
 import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  Text,
-  Paragraph,
-  Tooltip,
-  ControlGroup,
-  Checkbox,
-  Code,
-} from '@riftdweb/design-system'
-import {
   CheckIcon,
   ExclamationTriangleIcon,
   LockClosedIcon,
   Pencil2Icon,
 } from '@radix-ui/react-icons'
-import { Fragment, useCallback, useMemo } from 'react'
-import { useDomains } from '../../../hooks/domains'
-import debounce from 'lodash/debounce'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Code,
+  ControlGroup,
+  Flex,
+  Input,
+  Paragraph,
+  Text,
+  Tooltip,
+} from '@riftdweb/design-system'
 import { useFormik } from 'formik'
+import debounce from 'lodash/debounce'
+import { Fragment, useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
-import { getDefaultPaths } from './defaultPaths'
+import SpinnerIcon from '../../_icons/SpinnerIcon'
 import { Link } from '../../_shared/Link'
+import { getDefaultPaths } from './defaultPaths'
 
 const dGetHnsData = debounce(
   async (Api: any, hnsDomain: string, resolve: any) => {

@@ -1,20 +1,19 @@
 import {
-  Tooltip,
-  Text,
-  Box,
-  Flex,
-  Heading,
-  Button,
-} from '@riftdweb/design-system'
-import {
   EyeClosedIcon,
   EyeOpenIcon,
-  GearIcon,
   QuestionMarkCircledIcon,
 } from '@radix-ui/react-icons'
-import { Link } from '../../_shared/Link'
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  Tooltip,
+} from '@riftdweb/design-system'
 import capitalize from 'lodash/capitalize'
 import { useFeed } from '../../../hooks/feed'
+import { Link } from '../../_shared/Link'
 
 type Props = {
   section?: 'insights'

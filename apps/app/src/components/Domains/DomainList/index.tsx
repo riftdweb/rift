@@ -1,8 +1,8 @@
 import { Box, Subheading, Text } from '@riftdweb/design-system'
 import { useDomains } from '../../../hooks/domains'
 import { Grid } from '../../_shared/Grid'
-import { DomainCard } from './DomainCard'
 import { Nav } from '../_shared/Nav'
+import { DomainCard } from './DomainCard'
 
 function NoDomainsState() {
   return (

@@ -1,7 +1,7 @@
-import { Box, Text, Card, Flex } from '@riftdweb/design-system'
-import { FeedItem } from './FeedItem'
+import { Box, Card, Flex, Text } from '@riftdweb/design-system'
 import { useFeed } from '../../../hooks/feed'
 import { Nav } from '../_shared/Nav'
+import { FeedItem } from './FeedItem'
 
 // from RSS bot
 export const reddit = {

@@ -1,31 +1,31 @@
 import {
-  Textarea,
+  CheckIcon,
+  ExclamationTriangleIcon,
+  Pencil2Icon,
+} from '@radix-ui/react-icons'
+import {
+  Box,
+  Button,
+  ControlGroup,
   Dialog,
   DialogContent,
   DialogTrigger,
-  Box,
-  Button,
   Flex,
   Input,
-  Text,
   Subheading,
-  ControlGroup,
+  Text,
+  Textarea,
   Tooltip,
 } from '@riftdweb/design-system'
-import {
-  Pencil2Icon,
-  ExclamationTriangleIcon,
-  CheckIcon,
-} from '@radix-ui/react-icons'
-import { useCallback, useMemo, useState } from 'react'
-import { useApps } from '../../../hooks/useApps'
 import { App } from '@riftdweb/types'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
 import debounce from 'lodash/debounce'
+import { useCallback, useMemo, useState } from 'react'
+import * as Yup from 'yup'
+import { useSkynet } from '../../../hooks/skynet'
+import { useApps } from '../../../hooks/useApps'
 import { skapps } from '../../../shared/skapps'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
-import { useSkynet } from '../../../hooks/skynet'
 
 const defaultAppValues: Partial<App> = {
   name: '',

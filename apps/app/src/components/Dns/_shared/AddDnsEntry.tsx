@@ -1,21 +1,21 @@
+import { Pencil2Icon } from '@radix-ui/react-icons'
 import {
+  Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTrigger,
-  Box,
-  Button,
   Flex,
   Input,
-  Text,
   Subheading,
+  Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { Pencil2Icon } from '@radix-ui/react-icons'
-import { useCallback, useMemo, useState } from 'react'
-import { useDns } from '../../../hooks/useDns'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { useCallback, useMemo, useState } from 'react'
 import { parseSkylink } from 'skynet-js'
+import * as Yup from 'yup'
+import { useDns } from '../../../hooks/useDns'
 import { SkylinkInfo } from '../../_shared/SkylinkInfo'
 
 const buildSchema = (existingNames: string[] = []) =>

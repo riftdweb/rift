@@ -1,9 +1,7 @@
-import { Box, Text, Flex, Tooltip } from '@riftdweb/design-system'
-import { Pencil2Icon } from '@radix-ui/react-icons'
+import { Box, Flex, Text } from '@riftdweb/design-system'
+import { DnsEntry } from '@riftdweb/types'
 import { formatDistance, parseISO } from 'date-fns'
 import { useState } from 'react'
-import { copyToClipboard } from '../../shared/clipboard'
-import { DnsEntry } from '@riftdweb/types'
 import { SkylinkPeek } from '../_shared/SkylinkPeek'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 

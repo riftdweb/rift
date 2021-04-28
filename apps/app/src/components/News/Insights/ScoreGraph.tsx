@@ -1,20 +1,16 @@
-import { Group } from '@visx/group'
-import { Bar, Line, LinePath } from '@visx/shape'
-import { scaleLinear, scaleBand, scaleTime } from '@visx/scale'
-import { AxisLeft, AxisBottom } from '@visx/axis'
-import { ProcessedPost } from '../../../hooks/feed/types'
-import {
-  useTooltip,
-  useTooltipInPortal,
-  TooltipWithBounds,
-} from '@visx/tooltip'
+import { Box, Flex, Text } from '@riftdweb/design-system'
+import { AxisBottom, AxisLeft } from '@visx/axis'
 import { localPoint } from '@visx/event'
-import { useFeed } from '../../../hooks/feed'
-import { useMemo } from 'react'
-import { rankPost } from '../../../hooks/feed/ranking'
-import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
+import { Group } from '@visx/group'
+import { scaleLinear, scaleTime } from '@visx/scale'
+import { Line, LinePath } from '@visx/shape'
+import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
+import { useMemo } from 'react'
+import { useFeed } from '../../../hooks/feed'
+import { rankPost } from '../../../hooks/feed/ranking'
+import { ProcessedPost } from '../../../hooks/feed/types'
 import { SkylinkPeek } from '../../_shared/SkylinkPeek'
 import { PostTime } from '../_shared/PostTime'
 

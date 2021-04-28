@@ -1,13 +1,13 @@
-import { useHistory, useParams } from 'react-router-dom'
-import React, { useCallback, useMemo, useState } from 'react'
-import { Treebeard } from 'react-treebeard'
-import { style } from './style'
-import { decorators } from './decorators'
-import animations from './animations'
-import { transformKeys, TreeNode } from './transformKeys'
 import { Box } from '@riftdweb/design-system'
+import React, { useCallback, useMemo, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { Treebeard } from 'react-treebeard'
 import { useDomains } from '../../../../hooks/domains'
 import { useDomainParams } from '../../../../hooks/useDomainParams'
+import animations from './animations'
+import { decorators } from './decorators'
+import { style } from './style'
+import { transformKeys, TreeNode } from './transformKeys'
 
 type Props = {}
 

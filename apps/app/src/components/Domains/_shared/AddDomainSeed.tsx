@@ -1,24 +1,20 @@
+import { Pencil2Icon, SymbolIcon } from '@radix-ui/react-icons'
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
   Box,
   Button,
+  ControlGroup,
   Flex,
   Input,
-  Text,
-  Subheading,
-  ControlGroup,
-  Tooltip,
   Paragraph,
+  Text,
+  Tooltip,
 } from '@riftdweb/design-system'
-import { Pencil2Icon, SymbolIcon } from '@radix-ui/react-icons'
-import { useCallback, useMemo, useState } from 'react'
-import { useDomains } from '../../../hooks/domains'
 import { Domain } from '@riftdweb/types'
-import { v4 as uuid } from 'uuid'
 import { useFormik } from 'formik'
+import { useCallback, useMemo } from 'react'
+import { v4 as uuid } from 'uuid'
 import * as Yup from 'yup'
+import { useDomains } from '../../../hooks/domains'
 
 const defaultDomainValues: Partial<Domain> = {
   parentSeed: '',

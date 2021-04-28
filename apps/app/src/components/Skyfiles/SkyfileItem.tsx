@@ -1,4 +1,3 @@
-import { Box, Button, Flex, Link, Text, Tooltip } from '@riftdweb/design-system'
 import {
   ClipboardIcon,
   ExclamationTriangleIcon,
@@ -6,16 +5,16 @@ import {
   FileIcon,
   MagnifyingGlassIcon,
 } from '@radix-ui/react-icons'
+import { Box, Button, Flex, Link, Text, Tooltip } from '@riftdweb/design-system'
+import { Skyfile } from '@riftdweb/types'
 import bytes from 'bytes'
 import { formatDistance, parseISO } from 'date-fns'
 import React, { useMemo, useRef, useState } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
-import { Skyfile } from '@riftdweb/types'
 import { getSize } from '../../shared/uploads'
 import FolderIcon from '../_icons/FolderIcon'
 import SpinnerIcon from '../_icons/SpinnerIcon'
-import { SkylinkDnsMenu } from '../_shared/SkylinkDnsMenu'
 import { SkylinkPeek } from '../_shared/SkylinkPeek'
 
 const getProgressText = (progress) => {

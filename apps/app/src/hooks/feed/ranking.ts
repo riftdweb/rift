@@ -1,5 +1,5 @@
-import { ProcessedPost, Post } from './types'
 import { processPosts } from './processing'
+import { Post, ProcessedPost } from './types'
 
 type ScoreData = {
   keywords: {

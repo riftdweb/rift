@@ -1,8 +1,8 @@
-import React from 'react'
 import { styled } from '@modulz/design-system'
 import { CSS } from '@modulz/design-system/dist/stitches.config'
+import type * as Polymorphic from '@radix-ui/react-polymorphic'
 import { StitchesVariants } from '@stitches/react'
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
+import React from 'react'
 
 const DEFAULT_TAG = 'button'
 

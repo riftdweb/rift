@@ -1,6 +1,6 @@
-import { Flex, Box, Button, Heading, Input } from '@riftdweb/design-system'
-import { contentRecord, useSkynet } from '../../hooks/skynet'
+import { Box, Button, Flex, Heading, Input } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
+import { contentRecord, useSkynet } from '../../hooks/skynet'
 
 export function MySkyLearn() {
   const { userId } = useSkynet()

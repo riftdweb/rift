@@ -1,3 +1,4 @@
+import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -7,21 +8,20 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
+import { App, Domain, Skyfile } from '@riftdweb/types'
 import React, { useCallback } from 'react'
-import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
+import { useHistory } from 'react-router-dom'
+import useSWR from 'swr'
 import { useDomains } from '../../hooks/domains'
 import { useSkynet } from '../../hooks/skynet'
+import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { copyToClipboard } from '../../shared/clipboard'
-import { App, Domain, Skyfile } from '@riftdweb/types'
-import useSWR from 'swr'
 import {
   APPS_DATA_KEY,
   SKYDB_DATA_KEY,
   SKYFILES_DATA_KEY,
 } from '../../shared/dataKeys'
 import { exportData } from './_shared/exportData'
-import { useHistory } from 'react-router-dom'
 
 export function LocalSeed() {
   const { Api, userId } = useSkynet()

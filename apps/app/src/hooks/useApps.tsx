@@ -1,3 +1,5 @@
+import { App } from '@riftdweb/types'
+import debounce from 'lodash/debounce'
 import {
   createContext,
   useCallback,
@@ -6,12 +8,10 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { v4 as uuid } from 'uuid'
-import useSWR from 'swr'
-import { App } from '@riftdweb/types'
-import { upsertItem } from '../shared/collection'
 import { useHistory } from 'react-router-dom'
-import debounce from 'lodash/debounce'
+import useSWR from 'swr'
+import { v4 as uuid } from 'uuid'
+import { upsertItem } from '../shared/collection'
 import { useSkynet } from './skynet'
 
 const RESOURCE_DATA_KEY = 'apps'

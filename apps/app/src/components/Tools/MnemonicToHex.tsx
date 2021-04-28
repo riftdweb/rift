@@ -1,3 +1,4 @@
+import { ClipboardIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -6,7 +7,6 @@ import {
   Input,
   Tooltip,
 } from '@riftdweb/design-system'
-import { ClipboardIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
 import sia from 'sia-js'
 import { copyToClipboard } from '../../shared/clipboard'

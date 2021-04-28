@@ -1,21 +1,19 @@
+import { PlusIcon } from '@radix-ui/react-icons'
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogTrigger,
-  Box,
-  Button,
+  Flex,
+  Subheading,
   Tabs,
   TabsList,
-  TabsTab,
   TabsPanel,
-  Text,
-  Subheading,
-  Flex,
+  TabsTab,
 } from '@riftdweb/design-system'
-import { PlusIcon } from '@radix-ui/react-icons'
 import { useCallback, useState } from 'react'
-import { AddDomainSeed } from './AddDomainSeed'
 import { AddDomainMySky } from './AddDomainMySky'
+import { AddDomainSeed } from './AddDomainSeed'
 
 type Props = {
   children?: React.ReactNode

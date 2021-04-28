@@ -1,3 +1,5 @@
+import { Domain, DomainKey } from '@riftdweb/types'
+import debounce from 'lodash/debounce'
 import {
   createContext,
   useCallback,
@@ -6,14 +8,12 @@ import {
   useMemo,
   useState,
 } from 'react'
-import useSWR from 'swr'
-import { Domain, DomainKey } from '@riftdweb/types'
-import { upsertItem } from '../shared/collection'
-import { deriveChildSeed } from 'skynet-js'
 import { useHistory } from 'react-router-dom'
-import debounce from 'lodash/debounce'
-import { useSkynet } from './skynet'
+import { deriveChildSeed } from 'skynet-js'
+import useSWR from 'swr'
+import { upsertItem } from '../shared/collection'
 import { SKYDB_DATA_KEY } from '../shared/dataKeys'
+import { useSkynet } from './skynet'
 
 type State = {
   domains: Domain[]

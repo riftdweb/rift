@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
-import throttle from 'lodash/throttle'
-import { useSkynet } from './skynet'
 import { Skyfile } from '@riftdweb/types'
+import throttle from 'lodash/throttle'
+import { useCallback, useEffect, useState } from 'react'
 import { SKYFILES_DATA_KEY } from '../shared/dataKeys'
+import { useSkynet } from './skynet'
 
 const throttledSyncState = throttle(async (Api, state) => {
   try {

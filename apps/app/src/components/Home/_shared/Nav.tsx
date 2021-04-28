@@ -1,8 +1,7 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
-import { useHistory } from 'react-router-dom'
-import { useCallback } from 'react'
-import { useDomains } from '../../../hooks/domains'
 import { App } from '@riftdweb/types'
+import { useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Link } from '../../_shared/Link'
 // import { AddApp } from './AddApp'
 

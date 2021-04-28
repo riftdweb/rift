@@ -1,7 +1,7 @@
-import { ProcessedPost, Post } from './types'
 import retext from 'retext'
-import pos from 'retext-pos'
 import keywords from 'retext-keywords'
+import pos from 'retext-pos'
+import { Post, ProcessedPost } from './types'
 
 function extractKeywords(post: Post): Promise<Partial<ProcessedPost>> {
   const text = post.content.title

@@ -1,13 +1,11 @@
-import { Box, Flex, TabLink } from '@riftdweb/design-system'
 import {
   ActivityLogIcon,
   FilePlusIcon,
   GearIcon,
-  GlobeIcon,
   HomeIcon,
-  MixIcon,
   StackIcon,
 } from '@radix-ui/react-icons'
+import { Box, Flex, TabLink } from '@riftdweb/design-system'
 import { Link, useLocation } from 'react-router-dom'
 
 export function TabNav() {

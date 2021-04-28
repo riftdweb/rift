@@ -1,14 +1,14 @@
-import { Button, Flex, Box, Text } from '@riftdweb/design-system'
-import { useMemo } from 'react'
-import bytes from 'bytes'
 import {
   ExclamationTriangleIcon,
   ExternalLinkIcon,
 } from '@radix-ui/react-icons'
+import { Box, Button, Flex, Text } from '@riftdweb/design-system'
+import bytes from 'bytes'
+import { useMemo } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
-import { SkylinkContextMenu } from './SkylinkContextMenu'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { Link } from './Link'
+import { SkylinkContextMenu } from './SkylinkContextMenu'
 
 type Props = {
   skylink: string

@@ -1,20 +1,24 @@
-import { Box, Container, darkTheme } from '@riftdweb/design-system'
 import { IdProvider } from '@radix-ui/react-id'
-import Helmet from 'react-helmet'
+import {
+  Box,
+  Container,
+  darkTheme,
+  getCssString,
+} from '@riftdweb/design-system'
 import { useCallback, useEffect } from 'react'
+import Helmet from 'react-helmet'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import useLocalStorageState from 'use-local-storage-state'
+import { Init } from '../components/Init'
 import { DesignSystemProvider } from '../components/_layout/DesignSystemProvider'
 import Footer from '../components/_layout/Footer'
 import Navbar from '../components/_layout/Navbar'
 import { TabNav } from '../components/_layout/TabNav'
-import { Providers } from './_providers'
-import { Root } from './_root'
-import { ToastContainer } from 'react-toastify'
-import { Init } from '../components/Init'
-import { getCssString } from '@riftdweb/design-system'
-import 'react-toastify/dist/ReactToastify.css'
 import '../styles.css'
 import '../toast.css'
+import { Providers } from './_providers'
+import { Root } from './_root'
 
 export function Config({ children }) {
   const [themeConfig, setThemeConfig] = useLocalStorageState('v0/themeConfig', {

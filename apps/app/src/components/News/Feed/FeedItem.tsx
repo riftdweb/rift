@@ -1,14 +1,12 @@
-import { Badge, Box, Code, Flex, Text, Tooltip } from '@riftdweb/design-system'
-import { ProcessedPost } from '../../../hooks/feed/types'
-import { Link } from '../../_shared/Link'
 import { TriangleUpIcon } from '@radix-ui/react-icons'
-import { formatDistance, parseISO } from 'date-fns'
+import { Badge, Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
-import { Keyword } from './Keyword'
-import { copyToClipboard } from '../../../shared/clipboard'
+import { ProcessedPost } from '../../../hooks/feed/types'
+import { Link } from '../../_shared/Link'
 import { SkylinkPeek } from '../../_shared/SkylinkPeek'
 import { PostTime } from '../_shared/PostTime'
+import { Keyword } from './Keyword'
 
 const textStyles: any = {
   lineHeight: '25px',

@@ -1,6 +1,6 @@
 import { Box } from '@riftdweb/design-system'
-import React, { Suspense, lazy } from 'react'
-import { HashRouter as Router, Switch, Route } from 'react-router-dom'
+import React, { lazy, Suspense } from 'react'
+import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import SpinnerIcon from '../components/_icons/SpinnerIcon'
 import { Config } from './_config'
 

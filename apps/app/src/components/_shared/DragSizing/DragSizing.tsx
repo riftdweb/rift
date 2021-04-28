@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { DragHandler } from './DragHandler'
 import { DragSizingData, DragSizingProps, MEvent } from './types'
 import {

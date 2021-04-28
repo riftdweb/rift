@@ -1,4 +1,4 @@
-import { styled, Input, Select } from '@modulz/design-system'
+import { Input, Select, styled } from '@modulz/design-system'
 import { Button } from './Button'
 
 export const ControlGroup = styled('div', {

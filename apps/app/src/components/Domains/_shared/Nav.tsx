@@ -1,8 +1,8 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import { Domain } from '@riftdweb/types'
 import { Link } from '../../_shared/Link'
-import { DomainContextMenu } from './DomainContextMenu'
 import { AddDomain } from './AddDomain'
+import { DomainContextMenu } from './DomainContextMenu'
 
 type Props = {
   domain?: Domain

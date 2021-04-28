@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js/dist/utils/skylink'
 import useSWR from 'swr'
-import { useSelectedPortal } from './useSelectedPortal'
 import { useSkynet } from './skynet'
+import { useSelectedPortal } from './useSelectedPortal'
 
 export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
   const [portal] = useSelectedPortal()

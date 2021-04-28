@@ -1,3 +1,4 @@
+import { PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   keyframes,
   Tooltip,
 } from '@riftdweb/design-system'
-import { PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { useSkynet } from '../../hooks/skynet'
 import { copyToClipboard } from '../../shared/clipboard'

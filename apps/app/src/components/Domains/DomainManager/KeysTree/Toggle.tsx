@@ -1,6 +1,6 @@
-import React from 'react'
-import { Box } from '@riftdweb/design-system'
 import { TriangleRightIcon } from '@radix-ui/react-icons'
+import { Box } from '@riftdweb/design-system'
+import React from 'react'
 
 export function Toggle({ onClick }) {
   return (

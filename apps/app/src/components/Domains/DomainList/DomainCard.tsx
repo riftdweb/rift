@@ -7,9 +7,9 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { Link } from 'react-router-dom'
 import { Domain } from '@riftdweb/types'
 import { formatDistance, parseISO } from 'date-fns'
+import { Link } from 'react-router-dom'
 import { DomainContextMenu } from '../_shared/DomainContextMenu'
 
 type Props = {

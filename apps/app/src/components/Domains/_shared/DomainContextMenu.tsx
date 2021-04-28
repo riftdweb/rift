@@ -1,3 +1,4 @@
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
   DropdownMenu,
@@ -7,12 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@riftdweb/design-system'
-import { useDomains } from '../../../hooks/domains'
 import { Domain } from '@riftdweb/types'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { genKeyPairFromSeed } from 'skynet-js'
-import { copyToClipboard } from '../../../shared/clipboard'
 import { Fragment } from 'react'
+import { genKeyPairFromSeed } from 'skynet-js'
+import { useDomains } from '../../../hooks/domains'
+import { copyToClipboard } from '../../../shared/clipboard'
 
 type Props = {
   domain: Domain

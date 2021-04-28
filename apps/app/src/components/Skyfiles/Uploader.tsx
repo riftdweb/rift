@@ -9,19 +9,19 @@ import {
   Subheading,
   Text,
 } from '@riftdweb/design-system'
+import { Skyfile } from '@riftdweb/types'
 import bytes from 'bytes'
-import values from 'lodash/values'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
+import values from 'lodash/values'
 import path from 'path-browserify'
 import React, { useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { v4 as uuid } from 'uuid'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
-import { Skyfile } from '@riftdweb/types'
-import { getSize } from '../../shared/uploads'
-import useLocalStorageState from 'use-local-storage-state'
 import { useBeforeunload } from 'react-beforeunload'
+import { useDropzone } from 'react-dropzone'
+import useLocalStorageState from 'use-local-storage-state'
+import { v4 as uuid } from 'uuid'
 import { useSkynet } from '../../hooks/skynet'
+import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { getSize } from '../../shared/uploads'
 
 const getRelativeFilePath = (filepath: string): string => {
   const { root, dir, base } = path.parse(filepath)

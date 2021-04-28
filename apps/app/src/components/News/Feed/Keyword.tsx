@@ -1,4 +1,4 @@
-import { Text, Box, Input } from '@riftdweb/design-system'
+import { Box, Input, Text } from '@riftdweb/design-system'
 import { useCallback } from 'react'
 import { useFeed } from '../../../hooks/feed'
 

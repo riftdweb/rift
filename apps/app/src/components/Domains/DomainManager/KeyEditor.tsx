@@ -1,15 +1,15 @@
 import { Box, Flex } from '@riftdweb/design-system'
+import { Domain, DomainKey } from '@riftdweb/types'
 import findIndex from 'lodash/findIndex'
-import { useHistory } from 'react-router-dom'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
+import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { useDomains } from '../../../hooks/domains'
-import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
-import { Domain, DomainKey } from '@riftdweb/types'
-import { KeysToolbar } from './KeysToolbar'
 import { useSkynet } from '../../../hooks/skynet'
+import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 import { triggerToast } from '../../../shared/toast'
+import { KeysToolbar } from './KeysToolbar'
 
 const importConfigFiles = () => {
   return Promise.all([

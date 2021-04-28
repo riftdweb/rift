@@ -1,26 +1,21 @@
-import { Tooltip, Flex, Box } from '@riftdweb/design-system'
+import { LockClosedIcon, Pencil2Icon, StackIcon } from '@radix-ui/react-icons'
+import { Box, Flex, Tooltip } from '@riftdweb/design-system'
 import React, { useMemo, useState } from 'react'
 import { VelocityComponent } from 'velocity-react'
-import { ContextMenuFile } from '../ContextMenuFile'
+import { useSkynet } from '../../../../hooks/skynet'
+import SeedIcon from '../../../_icons/SeedIcon'
 import { ContextMenuDirectory } from '../ContextMenuDirectory'
+import { ContextMenuDomain } from '../ContextMenuDomain'
+import { ContextMenuFile } from '../ContextMenuFile'
 import { ContextMenuStatic } from '../ContextMenuStatic'
-import {
-  LockClosedIcon,
-  LockOpen1Icon,
-  Pencil2Icon,
-  StackIcon,
-} from '@radix-ui/react-icons'
+import { Header } from './Header'
+import { Toggle } from './Toggle'
 import {
   TreeNode,
   TreeNodeDirectory,
   TreeNodeFile,
   TreeNodeStatic,
 } from './transformKeys'
-import SeedIcon from '../../../_icons/SeedIcon'
-import { Toggle } from './Toggle'
-import { Header } from './Header'
-import { ContextMenuDomain } from '../ContextMenuDomain'
-import { useSkynet } from '../../../../hooks/skynet'
 
 type Props = {
   // customStyles?: {}

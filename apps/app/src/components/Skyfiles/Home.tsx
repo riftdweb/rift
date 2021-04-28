@@ -1,4 +1,9 @@
 import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Cross2Icon,
+} from '@radix-ui/react-icons'
+import {
   Box,
   Button,
   ControlGroup,
@@ -7,11 +12,6 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Cross2Icon,
-} from '@radix-ui/react-icons'
 import React, { Fragment, useCallback, useMemo, useState } from 'react'
 import { useSkyfiles } from '../../hooks/useSkyfiles'
 import { SkyfileItem } from './SkyfileItem'

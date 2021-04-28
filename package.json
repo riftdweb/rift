@@ -6,7 +6,8 @@
     "postinstall": "manypkg check && preconstruct dev",
     "packages:build": "preconstruct build",
     "start": "manypkg run @riftdweb/app start",
-    "build": "manypkg run @riftdweb/app build"
+    "build": "manypkg run @riftdweb/app build",
+    "format": "prettier --write src"
   },
   "workspaces": [
     "packages/*",
@@ -17,7 +18,8 @@
     "@babel/preset-typescript": "^7.13.0",
     "@changesets/cli": "^2.16.0",
     "@manypkg/cli": "^0.17.0",
-    "@preconstruct/cli": "^2.0.7"
+    "@preconstruct/cli": "^2.0.7",
+    "prettier": "^2.2.1"
   },
   "preconstruct": {
     "packages": [

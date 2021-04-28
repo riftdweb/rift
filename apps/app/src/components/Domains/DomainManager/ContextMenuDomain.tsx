@@ -1,11 +1,11 @@
-import { Flex } from '@riftdweb/design-system'
+import { ButtonVariants, Flex } from '@riftdweb/design-system'
 import { DomainContextMenu } from '../_shared/DomainContextMenu'
 import { AddKeyDialog } from './AddKeyDialog'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 type Props = {
   treeNode: TreeNodeDirectory
-  variant?: string
+  variant?: ButtonVariants['variant']
   size?: string
   right?: string
   color?: string
@@ -31,7 +31,7 @@ export function ContextMenuDomain({
       {/* <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           as={Button}
-          variant={variant as any}
+          variant={variant}
           size={size}
           css={{
             right,

@@ -66,7 +66,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
             {data.metadata.filename}
           </Link>
           <Flex css={{ marginRight: '-10px' }}>
-            <Button as="a" variant="ghost" href={weblink} target="_blank">
+            <Button<any> as="a" variant="ghost" href={weblink} target="_blank">
               <ExternalLinkIcon />
             </Button>
             <SkylinkContextMenu skylink={skylink} />

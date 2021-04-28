@@ -1,6 +1,7 @@
 import { GlobeIcon } from '@radix-ui/react-icons'
 import {
   Button,
+  ButtonVariants,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,7 +13,7 @@ import { useDns } from '../../hooks/useDns'
 
 type Props = {
   skylink: string
-  variant?: string
+  variant?: ButtonVariants['variant']
   size?: string
   right?: string
   onOpenChange?: (val: boolean) => void
@@ -31,7 +32,7 @@ export function SkylinkDnsMenu({
       <Tooltip content="Update DNS entry">
         <DropdownMenuTrigger
           as={Button}
-          variant={variant as any}
+          variant={variant}
           size={size}
           css={{
             right,

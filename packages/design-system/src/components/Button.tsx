@@ -1,8 +1,7 @@
-import { styled } from '@modulz/design-system'
-import { CSS } from '@modulz/design-system/dist/stitches.config'
-import type * as Polymorphic from '@radix-ui/react-polymorphic'
-import { StitchesVariants } from '@stitches/react'
 import React from 'react'
+import { styled, CSS, StitchesVariants } from '../stitches.config'
+
+import type * as Polymorphic from '@radix-ui/react-polymorphic'
 
 const DEFAULT_TAG = 'button'
 
@@ -249,9 +248,8 @@ const StyledButton = styled(DEFAULT_TAG, {
 })
 
 type ButtonCSSProp = { css?: CSS }
-// type ButtonCSSProp = { css?: any };
 // TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>
+export type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>
 type ButtonOwnProps = ButtonCSSProp & ButtonVariants & { size?: any }
 
 type ButtonComponent = Polymorphic.ForwardRefComponent<

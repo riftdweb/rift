@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
+  ButtonVariants,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,7 +17,7 @@ import { copyToClipboard } from '../../../shared/clipboard'
 
 type Props = {
   domain: Domain
-  variant?: string
+  variant?: ButtonVariants['variant']
   right?: string
   size?: string
   onOpenChange?: (val: boolean) => void
@@ -36,7 +37,7 @@ export function DomainContextMenu({
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         as={Button}
-        variant={variant as any}
+        variant={variant}
         size={size}
         css={{
           right,

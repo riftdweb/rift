@@ -1,7 +1,7 @@
-name: Deploy to Skynet
+name: Deploy Skynet Preview
 on: [pull_request]
 jobs:
-  descriptive-name:
+  preview:
     runs-on: ubuntu-latest
 
     strategy:

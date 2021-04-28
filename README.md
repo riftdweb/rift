@@ -1,3 +1,3 @@
-<p align="center">rift</p>
+<h1 align="center">rift</h1>
 
-<p align="center"><strong>Tools for the decentralized web.</strong></p>
+<p align="center">Tools for the decentralized web.</p>

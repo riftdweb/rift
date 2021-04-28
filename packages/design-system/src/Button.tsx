@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled} from '@modulz/design-system';
-// import { styled, CSS } from '@modulz/design-system/dist/stitches.config';
+import { CSS } from '@modulz/design-system/dist/stitches.config';
 import { StitchesVariants } from '@stitches/react';
 import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
@@ -241,8 +241,8 @@ const StyledButton = styled(DEFAULT_TAG, {
   },
 });
 
-// type ButtonCSSProp = { css?: CSS };
-type ButtonCSSProp = { css?: any };
+type ButtonCSSProp = { css?: CSS };
+// type ButtonCSSProp = { css?: any };
 // TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
 type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>;
 type ButtonOwnProps = ButtonCSSProp & ButtonVariants & { size?: any };

@@ -16,6 +16,7 @@
     "@radix-ui/react-icons": "^1.0.2",
     "@radix-ui/react-id": "^0.0.1",
     "@radix-ui/react-scroll-area": "^0.0.9",
+    "@riftdweb/design-system": "^1.0.0",
     "@riftdweb/types": "^1.0.0",
     "@skynetlabs/content-record-library": "^0.4.0",
     "@svgr/webpack": "5.5.0",

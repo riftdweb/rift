@@ -13,6 +13,7 @@
     "@radix-ui/react-polymorphic": "^0.0.10",
     "@radix-ui/react-portal": "^0.0.11",
     "@radix-ui/react-slot": "^0.0.9",
-    "@stitches/react": "^0.1.9"
+    "@stitches/react": "^0.1.9",
+    "react": "^17.0.2"
   }
 }

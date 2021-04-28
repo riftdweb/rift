@@ -1,21 +1,15 @@
 name: Deploy to Skynet
-
-on:
-  pull_request:
-
+on: [pull_request]
 jobs:
   build:
-  runs-on: ubuntu-latest
-
-steps:
-  - name: Install dependencies
-  - uses: actions/checkout@v2
-  - uses: borales/actions-yarn@v2.0.0
-    with:
-      cmd: install
-
-  # - name: Run unit tests
-  #   run: npm test
-
-  - name: Build
-    run: yarn build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+      # - name: Run unit tests
+      #   run: npm test
+      - name: Build
+        run: yarn build

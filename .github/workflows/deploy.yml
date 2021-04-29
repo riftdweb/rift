@@ -35,3 +35,9 @@ jobs:
       # Ready to run steps that rely on node_modules
       - name: Build application
         run: yarn build
+
+      - name: Deploy to Skynet
+        uses: kwypchlo/deploy-to-skynet-action@main
+        with:
+          upload-dir: apps/app/build
+          github-token: ${{ secrets.GITHUB_TOKEN }}

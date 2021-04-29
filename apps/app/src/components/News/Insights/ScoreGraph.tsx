@@ -143,6 +143,11 @@ export function ScoreGraph({ width, height }: Props) {
     <Box css={{ position: 'relative' }}>
       <svg width={width} height={height}>
         <AxisBottom
+          stroke={'var(--colors-gray800)'}
+          tickStroke={'var(--colors-gray800)'}
+          tickLabelProps={() => ({
+            fill: 'var(--colors-gray800)',
+          })}
           top={yMax}
           tickFormat={(value: Date) => {
             // Closest tick to current time. Don't show a label since there is a
@@ -159,7 +164,14 @@ export function ScoreGraph({ width, height }: Props) {
           scale={xScale}
           numTicks={width > 520 ? 10 : 5}
         />
-        <AxisLeft scale={yScale} />
+        <AxisLeft
+          stroke={'var(--colors-gray900)'}
+          tickStroke={'var(--colors-gray900)'}
+          labelProps={{
+            fill: 'var(--colors-gray900)',
+          }}
+          scale={yScale}
+        />
         {data.map((series, i) => {
           return (
             <Group key={i}>

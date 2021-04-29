@@ -1,6 +1,4 @@
-type Props = {}
-
-export default function SeedIcon({}: Props) {
+export default function SeedIcon() {
   return (
     <svg
       id="Capa_1"

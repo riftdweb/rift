@@ -41,11 +41,11 @@ type Props = {
 export function ScoreGraph({ width, height }: Props) {
   const { rankedPosts, keywords, domains } = useFeed()
 
-  const xMax = width - margin.left - margin.right
-  const yMax = height - margin.top - margin.bottom
+  const xMax = useMemo(() => width - margin.left - margin.right, [width])
+  const yMax = useMemo(() => height - margin.top - margin.bottom, [height])
 
   const timePoints = useMemo(() => generateTimePoints(-10, 10), [])
-  const posts = rankedPosts || []
+  const posts = useMemo(() => rankedPosts || [], [rankedPosts])
   const data = useMemo(
     () =>
       posts
@@ -67,7 +67,7 @@ export function ScoreGraph({ width, height }: Props) {
             })
             .filter(({ y }) => !!y),
         })),
-    [posts]
+    [posts, keywords, domains, timePoints]
   )
 
   // And then scale the graph by our data
@@ -79,7 +79,9 @@ export function ScoreGraph({ width, height }: Props) {
         domain: [timePoints[0], timePoints[timePoints.length - 1]],
         // padding: 0.4,
       }),
-    [data]
+    // Might need `data`
+    // [data, timePoints, xMax]
+    [timePoints, xMax]
   )
 
   const yScale = useMemo(
@@ -96,7 +98,7 @@ export function ScoreGraph({ width, height }: Props) {
           ),
         ],
       }),
-    [data]
+    [data, yMax]
   )
 
   const xPoint = compose(xScale, x)
@@ -108,7 +110,6 @@ export function ScoreGraph({ width, height }: Props) {
     tooltipTop,
     tooltipOpen,
     showTooltip,
-    hideTooltip,
   } = useTooltip()
 
   const selectedData = tooltipData as
@@ -124,7 +125,6 @@ export function ScoreGraph({ width, height }: Props) {
       throttle((event, series: any) => {
         const coords = localPoint(event.target.ownerSVGElement, event)
         const time = xScale.invert(coords.x)
-        const y = yScale(coords.y)
         const scoreCoords = series.data.find(({ x }) => x > time)
         showTooltip({
           tooltipLeft: coords.x,
@@ -136,7 +136,7 @@ export function ScoreGraph({ width, height }: Props) {
           },
         })
       }, 10),
-    [xScale, yScale]
+    [xScale, showTooltip]
   )
 
   return (
@@ -164,7 +164,7 @@ export function ScoreGraph({ width, height }: Props) {
           return (
             <Group key={i}>
               <LinePath
-                stroke="var(--sx-colors-hiContrast)"
+                stroke="var(--colors-hiContrast)"
                 strokeWidth={2}
                 strokeOpacity={0.6}
                 shapeRendering="geometricPrecision"
@@ -180,7 +180,7 @@ export function ScoreGraph({ width, height }: Props) {
         <Line
           from={{ x: xScale(new Date()), y: margin.top }}
           to={{ x: xScale(new Date()), y: height - 41 }}
-          stroke={'var(--sx-colors-blue300)'}
+          stroke={'var(--colors-blue300)'}
           strokeWidth={2}
           pointerEvents="none"
         />
@@ -189,7 +189,7 @@ export function ScoreGraph({ width, height }: Props) {
             <Line
               from={{ x: tooltipLeft, y: margin.top }}
               to={{ x: tooltipLeft, y: height + margin.top }}
-              stroke={'var(--sx-colors-gray900)'}
+              stroke={'var(--colors-gray900)'}
               strokeWidth={2}
               pointerEvents="none"
               strokeDasharray="5,2"
@@ -209,7 +209,7 @@ export function ScoreGraph({ width, height }: Props) {
               cx={tooltipLeft}
               cy={tooltipTop}
               r={4}
-              fill={'var(--sx-colors-gray900)'}
+              fill={'var(--colors-gray900)'}
               stroke="white"
               strokeWidth={2}
               pointerEvents="none"

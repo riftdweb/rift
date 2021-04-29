@@ -71,13 +71,13 @@ export const DragHandler: React.FC<DragHandlerProps> = (props) => {
     >
       <style>{`
         .drag-handler {
-          background-color: var(--sx-colors-indigo200);
+          background-color: var(--colors-indigo200);
           border-radius: 4px;
           opacity: 0;
           transition: background-color 0.1s, opacity 0.1s;
         }
         .drag-handler:hover {
-          background-color: var(--sx-colors-indigo400);
+          background-color: var(--colors-indigo400);
           opacity: 0.5;
         }
         `}</style>

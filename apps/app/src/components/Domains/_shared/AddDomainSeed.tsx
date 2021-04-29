@@ -51,6 +51,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
         closeDialog()
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [addDomain, closeDialog]
   )
 
@@ -121,7 +122,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
                   placeholder="Seed value"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--sx-colors-blue500), inset 0 0 0 100px var(--sx-colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
                   }}
                 />
                 <Tooltip content="Generate random seed">

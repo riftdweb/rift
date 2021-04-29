@@ -14,7 +14,7 @@ import bytes from 'bytes'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import values from 'lodash/values'
 import path from 'path-browserify'
-import React, { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useBeforeunload } from 'react-beforeunload'
 import { useDropzone } from 'react-dropzone'
 import useLocalStorageState from 'use-local-storage-state'
@@ -94,14 +94,6 @@ export function Uploader({
       e.preventDefault()
     }
   })
-
-  useEffect(() => {
-    if (directoryMode) {
-      inputRef.current.setAttribute('webkitdirectory', 'true')
-    } else {
-      inputRef.current.removeAttribute('webkitdirectory')
-    }
-  }, [directoryMode])
 
   const handleDrop = async (droppedFiles) => {
     // Make File data serializable
@@ -305,6 +297,14 @@ export function Uploader({
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
     onDrop: handleDrop,
   })
+
+  useEffect(() => {
+    if (directoryMode) {
+      inputRef.current.setAttribute('webkitdirectory', 'true')
+    } else {
+      inputRef.current.removeAttribute('webkitdirectory')
+    }
+  }, [directoryMode, inputRef])
 
   const stopPropagation = useCallback((e) => {
     e.stopPropagation()

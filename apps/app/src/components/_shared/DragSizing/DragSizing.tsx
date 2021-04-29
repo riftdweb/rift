@@ -15,7 +15,6 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
     onStart,
     onEnd,
     onUpdate,
-    onChange,
     id,
     className,
     style,
@@ -78,7 +77,7 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
       const e = normalizeMEvent(_e)
       if (onEnd) onEnd(e)
     },
-    [onEnd, onChange]
+    [onEnd]
   )
 
   const handleUpdate = useCallback(
@@ -91,15 +90,8 @@ export const DragSizing: React.FC<DragSizingProps> = (props) => {
       setDiffCoord(e[xy] - oldCoordRef.current)
 
       if (onUpdate) onUpdate(e)
-
-      // if (onChange) {
-      //   onChange({
-      //     width: containerStyle.width,
-      //     height: containerStyle.height,
-      //   })
-      // }
     },
-    [containerMeta, onUpdate, containerStyle]
+    [containerMeta, onUpdate]
   )
 
   return (

@@ -72,6 +72,7 @@ export function AddDnsEntry() {
         setIsOpen(false)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [addDnsEntry, setIsOpen]
   )
 

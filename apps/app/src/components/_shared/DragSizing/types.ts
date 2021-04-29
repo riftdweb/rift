@@ -28,7 +28,6 @@ export interface DragSizingProps {
   onStart?: DragHandlerProps['onStart']
   onEnd?: DragHandlerProps['onEnd']
   onUpdate?: DragHandlerProps['onUpdate']
-  onChange?: (box: { width: string | number; height: string | number }) => void
   id?: string
   className?: string
   style?: React.CSSProperties

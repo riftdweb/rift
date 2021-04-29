@@ -7,14 +7,9 @@ import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
 
-type Props = {}
-
-export function KeysWorkspace({}: Props) {
+export function KeysWorkspace() {
   const { domain, domainKey } = useDomainParams()
-  const [keysTreeWidth, _setKeysTreeWidth] = useLocalStorageState<string>(
-    'keysTreeWidth',
-    '200px'
-  )
+  const [keysTreeWidth] = useLocalStorageState<string>('keysTreeWidth', '200px')
 
   return (
     <Flex>

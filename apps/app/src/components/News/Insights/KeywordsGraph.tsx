@@ -66,7 +66,6 @@ export function KeywordsGraph({ width, height }: Props) {
     tooltipTop,
     tooltipOpen,
     showTooltip,
-    hideTooltip,
   } = useTooltip()
 
   const selectedData = tooltipData as KeywordItem | undefined
@@ -95,7 +94,7 @@ export function KeywordsGraph({ width, height }: Props) {
           tooltipData: data,
         })
       }, 10),
-    [xScale, yScale]
+    [showTooltip]
   )
 
   return (
@@ -117,8 +116,8 @@ export function KeywordsGraph({ width, height }: Props) {
                 height={barHeight}
                 fill={
                   selectedData?.stem === d.stem
-                    ? 'var(--sx-colors-blue900)'
-                    : 'var(--sx-colors-gray900)'
+                    ? 'var(--colors-blue900)'
+                    : 'var(--colors-gray900)'
                 }
                 onClick={() => handleBoostScore(d)}
                 onContextMenu={(e) => {

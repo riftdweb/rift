@@ -53,7 +53,7 @@ type Props = {
 export function AddKeyForm({ treeNode, closeDialog }: Props) {
   const history = useHistory()
   const { addKey } = useDomains()
-  const { domain, treeKey } = treeNode
+  const { domain } = treeNode
 
   const onSubmit = useCallback(
     (vals) => {
@@ -73,7 +73,8 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
         )
       }
     },
-    [history, domain, addKey, closeDialog]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [history, domain, addKey, closeDialog, treeNode]
   )
 
   const existingKeys = useMemo(() => domain.keys.map((key) => key.key), [
@@ -138,7 +139,7 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
                   placeholder="path.json"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--sx-colors-blue500), inset 0 0 0 100px var(--sx-colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
                   }}
                 />
               </ControlGroup>

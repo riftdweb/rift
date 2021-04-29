@@ -81,29 +81,29 @@ export function DnsProvider({ children }: Props) {
     [Api, mutate]
   )
 
-  const saveEntry = useCallback(
-    (id: string) => {
-      const func = async () => {
-        const dnsEntry = dnsEntries.find((e) => e.id === id)
+  // const saveEntry = useCallback(
+  //   (id: string) => {
+  //     const func = async () => {
+  //       const dnsEntry = dnsEntries.find((e) => e.id === id)
 
-        if (!dnsEntry) {
-          return false
-        }
+  //       if (!dnsEntry) {
+  //         return false
+  //       }
 
-        await Api.setJSON({
-          dataKey: `${RESOURCE_DATA_KEY}/${dnsEntry.name}`,
-          json: {
-            domain: dnsEntry.name,
-            skylink: dnsEntry.skylink,
-          },
-        })
+  //       await Api.setJSON({
+  //         dataKey: `${RESOURCE_DATA_KEY}/${dnsEntry.name}`,
+  //         json: {
+  //           domain: dnsEntry.name,
+  //           skylink: dnsEntry.skylink,
+  //         },
+  //       })
 
-        return true
-      }
-      return func()
-    },
-    [Api, dnsEntries]
-  )
+  //       return true
+  //     }
+  //     return func()
+  //   },
+  //   [Api, dnsEntries]
+  // )
 
   const addDnsEntry = useCallback(
     (dnsEntry: Partial<DnsEntry>): Promise<boolean> => {

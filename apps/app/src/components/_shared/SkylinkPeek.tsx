@@ -5,7 +5,7 @@ type Props = {
   skylink: string
 }
 
-export function SkylinkPeek({ skylink }) {
+export function SkylinkPeek({ skylink }: Props) {
   return (
     <Tooltip align="start" content="Copy skylink">
       <Code

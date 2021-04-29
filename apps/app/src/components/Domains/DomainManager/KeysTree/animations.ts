@@ -1,6 +1,6 @@
 const DURATION = 100
 
-export default {
+const animations = {
   toggle: ({ node: { toggled } }, duration = DURATION) => ({
     animation: { rotateZ: toggled ? 90 : 0 },
     duration: duration,
@@ -16,3 +16,5 @@ export default {
     },
   }),
 }
+
+export default animations

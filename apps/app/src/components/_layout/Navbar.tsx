@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { useCallback } from 'react'
-import { Link as RLink, useHistory } from 'react-router-dom'
+import { Link as RLink } from 'react-router-dom'
 import { extractDomainForPortal } from 'skynet-js'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
@@ -28,26 +28,21 @@ type Props = {
 }
 
 export default function Navbar({ toggleTheme }: Props) {
-  const history = useHistory()
-  const [selectedPortal, setSelectedPortal] = useSelectedPortal()
+  const [portal, setPortal] = useSelectedPortal()
 
   const handleChangePortal = useCallback(
     (newPortal: string) => {
       const hostname = window.location.hostname
-      const origin = window.location.origin
-      setSelectedPortal(newPortal)
+      setPortal(newPortal)
       if (hostname === 'localhost') {
         window.location.reload()
       } else {
         //  e.g. ("https://siasky.net", "dac.hns.siasky.net") => "dac.hns"
-        const subdomain = extractDomainForPortal(
-          `https://${selectedPortal}`,
-          hostname
-        )
+        const subdomain = extractDomainForPortal(`https://${portal}`, hostname)
         window.location.href = `https://${subdomain}.${newPortal}`
       }
     },
-    [history, setSelectedPortal]
+    [setPortal, portal]
   )
 
   return (
@@ -100,11 +95,7 @@ export default function Navbar({ toggleTheme }: Props) {
             </ControlGroup>
             <ControlGroup>
               <Tooltip content="Visit Portal">
-                <Button
-                  as="a"
-                  href={`https://${selectedPortal}`}
-                  target="_blank"
-                >
+                <Button as="a" href={`https://${portal}`} target="_blank">
                   <SkynetIcon />
                 </Button>
               </Tooltip>
@@ -116,7 +107,7 @@ export default function Navbar({ toggleTheme }: Props) {
                       borderRadius: '0 $2 $2 0 !important',
                     }}
                     onChange={(e) => handleChangePortal(e.target.value)}
-                    value={selectedPortal}
+                    value={portal}
                   >
                     {portals.map((portal) => (
                       <option key={portal.domain} value={portal.domain}>

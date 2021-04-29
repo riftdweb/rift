@@ -1,5 +1,5 @@
 import { Box } from '@riftdweb/design-system'
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Treebeard } from 'react-treebeard'
 import { useDomains } from '../../../../hooks/domains'
@@ -9,9 +9,7 @@ import { decorators } from './decorators'
 import { style } from './style'
 import { transformKeys, TreeNode } from './transformKeys'
 
-type Props = {}
-
-export function KeysTree({}: Props) {
+export function KeysTree() {
   const history = useHistory()
   const { domain, domainKey } = useDomainParams()
   const { domains } = useDomains()

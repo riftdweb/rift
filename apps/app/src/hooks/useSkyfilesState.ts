@@ -43,6 +43,7 @@ export const useSkyfilesState = () => {
   useEffect(() => {
     setLocalState([] as Skyfile[])
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identityKey])
 
   const refetchSkyfiles = useCallback(() => {
@@ -72,7 +73,7 @@ export const useSkyfilesState = () => {
         syncState(_nextState)
       }
     },
-    [localState, setLocalState]
+    [setLocalState, syncState]
   )
 
   return {

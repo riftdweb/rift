@@ -235,7 +235,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                         onCheckedChange={formik.handleChange}
                       />
                     </Flex>
-                    <Code>
+                    <Code css={{ overflow: 'auto' }}>
                       {defaultPaths.map((path) => (
                         <Box key={path} css={{ margin: '$1 0' }}>
                           {path}

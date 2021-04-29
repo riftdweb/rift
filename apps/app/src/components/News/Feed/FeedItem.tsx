@@ -65,6 +65,7 @@ export function FeedItem({ item, index }: Props) {
 
     return parts.map((part, i) => {
       if (part.startsWith('__WORD')) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, stem, value] = part.split('///')
         return <Keyword value={value} stem={stem} isHovering={isHovering} />
       }
@@ -78,7 +79,7 @@ export function FeedItem({ item, index }: Props) {
         </Text>
       )
     })
-  }, [isVisibilityEnabled, isHovering, item])
+  }, [isVisibilityEnabled, isHovering, item, post])
 
   const incrementCounters = useCallback(() => {
     incrementKeywords(keywordStems)

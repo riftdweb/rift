@@ -52,7 +52,7 @@ export function SkyfilesProvider({ children }: Props) {
       )
       setHasCleanedData(true)
     }
-  }, [skyfiles, setSkyfiles])
+  }, [skyfiles, setSkyfiles, hasCleanedData])
 
   const addSkyfiles = useCallback(
     (items) => {

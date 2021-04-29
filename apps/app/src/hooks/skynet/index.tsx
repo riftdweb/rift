@@ -85,6 +85,8 @@ export function SkynetProvider({ children }: Props) {
 
     // call async setup function
     initMySky()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const login = useCallback(() => {

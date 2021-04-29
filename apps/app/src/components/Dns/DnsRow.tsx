@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { DnsEntry } from '@riftdweb/types'
 import { formatDistance, parseISO } from 'date-fns'
-import { useState } from 'react'
 import { SkylinkPeek } from '../_shared/SkylinkPeek'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 
@@ -11,12 +10,9 @@ type Props = {
 
 export function DnsRow({ dnsEntry }: Props) {
   const { name, skylink, addedAt, updatedAt } = dnsEntry
-  const [isHovering, setIsHovering] = useState<boolean>(false)
 
   return (
     <Box
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
       css={{
         position: 'relative',
         borderBottom: '1px solid $gray300',

@@ -1,7 +1,6 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import { App } from '@riftdweb/types'
-import { useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 import { Link } from '../../_shared/Link'
 // import { AddApp } from './AddApp'
 
@@ -10,16 +9,16 @@ type Props = {
 }
 
 export function Nav({ app }: Props) {
-  const history = useHistory()
+  // const history = useHistory()
 
-  const removeAppAndNav = useCallback(() => {
-    if (!app) {
-      return
-    }
-    // removeApp(app.id)
-    history.push('/')
-  }, [app, history])
-  // }, [app, removeApp, push])
+  // const removeAppAndNav = useCallback(() => {
+  //   if (!app) {
+  //     return
+  //   }
+  //   // removeApp(app.id)
+  //   history.push('/')
+  // }, [app, history])
+  // // }, [app, removeApp, push])
 
   return (
     <Heading css={{ my: '$5' }}>

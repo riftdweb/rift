@@ -394,8 +394,6 @@ module.exports = function (webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              // AF: include all files in repo, its working but what happens to node_modules?
-              // include: isEnvDevelopment ? '*' : paths.appSrc,
               include: paths.appSrc,
               loader: require.resolve('babel-loader'),
               options: {

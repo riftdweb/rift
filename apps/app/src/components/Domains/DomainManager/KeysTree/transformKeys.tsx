@@ -91,7 +91,7 @@ function addNode(
       children: {},
     }
 
-    if (i == pathParts.length - 1 && domainKey.type === 'file') {
+    if (i === pathParts.length - 1 && domainKey.type === 'file') {
       node = {
         id: treeKey,
         name: name,
@@ -125,7 +125,7 @@ function objectToArrNode(node: TreeNodeArr) {
 }
 
 function objectToArr(tree: TreeArr) {
-  Object.keys(tree || {}).map((k) => {
+  Object.keys(tree || {}).forEach((k) => {
     if (tree[k].children) {
       objectToArrNode(tree[k])
     }

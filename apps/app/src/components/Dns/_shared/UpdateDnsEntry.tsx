@@ -71,7 +71,8 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
         setIsOpen(false)
       }
     },
-    [updateDnsEntry, setIsOpen]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateDnsEntry, setIsOpen, dnsEntry]
   )
 
   const validationSchema = useMemo(() => buildSchema(), [])

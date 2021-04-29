@@ -85,7 +85,8 @@ export function AddDomainMySky({ closeDialog }: Props) {
         closeDialog()
       }
     },
-    [addDomain, closeDialog]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [addDomain, closeDialog, appDomain]
   )
 
   const existingDataDomains = useMemo(
@@ -95,7 +96,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
 
   const validationSchema = useMemo(
     () => buildDomainSchema(Api, existingDataDomains),
-    [existingDataDomains]
+    [Api, existingDataDomains]
   )
 
   const formik = useFormik({
@@ -149,7 +150,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                       placeholder="eg: skyfeed.hns"
                       css={{
                         boxShadow:
-                          'inset 0 0 0 1px var(--sx-colors-blue500), inset 0 0 0 100px var(--sx-colors-blue200) !important',
+                          'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
                       }}
                     />
                     {formik.isValidating ? (

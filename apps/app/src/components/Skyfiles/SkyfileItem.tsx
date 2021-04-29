@@ -9,7 +9,7 @@ import { Box, Button, Flex, Link, Text, Tooltip } from '@riftdweb/design-system'
 import { Skyfile } from '@riftdweb/types'
 import bytes from 'bytes'
 import { formatDistance, parseISO } from 'date-fns'
-import React, { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
 import { copyToClipboard } from '../../shared/clipboard'
 import { getSize } from '../../shared/uploads'
@@ -40,7 +40,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   } = skyfile
   const portal = ingressPortals.length ? ingressPortals[0] : ''
   const [isHovering, setIsHovering] = useState<boolean>(false)
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+  const [isMenuOpen] = useState<boolean>(false)
 
   const iconElement = useMemo(() => {
     if (status === 'complete') {
@@ -53,7 +53,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
     } else {
       return null
     }
-  }, [status])
+  }, [status, isDirectory])
 
   const { skylink, weblink } = useSkylink(rawSkylink, true)
 
@@ -63,8 +63,6 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
       decimalPlaces: '1',
     })
   }, [skyfile])
-
-  const menuRef = useRef()
 
   return (
     <Box

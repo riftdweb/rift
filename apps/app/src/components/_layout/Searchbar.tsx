@@ -24,6 +24,7 @@ export function Searchbar() {
         setIsFocused(true)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   const width = value ? '500px' : '200px'

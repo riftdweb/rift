@@ -7,7 +7,6 @@ import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
-import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 import { triggerToast } from '../../../shared/toast'
 import { KeysToolbar } from './KeysToolbar'
 
@@ -36,7 +35,6 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [value, setValue] = useState<string>()
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
-  const [selectedPortal] = useSelectedPortal()
   const { Api, identityKey, dataDomain: appDomain } = useSkynet()
   const { removeKey } = useDomains()
   const key = [identityKey, domain.id, dataKey.id]
@@ -69,7 +67,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       )
     }
     removeKey(domain.id, dataKey.id)
-  }, [removeKey, domain, history])
+  }, [removeKey, domain, history, dataKey, keys])
 
   const setValueFromNetwork = useCallback(
     (data) => {
@@ -93,12 +91,13 @@ export function KeyEditor({ domain, dataKey }: Props) {
         }
       }
     },
-    [setValue, setSkylink, editingValue, setEditingValue, skylink]
+    [setValue, setSkylink, editingValue, setEditingValue, value]
   )
 
   // Initialize state after data is first fetched
   useEffect(() => {
     setValueFromNetwork(data)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   const refreshKey = useCallback(() => {
@@ -174,7 +173,6 @@ export function KeyEditor({ domain, dataKey }: Props) {
     mutate,
     formatCode,
     setIsSaving,
-    selectedPortal,
     domain,
     dataKey,
     editingValue,

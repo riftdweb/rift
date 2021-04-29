@@ -1,9 +1,8 @@
 import { Box, Button, Flex, Heading, Input } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
-import { contentRecord, useSkynet } from '../../hooks/skynet'
+import { contentRecord } from '../../hooks/skynet'
 
 export function MySkyLearn() {
-  const { userId } = useSkynet()
   const [skylink, setSkylink] = useState<string>('')
 
   const recordNewContent = useCallback((skylink: string) => {

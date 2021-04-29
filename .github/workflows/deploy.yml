@@ -1,5 +1,8 @@
 name: Deploy Skynet Preview
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches: [main]
 jobs:
   preview:
     runs-on: ubuntu-latest

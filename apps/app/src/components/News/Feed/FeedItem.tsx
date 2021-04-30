@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
 import { ProcessedPost } from '../../../hooks/feed/types'
 import { Link } from '../../_shared/Link'
-import { SkylinkPeek } from '../../_shared/SkylinkPeek'
 import { PostTime } from '../_shared/PostTime'
 import { Keyword } from './Keyword'
 
@@ -21,8 +20,6 @@ export function FeedItem({ item, index }: Props) {
   const { incrementKeywords, incrementDomain, isVisibilityEnabled } = useFeed()
 
   const { post, score } = item
-  const { skylink: rawSkylink } = post
-  const skylink = rawSkylink.replace('sia:', '')
   const { link } = post.content
   const hostname = link ? new URL(link).hostname : undefined
 
@@ -173,10 +170,29 @@ export function FeedItem({ item, index }: Props) {
             )}
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            <SkylinkPeek skylink={skylink} />
             <Text size="1" css={{ color: '$gray900' }}>
               {score} points
             </Text>
+            {/* <AvatarGroup>
+              <AvatarNestedItem>
+                <Popover>
+                  <PopoverTrigger
+                    as={Avatar}
+                    size="1"
+                    interactive
+                    src="https://pbs.twimg.com/profile_images/864164353771229187/Catw6Nmh_400x400.jpg"
+                    fallback="J"
+                  ></PopoverTrigger>
+                  <PopoverContent css={{ padding: '$3' }}>
+                    <Text size="2" css={{ lineHeight: '18px' }}>
+                      The other main improvement is with tables, which we'll
+                      probably use a lot. With horizontal overflow on small
+                      devices and when zoomed in.
+                    </Text>
+                  </PopoverContent>
+                </Popover>
+              </AvatarNestedItem>
+            </AvatarGroup> */}
             <Flex
               css={{
                 color: '$gray900',
@@ -186,7 +202,7 @@ export function FeedItem({ item, index }: Props) {
               }}
             >
               {post.content.tags.map((tag) => (
-                <Badge key={tag}>{tag}</Badge>
+                <Badge key={tag}>by {tag}</Badge>
               ))}
             </Flex>
             <PostTime post={post} />

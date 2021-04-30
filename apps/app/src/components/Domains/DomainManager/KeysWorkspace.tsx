@@ -1,33 +1,41 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
+import { useDomains } from '../../../hooks/domains'
 import { useDomainParams } from '../../../hooks/useDomainParams'
 import { DragSizing } from '../../_shared/DragSizing'
 import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
+import { ViewingUser } from './ViewingUser'
 
 export function KeysWorkspace() {
   const { domain, domainKey } = useDomainParams()
+  const { viewingUserId } = useDomains()
   const [keysTreeWidth] = useLocalStorageState<string>('keysTreeWidth', '200px')
+
+  const editorRemountKey = `${viewingUserId}/${domainKey}`
 
   return (
     <Flex>
-      <Box
+      <Flex
         css={{
-          padding: '11px $2 0 0',
+          padding: '$1 $2 0 0',
           height: '100vh',
+          flexDirection: 'column',
+          gap: '$1',
         }}
       >
+        <ViewingUser />
         <Box
           css={{
             height: '100%',
+            overflow: 'hidden',
             borderRadius: '6px',
             border: '1px solid $gray500',
             // backgroundColor: '$gray400',
             backgroundColor: '$panel',
             transition: 'background-color 0.1s',
-            overflow: 'auto',
             '&:hover': { backgroundColor: '$slate300' },
           }}
         >
@@ -41,13 +49,24 @@ export function KeysWorkspace() {
               height: '100%',
             }}
           >
-            <KeysTree />
+            <Box
+              css={{
+                height: '100%',
+                overflow: 'auto',
+              }}
+            >
+              <KeysTree />
+            </Box>
           </DragSizing>
         </Box>
-      </Box>
+      </Flex>
       <Flex css={{ flex: 1 }}>
         {domainKey ? (
-          <KeyEditor key={domainKey.id} domain={domain} dataKey={domainKey} />
+          <KeyEditor
+            key={editorRemountKey}
+            domain={domain}
+            dataKey={domainKey}
+          />
         ) : (
           <Flex
             css={{

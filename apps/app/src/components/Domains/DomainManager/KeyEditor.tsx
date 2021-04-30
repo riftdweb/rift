@@ -35,15 +35,21 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [value, setValue] = useState<string>()
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain: appDomain } = useSkynet()
-  const { removeKey } = useDomains()
-  const key = [identityKey, domain.id, dataKey.id]
+  const { Api, identityKey, dataDomain: appDomain, userId } = useSkynet()
+  const { removeKey, viewingUserId } = useDomains()
+  const key = [
+    userId === viewingUserId ? identityKey : viewingUserId,
+    domain.id,
+    dataKey.id,
+  ]
+  const keyString = key.join('/')
   const { data, isValidating, mutate } = useSWR(key, () => {
     // Only one of the two will be defined
     const { seed, dataDomain } = domain
     return Api.getJSON({
       seed,
       dataDomain,
+      publicKey: viewingUserId,
       dataKey: dataKey.key,
     })
   })
@@ -74,7 +80,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       if (data && data.data) {
         const newValue = JSON.stringify(data.data, null, 1)
         setValue(newValue)
-        setSkylink(data.skylink || '')
+        setSkylink(data.dataLink || '')
 
         // Set editing value,
         // or if no edits have been made by user, sync what is displayed to latest
@@ -93,6 +99,14 @@ export function KeyEditor({ domain, dataKey }: Props) {
     },
     [setValue, setSkylink, editingValue, setEditingValue, value]
   )
+
+  // Reset all state when data key changes
+  useEffect(() => {
+    setValue(undefined)
+    setEditingValue(undefined)
+    setSkylink('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyString])
 
   // Initialize state after data is first fetched
   useEffect(() => {
@@ -140,7 +154,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       try {
         const newData = JSON.parse(editingValue)
         // Update cache immediately
-        mutate({ data: newData, skylink }, false)
+        mutate({ data: newData, dataLink: skylink }, false)
         // Save changes to SkyDB
 
         // Only one of the two will be defined
@@ -179,8 +193,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
     skylink,
   ])
 
-  const isReadOnly =
-    !domain.seed && !['cqra.hns', appDomain].includes(domain.dataDomain)
+  const isReadOnly = !domain.seed && ![appDomain].includes(domain.dataDomain)
 
   return (
     <Flex css={{ flexDirection: 'column', height: '100%', width: '100%' }}>
@@ -203,7 +216,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
           <AceEditor
             style={{ width: '100%', height: '100%' }}
             readOnly={isReadOnly}
-            key={dataKey.id}
+            key={keyString}
             value={editingValue || ''}
             mode="json"
             theme="solarized_dark"

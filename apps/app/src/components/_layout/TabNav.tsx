@@ -3,6 +3,7 @@ import {
   FilePlusIcon,
   GearIcon,
   HomeIcon,
+  MixIcon,
   StackIcon,
 } from '@radix-ui/react-icons'
 import { Box, Flex, TabLink } from '@riftdweb/design-system'
@@ -43,12 +44,12 @@ export function TabNav() {
         </Box>
         DNS
       </TabLink> */}
-      {/* <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
+      <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
         <Box css={{ mr: '$1' }}>
           <MixIcon />
         </Box>
         Tools
-      </TabLink> */}
+      </TabLink>
       <TabLink
         as={Link}
         to="/settings"

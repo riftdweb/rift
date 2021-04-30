@@ -1,29 +1,57 @@
 import { Box, Button, Flex, Heading, Input } from '@riftdweb/design-system'
-import { useCallback, useState } from 'react'
-import { contentRecord } from '../../hooks/skynet'
+import { Post } from 'feed-dac-library/dist/cjs/skystandards'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { contentRecord, feedDAC, useSkynet } from '../../hooks/skynet'
 
 export function MySkyLearn() {
   const [skylink, setSkylink] = useState<string>('')
+  const [value, setValue] = useState<string>('')
+  const { userId } = useSkynet()
 
-  const recordNewContent = useCallback((skylink: string) => {
+  const recordNewContent = useCallback(() => {
     const func = async () => {
-      await contentRecord.recordNewContent({
+      return await contentRecord.recordNewContent({
         skylink,
         metadata: {},
       })
     }
     func()
-  }, [])
+  }, [skylink])
 
-  const recordInteraction = useCallback((skylink: string) => {
+  const recordInteraction = useCallback(() => {
     const func = async () => {
-      await contentRecord.recordInteraction({
+      return await contentRecord.recordInteraction({
         skylink,
         metadata: { action: 'updatedColorOf' },
       })
     }
     func()
-  }, [])
+  }, [skylink])
+
+  const createPost = useCallback(() => {
+    const func = async () => {
+      const response = await feedDAC.createPost({
+        text: value,
+      })
+      setValue('')
+    }
+    func()
+  }, [value, userId, setValue])
+
+  const [posts, setPosts] = useState<Post[]>([])
+  const fetchPosts = useCallback(() => {
+    const func = async () => {
+      let _posts = []
+      const feed = feedDAC.loadPostsForUser(userId)
+      for await (let batch of feed) {
+        console.log(batch)
+        _posts = _posts.concat(batch)
+      }
+      console.log(_posts)
+      setPosts(_posts)
+    }
+    func()
+  }, [value, userId, setPosts])
 
   return (
     <Box>
@@ -31,14 +59,22 @@ export function MySkyLearn() {
         <Heading>Learning</Heading>
         <Input onChange={(e) => setSkylink(e.target.value)} />
         <Box css={{ p: '$2 0' }}>
-          <Button onClick={() => recordNewContent(skylink)}>
-            Record new content
-          </Button>
-          <Button onClick={() => recordInteraction(skylink)}>
+          <Button onClick={() => recordNewContent()}>Record new content</Button>
+          <Button onClick={() => recordInteraction()}>
             Record interaction
           </Button>
         </Box>
+        <Box>
+          <Input onChange={(e) => setValue(e.target.value)} />
+          <Box css={{ p: '$2 0' }}>
+            <Button onClick={() => createPost()}>Create Post</Button>
+          </Box>
+        </Box>
       </Flex>
+      <Button onClick={fetchPosts}>Fetch posts</Button>
+      {posts.map((post) => (
+        <Box>{post.content.text}</Box>
+      ))}
     </Box>
   )
 }

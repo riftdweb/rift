@@ -41,23 +41,23 @@ const dGetHnsData = debounce(
 const buildDomainSchema = (Api: any, dataDomains: string[]) =>
   Yup.object().shape({
     dataDomain: Yup.string()
+      .required('Required')
       .min(1, 'Too Short!')
       .max(50, 'Too Long!')
-      .required('Required')
       .test(
         'hns',
         'Must contain .hns',
-        (val) => val === 'localhost' || val.includes('.hns')
+        (val) => val && (val === 'localhost' || val.includes('.hns'))
       )
       .notOneOf(dataDomains, 'Already added')
-      .test(
-        'check exists',
-        'Domain does not exist',
-        (val) =>
-          new Promise((resolve) =>
-            dGetHnsData(Api, val.replace('.hns', ''), resolve)
-          )
-      ),
+      .test('check exists', 'Domain does not exist', (val) => {
+        if (!val) {
+          return false
+        }
+        return new Promise((resolve) =>
+          dGetHnsData(Api, val.replace('.hns', ''), resolve)
+        )
+      }),
   })
 
 type Props = {

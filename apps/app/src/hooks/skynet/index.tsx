@@ -12,10 +12,12 @@ import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../useLocalRootSeed'
 import { useSelectedPortal } from '../useSelectedPortal'
 import { buildApi } from './buildApi'
-// import { FeedDAC } from 'feed-dac-library'
+import { FeedDAC } from 'feed-dac-library'
+import { UserProfileDAC } from '@skynethub/userprofile-library'
 
-// const feedDAC = new FeedDAC()
+export const feedDAC = new FeedDAC()
 export const contentRecord = new ContentRecordDAC()
+export const userProfileDAC = new UserProfileDAC()
 
 type State = {
   isInitializing: boolean
@@ -66,7 +68,11 @@ export function SkynetProvider({ children }: Props) {
           // debug: true,
         })
         // load necessary DACs and permissions
-        await _mySky.loadDacs(contentRecord)
+        await _mySky.loadDacs(
+          contentRecord as any,
+          feedDAC as any,
+          userProfileDAC as any
+        )
         setMySky(_mySky)
 
         // check if user is already logged in with permissions

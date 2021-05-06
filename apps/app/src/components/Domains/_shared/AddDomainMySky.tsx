@@ -18,13 +18,14 @@ import {
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
 import debounce from 'lodash/debounce'
+import difference from 'lodash/difference'
 import { Fragment, useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 import { Link } from '../../_shared/Link'
-import { getDefaultPaths } from './defaultPaths'
+import { getDefaultPaths, SUGGESTED_DOMAINS } from './suggestedDomains'
 
 const dGetHnsData = debounce(
   async (Api: any, hnsDomain: string, resolve: any) => {
@@ -53,6 +54,9 @@ const buildDomainSchema = (Api: any, dataDomains: string[]) =>
       .test('check exists', 'Domain does not exist', (val) => {
         if (!val) {
           return false
+        }
+        if (val === 'localhost') {
+          return true
         }
         return new Promise((resolve) =>
           dGetHnsData(Api, val.replace('.hns', ''), resolve)
@@ -110,7 +114,9 @@ export function AddDomainMySky({ closeDialog }: Props) {
 
   const defaultPaths = getDefaultPaths(appDomain, formik.values.dataDomain)
 
-  const isReadOnly = !['cqra.hns', appDomain].includes(formik.values.dataDomain)
+  const isReadOnly = ![appDomain].includes(formik.values.dataDomain)
+
+  const suggestedDomains = difference(SUGGESTED_DOMAINS, existingDataDomains)
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -177,33 +183,35 @@ export function AddDomainMySky({ closeDialog }: Props) {
                     )}
                   </ControlGroup>
                 </Flex>
-                {!formik.values.dataDomain &&
-                  !existingDataDomains.includes('crqa.hns') && (
-                    <Flex
+                {!formik.values.dataDomain && suggestedDomains.length && (
+                  <Flex
+                    css={{
+                      color: '$gray900',
+                      gap: '$1',
+                      textAlign: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <Text
                       css={{
+                        position: 'relative',
+                        top: '1px',
                         color: '$gray900',
-                        gap: '$1',
-                        textAlign: 'center',
                       }}
                     >
-                      <Text
-                        css={{
-                          position: 'relative',
-                          top: '1px',
-                          color: '$gray900',
-                        }}
-                      >
-                        Suggestions:
-                      </Text>
+                      Suggestions:
+                    </Text>
+                    {suggestedDomains.map((domain) => (
                       <Link
                         onClick={() =>
-                          formik.setFieldValue('dataDomain', 'crqa.hns', true)
+                          formik.setFieldValue('dataDomain', domain, true)
                         }
                       >
-                        crqa.hns
+                        {domain}
                       </Link>
-                    </Flex>
-                  )}
+                    ))}
+                  </Flex>
+                )}
                 {formik.values.dataDomain && !formik.errors.dataDomain && (
                   <Box>
                     {isReadOnly ? (

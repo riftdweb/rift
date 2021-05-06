@@ -24,7 +24,7 @@ export const buildApi = ({
 
   function getJSON({
     seed,
-    publicKey,
+    publicKey: customPublicKey,
     dataKey,
     dataDomain: customDataDomain,
   }: {
@@ -40,21 +40,23 @@ export const buildApi = ({
       console.log(`\tdata key: ${dataKey}`)
       return client.db.getJSON(publicKey, dataKey)
     }
-    if (!userId) {
-      const { publicKey } = genKeyPairFromSeed(localRootSeed)
-      console.log(`client.db.getJSON - local app seed`)
-      console.log(`\tpublic key: ${publicKey}`)
-      console.log(`\tdata key: ${dataKey}`)
-      return client.db.getJSON(publicKey, dataKey)
-    }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`mySky.getJSON - mysky`)
-    console.log(`\tdata path: ${dataPath}`)
-    if (publicKey) {
-      console.log(`\tpublic key: ${publicKey}`)
-      return client.file.getJSON(publicKey, dataPath)
+    if (customPublicKey) {
+      console.log(`mySky.getJSON - mysky`)
+      console.log(`\tdata path: ${dataPath}`)
+      console.log(`\tpublic key: ${customPublicKey}`)
+      return client.file.getJSON(customPublicKey, dataPath)
     }
-    return mySky.getJSON(dataPath)
+    if (userId) {
+      console.log(`mySky.getJSON - mysky`)
+      console.log(`\tdata path: ${dataPath}`)
+      return mySky.getJSON(dataPath)
+    }
+    const { publicKey } = genKeyPairFromSeed(localRootSeed)
+    console.log(`client.db.getJSON - local app seed`)
+    console.log(`\tpublic key: ${publicKey}`)
+    console.log(`\tdata key: ${dataKey}`)
+    return client.db.getJSON(publicKey, dataKey)
   }
   function setJSON({
     seed,

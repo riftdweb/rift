@@ -3,6 +3,7 @@ import {
   FilePlusIcon,
   GearIcon,
   HomeIcon,
+  // MixIcon,
   StackIcon,
 } from '@radix-ui/react-icons'
 import { Box, Flex, TabLink } from '@riftdweb/design-system'

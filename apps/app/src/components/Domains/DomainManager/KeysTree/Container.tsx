@@ -59,7 +59,7 @@ export function Container({
   const isReadOnly =
     node.domain &&
     !node.domain.seed &&
-    !['cqra.hns', appDomain].includes(node.domain.dataDomain)
+    ![appDomain].includes(node.domain.dataDomain)
 
   return (
     <Flex

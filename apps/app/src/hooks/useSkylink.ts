@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
-import { convertSkylinkToBase32 } from 'skynet-js/dist/utils/skylink'
+import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
 import { useSkynet } from './skynet'
 import { useSelectedPortal } from './useSelectedPortal'

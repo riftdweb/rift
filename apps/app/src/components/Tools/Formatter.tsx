@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
-import { convertSkylinkToBase32 } from 'skynet-js/dist/utils/skylink'
+import { convertSkylinkToBase32 } from 'skynet-js'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { copyToClipboard } from '../../shared/clipboard'
 

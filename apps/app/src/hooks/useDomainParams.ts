@@ -27,17 +27,18 @@ export function useDomainParams() {
   )
 
   useEffect(() => {
-    if (isValidating || pathname === '/data') {
+    const path = '/data'
+    if (isValidating || pathname === path) {
       return
     }
     if (!domains.length) {
-      history.push('/data')
+      history.push(path)
     }
     if (!domain) {
-      history.push('/data')
+      history.push(path)
     }
     if (!domainKey) {
-      history.push('/data')
+      history.push(path)
     }
   }, [isValidating, pathname, domains, domain, domainKey, history])
 

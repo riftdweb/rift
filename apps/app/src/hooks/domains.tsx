@@ -13,6 +13,7 @@ import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { SKYDB_DATA_KEY } from '../shared/dataKeys'
+import { triggerToast } from '../shared/toast'
 import { useSkynet } from './skynet'
 
 type State = {
@@ -27,6 +28,9 @@ type State = {
   ) => boolean
   isValidating: boolean
   userHasNoDomains: boolean
+  viewingUserId: string
+  setViewingUserId: (userId: string) => void
+  resetViewingUserId: () => void
 }
 
 const DomainsContext = createContext({} as State)
@@ -43,7 +47,7 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain } = useSkynet()
+  const { Api, identityKey, dataDomain, userId } = useSkynet()
   const history = useHistory()
 
   const key = [identityKey, dataDomain, SKYDB_DATA_KEY]
@@ -215,6 +219,22 @@ export function DomainsProvider({ children }: Props) {
     [history, domains, setDomains]
   )
 
+  // State for switching the user data in view
+  const [viewingUserId, _setViewingUserId] = useState<string>(userId)
+
+  const setViewingUserId = useCallback(
+    (userId: string) => {
+      _setViewingUserId(userId)
+      triggerToast(`Switched to user ${userId.slice(0, 10)}...`)
+    },
+    [_setViewingUserId]
+  )
+
+  const resetViewingUserId = useCallback(() => {
+    _setViewingUserId(userId)
+    triggerToast(`Switched user back to self`)
+  }, [userId, _setViewingUserId])
+
   const value = {
     domains,
     addDomain,
@@ -223,6 +243,9 @@ export function DomainsProvider({ children }: Props) {
     removeKey,
     isValidating,
     userHasNoDomains,
+    viewingUserId,
+    setViewingUserId,
+    resetViewingUserId,
   }
 
   return (

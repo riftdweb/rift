@@ -45,11 +45,13 @@ export function ViewingUser() {
   const { data } = useSWR<{ data: { profile: Profile } }>(
     viewingUserId,
     () =>
-      Api.getJSON({
+      (Api.getJSON({
         publicKey: viewingUserId,
         dataDomain: 'profile-dac.hns',
         dataKey: 'profileIndex.json',
-      }) as any
+      }) as unknown) as Promise<{
+        data: { profile: Profile }
+      }>
   )
 
   const toggleEditing = useCallback(() => {
@@ -72,7 +74,11 @@ export function ViewingUser() {
       username = username + ' (me)'
     }
   }
-  const avatarUrl = profile ? profile.avatar[0].url : undefined
+
+  const avatarUrl =
+    profile && profile.avatar && profile.avatar.length
+      ? profile.avatar[0].url
+      : null
 
   const onSubmit = useCallback(
     (vals) => {

@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, Input } from '@riftdweb/design-system'
 import { Post } from 'feed-dac-library/dist/cjs/skystandards'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { contentRecord, feedDAC, useSkynet } from '../../hooks/skynet'
 
 export function MySkyLearn() {
@@ -30,13 +30,13 @@ export function MySkyLearn() {
 
   const createPost = useCallback(() => {
     const func = async () => {
-      const response = await feedDAC.createPost({
+      await feedDAC.createPost({
         text: value,
       })
       setValue('')
     }
     func()
-  }, [value, userId, setValue])
+  }, [value, setValue])
 
   const [posts, setPosts] = useState<Post[]>([])
   const fetchPosts = useCallback(() => {
@@ -51,7 +51,7 @@ export function MySkyLearn() {
       setPosts(_posts)
     }
     func()
-  }, [value, userId, setPosts])
+  }, [userId, setPosts])
 
   return (
     <Box>

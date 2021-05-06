@@ -15,14 +15,14 @@ import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 
-type Avatar = {
+type UserAvatar = {
   url: string
 }
 
 type Profile = {
   username: string
   aboutMe: string
-  avatar: Avatar[]
+  avatar: UserAvatar[]
   connections: Object[]
   contact: string
   emailID: string

@@ -38,13 +38,12 @@ export function ViewingUser() {
   const { Api, userId } = useSkynet()
   const {
     viewingUserId,
+    isViewingSelf,
     setViewingUserId,
     resetViewingUserId,
   } = useDomainParams()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
-
-  const isViewingMyself = viewingUserId === userId
 
   const { data } = useSWR<{ data: { profile: Profile } }>(
     viewingUserId || 'local',
@@ -69,14 +68,14 @@ export function ViewingUser() {
   }, [isEditing, ref])
 
   const profile = data?.data?.profile
+  // mysky logged in, or viewing user id
+  // usename is user id unless profile data loads and exists
   let username = profile ? profile.username : viewingUserId
-  if (isViewingMyself) {
-    // Local seed, no mysky
-    if (!username) {
-      username = 'local (me)'
-    } else {
-      username = username + ' (me)'
-    }
+  if (username) {
+    username = username + ' (me)'
+    // if user is logged out
+  } else {
+    username = 'local (me)'
   }
 
   const avatarUrl =
@@ -171,7 +170,7 @@ export function ViewingUser() {
               </Button>
             </Tooltip>
           )}
-          {!isEditing && !isViewingMyself && (
+          {!isEditing && !isViewingSelf && (
             <Tooltip content="Reset to your user ID">
               <Button onClick={resetViewingUserId}>
                 <ResetIcon />

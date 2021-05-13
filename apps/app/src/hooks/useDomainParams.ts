@@ -12,6 +12,7 @@ type Return = {
   viewingUserId: string
   setViewingUserId: (userId: string) => void
   resetViewingUserId: () => void
+  isViewingSelf: boolean
   isReadOnly: boolean
   isReadWrite: boolean
 }
@@ -144,6 +145,7 @@ export function useDomainParams(): Return {
     domain,
     domainKey,
     viewingUserId,
+    isViewingSelf,
     setViewingUserId,
     resetViewingUserId,
     isReadOnly,

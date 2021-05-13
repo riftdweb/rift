@@ -8,6 +8,7 @@ import {
 } from '@radix-ui/react-icons'
 import { Box, Flex, TabLink } from '@riftdweb/design-system'
 import { Link, useLocation } from 'react-router-dom'
+import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
 
 export function TabNav() {
   const location = useLocation()
@@ -32,7 +33,11 @@ export function TabNav() {
         </Box>
         Files
       </TabLink>
-      <TabLink as={Link} to="/data" active={route.split('/')[1] === 'data'}>
+      <TabLink
+        as={Link}
+        to={DATA_MYSKY_BASE_PATH}
+        active={route.split('/')[1] === 'data'}
+      >
         <Box css={{ mr: '$1' }}>
           <StackIcon />
         </Box>

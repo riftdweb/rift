@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Treebeard } from 'react-treebeard'
 import { useDomains } from '../../../../hooks/domains'
+import { DATA_MYSKY_BASE_PATH, usePath } from '../../../../hooks/path'
 import { useDomainParams } from '../../../../hooks/useDomainParams'
 import animations from './animations'
 import { decorators } from './decorators'
@@ -25,6 +26,8 @@ export function KeysTree() {
     return transformKeys(domains, stateMap, activeKeyTreeKey)
   }, [domains, stateMap, activeKeyTreeKey])
 
+  const { getDataPath } = usePath()
+
   const onToggle = useCallback(
     (node: TreeNode, toggled: boolean) => {
       let nextState = {
@@ -37,17 +40,21 @@ export function KeysTree() {
       if (children) {
         nodeState.toggled = toggled
       } else if (node.type === 'file') {
-        history.push(
-          `/data/${encodeURIComponent(node.domain.name)}/${encodeURIComponent(
-            key
-          )}`
-        )
+        const path = getDataPath({
+          domainName: node.domain.name,
+          dataKeyName: key,
+        })
+
+        if (path === DATA_MYSKY_BASE_PATH) {
+          alert('To view this file, first select a MySky user')
+        }
+        history.push(path)
       }
       nextState[node.id] = nodeState
 
       setStateMap(nextState)
     },
-    [stateMap, setStateMap, history]
+    [getDataPath, stateMap, setStateMap, history]
   )
 
   return (

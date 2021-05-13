@@ -1,12 +1,11 @@
 import { Box, Flex } from '@riftdweb/design-system'
 import { Domain, DomainKey } from '@riftdweb/types'
-import findIndex from 'lodash/findIndex'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
-import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
+import { useDomainParams } from '../../../hooks/useDomainParams'
 import { triggerToast } from '../../../shared/toast'
 import { KeysToolbar } from './KeysToolbar'
 
@@ -24,9 +23,6 @@ type Props = {
 }
 
 export function KeyEditor({ domain, dataKey }: Props) {
-  const history = useHistory()
-  const { keys } = domain
-
   const { data: configFilesLoaded } = useSWR(
     'configFilesLoaded',
     importConfigFiles
@@ -35,8 +31,9 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [value, setValue] = useState<string>()
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain: appDomain, userId } = useSkynet()
-  const { removeKey, viewingUserId } = useDomains()
+  const { Api, identityKey, userId } = useSkynet()
+  const { removeKey } = useDomains()
+  const { viewingUserId, isReadOnly } = useDomainParams()
   const key = [
     userId === viewingUserId ? identityKey : viewingUserId,
     domain.id,
@@ -55,25 +52,8 @@ export function KeyEditor({ domain, dataKey }: Props) {
   })
 
   const removeKeyAndRoute = useCallback(() => {
-    const dataKeyIndex = findIndex(keys, (key) => key.id === dataKey.id)
-    // load previous
-    if (dataKeyIndex > 0) {
-      history.push(
-        `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-          keys[dataKeyIndex - 1].key
-        )}`
-      )
-    }
-    // load previous
-    else if (dataKeyIndex === 0 && domain.keys.length > 1) {
-      history.push(
-        `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-          keys[1].key
-        )}`
-      )
-    }
-    removeKey(domain.id, dataKey.id)
-  }, [removeKey, domain, history, dataKey, keys])
+    removeKey(domain.id, dataKey.id, true)
+  }, [removeKey, domain, dataKey])
 
   const setValueFromNetwork = useCallback(
     (data) => {
@@ -192,8 +172,6 @@ export function KeyEditor({ domain, dataKey }: Props) {
     editingValue,
     skylink,
   ])
-
-  const isReadOnly = !domain.seed && ![appDomain].includes(domain.dataDomain)
 
   return (
     <Flex css={{ flexDirection: 'column', height: '100%', width: '100%' }}>

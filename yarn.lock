@@ -6699,10 +6699,10 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "2.1.1"
 
-feed-dac-library@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/feed-dac-library/-/feed-dac-library-0.2.0.tgz#f6d8c746e6894742ccc678ffde936f83d5d20c67"
-  integrity sha512-sFBPLM90yXJhiiWeO9Vy6K7cXYGj6HGFVwssXVJNXt8YlvtvOqzS2rvNJj1R1xH/3ADNKMOq0CxhsZ7siQ6ckw==
+feed-dac-library@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/feed-dac-library/-/feed-dac-library-0.2.2.tgz#9f3b0721537c658d4133b244af8495a64b449c3b"
+  integrity sha512-kPRSNML0uIJy8uB61VbXoUsdRIEDQwbel3Jrxukr5MmGkrf+M80rQ7gG1HqYtfNfuogfXFpOPA6ZcPieRPeqyw==
   dependencies:
     post-me "^0.4.5"
     skynet-js "^4.0.3-beta"

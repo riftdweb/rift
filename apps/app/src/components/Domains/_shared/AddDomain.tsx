@@ -6,14 +6,9 @@ import {
   DialogTrigger,
   Flex,
   Subheading,
-  Tabs,
-  TabsList,
-  TabsPanel,
-  TabsTab,
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
 import { AddDomainMySky } from './AddDomainMySky'
-import { AddDomainSeed } from './AddDomainSeed'
 
 type Props = {
   children?: React.ReactNode
@@ -67,18 +62,7 @@ export function AddDomain({ children, variant = 'ghost' }: Props) {
       >
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
           <Subheading css={{ mb: '$2' }}>Add Domain</Subheading>
-          <Tabs defaultValue="mysky">
-            <TabsList>
-              <TabsTab value="mysky">MySky</TabsTab>
-              <TabsTab value="seed">Seed</TabsTab>
-            </TabsList>
-            <TabsPanel value="mysky">
-              <AddDomainMySky closeDialog={closeDialog} />
-            </TabsPanel>
-            <TabsPanel value="seed">
-              <AddDomainSeed closeDialog={closeDialog} />
-            </TabsPanel>
-          </Tabs>
+          <AddDomainMySky closeDialog={closeDialog} />
         </Flex>
       </DialogContent>
     </Dialog>

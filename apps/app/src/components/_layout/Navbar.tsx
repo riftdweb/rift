@@ -16,6 +16,7 @@ import {
 import { useCallback } from 'react'
 import { Link as RLink } from 'react-router-dom'
 import { extractDomainForPortal } from 'skynet-js'
+import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
@@ -85,7 +86,7 @@ export default function Navbar({ toggleTheme }: Props) {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     as={RLink}
-                    to="/data"
+                    to={DATA_MYSKY_BASE_PATH}
                     css={{ textDecoration: 'none', cursor: 'pointer' }}
                   >
                     Add data domain

@@ -1,7 +1,8 @@
 import { Box } from '@riftdweb/design-system'
-import React, { lazy, Suspense } from 'react'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import SpinnerIcon from '../components/_icons/SpinnerIcon'
+import { DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from '../hooks/path'
 import { Config } from './_config'
 
 // import Home from '../pages/Home'
@@ -10,6 +11,7 @@ import { Config } from './_config'
 // import Data from '../pages/Data'
 // import Tools from '../pages/Tools'
 // import Settings from '../pages/Settings'
+
 const Home = lazy(() => import('../pages/Home'))
 const NewsFeed = lazy(() => import('../pages/NewsFeed'))
 const NewsInsights = lazy(() => import('../pages/NewsInsights'))
@@ -46,12 +48,18 @@ export function App() {
             <Route path="/files">
               <Skyfiles />
             </Route>
-            <Route path="/data/:domainName/:dataKeyName">
+            <Route
+              path={`${DATA_MYSKY_BASE_PATH}/:viewingUserId/:domainName/*`}
+            >
               <Data />
             </Route>
-            <Route path="/data">
+            <Route path={`${DATA_MYSKY_BASE_PATH}/:viewingUserId`}>
               <Data />
             </Route>
+            <Route path={DATA_MYSKY_BASE_PATH}>
+              <Data />
+            </Route>
+            <Redirect from={DATA_BASE_PATH} to={DATA_MYSKY_BASE_PATH} />
             <Route path="/dns/:id">
               <Dns />
             </Route>
@@ -70,9 +78,10 @@ export function App() {
             <Route path="/news">
               <NewsFeed />
             </Route>
-            <Route path="/">
+            <Route exact path="/">
               <Home />
             </Route>
+            <Redirect from="/*" to="/" />
           </Switch>
         </Suspense>
       </Config>

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { App } from './app'
+import { App } from './app/router'
 import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(

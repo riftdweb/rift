@@ -1,7 +1,6 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
-import { useDomains } from '../../../hooks/domains'
 import { useDomainParams } from '../../../hooks/useDomainParams'
 import { DragSizing } from '../../_shared/DragSizing'
 import { AddDomain } from '../_shared/AddDomain'
@@ -10,8 +9,7 @@ import { KeysTree } from './KeysTree'
 import { ViewingUser } from './ViewingUser'
 
 export function KeysWorkspace() {
-  const { domain, domainKey } = useDomainParams()
-  const { viewingUserId } = useDomains()
+  const { domain, domainKey, viewingUserId } = useDomainParams()
   const [keysTreeWidth] = useLocalStorageState<string>('keysTreeWidth', '200px')
 
   const editorRemountKey = `${viewingUserId}/${domainKey}`

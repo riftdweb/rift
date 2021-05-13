@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Treebeard } from 'react-treebeard'
 import { useDomains } from '../../../../hooks/domains'
-import { usePath } from '../../../../hooks/path'
+import { DATA_MYSKY_BASE_PATH, usePath } from '../../../../hooks/path'
 import { useDomainParams } from '../../../../hooks/useDomainParams'
 import animations from './animations'
 import { decorators } from './decorators'
@@ -45,7 +45,7 @@ export function KeysTree() {
           dataKeyName: key,
         })
 
-        if (path === '/data') {
+        if (path === DATA_MYSKY_BASE_PATH) {
           alert('To view this file, first select a MySky user')
         }
         history.push(path)

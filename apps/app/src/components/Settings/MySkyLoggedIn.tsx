@@ -12,6 +12,7 @@ import {
 import React, { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDomains } from '../../hooks/domains'
+import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
 import { useSkynet } from '../../hooks/skynet'
 import { useApps } from '../../hooks/useApps'
 import { useSkyfiles } from '../../hooks/useSkyfiles'
@@ -40,7 +41,7 @@ export function MySkyLoggedIn() {
         key,
       })),
     })
-    history.push('/data')
+    history.push(DATA_MYSKY_BASE_PATH)
   }, [addDomain, appDomain, history])
 
   const exportAllData = useCallback(() => {

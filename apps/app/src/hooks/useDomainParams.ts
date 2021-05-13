@@ -42,7 +42,7 @@ export function useDomainParams(): Return {
     [domain, dataKeyName]
   )
 
-  const { getDataPath } = usePath()
+  const { getDataPath, getDataBasePath } = usePath()
 
   const setViewingUserId = useCallback(
     (userId: string) => {
@@ -60,7 +60,7 @@ export function useDomainParams(): Return {
 
   const resetViewingUserId = useCallback(() => {
     if (!myUserId) {
-      history.push(getDataPath())
+      history.push(getDataBasePath())
     } else {
       history.push(
         getDataPath({
@@ -74,7 +74,7 @@ export function useDomainParams(): Return {
   }, [history, getDataPath, myUserId, domainName, dataKeyName])
 
   useEffect(() => {
-    // Routed to /data redirect to mysky base user path
+    // Routed to /data/mysky redirect to mysky base user path
     if (!viewingUserId && myUserId) {
       history.replace(
         getDataPath({

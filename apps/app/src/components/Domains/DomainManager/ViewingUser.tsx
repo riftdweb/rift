@@ -47,7 +47,7 @@ export function ViewingUser() {
   const isViewingMyself = viewingUserId === userId
 
   const { data } = useSWR<{ data: { profile: Profile } }>(
-    viewingUserId,
+    viewingUserId || 'local',
     () =>
       (Api.getJSON({
         publicKey: viewingUserId,

@@ -13,7 +13,7 @@ import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { SKYDB_DATA_KEY } from '../shared/dataKeys'
-import { usePath } from './path'
+import { DATA_MYSKY_BASE_PATH, usePath } from './path'
 import { useSkynet } from './skynet'
 
 type State = {
@@ -217,7 +217,7 @@ export function DomainsProvider({ children }: Props) {
       setDomains(domains.filter((item) => item.id !== domainId))
 
       if (redirect) {
-        history.push('/data')
+        history.push(DATA_MYSKY_BASE_PATH)
       }
     },
     [history, domains, setDomains]

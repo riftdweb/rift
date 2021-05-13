@@ -170,7 +170,7 @@ export function ViewingUser() {
               </Button>
             </Tooltip>
           )}
-          {!isEditing && !isViewingSelf && (
+          {!isEditing && viewingUserId && !isViewingSelf && (
             <Tooltip content="Reset to your user ID">
               <Button onClick={resetViewingUserId}>
                 <ResetIcon />

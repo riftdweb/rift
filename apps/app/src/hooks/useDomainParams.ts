@@ -71,7 +71,7 @@ export function useDomainParams(): Return {
       )
     }
     triggerToast(`Switched user back to self`)
-  }, [history, getDataPath, myUserId, domainName, dataKeyName])
+  }, [history, getDataBasePath, getDataPath, myUserId, domainName, dataKeyName])
 
   useEffect(() => {
     // Routed to /data/mysky redirect to mysky base user path

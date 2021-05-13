@@ -2,7 +2,6 @@ import { Box, Flex } from '@riftdweb/design-system'
 import { Domain, DomainKey } from '@riftdweb/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
-import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
@@ -24,9 +23,6 @@ type Props = {
 }
 
 export function KeyEditor({ domain, dataKey }: Props) {
-  const history = useHistory()
-  const { keys } = domain
-
   const { data: configFilesLoaded } = useSWR(
     'configFilesLoaded',
     importConfigFiles

@@ -71,10 +71,13 @@ export function ViewingUser() {
   // mysky logged in, or viewing user id
   // usename is user id unless profile data loads and exists
   let username = profile ? profile.username : viewingUserId
-  if (username) {
+
+  if (username && isViewingSelf) {
     username = username + ' (me)'
-    // if user is logged out
-  } else {
+  }
+
+  // if user is logged out
+  if (!username) {
     username = 'local (me)'
   }
 

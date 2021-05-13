@@ -15,7 +15,6 @@ export function usePath() {
       // Work around apparent react-router useParams issue where it becomes
       // undefined for 1 render cycle which ends up routing to /data/mysky/undefined/...
       const viewingUserId = window.location.hash.split('/')[3]
-      console.log('check', viewingUserId)
 
       if (!params) {
         if (!viewingUserId) {

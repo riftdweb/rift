@@ -12,14 +12,13 @@ import {
   ControlGroup,
   Flex,
   Input,
-  Paragraph,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
 import debounce from 'lodash/debounce'
 import difference from 'lodash/difference'
-import { Fragment, useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
@@ -70,7 +69,7 @@ type Props = {
 
 export function AddDomainMySky({ closeDialog }: Props) {
   const { domains, addDomain } = useDomains()
-  const { Api, userId, dataDomain: appDomain } = useSkynet()
+  const { Api, dataDomain: appDomain } = useSkynet()
 
   const onSubmit = useCallback(
     (vals) => {
@@ -129,130 +128,116 @@ export function AddDomainMySky({ closeDialog }: Props) {
       >
         <Box>
           <Flex css={{ flexDirection: 'column', gap: '$3' }}>
-            <Paragraph css={{ color: '$gray900' }}>
-              {userId
-                ? 'Add any MySky data domain to view and edit the data.'
-                : 'Must be logged in to a MySky identity to add a data domain.'}
-            </Paragraph>
-            {userId && (
-              <Fragment>
-                <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-                  <Flex>
-                    <Text>Data domain</Text>
-                    {formik.errors.dataDomain && (
-                      <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
-                      >
-                        {formik.errors.dataDomain}
-                      </Text>
-                    )}
-                  </Flex>
-                  <ControlGroup>
-                    <Input
-                      name="dataDomain"
-                      value={formik.values.dataDomain}
-                      onChange={formik.handleChange}
-                      size="3"
-                      placeholder="eg: skyfeed.hns"
-                      css={{
-                        boxShadow:
-                          'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
-                      }}
-                    />
-                    {formik.isValidating ? (
-                      <Tooltip
-                        align="end"
-                        content="Checking HNS domain for app"
-                      >
-                        <Button size="2">
-                          <SpinnerIcon />
-                        </Button>
-                      </Tooltip>
-                    ) : formik.errors.dataDomain ? (
-                      <Tooltip align="end" content="No app found at HNS domain">
-                        <Button size="2" css={{ color: '$red900' }}>
-                          <ExclamationTriangleIcon />
-                        </Button>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip align="end" content="App found at HNS domain">
-                        <Button size="2" css={{ color: '$green900' }}>
-                          <CheckIcon />
-                        </Button>
-                      </Tooltip>
-                    )}
-                  </ControlGroup>
-                </Flex>
-                {!formik.values.dataDomain && suggestedDomains.length && (
-                  <Flex
-                    css={{
-                      color: '$gray900',
-                      gap: '$1',
-                      textAlign: 'center',
-                      flexWrap: 'wrap',
-                    }}
+            <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+              <Flex>
+                <Text>Data domain</Text>
+                {formik.errors.dataDomain && (
+                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                    {formik.errors.dataDomain}
+                  </Text>
+                )}
+              </Flex>
+              <ControlGroup>
+                <Input
+                  name="dataDomain"
+                  value={formik.values.dataDomain}
+                  onChange={formik.handleChange}
+                  size="3"
+                  placeholder="eg: skyfeed.hns"
+                  css={{
+                    boxShadow:
+                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                  }}
+                />
+                {formik.isValidating ? (
+                  <Tooltip align="end" content="Checking HNS domain for app">
+                    <Button size="2">
+                      <SpinnerIcon />
+                    </Button>
+                  </Tooltip>
+                ) : formik.errors.dataDomain ? (
+                  <Tooltip align="end" content="No app found at HNS domain">
+                    <Button size="2" css={{ color: '$red900' }}>
+                      <ExclamationTriangleIcon />
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Tooltip align="end" content="App found at HNS domain">
+                    <Button size="2" css={{ color: '$green900' }}>
+                      <CheckIcon />
+                    </Button>
+                  </Tooltip>
+                )}
+              </ControlGroup>
+            </Flex>
+            {!formik.values.dataDomain && suggestedDomains.length && (
+              <Flex
+                css={{
+                  color: '$gray900',
+                  gap: '$1',
+                  textAlign: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Text
+                  css={{
+                    position: 'relative',
+                    top: '1px',
+                    color: '$gray900',
+                  }}
+                >
+                  Suggestions:
+                </Text>
+                {suggestedDomains.map((domain) => (
+                  <Link
+                    onClick={() =>
+                      formik.setFieldValue('dataDomain', domain, true)
+                    }
                   >
-                    <Text
-                      css={{
-                        position: 'relative',
-                        top: '1px',
-                        color: '$gray900',
-                      }}
-                    >
-                      Suggestions:
+                    {domain}
+                  </Link>
+                ))}
+              </Flex>
+            )}
+            {formik.values.dataDomain && !formik.errors.dataDomain && (
+              <Box>
+                {isReadOnly ? (
+                  <Flex css={{ color: '$gray900', gap: '$1' }}>
+                    <LockClosedIcon />
+                    <Text css={{ color: '$gray900' }}>
+                      File permissions will be read-only
                     </Text>
-                    {suggestedDomains.map((domain) => (
-                      <Link
-                        onClick={() =>
-                          formik.setFieldValue('dataDomain', domain, true)
-                        }
-                      >
-                        {domain}
-                      </Link>
-                    ))}
+                  </Flex>
+                ) : (
+                  <Flex css={{ color: '$gray900', gap: '$1' }}>
+                    <Pencil2Icon />
+                    <Text css={{ color: '$gray900' }}>
+                      File permissions will be read-write
+                    </Text>
                   </Flex>
                 )}
-                {formik.values.dataDomain && !formik.errors.dataDomain && (
-                  <Box>
-                    {isReadOnly ? (
-                      <Flex css={{ color: '$gray900', gap: '$1' }}>
-                        <LockClosedIcon />
-                        <Text css={{ color: '$gray900' }}>
-                          File permissions will be read-only
-                        </Text>
-                      </Flex>
-                    ) : (
-                      <Flex css={{ color: '$gray900', gap: '$1' }}>
-                        <Pencil2Icon />
-                        <Text css={{ color: '$gray900' }}>
-                          File permissions will be read-write
-                        </Text>
-                      </Flex>
-                    )}
-                  </Box>
-                )}
-                {!!defaultPaths.length && (
-                  <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-                    <Flex css={{ alignItems: 'center' }}>
-                      <Text>Add default file paths</Text>
-                      <Box css={{ flex: 1 }} />
-                      <Checkbox
-                        name="addDefaultPaths"
-                        size="2"
-                        checked={formik.values.addDefaultPaths}
-                        onCheckedChange={formik.handleChange}
-                      />
-                    </Flex>
-                    <Code css={{ overflow: 'auto' }}>
-                      {defaultPaths.map((path) => (
-                        <Box key={path} css={{ margin: '$1 0' }}>
-                          {path}
-                        </Box>
-                      ))}
-                    </Code>
-                  </Flex>
-                )}
-              </Fragment>
+              </Box>
+            )}
+            {!!defaultPaths.length && (
+              <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+                <Flex css={{ alignItems: 'center' }}>
+                  <Text>Add default file paths</Text>
+                  <Box css={{ flex: 1 }} />
+                  <Checkbox
+                    name="addDefaultPaths"
+                    size="2"
+                    checked={formik.values.addDefaultPaths}
+                    onCheckedChange={formik.handleChange}
+                  />
+                </Flex>
+                <Code css={{ overflow: 'auto' }}>
+                  {defaultPaths.map((path) => (
+                    <Box key={path} css={{ margin: '$1 0' }}>
+                      {path}
+                    </Box>
+                  ))}
+                </Code>
+              </Flex>
             )}
           </Flex>
         </Box>
@@ -263,7 +248,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
           <Button
             size="2"
             type="submit"
-            disabled={!userId || !formik.isValid || formik.isValidating}
+            disabled={!formik.isValid || formik.isValidating}
           >
             <Box
               css={{

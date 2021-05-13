@@ -11,8 +11,8 @@ import {
 import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
-import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
+import { useDomainParams } from '../../../hooks/useDomainParams'
 import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 
 type UserAvatar = {
@@ -36,7 +36,11 @@ type Profile = {
 export function ViewingUser() {
   const [portal] = useSelectedPortal()
   const { Api, userId } = useSkynet()
-  const { viewingUserId, setViewingUserId, resetViewingUserId } = useDomains()
+  const {
+    viewingUserId,
+    setViewingUserId,
+    resetViewingUserId,
+  } = useDomainParams()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
 

@@ -10,6 +10,7 @@ import { Config } from './_config'
 // import Data from '../pages/Data'
 // import Tools from '../pages/Tools'
 // import Settings from '../pages/Settings'
+
 const Home = lazy(() => import('../pages/Home'))
 const NewsFeed = lazy(() => import('../pages/NewsFeed'))
 const NewsInsights = lazy(() => import('../pages/NewsInsights'))
@@ -46,7 +47,10 @@ export function App() {
             <Route path="/files">
               <Skyfiles />
             </Route>
-            <Route path="/data/:domainName/:dataKeyName">
+            <Route path="/data/:viewingUserId/:domainName/*">
+              <Data />
+            </Route>
+            <Route path="/data/:viewingUserId">
               <Data />
             </Route>
             <Route path="/data">

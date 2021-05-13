@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useDomains } from '../../../hooks/domains'
+import { usePath } from '../../../hooks/path'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 const getFullPath = (treeNode: TreeNodeDirectory, val: string) =>
@@ -53,6 +54,7 @@ type Props = {
 export function AddKeyForm({ treeNode, closeDialog }: Props) {
   const history = useHistory()
   const { addKey } = useDomains()
+  const { getDataPath } = usePath()
   const { domain } = treeNode
 
   const onSubmit = useCallback(
@@ -67,14 +69,15 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
         formik.resetForm()
         closeDialog()
         history.push(
-          `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-            newKey.key
-          )}`
+          getDataPath({
+            domainName: domain.name,
+            dataKeyName: newKey.key,
+          })
         )
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [history, domain, addKey, closeDialog, treeNode]
+    [getDataPath, history, domain, addKey, closeDialog, treeNode]
   )
 
   const existingKeys = useMemo(() => domain.keys.map((key) => key.key), [

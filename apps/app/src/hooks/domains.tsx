@@ -13,7 +13,7 @@ import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { SKYDB_DATA_KEY } from '../shared/dataKeys'
-import { triggerToast } from '../shared/toast'
+import { usePath } from './path'
 import { useSkynet } from './skynet'
 
 type State = {
@@ -28,9 +28,6 @@ type State = {
   ) => boolean
   isValidating: boolean
   userHasNoDomains: boolean
-  viewingUserId: string
-  setViewingUserId: (userId: string) => void
-  resetViewingUserId: () => void
 }
 
 const DomainsContext = createContext({} as State)
@@ -47,7 +44,7 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain, userId } = useSkynet()
+  const { Api, identityKey, dataDomain } = useSkynet()
   const history = useHistory()
 
   const key = [identityKey, dataDomain, SKYDB_DATA_KEY]
@@ -164,6 +161,8 @@ export function DomainsProvider({ children }: Props) {
     [domains, setDomains]
   )
 
+  const { getDataPath } = usePath()
+
   const removeKey = useCallback(
     (domainId: string, keyId: string, routeToNextKey?: boolean): boolean => {
       const domain = domains.find((domain) => domain.id === domainId)
@@ -178,18 +177,23 @@ export function DomainsProvider({ children }: Props) {
         // load previous
         if (dataKeyIndex > 0) {
           history.push(
-            `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-              domain.keys[dataKeyIndex - 1].key
-            )}`
+            getDataPath({
+              domainName: domain.name,
+              dataKeyName: domain.keys[dataKeyIndex - 1].key,
+            })
           )
         }
         // load new first
         else if (dataKeyIndex === 0 && domain.keys.length > 1) {
           history.push(
-            `/data/${encodeURIComponent(domain.name)}/${encodeURIComponent(
-              domain.keys[1].key
-            )}`
+            getDataPath({
+              domainName: domain.name,
+              dataKeyName: domain.keys[1].key,
+            })
           )
+          // load base user data path
+        } else {
+          history.push(getDataPath())
         }
       }
 
@@ -201,7 +205,7 @@ export function DomainsProvider({ children }: Props) {
       setDomains(upsertItem(domains, modifiedDomain))
       return true
     },
-    [domains, setDomains, history]
+    [getDataPath, domains, setDomains, history]
   )
 
   const removeDomain = useCallback(
@@ -218,23 +222,6 @@ export function DomainsProvider({ children }: Props) {
     },
     [history, domains, setDomains]
   )
-
-  // State for switching the user data in view
-  const [viewingUserId, _setViewingUserId] = useState<string>(userId)
-
-  const setViewingUserId = useCallback(
-    (userId: string) => {
-      _setViewingUserId(userId)
-      triggerToast(`Switched to user ${userId.slice(0, 10)}...`)
-    },
-    [_setViewingUserId]
-  )
-
-  const resetViewingUserId = useCallback(() => {
-    _setViewingUserId(userId)
-    triggerToast(`Switched user back to self`)
-  }, [userId, _setViewingUserId])
-
   const value = {
     domains,
     addDomain,
@@ -243,9 +230,6 @@ export function DomainsProvider({ children }: Props) {
     removeKey,
     isValidating,
     userHasNoDomains,
-    viewingUserId,
-    setViewingUserId,
-    resetViewingUserId,
   }
 
   return (

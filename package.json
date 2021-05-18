@@ -13,7 +13,8 @@
   },
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "services/*"
   ],
   "dependencies": {
     "@babel/preset-react": "^7.13.13",

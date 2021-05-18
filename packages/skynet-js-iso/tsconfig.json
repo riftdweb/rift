@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "isolatedModules": true,
+    "types": ["node", "jest"],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "strictNullChecks": true
+  }
+}

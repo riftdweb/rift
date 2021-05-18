@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "declarationMap": true,
+    "isolatedModules": true,
+    "outDir": "dist",
+    "types": ["node", "jest"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "include": ["src", "types/**/*.d.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}

@@ -22,9 +22,9 @@ type Props = {
 export function Nav({ section }: Props) {
   const { isVisibilityEnabled, setIsVisibilityEnabled } = useFeed()
   return (
-    <Heading css={{ my: '$5' }}>
+    <Heading>
       <Flex css={{ gap: '$1', alignItems: 'center', height: '30px' }}>
-        <Link to="/news">News</Link>
+        <Link to="/">Feed</Link>
         {section && <Text>/</Text>}
         {section && (
           <Link
@@ -34,7 +34,7 @@ export function Nav({ section }: Props) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
-            to={`/news/${section}`}
+            to={`/feed/${section}`}
           >
             {capitalize(section)}
           </Link>
@@ -52,7 +52,7 @@ export function Nav({ section }: Props) {
           </Tooltip>
           <Link
             as="button"
-            to="/news/insights"
+            to="/feed/insights"
             tooltipAlign="end"
             content="Explore your feed algorithm"
           >

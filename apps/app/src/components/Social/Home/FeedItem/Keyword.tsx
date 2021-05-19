@@ -1,6 +1,6 @@
 import { Box, Input, Text } from '@riftdweb/design-system'
 import { useCallback } from 'react'
-import { useFeed } from '../../../hooks/feed'
+import { useFeed } from '../../../../hooks/feed'
 
 const textStyles: any = {
   lineHeight: '25px',

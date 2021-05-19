@@ -14,7 +14,7 @@ export function Algorithm() {
     <Box>
       <MathComponent
         display={false}
-        tex={String.raw`rank = \frac{p + c_w c + v_w v + r_w r + d_w d + b}{1 + t_c^{1.9} - (t_c - t_u)^{1.3}}`}
+        tex={String.raw`score = \frac{p + c_w c + v_w v + r_w r + d_w d + b}{1 + t_c^{1.9} - (t_c - t_u)^{1.3}}`}
       />
     </Box>
   )

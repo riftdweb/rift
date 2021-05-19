@@ -3,16 +3,16 @@ import { formatDistance, parseISO } from 'date-fns'
 import { Post } from '../../../hooks/feed/types'
 
 type Props = {
-  post: Post
+  time: number
   prefix?: string
 }
 
-export function PostTime({ post, prefix }: Props) {
+export function RelativeTime({ time, prefix }: Props) {
   return (
     <Text size="1" css={{ color: '$gray900' }}>
       {prefix}{' '}
-      {post.ts &&
-        formatDistance(parseISO(new Date(post.ts).toISOString()), new Date(), {
+      {time &&
+        formatDistance(parseISO(new Date(time).toISOString()), new Date(), {
           addSuffix: true,
         })}
     </Text>

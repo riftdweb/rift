@@ -5,20 +5,13 @@ import SpinnerIcon from '../components/_icons/SpinnerIcon'
 import { DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from '../hooks/path'
 import { Config } from './_config'
 
-// import Home from '../pages/Home'
-// import News from '../pages/News'
-// import Skyfiles from '../pages/Skyfiles'
-// import Data from '../pages/Data'
-// import Tools from '../pages/Tools'
-// import Settings from '../pages/Settings'
-
 const Home = lazy(() => import('../pages/Home'))
-const NewsFeed = lazy(() => import('../pages/NewsFeed'))
-const NewsInsights = lazy(() => import('../pages/NewsInsights'))
+const FeedInsights = lazy(() => import('../pages/FeedInsights'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 const Data = lazy(() => import('../pages/Data'))
 const Dns = lazy(() => import('../pages/Dns'))
 const Tools = lazy(() => import('../pages/Tools'))
+const Community = lazy(() => import('../pages/Community'))
 const Settings = lazy(() => import('../pages/Settings'))
 
 export function App() {
@@ -72,11 +65,11 @@ export function App() {
             <Route path="/settings">
               <Settings />
             </Route>
-            <Route path="/news/insights">
-              <NewsInsights />
+            <Route path="/feed/insights">
+              <FeedInsights />
             </Route>
-            <Route path="/news">
-              <NewsFeed />
+            <Route path="/community">
+              <Community />
             </Route>
             <Route exact path="/">
               <Home />

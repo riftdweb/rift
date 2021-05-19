@@ -7,7 +7,7 @@ import { LinkCard } from './LinkCard'
 import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 
-export function Home() {
+export function Community() {
   const [portal] = useSelectedPortal()
   return (
     <Box css={{ py: '$3', position: 'relative' }}>

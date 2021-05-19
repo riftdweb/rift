@@ -1,11 +1,13 @@
 import { TriangleUpIcon } from '@radix-ui/react-icons'
-import { Badge, Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
+import { Badge, Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
-import { useFeed } from '../../../hooks/feed'
-import { ProcessedPost } from '../../../hooks/feed/types'
-import { Link } from '../../_shared/Link'
-import { PostTime } from '../_shared/PostTime'
+import { useFeed } from '../../../../hooks/feed'
+import { ProcessedPost } from '../../../../hooks/feed/types'
+import { Link } from '../../../_shared/Link'
+import { PostTime } from '../../_shared/PostTime'
 import { Keyword } from './Keyword'
+import { People } from './People'
+import { Reactions } from './Reactions'
 
 const textStyles: any = {
   lineHeight: '25px',
@@ -86,11 +88,12 @@ export function FeedItem({ item, index }: Props) {
   }, [keywordStems, hostname, incrementKeywords, incrementDomain])
 
   return (
-    <Flex
+    <Card
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       css={{
-        py: '$3',
+        // py: '$3',
+        p: '$3',
         flexDirection: 'column',
         gap: '$2',
         position: 'relative',
@@ -132,27 +135,34 @@ export function FeedItem({ item, index }: Props) {
             overflow: 'hidden',
             gap: '$1',
             marginLeft: '26px',
+            width: '100%',
           }}
         >
           <Flex
             css={{
               color: '$hiContrast',
-              flexWrap: 'wrap',
+              // flexWrap: 'wrap',
             }}
           >
-            <Link
-              target="_blank"
-              onClick={incrementCounters}
-              href={post.content.link}
-              css={{
-                textDecoration: 'none',
-                '&:hover': {
+            <Box css={{ flex: 1, overflow: 'hidden' }}>
+              <Link
+                target="_blank"
+                onClick={incrementCounters}
+                href={post.content.link}
+                css={{
+                  display: 'block',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                   textDecoration: 'none',
-                },
-              }}
-            >
-              {titleElements}
-            </Link>
+                  '&:hover': {
+                    textDecoration: 'none',
+                  },
+                }}
+              >
+                {titleElements}
+              </Link>
+            </Box>
             {post.content.link && (
               <Flex css={{ position: 'relative', marginLeft: '$1' }}>
                 {/* <Score domain={hostname} /> */}
@@ -170,30 +180,12 @@ export function FeedItem({ item, index }: Props) {
             )}
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            <Text size="1" css={{ color: '$gray900' }}>
+            {/* <Text size="1" css={{ color: '$gray900' }}>
               {score} points
-            </Text>
-            {/* <AvatarGroup>
-              <AvatarNestedItem>
-                <Popover>
-                  <PopoverTrigger
-                    as={Avatar}
-                    size="1"
-                    interactive
-                    src="https://pbs.twimg.com/profile_images/864164353771229187/Catw6Nmh_400x400.jpg"
-                    fallback="J"
-                  ></PopoverTrigger>
-                  <PopoverContent css={{ padding: '$3' }}>
-                    <Text size="2" css={{ lineHeight: '18px' }}>
-                      The other main improvement is with tables, which we'll
-                      probably use a lot. With horizontal overflow on small
-                      devices and when zoomed in.
-                    </Text>
-                  </PopoverContent>
-                </Popover>
-              </AvatarNestedItem>
-            </AvatarGroup> */}
-            <Flex
+            </Text> */}
+            <People />
+            <Reactions />
+            {/* <Flex
               css={{
                 color: '$gray900',
                 alignItems: 'center',
@@ -204,11 +196,12 @@ export function FeedItem({ item, index }: Props) {
               {post.content.tags.map((tag) => (
                 <Badge key={tag}>by {tag}</Badge>
               ))}
-            </Flex>
+            </Flex> */}
+            <Box css={{ flex: 1 }} />
             <PostTime post={post} />
           </Flex>
         </Flex>
       </Flex>
-    </Flex>
+    </Card>
   )
 }

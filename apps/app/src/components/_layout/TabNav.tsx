@@ -3,7 +3,7 @@ import {
   FilePlusIcon,
   GearIcon,
   HomeIcon,
-  // MixIcon,
+  MixIcon,
   StackIcon,
 } from '@radix-ui/react-icons'
 import { Box, Flex, TabLink } from '@riftdweb/design-system'
@@ -15,17 +15,15 @@ export function TabNav() {
   const { pathname: route } = location
   return (
     <Flex css={{ borderBottom: '1px solid $slate500' }}>
-      <TabLink as={Link} to="/" active={route.split('/')[1] === ''}>
+      <TabLink
+        as={Link}
+        to="/"
+        active={['', 'feed'].includes(route.split('/')[1])}
+      >
         <Box css={{ mr: '$1' }}>
           <HomeIcon />
         </Box>
         Home
-      </TabLink>
-      <TabLink as={Link} to="/news" active={route.split('/')[1] === 'news'}>
-        <Box css={{ mr: '$1' }}>
-          <ActivityLogIcon />
-        </Box>
-        News
       </TabLink>
       <TabLink as={Link} to="/files" active={route.split('/')[1] === 'files'}>
         <Box css={{ mr: '$1' }}>
@@ -55,6 +53,16 @@ export function TabNav() {
         </Box>
         Tools
       </TabLink> */}
+      <TabLink
+        as={Link}
+        to="/community"
+        active={route.split('/')[1] === 'community'}
+      >
+        <Box css={{ mr: '$1' }}>
+          <MixIcon />
+        </Box>
+        Community
+      </TabLink>
       <TabLink
         as={Link}
         to="/settings"

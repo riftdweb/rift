@@ -1,27 +1,16 @@
-import { getFileMimeType } from "./utils/file";
-import { BaseCustomOptions, defaultBaseOptions } from "./utils/options";
-import { formatSkylink } from "./utils/skylink";
-import { SkynetClient } from "./client";
-import { AxiosResponse } from "axios";
+import { getFileMimeType } from './utils/file'
+import { BaseCustomOptions, defaultBaseOptions } from './utils/options'
+import { formatSkylink } from './utils/skylink'
+import { SkynetClient } from './client'
+import { AxiosResponse } from 'axios'
 import {
   throwValidationError,
   validateNumber,
   validateObject,
   validateOptionalObject,
   validateString,
-} from "./utils/validation";
-import FormData from 'form-data';
-import fs from 'fs';
-import path from 'path';
-
-function ensureDirectoryExistence(filePath: string) {
-  var dirname = path.dirname(filePath);
-  if (fs.existsSync(dirname)) {
-    return true;
-  }
-  ensureDirectoryExistence(dirname);
-  fs.mkdirSync(dirname);
-}
+} from './utils/validation'
+import FormData from 'form-data'
 
 /**
  * Custom upload options.
@@ -33,12 +22,12 @@ function ensureDirectoryExistence(filePath: string) {
  * @property [query] - Query parameters. Allows passing in parameters that haven't been implemented in the SDK yet.
  */
 export type CustomUploadOptions = BaseCustomOptions & {
-  endpointUpload?: string;
-  portalFileFieldname?: string;
-  portalDirectoryFileFieldname?: string;
-  customFilename?: string;
-  query?: Record<string, unknown>;
-};
+  endpointUpload?: string
+  portalFileFieldname?: string
+  portalDirectoryFileFieldname?: string
+  customFilename?: string
+  query?: Record<string, unknown>
+}
 
 /**
  * The response to an upload request.
@@ -48,19 +37,19 @@ export type CustomUploadOptions = BaseCustomOptions & {
  * @property bitfield - The bitfield that gets encoded into the skylink. The bitfield contains a version, an offset and a length in a heavily compressed and optimized format.
  */
 export type UploadRequestResponse = {
-  skylink: string;
-  merkleroot: string;
-  bitfield: number;
-};
+  skylink: string
+  merkleroot: string
+  bitfield: number
+}
 
 export const defaultUploadOptions = {
   ...defaultBaseOptions,
-  endpointUpload: "/skynet/skyfile",
-  portalFileFieldname: "file",
-  portalDirectoryFileFieldname: "files[]",
-  customFilename: "",
+  endpointUpload: '/skynet/skyfile',
+  portalFileFieldname: 'file',
+  portalDirectoryFileFieldname: 'files[]',
+  customFilename: '',
   query: undefined,
-};
+}
 
 /**
  * Uploads a file to Skynet.
@@ -74,21 +63,21 @@ export const defaultUploadOptions = {
  */
 export async function uploadFile(
   this: SkynetClient,
-  file: { data: any, name: string, type: string },
+  file: { data: any; name: string; type: string },
   customOptions?: CustomUploadOptions
 ): Promise<UploadRequestResponse> {
   // Validation is done in `uploadDirectoryRequest`.
 
-  const response = await this.uploadFileRequest(file, customOptions);
+  const response = await this.uploadFileRequest(file, customOptions)
 
   // Sanity check.
-  validateUploadResponse(response);
+  validateUploadResponse(response)
 
-  const skylink = formatSkylink(response.data.skylink);
-  const merkleroot = response.data.merkleroot;
-  const bitfield = response.data.bitfield;
+  const skylink = formatSkylink(response.data.skylink)
+  const merkleroot = response.data.merkleroot
+  const bitfield = response.data.bitfield
 
-  return { skylink, merkleroot, bitfield };
+  return { skylink, merkleroot, bitfield }
 }
 
 /**
@@ -102,42 +91,43 @@ export async function uploadFile(
  */
 export async function uploadFileRequest(
   this: SkynetClient,
-  file: { data: any, name: string, type: string },
+  file: { data: any; name: string; type: string },
   customOptions?: CustomUploadOptions
 ): Promise<AxiosResponse> {
   // validateFile("file", file, "parameter");
-  validateOptionalObject("customOptions", customOptions, "parameter", defaultUploadOptions);
+  validateOptionalObject(
+    'customOptions',
+    customOptions,
+    'parameter',
+    defaultUploadOptions
+  )
 
-  const opts = { ...defaultUploadOptions, ...this.customOptions, ...customOptions };
-  const formData = new FormData();
-
-  const filepath = `temp/${file.name}.json`
-
-  ensureDirectoryExistence(filepath)
-  fs.writeFileSync(filepath, file.data)
-  // file = ensureFileObjectConsistency(file);
+  const opts = {
+    ...defaultUploadOptions,
+    ...this.customOptions,
+    ...customOptions,
+  }
+  const formData = new FormData()
 
   if (opts.customFilename) {
-    formData.append(opts.portalFileFieldname, fs.createReadStream(filepath), {
+    formData.append(opts.portalFileFieldname, file.data, {
       filename: opts.customFilename,
-    });
+    })
   } else {
-    formData.append(opts.portalFileFieldname, fs.createReadStream(filepath), {
+    formData.append(opts.portalFileFieldname, file.data, {
       filename: file.name,
-    });
+    })
   }
 
   const response = await this.executeRequest({
     ...opts,
     endpointPath: opts.endpointUpload,
-    method: "post",
+    method: 'post',
     headers: formData.getHeaders(),
     data: formData,
-  });
+  })
 
-  fs.unlinkSync(filepath)
-
-  return response;
+  return response
 }
 
 /**
@@ -159,16 +149,20 @@ export async function uploadDirectory(
 ): Promise<UploadRequestResponse> {
   // Validation is done in `uploadDirectoryRequest`.
 
-  const response = await this.uploadDirectoryRequest(directory, filename, customOptions);
+  const response = await this.uploadDirectoryRequest(
+    directory,
+    filename,
+    customOptions
+  )
 
   // Sanity check.
-  validateUploadResponse(response);
+  validateUploadResponse(response)
 
-  const skylink = formatSkylink(response.data.skylink);
-  const merkleroot = response.data.merkleroot;
-  const bitfield = response.data.bitfield;
+  const skylink = formatSkylink(response.data.skylink)
+  const merkleroot = response.data.merkleroot
+  const bitfield = response.data.bitfield
 
-  return { skylink, merkleroot, bitfield };
+  return { skylink, merkleroot, bitfield }
 }
 
 /**
@@ -188,27 +182,36 @@ export async function uploadDirectoryRequest(
   filename: string,
   customOptions?: CustomUploadOptions
 ): Promise<AxiosResponse> {
-  validateObject("directory", directory, "parameter");
-  validateString("filename", filename, "parameter");
-  validateOptionalObject("customOptions", customOptions, "parameter", defaultUploadOptions);
+  validateObject('directory', directory, 'parameter')
+  validateString('filename', filename, 'parameter')
+  validateOptionalObject(
+    'customOptions',
+    customOptions,
+    'parameter',
+    defaultUploadOptions
+  )
 
-  const opts = { ...defaultUploadOptions, ...this.customOptions, ...customOptions };
-  const formData = new FormData();
+  const opts = {
+    ...defaultUploadOptions,
+    ...this.customOptions,
+    ...customOptions,
+  }
+  const formData = new FormData()
 
   Object.entries(directory).forEach(([path, file]) => {
-    file = ensureFileObjectConsistency(file as File);
-    formData.append(opts.portalDirectoryFileFieldname, file as File, path);
-  });
+    file = ensureFileObjectConsistency(file as File)
+    formData.append(opts.portalDirectoryFileFieldname, file as File, path)
+  })
 
   const response = await this.executeRequest({
     ...opts,
     endpointPath: opts.endpointUpload,
-    method: "post",
+    method: 'post',
     data: formData,
     query: { filename },
-  });
+  })
 
-  return response;
+  return response
 }
 
 /**
@@ -223,27 +226,31 @@ export async function uploadDirectoryRequest(
  * @see {@link https://github.com/NebulousLabs/skynet-webportal/issues/290| Related Issue}
  */
 function ensureFileObjectConsistency(file: File): File {
-  return new File([file], file.name, { type: getFileMimeType(file) });
+  return new File([file], file.name, { type: getFileMimeType(file) })
 }
 
 function validateFile(name: string, value: unknown, valueKind: string) {
   if (!(value instanceof File)) {
-    throwValidationError(name, value, valueKind, "'File'");
+    throwValidationError(name, value, valueKind, "'File'")
   }
 }
 
 function validateUploadResponse(response: AxiosResponse): void {
   try {
     if (!response.data) {
-      throw new Error("response.data field missing");
+      throw new Error('response.data field missing')
     }
 
-    validateString("skylink", response.data.skylink, "upload response field");
-    validateString("merkleroot", response.data.merkleroot, "upload response field");
-    validateNumber("bitfield", response.data.bitfield, "upload response field");
+    validateString('skylink', response.data.skylink, 'upload response field')
+    validateString(
+      'merkleroot',
+      response.data.merkleroot,
+      'upload response field'
+    )
+    validateNumber('bitfield', response.data.bitfield, 'upload response field')
   } catch (err) {
     throw new Error(
       `Did not get a complete upload response despite a successful request. Please try again and report this issue to the devs if it persists. Error: ${err}`
-    );
+    )
   }
 }

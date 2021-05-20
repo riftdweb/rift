@@ -46,7 +46,7 @@ export type ProcessedPost = {
 }
 
 export interface Post {
-  skylink: string
+  userId: string
   /**
    * Full ID of the post this posts is commenting on
    */

@@ -4,15 +4,17 @@ import { Nav } from '../_shared/Nav'
 import { Algorithm } from './Algorithm'
 import { KeywordsGraph } from './KeywordsGraph'
 import { ScoreGraph } from './ScoreGraph'
+import useDimensions from 'react-use-dimensions'
 
-const WIDTH = 1145
+// const WIDTH = 800
 const HEIGHT = 500
 
 export function FeedInsights() {
+  const [ref, { width }] = useDimensions()
   return (
-    <Layout>
+    <Layout overflow="visible">
       <Nav />
-      <Box css={{ position: 'relative' }}>
+      <Box css={{ position: 'relative' }} ref={ref}>
         <Box css={{ my: '$3' }}>
           <Flex css={{ flexDirection: 'column', gap: '$6' }}>
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
@@ -23,7 +25,7 @@ export function FeedInsights() {
                 <Box css={{ flex: 1 }} />
                 <Algorithm />
               </Flex>
-              <ScoreGraph width={WIDTH} height={HEIGHT} />
+              <ScoreGraph width={width} height={HEIGHT} />
             </Flex>
             <Box
               css={{
@@ -38,7 +40,7 @@ export function FeedInsights() {
               <Subheading css={{ color: '$gray900' }}>
                 Keywords extracted from content interaction events
               </Subheading>
-              <KeywordsGraph width={WIDTH} height={HEIGHT} />
+              <KeywordsGraph width={width} height={HEIGHT} />
             </Flex>
             <Flex
               css={{

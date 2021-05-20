@@ -11,7 +11,6 @@ import { useMemo } from 'react'
 import { useFeed } from '../../../hooks/feed'
 import { rankPost } from '../../../hooks/feed/ranking'
 import { ProcessedPost } from '../../../hooks/feed/types'
-import { SkylinkPeek } from '../../_shared/SkylinkPeek'
 import { PostTime } from '../_shared/PostTime'
 
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }
@@ -250,7 +249,11 @@ export function ScoreGraph({ width, height }: Props) {
                 At time{' '}
               </Text>
               <Text
-                css={{ display: 'inline', color: '$blue900', fontWeight: 600 }}
+                css={{
+                  display: 'inline',
+                  color: '$blue900',
+                  fontWeight: 600,
+                }}
               >
                 {format(selectedData.time, 'h:mmaaa')}
               </Text>
@@ -259,7 +262,11 @@ export function ScoreGraph({ width, height }: Props) {
                 current content score is:{' '}
               </Text>
               <Text
-                css={{ display: 'inline', color: '$blue900', fontWeight: 600 }}
+                css={{
+                  display: 'inline',
+                  color: '$blue900',
+                  fontWeight: 600,
+                }}
               >
                 {selectedData.score}
               </Text>
@@ -277,12 +284,6 @@ export function ScoreGraph({ width, height }: Props) {
               {selectedData.processedPost.post.content.title}
             </Text>
             <Flex css={{ alignItems: 'center', gap: '$1' }}>
-              <SkylinkPeek
-                skylink={selectedData.processedPost.post.skylink.replace(
-                  'sia:',
-                  ''
-                )}
-              />
               <PostTime
                 post={selectedData.processedPost.post}
                 prefix="posted"

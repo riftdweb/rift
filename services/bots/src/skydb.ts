@@ -1,68 +1,120 @@
-import { PostMap } from '.';
-import { genKeyPairFromSeed } from '@riftdweb/skynet-js-iso';
-import { Post } from './bot/types';
+import { PostMap, SectionData } from './bot/types';
 import { setJSON } from './bot/skynet';
+import { genKeyPairFromSeed } from '@riftdweb/skynet-js-iso';
 
-const seed = process.env.BOT_SEED || 'bot';
-const { publicKey } = genKeyPairFromSeed(seed);
-
-type SavedPost = {
-  data: Post;
-  skylink: string;
+const profileAvatarMap = {
+  cnn: 'sia:OAC_gz0VGFL_Pkg92YOswG7rgy8KXRK_Ph9_HyiPNiPjww',
+  reddit: 'sia:KADkguepy_1lyV_QLgkxseq7E5p8o3fJn8JNi7CrWuEEpg',
+  hn: 'sia:AAD_BpavFKpBFnH2KEhTd0uEANEy_BDtEvBCkmSbnQXnww',
 };
 
-export async function writeContentRecordsToSkyDb(postMap: PostMap) {
-  const posts: Post[] = Object.entries(postMap).map(([_key, post]) => post);
+export async function writePosts(section: SectionData) {
+  updateProfile(section);
 
-  console.log(publicKey);
+  const namespace = 'riftapp.hns';
+  const feedDacBasePath = `feed-dac.hns`;
+  const feedDacPostsBasePath = `feed-dac.hns/${namespace}/posts`;
 
-  const contentRecordsBasePath = `crqa.hns/${publicKey}/newcontent`;
-  const timestamp = new Date().getTime();
-
-  // Save each post individually
-  const requests = posts.map((post) => {
-    const func = async () => {
-      const name = `data/${post.id}`;
-      console.log(`Saving ${name}`);
-      const res = await setJSON(seed, `data/${post.id}`, post as any);
-      console.log(`\t${name} done`);
-      return (res as unknown) as SavedPost;
-    };
-    return func;
+  await setJSON(section.seed, `${feedDacBasePath}/skapps.json`, {
+    [namespace]: true,
   });
 
-  let savedPosts: SavedPost[] = [];
-
-  for await (let request of requests) {
-    const savedPost = await request();
-    savedPosts.push(savedPost);
-  }
-
-  console.log('all done');
-  console.log(savedPosts);
-
-  await setJSON(seed, `${contentRecordsBasePath}/index.json`, {
+  await setJSON(section.seed, `${feedDacPostsBasePath}/index.json`, {
     version: 1,
     currPageNumber: 0,
-    currPageNumEntries: savedPosts.length,
-    pages: ['crqa.hns/localhost/newcontent/page_0.json'],
-    pageSize: savedPosts.length,
+    currPageNumEntries: section.posts.length,
+    pages: [`feed-dac.hns/${namespace}/posts/page_0.json`],
+    pageSize: section.posts.length,
   });
-  console.log('saved index');
 
-  await setJSON(seed, `${contentRecordsBasePath}/page_0.json`, {
+  await setJSON(section.seed, `${feedDacPostsBasePath}/page_0.json`, {
     version: 1,
-    indexPath: `${contentRecordsBasePath}/index.json`,
-    pagePath: `${contentRecordsBasePath}/page_0.json`,
-    entries: savedPosts.map(({ data, skylink }) => ({
-      timestamp: timestamp,
-      skylink: skylink,
-      metadata: {
-        ...data,
-        skylink: skylink,
-      },
-    })),
+    indexPath: `${feedDacPostsBasePath}/index.json`,
+    _self: `${feedDacPostsBasePath}/page_0.json`,
+    items: section.posts,
   });
-  console.log('saved page 0');
-  console.log('done');
+
+  const { publicKey } = genKeyPairFromSeed(section.seed);
+
+  console.log(`${section.name}`);
+  console.log(`${section.posts.length} posts`);
+  console.log(
+    `https://riftapp.hns.siasky.net/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/index.json`
+  );
+  console.log(
+    `https://riftapp.hns.siasky.net/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/page_0.json`
+  );
+  console.log('');
+}
+
+export async function writeFeed(postMap: PostMap) {
+  Object.entries(postMap).forEach(([_seed, section]) => {
+    writePosts(section);
+  });
+}
+
+export async function updateProfile(section: SectionData) {
+  const profileDacBasePath = `profile-dac.hns`;
+  let url = '';
+  if (section.name.startsWith('Hacker')) {
+    url = profileAvatarMap.hn;
+  }
+  if (section.name.startsWith('Reddit')) {
+    url = profileAvatarMap.reddit;
+  }
+  if (section.name.startsWith('CNN')) {
+    url = profileAvatarMap.cnn;
+  }
+  const profile = {
+    version: 1,
+    profile: {
+      version: 1,
+      username: section.name,
+      firstName: '',
+      lastName: '',
+      emailID: '',
+      contact: '',
+      aboutMe: '',
+      location: '',
+      topics: [],
+      connections: [
+        {
+          twitter: '',
+        },
+        {
+          facebook: '',
+        },
+        {
+          github: '',
+        },
+        {
+          reddit: '',
+        },
+        {
+          telegram: '',
+        },
+      ],
+      avatar: [
+        {
+          ext: 'jpeg',
+          w: 300,
+          h: 300,
+          url,
+        },
+      ],
+    },
+    lastUpdatedBy: 'riftapp.hns',
+    historyLog: [
+      {
+        updatedBy: 'riftapp.hns',
+        timestamp: '2021-05-13T21:32:54.069Z',
+      },
+    ],
+  };
+
+  await setJSON(
+    section.seed,
+    `${profileDacBasePath}/profileIndex.json`,
+    profile
+  );
 }

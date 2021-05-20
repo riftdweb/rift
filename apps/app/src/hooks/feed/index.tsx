@@ -28,7 +28,7 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { Api } = useSkynet()
+  const { userId } = useSkynet()
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})
@@ -36,7 +36,7 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
-  const { data: posts } = useSWR<Post[]>('posts', () => getPosts(Api))
+  const { data: posts } = useSWR<Post[]>('posts', () => getPosts(userId))
   const { data: rankedPosts } = useSWR<ProcessedPost[]>(
     () => (posts ? [posts, keywords, domains] : null),
     () =>

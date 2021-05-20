@@ -1,8 +1,19 @@
 import { TriangleUpIcon } from '@radix-ui/react-icons'
-import { Badge, Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
+import {
+  Avatar,
+  Badge,
+  Box,
+  Card,
+  Flex,
+  Text,
+  Tooltip,
+} from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
+import useSWR from 'swr'
 import { useFeed } from '../../../../hooks/feed'
 import { ProcessedPost } from '../../../../hooks/feed/types'
+import { userProfileDAC } from '../../../../hooks/skynet'
+import { useAvatarUrl } from '../../../../hooks/useAvatarUrl'
 import { Link } from '../../../_shared/Link'
 import { PostTime } from '../../_shared/PostTime'
 import { Keyword } from './Keyword'
@@ -86,6 +97,12 @@ export function FeedItem({ item, index }: Props) {
       incrementDomain(hostname)
     }
   }, [keywordStems, hostname, incrementKeywords, incrementDomain])
+
+  const userId = post.userId
+  const { data: creatorProfile } = useSWR('profile' + userId, () =>
+    userProfileDAC.getProfile(userId)
+  )
+  const creatorAvatarUrl = useAvatarUrl(creatorProfile)
 
   return (
     <Card
@@ -183,6 +200,7 @@ export function FeedItem({ item, index }: Props) {
             {/* <Text size="1" css={{ color: '$gray900' }}>
               {score} points
             </Text> */}
+            <Avatar size="1" src={creatorAvatarUrl} />
             <People />
             <Reactions />
             {/* <Flex

@@ -12,8 +12,8 @@ import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { useSkynet } from '../../../hooks/skynet'
+import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { useDomainParams } from '../../../hooks/useDomainParams'
-import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
 
 type UserAvatar = {
   url: string
@@ -34,7 +34,6 @@ type Profile = {
 }
 
 export function ViewingUser() {
-  const [portal] = useSelectedPortal()
   const { Api, userId } = useSkynet()
   const {
     viewingUserId,
@@ -81,10 +80,7 @@ export function ViewingUser() {
     username = 'local (me)'
   }
 
-  const avatarUrl =
-    profile && profile.avatar && profile.avatar.length
-      ? profile.avatar[0].url
-      : null
+  const avatarUrl = useAvatarUrl(profile)
 
   const onSubmit = useCallback(
     (vals) => {
@@ -116,11 +112,7 @@ export function ViewingUser() {
           }}
         >
           <Avatar
-            src={
-              avatarUrl
-                ? `https://${portal}/${avatarUrl.replace('sia:', '')}`
-                : undefined
-            }
+            src={avatarUrl}
             onClick={toggleEditing}
             interactive
             css={{

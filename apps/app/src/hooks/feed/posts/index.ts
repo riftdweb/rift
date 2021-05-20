@@ -1,13 +1,23 @@
+import { feedDAC, socialDAC } from '../../skynet'
 import { Post } from '../types'
 
-export async function getPosts(Api): Promise<Post[]> {
-  // Fetch content record data from bot public key
-  const botPublicKey =
-    '7811b31ded60d43db16d28fa7805d018d93c2ea846040c80a16b87c6d3d5c132'
-  const response = await Api.getJSON({
-    publicKey: botPublicKey,
-    dataDomain: 'crqa.hns',
-    dataKey: `${botPublicKey}/newcontent/page_0.json`,
-  })
-  return response.data.entries.map((entry) => entry.metadata)
+export async function getPosts(userId): Promise<Post[]> {
+  const followingUserIds = await socialDAC.getFollowingForUser(userId)
+
+  // TODO: Load suggestions if signed out?
+
+  let posts = []
+
+  for (let followingUserId of followingUserIds) {
+    for await (let batchOfPosts of feedDAC.loadPostsForUser(followingUserId)) {
+      posts = posts.concat(
+        batchOfPosts.map((post) => ({
+          ...post,
+          userId: followingUserId,
+        }))
+      )
+    }
+  }
+
+  return posts
 }

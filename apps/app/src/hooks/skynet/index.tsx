@@ -14,10 +14,12 @@ import { useSelectedPortal } from '../useSelectedPortal'
 import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
+import { SocialDAC } from 'social-dac-library'
 
 export const feedDAC = new FeedDAC()
 export const contentRecord = new ContentRecordDAC()
 export const userProfileDAC = new UserProfileDAC()
+export const socialDAC = new SocialDAC()
 
 type State = {
   isInitializing: boolean
@@ -71,7 +73,8 @@ export function SkynetProvider({ children }: Props) {
         await _mySky.loadDacs(
           contentRecord as any,
           feedDAC as any,
-          userProfileDAC as any
+          userProfileDAC as any,
+          socialDAC as any
         )
         setMySky(_mySky)
 

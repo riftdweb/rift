@@ -55,13 +55,13 @@ export function TabNav() {
       </TabLink> */}
       <TabLink
         as={Link}
-        to="/community"
-        active={route.split('/')[1] === 'community'}
+        to="/ecosystem"
+        active={route.split('/')[1] === 'ecosystem'}
       >
         <Box css={{ mr: '$1' }}>
           <MixIcon />
         </Box>
-        Community
+        Ecosystem
       </TabLink>
       <TabLink
         as={Link}

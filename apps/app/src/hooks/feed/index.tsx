@@ -1,15 +1,31 @@
-import { createContext, useCallback, useContext, useState } from 'react'
-import useSWR from 'swr'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import useSWR, { SWRResponse } from 'swr'
 import useLocalStorageState from 'use-local-storage-state'
-import { useSkynet } from '../skynet'
-import { getPosts } from './posts'
-import { rankPosts } from './ranking'
-import { Post, ProcessedPost } from './types'
+import { v4 as uuid } from 'uuid'
+import { feedDAC, useSkynet } from '../skynet'
+import { updateUserData, workerEntries } from './workerEntries'
+import { Entry, EntryFeed } from './types'
+import { globals } from '../../shared/globals'
+import { fetchAllEntries, fetchTopEntries } from './shared'
+import { workerFeed } from './workerFeed'
 
 const RESOURCE_DATA_KEY = 'feed'
 
+type Mode = 'latest' | 'top'
+
 type State = {
-  rankedPosts: ProcessedPost[]
+  feedResponse: SWRResponse<EntryFeed, any>
+  topFeedResponse: SWRResponse<EntryFeed, any>
+  latestFeedResponse: SWRResponse<EntryFeed, any>
+  refreshTopFeed: () => void
+  createPost: ({ text: string }) => void
   keywords: { [keyword: string]: number }
   domains: { [domain: string]: number }
   incrementKeywords: (keywords: string[]) => void
@@ -18,6 +34,8 @@ type State = {
   decrementDomain: (domain: string) => void
   isVisibilityEnabled: boolean
   setIsVisibilityEnabled: (val: boolean) => void
+  mode: 'latest' | 'top'
+  setMode: (mode: Mode) => void
 }
 
 const FeedContext = createContext({} as State)
@@ -28,7 +46,7 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { userId } = useSkynet()
+  const { userId: myUserId } = useSkynet()
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})
@@ -36,14 +54,66 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
-  const { data: posts } = useSWR<Post[]>('posts', () => getPosts(userId))
-  const { data: rankedPosts } = useSWR<ProcessedPost[]>(
-    () => (posts ? [posts, keywords, domains] : null),
-    () =>
-      rankPosts(posts, {
-        keywords,
-        domains,
-      })
+  // Make data accessible to workers
+  useEffect(() => {
+    globals.keywords = keywords
+    globals.domains = domains
+  }, [keywords, domains])
+
+  useEffect(() => {
+    if (myUserId) {
+      workerEntries()
+    }
+  }, [myUserId])
+
+  const latestFeedResponse = useSWR<EntryFeed>('entries/latest', () =>
+    fetchAllEntries()
+  )
+  const topFeedResponse = useSWR<EntryFeed>('entries/top', () =>
+    fetchTopEntries()
+  )
+
+  const refreshTopFeed = useCallback(() => {
+    const func = async () => {
+      await workerFeed({ force: true })
+      topFeedResponse.mutate()
+    }
+    func()
+  }, [topFeedResponse])
+
+  const createPost = useCallback(
+    ({ text }: { text: string }) => {
+      const func = async () => {
+        // Optimistically update local latest entries
+        latestFeedResponse.mutate((data) => ({
+          updatedAt: data.updatedAt,
+          entries: [
+            {
+              // TODO: What to do with id?
+              id: uuid(),
+              userId: myUserId,
+              post: {
+                content: {
+                  text,
+                },
+                ts: new Date().getTime(),
+              },
+            } as Entry,
+            ...data.entries,
+          ],
+        }))
+
+        // TODO: Optimistically update local user entries
+
+        // Create post
+        await feedDAC.createPost({ text })
+
+        // Update all entries and user entries caches
+        updateUserData(myUserId)
+      }
+      func()
+    },
+    [latestFeedResponse, myUserId]
   )
 
   const incrementKeywords = useCallback(
@@ -104,9 +174,19 @@ export function FeedProvider({ children }: Props) {
   )
 
   const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
+  const [mode, setMode] = useState<Mode>('top')
+
+  const feedResponse = useMemo(
+    () => (mode === 'latest' ? latestFeedResponse : topFeedResponse),
+    [mode, latestFeedResponse, topFeedResponse]
+  )
 
   const value = {
-    rankedPosts,
+    feedResponse,
+    latestFeedResponse,
+    topFeedResponse,
+    refreshTopFeed,
+    createPost,
     keywords,
     domains,
     incrementKeywords,
@@ -115,6 +195,8 @@ export function FeedProvider({ children }: Props) {
     decrementDomain,
     isVisibilityEnabled,
     setIsVisibilityEnabled,
+    mode,
+    setMode,
   }
 
   return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>

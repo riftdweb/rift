@@ -8,30 +8,13 @@ import {
   Tooltip,
   Box,
 } from '@riftdweb/design-system'
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { useSkynet } from '../../../hooks/skynet'
 import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { useDomainParams } from '../../../hooks/useDomainParams'
-
-type UserAvatar = {
-  url: string
-}
-
-type Profile = {
-  username: string
-  aboutMe: string
-  avatar: UserAvatar[]
-  connections: Object[]
-  contact: string
-  emailID: string
-  firstName: string
-  lastName: string
-  location: string
-  topicsDiscoverable: string[]
-  topicsHidden: string[]
-}
 
 export function ViewingUser() {
   const { Api, userId } = useSkynet()
@@ -44,7 +27,7 @@ export function ViewingUser() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
 
-  const { data } = useSWR<{ data: { profile: Profile } }>(
+  const { data } = useSWR<{ data: { profile: IUserProfile } }>(
     viewingUserId || 'local',
     () =>
       (Api.getJSON({
@@ -52,7 +35,7 @@ export function ViewingUser() {
         dataDomain: 'profile-dac.hns',
         dataKey: 'profileIndex.json',
       }) as unknown) as Promise<{
-        data: { profile: Profile }
+        data: { profile: IUserProfile }
       }>
   )
 

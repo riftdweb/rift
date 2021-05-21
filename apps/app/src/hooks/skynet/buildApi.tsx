@@ -20,6 +20,8 @@ export const buildApi = ({
   dataDomain,
   userId,
 }: BuildApi) => {
+  // Ensure that this client is only recreated when necessary as this will
+  // interfere with stateful features such as clearing cached revisions.
   const client = new SkynetClient(`https://${portal}`)
 
   function getJSON({

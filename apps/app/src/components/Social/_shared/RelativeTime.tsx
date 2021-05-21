@@ -1,6 +1,5 @@
 import { Text } from '@riftdweb/design-system'
 import { formatDistance, parseISO } from 'date-fns'
-import { Post } from '../../../hooks/feed/types'
 
 type Props = {
   time: number
@@ -8,13 +7,12 @@ type Props = {
 }
 
 export function RelativeTime({ time, prefix }: Props) {
-  return (
+  return time ? (
     <Text size="1" css={{ color: '$gray900' }}>
       {prefix}{' '}
-      {time &&
-        formatDistance(parseISO(new Date(time).toISOString()), new Date(), {
-          addSuffix: true,
-        })}
+      {formatDistance(parseISO(new Date(time).toISOString()), new Date(), {
+        addSuffix: true,
+      })}
     </Text>
-  )
+  ) : null
 }

@@ -9,8 +9,8 @@ import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
 import { useMemo } from 'react'
 import { useFeed } from '../../../hooks/feed'
-import { rankPost } from '../../../hooks/feed/ranking'
-import { ProcessedPost } from '../../../hooks/feed/types'
+import { scoreEntry } from '../../../hooks/feed/scoring'
+import { Entry } from '../../../hooks/feed/types'
 import { PostTime } from '../_shared/PostTime'
 
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }
@@ -38,35 +38,37 @@ type Props = {
 }
 
 export function ScoreGraph({ width, height }: Props) {
-  const { rankedPosts, keywords, domains } = useFeed()
+  const { topFeedResponse, keywords, domains } = useFeed()
 
   const xMax = useMemo(() => width - margin.left - margin.right, [width])
   const yMax = useMemo(() => height - margin.top - margin.bottom, [height])
 
   const timePoints = useMemo(() => generateTimePoints(-10, 10), [])
-  const posts = useMemo(() => rankedPosts || [], [rankedPosts])
+  const entries = useMemo(() => topFeedResponse.data?.entries || [], [
+    topFeedResponse,
+  ])
   const data = useMemo(
     () =>
-      posts
+      entries
         .slice(0, 100)
         .reverse()
-        .map((post) => ({
-          post,
+        .map((entry) => ({
+          entry,
           data: timePoints
             .map((time) => {
-              const processedPost = rankPost({
-                post,
+              const rescoredEntry = scoreEntry({
+                entry,
                 rankTime: time,
                 scoreData: { keywords, domains },
               })
               return {
                 x: time,
-                y: post.post.ts > time ? null : processedPost.score,
+                y: entry.post.ts > time ? null : rescoredEntry.score,
               }
             })
             .filter(({ y }) => !!y),
         })),
-    [posts, keywords, domains, timePoints]
+    [entries, keywords, domains, timePoints]
   )
 
   // And then scale the graph by our data
@@ -113,7 +115,7 @@ export function ScoreGraph({ width, height }: Props) {
 
   const selectedData = tooltipData as
     | {
-        processedPost: ProcessedPost
+        entry: Entry
         time: Date
         score: number
       }
@@ -129,7 +131,7 @@ export function ScoreGraph({ width, height }: Props) {
           tooltipLeft: coords.x,
           tooltipTop: coords.y,
           tooltipData: {
-            processedPost: series.post,
+            entry: series.entry,
             time,
             score: scoreCoords.y,
           },
@@ -230,7 +232,7 @@ export function ScoreGraph({ width, height }: Props) {
       </svg>
       {tooltipOpen && selectedData && (
         <TooltipWithBounds
-          key={selectedData.processedPost.post.id}
+          key={selectedData.entry.id}
           top={tooltipTop}
           left={tooltipLeft}
         >
@@ -281,13 +283,10 @@ export function ScoreGraph({ width, height }: Props) {
               }}
             />
             <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
-              {selectedData.processedPost.post.content.title}
+              {selectedData.entry.post.content.title}
             </Text>
             <Flex css={{ alignItems: 'center', gap: '$1' }}>
-              <PostTime
-                post={selectedData.processedPost.post}
-                prefix="posted"
-              />
+              <PostTime entry={selectedData.entry} prefix="posted" />
               <Box css={{ flex: 1 }} />
             </Flex>
           </Flex>

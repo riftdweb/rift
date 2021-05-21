@@ -1,11 +1,11 @@
-import { Post } from '../../../hooks/feed/types'
+import { Entry } from '../../../hooks/feed/types'
 import { RelativeTime } from './RelativeTime'
 
 type Props = {
-  post: Post
+  entry: Entry
   prefix?: string
 }
 
-export function PostTime({ post, prefix }: Props) {
-  return <RelativeTime time={post.ts} prefix={prefix} />
+export function PostTime({ entry, prefix }: Props) {
+  return <RelativeTime time={entry.post.ts} prefix={prefix} />
 }

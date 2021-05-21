@@ -15,6 +15,10 @@ import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
+import { globals } from '../../shared/globals'
+import useSWR from 'swr'
+import { useProfile } from '../useProfile'
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 
 export const feedDAC = new FeedDAC()
 export const contentRecord = new ContentRecordDAC()
@@ -23,6 +27,7 @@ export const socialDAC = new SocialDAC()
 
 type State = {
   isInitializing: boolean
+  myProfile: IUserProfile
   Api: ReturnType<typeof buildApi>
   mySky: MySky
   loggedIn: boolean
@@ -46,6 +51,7 @@ export function SkynetProvider({ children }: Props) {
 
   const [isInitializing, setIsInitializing] = useState<boolean>(true)
   const [userId, setUserId] = useState<string>()
+  const myProfile = useProfile(userId)
   const [mySky, setMySky] = useState<MySky>()
   const [loggedIn, setLoggedIn] = useState(null)
 
@@ -140,6 +146,12 @@ export function SkynetProvider({ children }: Props) {
     [mySky, portal, userId, dataDomain, localRootSeed]
   )
 
+  // Update globals used in workers
+  useEffect(() => {
+    globals.Api = Api
+    globals.userId = userId
+  }, [Api, userId])
+
   // Key that can be used for SWR revalidation when identity changes
   const identityKey = userId ? userId : localRootSeed
 
@@ -153,6 +165,7 @@ export function SkynetProvider({ children }: Props) {
     Api,
     identityKey,
     dataDomain,
+    myProfile,
   }
 
   return (

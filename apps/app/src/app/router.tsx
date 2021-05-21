@@ -6,12 +6,13 @@ import { DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from '../hooks/path'
 import { Config } from './_config'
 
 const Home = lazy(() => import('../pages/Home'))
+const SocialProfile = lazy(() => import('../pages/SocialProfile'))
 const FeedInsights = lazy(() => import('../pages/FeedInsights'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 const Data = lazy(() => import('../pages/Data'))
 const Dns = lazy(() => import('../pages/Dns'))
 const Tools = lazy(() => import('../pages/Tools'))
-const Community = lazy(() => import('../pages/Community'))
+const Ecosystem = lazy(() => import('../pages/Ecosystem'))
 const Settings = lazy(() => import('../pages/Settings'))
 
 export function App() {
@@ -68,8 +69,11 @@ export function App() {
             <Route path="/feed/insights">
               <FeedInsights />
             </Route>
-            <Route path="/community">
-              <Community />
+            <Route path="/users/:userId">
+              <SocialProfile />
+            </Route>
+            <Route path="/ecosystem">
+              <Ecosystem />
             </Route>
             <Route exact path="/">
               <Home />

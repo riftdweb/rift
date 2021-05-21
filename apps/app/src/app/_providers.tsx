@@ -1,6 +1,7 @@
 import { DomainsProvider } from '../hooks/domains'
 import { FeedProvider } from '../hooks/feed'
 import { useSkynet } from '../hooks/skynet'
+import { UsersProvider } from '../hooks/users'
 import { AppsProvider } from '../hooks/useApps'
 import { DnsProvider } from '../hooks/useDns'
 import { SkyfilesProvider } from '../hooks/useSkyfiles'
@@ -19,7 +20,9 @@ export function Providers({ children }) {
       <DomainsProvider>
         <DnsProvider>
           <FeedProvider>
-            <SkyfilesProvider>{children}</SkyfilesProvider>
+            <UsersProvider>
+              <SkyfilesProvider>{children}</SkyfilesProvider>
+            </UsersProvider>
           </FeedProvider>
         </DnsProvider>
       </DomainsProvider>

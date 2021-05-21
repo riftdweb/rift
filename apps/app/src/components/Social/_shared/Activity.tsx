@@ -11,21 +11,21 @@ const activityItems = [
     at: new Date().getTime() - 1000 * 60 * 20,
   },
   {
-    id: '1',
+    id: '2',
     userId: 'parox',
     content:
       'CDC: Slow pace of rural vaccinations could hinder end of the pandemic',
     at: new Date().getTime() - 1000 * 60 * 60 * 1,
   },
   {
-    id: '1',
+    id: '3',
     userId: 'parox',
     content:
       'CDC: Slow pace of rural vaccinations could hinder end of the pandemic',
     at: new Date().getTime() - 1000 * 60 * 60 * 2,
   },
   {
-    id: '1',
+    id: '4',
     userId: 'parox',
     content:
       'CDC: Slow pace of rural vaccinations could hinder end of the pandemic',

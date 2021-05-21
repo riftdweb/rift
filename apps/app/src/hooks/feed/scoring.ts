@@ -1,5 +1,5 @@
-import { processPosts } from './processing'
-import { Post, ProcessedPost } from './types'
+import { processEntries } from './processing'
+import { Entry } from './types'
 
 type ScoreData = {
   keywords: {
@@ -32,9 +32,9 @@ function calculateTimeDiff({ t, t_now }) {
   return (t_now - t) / time_increment
 }
 
-function rank({ processedPost, t_now, p, c, v, r, d }) {
-  const t_c = calculateTimeDiff({ t: processedPost.post.ts, t_now })
-  const t_i = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+function rank({ entry, t_now, p, c, v, r, d }) {
+  const t_c = calculateTimeDiff({ t: entry.post.ts, t_now })
+  const t_i = calculateTimeDiff({ t: entry.post.ts, t_now })
 
   const signal = calculateSignal({ p, c, v, r, d })
   const decay = calculateDecay({ t_c, t_i })
@@ -58,25 +58,26 @@ Algorithm
     - User's own average time spent on author's content
 */
 
-export function rankPost({
-  post: processedPost,
+export function scoreEntry({
+  entry,
   rankTime = new Date().getTime(),
   scoreData: { keywords, domains },
 }: {
-  post: Partial<ProcessedPost>
+  entry: Entry
   rankTime?: number
   scoreData: ScoreData
-}): ProcessedPost {
-  const titleKeywordStems = processedPost.nlp.data.keywords.map(
+}): Entry {
+  const titleKeywordStems = entry.nlp.data.keywords.map(
     (keyword) => keyword.stem
   )
-  const hostname = new URL(processedPost.post.content.link).hostname
+  const link = entry.post.content.link
+  const hostname = link ? new URL(link).hostname : ''
 
-  if (rankTime < processedPost.post.ts) {
+  if (rankTime < entry.post.ts) {
     return {
-      ...processedPost,
+      ...entry,
       score: 0,
-    } as ProcessedPost
+    } as Entry
   }
 
   // p: Number of upvotes
@@ -115,7 +116,7 @@ export function rankPost({
   const t_now = rankTime
 
   const output = rank({
-    processedPost,
+    entry,
     t_now,
     p,
     c,
@@ -124,15 +125,15 @@ export function rankPost({
     d,
   })
 
-  const t_c = calculateTimeDiff({ t: processedPost.post.ts, t_now })
-  const t_i = calculateTimeDiff({ t: processedPost.post.ts, t_now })
+  const t_c = calculateTimeDiff({ t: entry.post.ts, t_now })
+  const t_i = calculateTimeDiff({ t: entry.post.ts, t_now })
 
   const decay = calculateDecay({ t_c, t_i })
 
   const score = Number((output * 100).toFixed(0))
 
   return {
-    ...processedPost,
+    ...entry,
     score,
     scoreDetails: {
       signal: {
@@ -145,22 +146,22 @@ export function rankPost({
       },
       decay,
     },
-  } as ProcessedPost
+  } as Entry
 }
 
-export async function rankPosts(
-  posts: Post[],
+export async function scoreEntries(
+  entries: Entry[],
   scoreData: ScoreData
-): Promise<ProcessedPost[]> {
-  let _posts = []
-  _posts = await processPosts(posts)
-  _posts = _posts.map((post) =>
-    rankPost({
-      post,
+): Promise<Entry[]> {
+  let _entries = []
+  _entries = await processEntries(entries)
+  _entries = _entries.map((entry) =>
+    scoreEntry({
+      entry,
       scoreData,
     })
   )
-  _posts = _posts.sort((a, b) => (a.score < b.score ? 1 : -1))
+  _entries = _entries.sort((a, b) => (a.score < b.score ? 1 : -1))
 
-  return _posts
+  return _entries
 }

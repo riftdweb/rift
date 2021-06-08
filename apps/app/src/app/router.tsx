@@ -66,7 +66,7 @@ export function App() {
             <Route path="/settings">
               <Settings />
             </Route>
-            <Route path="/feed/insights">
+            <Route path="/feed/top/insights">
               <FeedInsights />
             </Route>
             <Route path="/users/:userId">

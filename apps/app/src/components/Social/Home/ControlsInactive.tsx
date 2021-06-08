@@ -4,7 +4,6 @@ import {
   EyeOpenIcon,
   QuestionMarkCircledIcon,
   ThickArrowUpIcon,
-  UpdateIcon,
 } from '@radix-ui/react-icons'
 import {
   Button,
@@ -12,11 +11,13 @@ import {
   ControlGroup,
   Flex,
   Input,
+  Text,
   Tooltip,
 } from '@riftdweb/design-system'
 import { useFeed } from '../../../hooks/feed'
 import { Link } from '../../_shared/Link'
 import { RelativeTime } from '../_shared/RelativeTime'
+import { FeedContextMenu } from './FeedContextMenu'
 
 type Props = {
   setEditing: () => void
@@ -24,10 +25,10 @@ type Props = {
 
 export function ControlsInactive({ setEditing }: Props) {
   const {
-    topFeedResponse,
+    current,
+    loadingState,
     mode,
     setMode,
-    refreshTopFeed,
     isVisibilityEnabled,
     setIsVisibilityEnabled,
   } = useFeed()
@@ -36,9 +37,13 @@ export function ControlsInactive({ setEditing }: Props) {
     <Flex css={{ flexDirection: 'column' }}>
       <Input onClick={() => setEditing()} placeholder="Whats on your mind?" />
       <Flex css={{ alignItems: 'center', gap: '$1', paddingTop: '$3' }}>
-        {mode === 'top' && (
+        {current.loadingState ? (
+          <Text size="1" css={{ color: '$gray900' }}>
+            {current.loadingState}...
+          </Text>
+        ) : (
           <RelativeTime
-            time={topFeedResponse.data?.updatedAt}
+            time={current.response.data?.updatedAt}
             prefix="Feed generated"
           />
         )}
@@ -60,11 +65,7 @@ export function ControlsInactive({ setEditing }: Props) {
               <ClockIcon />
             </Button>
           </Tooltip>
-          <Tooltip align="end" content="Refresh feed">
-            <Button onClick={() => refreshTopFeed()}>
-              <UpdateIcon />
-            </Button>
-          </Tooltip>
+          <FeedContextMenu />
         </ControlGroup>
         <ControlGroup>
           <Tooltip align="end" content="Toggle algorithmic visibility">
@@ -78,9 +79,9 @@ export function ControlsInactive({ setEditing }: Props) {
           </Tooltip>
           <Link
             as="button"
-            to="/feed/insights"
+            to="/feed/top/insights"
             tooltipAlign="end"
-            content="Explore your feed algorithm"
+            content="Explore your top feed algorithm"
           >
             <QuestionMarkCircledIcon />
           </Link>

@@ -1,21 +1,19 @@
 import { Flex } from '@riftdweb/design-system'
-import useSWR from 'swr'
 import { useParams } from 'react-router-dom'
 import { FeedItem } from '../_shared/FeedItem'
-import { EntryFeed } from '../../../hooks/feed/types'
 import { EntriesState } from '../../_shared/EntriesState'
-import { fetchUserEntries } from '../../../hooks/feed/shared'
+import { useFeed } from '../../../hooks/feed'
 
 export function Feed() {
   const { userId } = useParams()
-  const userEntriesFeedResponse = useSWR<EntryFeed>(['entries', userId], () =>
-    fetchUserEntries(userId)
-  )
-  const entries = userEntriesFeedResponse.data?.entries || []
+  const { user } = useFeed()
+  const entries = user.response.data?.entries || []
 
   return (
     <EntriesState
-      response={userEntriesFeedResponse}
+      key={userId}
+      response={user.response}
+      loadingState={user.loadingStateCurrentUser}
       emptyTitle="No posts"
       emptyMessage="This user has not posted anything yet."
     >

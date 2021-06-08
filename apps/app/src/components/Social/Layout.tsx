@@ -1,5 +1,4 @@
 import { Box, Flex } from '@riftdweb/design-system'
-import { Nav } from './_shared/Nav'
 import { Following } from './_shared/Following'
 import { Activity } from './_shared/Activity'
 

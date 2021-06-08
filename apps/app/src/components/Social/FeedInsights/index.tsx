@@ -1,6 +1,6 @@
 import { Box, Flex, Subheading, Text } from '@riftdweb/design-system'
 import { Layout } from '../Layout'
-import { Nav } from '../_shared/Nav'
+import { Nav } from './Nav'
 import { Algorithm } from './Algorithm'
 import { KeywordsGraph } from './KeywordsGraph'
 import { ScoreGraph } from './ScoreGraph'
@@ -20,7 +20,7 @@ export function FeedInsights() {
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
               <Flex css={{ alignItems: 'center' }}>
                 <Subheading css={{ color: '$gray900' }}>
-                  Feed algorithm content ranking over time
+                  Content ranking over time
                 </Subheading>
                 <Box css={{ flex: 1 }} />
                 <Algorithm />
@@ -38,7 +38,7 @@ export function FeedInsights() {
             />
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
               <Subheading css={{ color: '$gray900' }}>
-                Keywords extracted from content interaction events
+                Keyword interaction events
               </Subheading>
               <KeywordsGraph width={width} height={HEIGHT} />
             </Flex>
@@ -58,8 +58,8 @@ export function FeedInsights() {
                 }}
               >
                 More visualizations and interactive options will be available
-                after components such as the Social DAC are integrated,
-                providing richer data and a more complete relevancy algorithm.
+                soon, providing richer data and a more complete relevancy
+                algorithm.
               </Text>
             </Flex>
           </Flex>

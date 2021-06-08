@@ -4,10 +4,12 @@ import { EntriesState } from '../../_shared/EntriesState'
 import { FeedItem } from '../_shared/FeedItem'
 
 export function Feed() {
-  const { feedResponse, mode } = useFeed()
+  const { current, mode } = useFeed()
+
   return (
     <EntriesState
-      response={feedResponse}
+      response={current.response}
+      loadingState={current.loadingState}
       emptyTitle="No posts"
       emptyMessage="This feed is empty."
     >
@@ -18,7 +20,7 @@ export function Feed() {
           gap: '$2',
         }}
       >
-        {feedResponse.data?.entries.slice(0, 50).map((entry, index) => (
+        {current.response.data?.entries.slice(0, 50).map((entry, index) => (
           <FeedItem
             key={entry.id}
             index={mode === 'top' ? index + 1 : undefined}

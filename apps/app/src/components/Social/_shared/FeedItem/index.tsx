@@ -6,6 +6,7 @@ import { useFeed } from '../../../../hooks/feed'
 import { Entry } from '../../../../hooks/feed/types'
 import { userProfileDAC } from '../../../../hooks/skynet'
 import { useAvatarUrl } from '../../../../hooks/useAvatarUrl'
+import { useProfile } from '../../../../hooks/useProfile'
 import { useSelectedPortal } from '../../../../hooks/useSelectedPortal'
 import { Link } from '../../../_shared/Link'
 import { PostTime } from '../PostTime'
@@ -17,7 +18,7 @@ import { Keyword } from './Keyword'
 const textStyles: any = {
   lineHeight: '25px',
   display: 'inline',
-  whiteSpace: 'pre',
+  // whiteSpace: 'pre',
 }
 
 type Props = { entry: Entry; index?: number }
@@ -61,8 +62,8 @@ export function FeedItem({ entry, index }: Props) {
           css={{
             ...textStyles,
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            // textOverflow: 'ellipsis',
+            // whiteSpace: 'nowrap',
           }}
         >
           {title}
@@ -117,9 +118,7 @@ export function FeedItem({ entry, index }: Props) {
   }, [keywordStems, hostname, incrementKeywords, incrementDomain])
 
   const userId = entry.userId
-  const { data: creatorProfile } = useSWR('profile' + userId, () =>
-    userProfileDAC.getProfile(userId)
-  )
+  const creatorProfile = useProfile(userId)
 
   return (
     <Card
@@ -137,7 +136,7 @@ export function FeedItem({ entry, index }: Props) {
         {index && (
           <Tooltip
             align="start"
-            content="Upvotes and other content record interactions are coming soon"
+            content="Upvotes, reactions, and comments are coming soon"
           >
             <Box
               css={{
@@ -181,24 +180,34 @@ export function FeedItem({ entry, index }: Props) {
             }}
           >
             <Box css={{ flex: 1, overflow: 'hidden' }}>
-              <Link
-                target="_blank"
-                onClick={incrementCounters}
-                href={link}
-                css={{
-                  display: 'block',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  textDecoration: 'none',
-                  '&:hover': {
+              {link ? (
+                <Link
+                  target="_blank"
+                  onClick={incrementCounters}
+                  href={link}
+                  css={{
+                    display: 'block',
+                    overflow: 'hidden',
+                    // textOverflow: 'ellipsis',
+                    // whiteSpace: 'nowrap',
                     textDecoration: 'none',
-                  },
-                }}
-              >
-                {titleElements}
-              </Link>
+                    '&:hover': {
+                      textDecoration: 'none',
+                    },
+                  }}
+                >
+                  {titleElements}
+                </Link>
+              ) : (
+                titleElements
+              )}
             </Box>
+          </Flex>
+          <Flex css={{ gap: '$1', alignItems: 'center' }}>
+            {userId && (
+              <User size="1" userId={userId} profile={creatorProfile} />
+            )}
+            <Box css={{ flex: 1 }} />
             {link &&
               (hnsDomain ? (
                 <Flex css={{ position: 'relative', marginLeft: '$1' }}>
@@ -206,7 +215,11 @@ export function FeedItem({ entry, index }: Props) {
                     target="_blank"
                     onClick={incrementCounters}
                     href={link}
-                    css={{ ...textStyles, color: '$violet900' }}
+                    css={{
+                      ...textStyles,
+                      fontSize: '$1',
+                      color: '$violet900',
+                    }}
                   >
                     {hnsDomain}
                   </Link>
@@ -214,38 +227,38 @@ export function FeedItem({ entry, index }: Props) {
               ) : (
                 <Flex css={{ position: 'relative', marginLeft: '$1' }}>
                   {/* <Score domain={hostname} /> */}
-                  <Text css={{ ...textStyles, color: '$gray900' }}>(</Text>
+                  {/* <Text
+                    css={{
+                      ...textStyles,
+                      fontSize: '$1',
+                      color: '$gray900',
+                    }}
+                  >
+                    (
+                  </Text> */}
                   <Link
                     target="_blank"
                     onClick={incrementCounters}
                     href={link}
-                    css={{ ...textStyles, color: '$gray900' }}
+                    css={{
+                      ...textStyles,
+                      fontSize: '$1',
+                      color: '$gray900',
+                    }}
                   >
                     {hostname}
                   </Link>
-                  <Text css={{ ...textStyles, color: '$gray900' }}>)</Text>
+                  {/* <Text
+                    css={{
+                      ...textStyles,
+                      fontSize: '$1',
+                      color: '$gray900',
+                    }}
+                  >
+                    )
+                  </Text> */}
                 </Flex>
               ))}
-          </Flex>
-          <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            {userId && (
-              <User size="1" userId={userId} profile={creatorProfile} />
-            )}
-            {/* <People />
-            <Reactions /> */}
-            {/* <Flex
-              css={{
-                color: '$gray900',
-                alignItems: 'center',
-                position: 'relative',
-                top: '1px',
-              }}
-            >
-              {post.content.tags.map((tag) => (
-                <Badge key={tag}>by {tag}</Badge>
-              ))}
-            </Flex> */}
-            <Box css={{ flex: 1 }} />
             <PostTime entry={entry} />
           </Flex>
         </Flex>

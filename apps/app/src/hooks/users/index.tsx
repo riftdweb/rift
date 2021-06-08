@@ -7,7 +7,9 @@ import {
 } from 'react'
 import useSWR from 'swr'
 import debounce from 'lodash/debounce'
-import { socialDAC, userProfileDAC, useSkynet } from '../skynet'
+import { socialDAC, useSkynet } from '../skynet'
+import { fetchProfile } from '../useProfile'
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 
 const debouncedMutate = debounce((mutate) => {
   return mutate()
@@ -16,12 +18,12 @@ const debouncedMutate = debounce((mutate) => {
 export const suggestionUserIds = [
   // Hacker News
   'd723ded05f38603593d455fe0f5c4fee5d52e67d7d66dfd63c56c51cef22a999',
+  // Reddit CryptoCurrency
+  '2898f8a41a1c8ffa7777b44530db8e4b1d47f1a5e39d68784d22d86704143d2c',
   // Reddit Popular
   '3e6cbb387e26f405d8394ad8df3d4aa4e945fdf3850bcae1b5b0f602c797b292',
   // Reddit Tech
   'a36a0ceb9b8535822a5a7f37f13a184736c8a60f89722207228ce3373827a39c',
-  // Reddit CryptoCurrency
-  '2898f8a41a1c8ffa7777b44530db8e4b1d47f1a5e39d68784d22d86704143d2c',
   // Reddit Siacoin
   '8762804ded167d2dd7dea9c0c81af70fa45a145e301eb8af2e9bfb5bbcc2f79f',
   // Redsolver
@@ -46,9 +48,14 @@ export const suggestionUserIds = [
 
 // const RESOURCE_DATA_KEY = 'users'
 
+export type User = {
+  userId: string
+  profile: IUserProfile
+}
+
 type State = {
-  followings: any[]
-  suggestions: any[]
+  followings: User[]
+  suggestions: User[]
   handleFollow: (name: string, userId: string) => void
   handleUnfollow: (userId: string) => void
 }
@@ -61,7 +68,7 @@ type Props = {
 }
 
 export function UsersProvider({ children }: Props) {
-  const { Api, userId: myUserId } = useSkynet()
+  const { userId: myUserId } = useSkynet()
 
   const [allSuggestions, setSuggestions] = useState<any[]>([])
 
@@ -72,7 +79,7 @@ export function UsersProvider({ children }: Props) {
     const func = async () => {
       const profiles = []
       for (let userId of suggestionUserIds) {
-        const profile = await userProfileDAC.getProfile(userId)
+        const profile = await fetchProfile(userId)
         profiles.push({
           userId,
           profile,
@@ -86,7 +93,10 @@ export function UsersProvider({ children }: Props) {
 
   const { data: followingUserIds, mutate } = useSWR(
     'followingList' + myUserId,
-    () => socialDAC.getFollowingForUser(myUserId)
+    () => socialDAC.getFollowingForUser(myUserId),
+    {
+      revalidateOnFocus: false,
+    }
   )
 
   const [followings, setFollowings] = useState<any[]>([])
@@ -98,7 +108,7 @@ export function UsersProvider({ children }: Props) {
     const func = async () => {
       const profiles = []
       for (let userId of followingUserIds) {
-        const profile = await userProfileDAC.getProfile(userId)
+        const profile = await fetchProfile(userId)
         profiles.push({
           userId,
           profile,
@@ -109,9 +119,6 @@ export function UsersProvider({ children }: Props) {
     }
     func()
   }, [followingUserIds, setFollowings])
-
-  // console.log(followingUserIds)
-  // console.log(followings)
 
   const handleFollow = useCallback(
     (name, userId) => {

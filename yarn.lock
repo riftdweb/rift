@@ -5552,6 +5552,11 @@ cacheable-request@^6.0.0:
     normalize-url "^4.1.0"
     responselike "^1.0.2"
 
+caf@^13.1.1:
+  version "13.1.1"
+  resolved "https://registry.yarnpkg.com/caf/-/caf-13.1.1.tgz#c43061a11f01ca642a7b535d075026ce4f13456c"
+  integrity sha512-Xc9exUN5aEnEzjZX+njng7M5TLIJ0dq898cb5cjqOKn+bLGdEPIEXdtD4GWM8eiSO7/a9sIIGQS2AIzhvWD2Bw==
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"

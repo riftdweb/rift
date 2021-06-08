@@ -6,32 +6,79 @@ import {
   useMemo,
   useState,
 } from 'react'
-import useSWR, { SWRResponse } from 'swr'
+import { SWRResponse } from 'swr'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { feedDAC, useSkynet } from '../skynet'
-import { updateUserData, workerEntries } from './workerEntries'
-import { Entry, EntryFeed } from './types'
-import { globals } from '../../shared/globals'
-import { fetchAllEntries, fetchTopEntries } from './shared'
-import { workerFeed } from './workerFeed'
+import { workerFeeds } from './workerFeeds'
+import { updateUserData } from './workerFeedUser'
+import { ActivityFeed, Entry, EntryFeed } from './types'
+import { workerFeedTop } from './workerFeedTop'
+import { workerFeedActivity } from './workerFeedActivity'
+import { logger } from '../../shared/logger'
+import { useParamUserId } from './useParamUserId'
+import { useFeedActivity } from './useFeedActivity'
+import { useFeedAll } from './useFeedAll'
+import { useFeedTop } from './useFeedTop'
+import { useFeedUser } from './useFeedUser'
+import { useUsers } from '../users'
 
 const RESOURCE_DATA_KEY = 'feed'
 
 type Mode = 'latest' | 'top'
 
 type State = {
-  feedResponse: SWRResponse<EntryFeed, any>
-  topFeedResponse: SWRResponse<EntryFeed, any>
-  latestFeedResponse: SWRResponse<EntryFeed, any>
+  current: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  top: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  latest: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  activity: {
+    response: SWRResponse<ActivityFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  user: {
+    response: SWRResponse<EntryFeed, any>
+    loadingStateCurrentUser?: string
+    getLoadingState: (userId: string) => string
+    setLoadingState: (userId: string, state?: string) => void
+  }
+
+  // refresh methods
   refreshTopFeed: () => void
+  refreshLatestFeed: () => void
+  refreshCurrentFeed: () => void
+  refreshActivity: () => void
+  refreshUser: (userId) => void
+
+  loadingState?: string
+  setLoadingState: (state: string) => void
+
   createPost: ({ text: string }) => void
-  keywords: { [keyword: string]: number }
-  domains: { [domain: string]: number }
   incrementKeywords: (keywords: string[]) => void
   setKeywordValue: (keyword: string, value: number) => void
   incrementDomain: (domain: string) => void
   decrementDomain: (domain: string) => void
+
+  // data
+  userId?: string
+
+  // algorithm data
+  keywords: { [keyword: string]: number }
+  domains: { [domain: string]: number }
+
+  // config methods
   isVisibilityEnabled: boolean
   setIsVisibilityEnabled: (val: boolean) => void
   mode: 'latest' | 'top'
@@ -46,7 +93,16 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { userId: myUserId } = useSkynet()
+  const {
+    Api,
+    userId: myUserId,
+    isReseting,
+    isInitializing,
+    controlRef: ref,
+  } = useSkynet()
+  const viewingUserId = useParamUserId()
+  const { followings } = useUsers()
+
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})
@@ -54,67 +110,84 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
-  // Make data accessible to workers
-  useEffect(() => {
-    globals.keywords = keywords
-    globals.domains = domains
-  }, [keywords, domains])
+  const [loadingState, setLoadingState] = useState<string>()
+  const activity = useFeedActivity({ ref })
+  const latest = useFeedAll({ ref })
+  const top = useFeedTop({ ref })
+  const user = useFeedUser({ ref })
 
+  // Update controlRef
   useEffect(() => {
-    if (myUserId) {
-      workerEntries()
+    ref.current.loadingState = loadingState
+    ref.current.setLoadingState = setLoadingState
+    ref.current.viewingUserId = viewingUserId
+    ref.current.followings = followings
+    ref.current.keywords = keywords
+    ref.current.domains = domains
+    ref.current.feeds = {
+      latest: latest,
+      top: top,
+      activity: activity,
+      user: user,
     }
-  }, [myUserId])
+  }, [
+    Api,
+    viewingUserId,
+    myUserId,
+    keywords,
+    domains,
+    latest,
+    top,
+    activity,
+    user,
+    loadingState,
+    followings,
+    setLoadingState,
+  ])
 
-  const latestFeedResponse = useSWR<EntryFeed>('entries/latest', () =>
-    fetchAllEntries()
-  )
-  const topFeedResponse = useSWR<EntryFeed>('entries/top', () =>
-    fetchTopEntries()
-  )
+  useEffect(() => {
+    if (isInitializing || isReseting) {
+      return
+    }
+    workerFeeds(ref)
+  }, [isInitializing, isReseting])
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
-      await workerFeed({ force: true })
-      topFeedResponse.mutate()
+      await workerFeedTop(ref, { force: true })
     }
     func()
-  }, [topFeedResponse])
+  }, [])
 
-  const createPost = useCallback(
-    ({ text }: { text: string }) => {
-      const func = async () => {
-        // Optimistically update local latest entries
-        latestFeedResponse.mutate((data) => ({
-          updatedAt: data.updatedAt,
-          entries: [
-            {
-              // TODO: What to do with id?
-              id: uuid(),
-              userId: myUserId,
-              post: {
-                content: {
-                  text,
-                },
-                ts: new Date().getTime(),
-              },
-            } as Entry,
-            ...data.entries,
-          ],
-        }))
+  const refreshLatestFeed = useCallback(() => {
+    const func = async () => {
+      await workerFeedTop(ref, { force: true })
+    }
+    func()
+  }, [])
 
-        // TODO: Optimistically update local user entries
+  const refreshActivity = useCallback(() => {
+    const func = async () => {
+      await workerFeedActivity(ref, { force: true })
+    }
+    return func()
+  }, [])
 
-        // Create post
-        await feedDAC.createPost({ text })
+  const refreshUser = useCallback((userId: string) => {
+    const func = async () => {
+      await updateUserData(ref, userId)
+    }
+    return func()
+  }, [])
 
-        // Update all entries and user entries caches
-        updateUserData(myUserId)
-      }
-      func()
-    },
-    [latestFeedResponse, myUserId]
-  )
+  // If cached user feed returns null flag true,
+  // the user feed has never been compiled
+  useEffect(() => {
+    if (!user.loadingStateCurrentUser && user.response.data?.null) {
+      logger('feed', `building a feed for ${viewingUserId}`)
+      refreshUser(viewingUserId)
+    }
+  }, [user])
 
   const incrementKeywords = useCallback(
     (keywords) => {
@@ -176,16 +249,70 @@ export function FeedProvider({ children }: Props) {
   const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
   const [mode, setMode] = useState<Mode>('top')
 
-  const feedResponse = useMemo(
-    () => (mode === 'latest' ? latestFeedResponse : topFeedResponse),
-    [mode, latestFeedResponse, topFeedResponse]
+  const createPost = useCallback(
+    ({ text }: { text: string }) => {
+      const func = async () => {
+        const cid = uuid()
+        const pendingPost = ({
+          userId: myUserId,
+          post: {
+            // skystandards is number
+            id: cid,
+            content: {
+              text,
+            },
+            ts: new Date().getTime(),
+          },
+        } as unknown) as Entry
+
+        // Optimistically update local latest feed
+        latest.response.mutate((data) => ({
+          updatedAt: data.updatedAt,
+          entries: [pendingPost, ...data.entries],
+        }))
+
+        // Optimistically update local user feed
+        user.response.mutate((data) => ({
+          updatedAt: data.updatedAt,
+          entries: [pendingPost, ...data.entries],
+        }))
+
+        // Create post
+        await feedDAC.createPost({ text })
+
+        // Update all entries and user entries caches
+        await updateUserData(ref, myUserId)
+      }
+      func()
+    },
+    [latest, user, myUserId]
+  )
+
+  const current = useMemo(() => (mode === 'latest' ? latest : top), [
+    mode,
+    latest,
+    top,
+  ])
+
+  const refreshCurrentFeed = useMemo(
+    () => (mode === 'latest' ? refreshLatestFeed : refreshTopFeed),
+    [mode, refreshLatestFeed, refreshTopFeed]
   )
 
   const value = {
-    feedResponse,
-    latestFeedResponse,
-    topFeedResponse,
+    current,
+    latest,
+    top,
+    activity,
+    user,
+    loadingState,
+    setLoadingState,
+    refreshCurrentFeed,
     refreshTopFeed,
+    refreshLatestFeed,
+    refreshActivity,
+    refreshUser,
+    userId: viewingUserId,
     createPost,
     keywords,
     domains,

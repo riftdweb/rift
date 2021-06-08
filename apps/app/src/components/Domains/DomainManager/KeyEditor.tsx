@@ -2,6 +2,7 @@ import { Box, Flex } from '@riftdweb/design-system'
 import { Domain, DomainKey } from '@riftdweb/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
+import { JSONResponse } from 'skynet-js'
 import useSWR from 'swr'
 import { useDomains } from '../../../hooks/domains'
 import { useSkynet } from '../../../hooks/skynet'
@@ -43,7 +44,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const { data, isValidating, mutate } = useSWR(key, () => {
     // Only one of the two will be defined
     const { seed, dataDomain } = domain
-    return Api.getJSON({
+    return Api.getJSON<{}>({
       seed,
       dataDomain,
       publicKey: viewingUserId,
@@ -102,10 +103,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(() => value === editingValue, [
-    value,
-    editingValue,
-  ])
+  const isDataLatest = useMemo(
+    () => value === editingValue,
+    [value, editingValue]
+  )
 
   const isValid = useMemo(() => {
     try {

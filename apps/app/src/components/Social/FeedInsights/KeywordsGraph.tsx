@@ -1,11 +1,19 @@
-import { Box, Flex, Text } from '@riftdweb/design-system'
+import { Cross1Icon } from '@radix-ui/react-icons'
+import {
+  Box,
+  Button,
+  ControlGroup,
+  Flex,
+  Input,
+  Text,
+} from '@riftdweb/design-system'
 import { localPoint } from '@visx/event'
 import { Group } from '@visx/group'
 import { scaleBand, scaleLinear } from '@visx/scale'
 import { Bar } from '@visx/shape'
 import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import throttle from 'lodash/throttle'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
 
 const verticalMargin = 120
@@ -26,7 +34,9 @@ type Props = {
 export function KeywordsGraph({ width, height }: Props) {
   const { keywords, setKeywordValue } = useFeed()
 
-  const data: KeywordItem[] = useMemo(() => {
+  const [filterValue, setFilterValue] = useState<string>()
+
+  const allData: KeywordItem[] = useMemo(() => {
     return Object.entries(keywords)
       .map(([stem, count]) => ({
         stem,
@@ -34,6 +44,13 @@ export function KeywordsGraph({ width, height }: Props) {
       }))
       .sort((a, b) => (a.count > b.count ? 1 : -1))
   }, [keywords])
+
+  const data = useMemo(() => {
+    if (!filterValue) {
+      return allData
+    }
+    return allData.filter((keyword) => keyword.stem.includes(filterValue))
+  }, [allData, filterValue])
 
   // bounds
   const xMax = width
@@ -99,6 +116,16 @@ export function KeywordsGraph({ width, height }: Props) {
 
   return (
     <Box css={{ position: 'relative' }}>
+      <ControlGroup css={{ marginBottom: '$2' }}>
+        <Input
+          placeholder="Search keywords"
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
+        />
+        <Button onClick={() => setFilterValue('')}>
+          <Cross1Icon />
+        </Button>
+      </ControlGroup>
       <svg width={width} height={height}>
         <Group left={0}>
           {data.map((d) => {

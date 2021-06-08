@@ -1,7 +1,7 @@
-import { Avatar, Box, Flex } from '@riftdweb/design-system'
+import { Flex } from '@riftdweb/design-system'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
-import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { Link } from '../../_shared/Link'
+import { Avatar } from '../../_shared/Avatar'
 
 type Props = {
   userId: string
@@ -11,7 +11,6 @@ type Props = {
 }
 
 export function User({ userId, profile, size = '2', children }: Props) {
-  const avatarUrl = useAvatarUrl(profile)
   return (
     <Flex
       css={{
@@ -19,7 +18,7 @@ export function User({ userId, profile, size = '2', children }: Props) {
         gap: '$1',
       }}
     >
-      <Avatar size={size} src={avatarUrl} />
+      <Avatar size={size} profile={profile} />
       <Link
         css={{
           color: '$hiContrast',

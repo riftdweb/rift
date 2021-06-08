@@ -1,5 +1,5 @@
-import { globals } from '../../shared/globals'
 import { logger } from '../../shared/logger'
+import { ControlRef } from '../skynet/useControlRef'
 import { scoreEntries } from './scoring'
 import {
   cacheTopEntries,
@@ -10,7 +10,7 @@ import {
 import { EntryFeed } from './types'
 
 function log(...args) {
-  logger('workerFeed', ...args)
+  logger('workerFeedTop', ...args)
 }
 
 type Params = {
@@ -18,27 +18,34 @@ type Params = {
   callback?: () => void
 }
 
-export async function workerFeed(params: Params = {}): Promise<EntryFeed> {
+export async function workerFeedTop(
+  ref: ControlRef,
+  params: Params = {}
+): Promise<EntryFeed> {
   const { force = false } = params
-  log('Feed worker running')
+  log('Running')
+  ref.current.feeds.latest.setLoadingState('Checking feed status')
 
   if (!force) {
     log('Fetching cached top entries')
-    let feed = await fetchTopEntries()
+    let feed = await fetchTopEntries(ref)
 
     if (!needsRefresh(feed, 5)) {
       log('Up to date')
+      ref.current.feeds.top.setLoadingState()
       return
     }
   }
+  ref.current.feeds.top.setLoadingState('Compiling')
 
   log('Fetching cached entries')
-  let allEntriesFeed = await fetchAllEntries()
+  let allEntriesFeed = await fetchAllEntries(ref)
   let entries = allEntriesFeed.entries
 
   log('Scoring entries')
-  const keywords = globals.keywords
-  const domains = globals.domains
+  ref.current.feeds.top.setLoadingState('Scoring')
+  const keywords = ref.current.keywords
+  const domains = ref.current.domains
   const scoredEntries = await scoreEntries(entries, {
     keywords,
     domains,
@@ -49,9 +56,13 @@ export async function workerFeed(params: Params = {}): Promise<EntryFeed> {
 
   log(sortedEntries)
   log('Caching top entries')
-  await cacheTopEntries(sortedEntries)
+  await cacheTopEntries(ref, sortedEntries)
 
-  log('Feed worker returning')
+  log('Trigger mutate')
+  await ref.current.feeds.top.response.mutate()
+  ref.current.feeds.top.setLoadingState()
+
+  log('Returning')
   return {
     updatedAt: new Date().getTime(),
     entries: sortedEntries,

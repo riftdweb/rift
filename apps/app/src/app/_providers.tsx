@@ -19,11 +19,11 @@ export function Providers({ children }) {
     <AppsProvider>
       <DomainsProvider>
         <DnsProvider>
-          <FeedProvider>
-            <UsersProvider>
+          <UsersProvider>
+            <FeedProvider>
               <SkyfilesProvider>{children}</SkyfilesProvider>
-            </UsersProvider>
-          </FeedProvider>
+            </FeedProvider>
+          </UsersProvider>
         </DnsProvider>
       </DomainsProvider>
     </AppsProvider>

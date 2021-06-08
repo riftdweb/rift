@@ -1,4 +1,4 @@
-import { DotsHorizontalIcon, PersonIcon } from '@radix-ui/react-icons'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
   ButtonVariants,
@@ -10,10 +10,14 @@ import {
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useState } from 'react'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
+import { useSkynet } from '../../hooks/skynet'
+import { dataVersion } from '../../hooks/feed/shared'
+import { Fragment, useMemo } from 'react'
+import { useFeed } from '../../hooks/feed'
+import SpinnerIcon from '../_icons/SpinnerIcon'
 
 type Props = {
   userId: string
@@ -32,11 +36,23 @@ export function UserContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const [isOpen, setIsOpen] = useState<boolean>()
+  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
+  const self = userId === myUserId
+  const isViewingUser = userId === viewingUserId
+
+  const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
+    feedUser,
+    userId,
+  ])
+
+  const combinedLoadingState =
+    loadingState ||
+    (isViewingUser && feedUser.response.isValidating && 'Fetching feed')
 
   return (
     <DropdownMenu>
-      <Tooltip align="end" content="Open user menu">
+      <Tooltip align="end" content={combinedLoadingState || 'Open user menu'}>
         <DropdownMenuTrigger
           as={Button}
           variant={variant}
@@ -50,28 +66,65 @@ export function UserContextMenu({
             },
           }}
         >
-          <DotsHorizontalIcon />
+          {combinedLoadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">
-        {profile ? (
-          <DropdownMenuLabel>{profile.username}</DropdownMenuLabel>
-        ) : (
-          <DropdownMenuLabel>User {userId.slice(0, 6)}...</DropdownMenuLabel>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        {handleUnfollow && (
-          <DropdownMenuItem onSelect={() => handleUnfollow(userId)}>
-            Unfollow
-          </DropdownMenuItem>
+        {userId && (
+          <Fragment>
+            {profile ? (
+              <DropdownMenuLabel>{profile.username}</DropdownMenuLabel>
+            ) : (
+              <DropdownMenuLabel>
+                User {userId.slice(0, 6)}...
+              </DropdownMenuLabel>
+            )}
+            {!self && (
+              <Fragment>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {handleUnfollow && (
+                  <DropdownMenuItem onSelect={() => handleUnfollow(userId)}>
+                    Unfollow
+                  </DropdownMenuItem>
+                )}
+              </Fragment>
+            )}
+          </Fragment>
         )}
         <DropdownMenuItem
-          as={RLink}
-          to={`/data/mysky/${userId}`}
-          css={{ textDecoration: 'none', cursor: 'pointer' }}
+          disabled={!!combinedLoadingState}
+          onSelect={() => refreshUser(userId)}
         >
-          View Data
+          Refresh
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Data</DropdownMenuLabel>
+        <DropdownMenuItem
+          as={RLink}
+          to={`/data/mysky/${userId}/profile-dac.hns/profileIndex.json`}
+          css={{
+            textDecoration: 'none',
+            cursor: 'pointer',
+            '&:hover': {
+              backgroundColor: '$blue800',
+            },
+          }}
+        >
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          as={RLink}
+          to={`/data/mysky/${myUserId}/${appDomain}/${dataVersion}/entries/${userId}`}
+          css={{
+            textDecoration: 'none',
+            cursor: 'pointer',
+            '&:hover': {
+              backgroundColor: '$blue800',
+            },
+          }}
+        >
+          Feed
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>

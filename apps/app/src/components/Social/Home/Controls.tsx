@@ -1,26 +1,28 @@
 import { Box, Button, Flex, Textarea } from '@riftdweb/design-system'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
-import { logger } from '../../../shared/logger'
 import { ControlsInactive } from './ControlsInactive'
 
-function log(...args) {
-  logger('Controls', ...args)
-}
-
 export function Controls() {
-  const { createPost } = useFeed()
+  const { createPost, setMode } = useFeed()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [value, setValue] = useState<string>('')
   const ref = useRef(null)
+
+  const createPostAndNavigate = useCallback(
+    (value: string) => {
+      createPost({ text: value })
+      setMode('latest')
+      setIsEditing(false)
+    },
+    [createPost, setMode, setIsEditing]
+  )
 
   useEffect(() => {
     if (isEditing && ref && ref.current) {
       ref.current.focus()
     }
   }, [ref, isEditing])
-
-  log(value)
 
   return (
     <Flex css={{ flexDirection: 'column', gap: '$1', paddingBottom: '$3' }}>
@@ -37,7 +39,7 @@ export function Controls() {
             <Button variant="ghost" onClick={() => setIsEditing(!isEditing)}>
               Cancel
             </Button>
-            <Button onClick={() => createPost({ text: value })}>Post</Button>
+            <Button onClick={() => createPostAndNavigate(value)}>Post</Button>
           </Flex>
         </Flex>
       )}

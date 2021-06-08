@@ -1,4 +1,12 @@
-import { Box, Flex, Text } from '@riftdweb/design-system'
+import { Cross1Icon } from '@radix-ui/react-icons'
+import {
+  Box,
+  Button,
+  ControlGroup,
+  Flex,
+  Input,
+  Text,
+} from '@riftdweb/design-system'
 import { AxisBottom, AxisLeft } from '@visx/axis'
 import { localPoint } from '@visx/event'
 import { Group } from '@visx/group'
@@ -7,7 +15,7 @@ import { Line, LinePath } from '@visx/shape'
 import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
 import { scoreEntry } from '../../../hooks/feed/scoring'
 import { Entry } from '../../../hooks/feed/types'
@@ -38,22 +46,32 @@ type Props = {
 }
 
 export function ScoreGraph({ width, height }: Props) {
-  const { topFeedResponse, keywords, domains } = useFeed()
+  const { top, keywords, domains } = useFeed()
 
   const xMax = useMemo(() => width - margin.left - margin.right, [width])
   const yMax = useMemo(() => height - margin.top - margin.bottom, [height])
 
   const timePoints = useMemo(() => generateTimePoints(-10, 10), [])
-  const entries = useMemo(() => topFeedResponse.data?.entries || [], [
-    topFeedResponse,
+  const entries = useMemo(() => top.response.data?.entries || [], [
+    top.response,
   ])
-  const data = useMemo(
+
+  const [filterValue, setFilterValue] = useState<string>()
+
+  const allData = useMemo(
     () =>
-      entries
-        .slice(0, 100)
-        .reverse()
-        .map((entry) => ({
+      entries.map((entry) => {
+        const isMatch =
+          !filterValue ||
+          entry.post.content.title?.includes(filterValue) ||
+          entry.post.content.text?.includes(filterValue)
+        const color = isMatch
+          ? 'var(--colors-hiContrast)'
+          : 'var(--colors-gray400)'
+        return {
           entry,
+          isMatch,
+          color,
           data: timePoints
             .map((time) => {
               const rescoredEntry = scoreEntry({
@@ -67,9 +85,17 @@ export function ScoreGraph({ width, height }: Props) {
               }
             })
             .filter(({ y }) => !!y),
-        })),
-    [entries, keywords, domains, timePoints]
+        }
+      }),
+    [entries, keywords, domains, timePoints, filterValue]
   )
+
+  const data = useMemo(() => {
+    if (!filterValue) {
+      return allData.slice(0, 100).reverse()
+    }
+    return allData.sort((a, b) => (a.isMatch ? 1 : -1)).slice(0, 100)
+  }, [allData])
 
   // And then scale the graph by our data
   const xScale = useMemo(
@@ -140,8 +166,20 @@ export function ScoreGraph({ width, height }: Props) {
     [xScale, showTooltip]
   )
 
+  const hideTooltip = useCallback(() => showTooltip({}), [])
+
   return (
     <Box css={{ position: 'relative' }}>
+      <ControlGroup css={{ marginBottom: '$2' }}>
+        <Input
+          placeholder="Search scored posts"
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
+        />
+        <Button onClick={() => setFilterValue('')}>
+          <Cross1Icon />
+        </Button>
+      </ControlGroup>
       <svg width={width} height={height}>
         <AxisBottom
           stroke={'var(--colors-gray800)'}
@@ -177,13 +215,13 @@ export function ScoreGraph({ width, height }: Props) {
           return (
             <Group key={i}>
               <LinePath
-                stroke="var(--colors-hiContrast)"
+                stroke={series.color}
                 strokeWidth={2}
                 strokeOpacity={0.6}
                 shapeRendering="geometricPrecision"
                 data={series.data}
                 onMouseMove={((e) => handleMouseMove(e, series)) as any}
-                // onMouseOut={hideTooltip}
+                onMouseOut={hideTooltip}
                 x={(d) => xPoint(d) ?? 0}
                 y={(d) => yPoint(d) ?? 0}
               />
@@ -282,9 +320,16 @@ export function ScoreGraph({ width, height }: Props) {
                 borderBottomColor: 'rgba(0,0,0,0.05)',
               }}
             />
-            <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
-              {selectedData.entry.post.content.title}
-            </Text>
+            {selectedData.entry.post.content.title && (
+              <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
+                {selectedData.entry.post.content.title}
+              </Text>
+            )}
+            {selectedData.entry.post.content.text && (
+              <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
+                {selectedData.entry.post.content.text}
+              </Text>
+            )}
             <Flex css={{ alignItems: 'center', gap: '$1' }}>
               <PostTime entry={selectedData.entry} prefix="posted" />
               <Box css={{ flex: 1 }} />

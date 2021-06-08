@@ -47,16 +47,33 @@ export type Entry = {
       }[]
     }
   }
+  local?: boolean
 }
 
 export type Feed<T> = {
   updatedAt: number
   entries: T[]
+  // The feed data does not exist yet on Skynet
+  null?: boolean
 }
 
 export type EntryFeed = Feed<Entry>
 
 export type EntryFeedResponse = {
   data?: EntryFeed
+  dataLink?: string
+}
+
+export type Activity = {
+  id: string
+  userId: string
+  message: string
+  at: number
+}
+
+export type ActivityFeed = Feed<Activity>
+
+export type ActivityFeedResponse = {
+  data?: ActivityFeed
   dataLink?: string
 }

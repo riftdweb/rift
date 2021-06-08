@@ -1,16 +1,33 @@
-import { globals } from '../../shared/globals'
 import { feedDAC } from '../skynet'
-import { Feed, Entry, EntryFeed } from './types'
+import { ControlRef } from '../skynet/useControlRef'
+import { Feed, Entry, EntryFeed, ActivityFeed, Activity } from './types'
+
+export const dataVersion = 'v3'
+
+function key(str: string) {
+  return `${dataVersion}/${str}`
+}
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,
   entries: [],
+  null: true,
 }
 
-export async function cacheUserEntries(userId: string, entries: Entry[]) {
-  const Api = globals.Api
+export const emptyActivityFeed: ActivityFeed = {
+  updatedAt: 0,
+  entries: [],
+  null: true,
+}
+
+export async function cacheUserEntries(
+  ref: ControlRef,
+  userId: string,
+  entries: Entry[]
+) {
+  const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: `entries/${userId}`,
+    dataKey: key(`entries/${userId}`),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries,
@@ -34,10 +51,10 @@ export function upsertAllEntries(
   }, allEntries)
 }
 
-export async function fetchAllEntries(): Promise<EntryFeed> {
-  const Api = globals.Api
-  let { data: feed } = await Api.getJSON({
-    dataKey: 'entries',
+export async function fetchAllEntries(ref: ControlRef): Promise<EntryFeed> {
+  const { Api } = ref.current
+  let { data: feed } = await Api.getJSON<EntryFeed>({
+    dataKey: key('entries'),
   })
   return feed
     ? {
@@ -49,26 +66,37 @@ export async function fetchAllEntries(): Promise<EntryFeed> {
     : emptyFeed
 }
 
-export async function fetchUserEntries(userId: string): Promise<EntryFeed> {
-  const Api = globals.Api
-  let { data: feed } = await Api.getJSON({
-    dataKey: `entries/${userId}`,
+export async function fetchUserEntries(
+  ref: ControlRef,
+  userId: string
+): Promise<EntryFeed> {
+  const { Api } = ref.current
+  let { data: feed } = await Api.getJSON<EntryFeed>({
+    dataKey: key(`entries/${userId}`),
   })
   return feed || emptyFeed
 }
 
-export async function fetchTopEntries(): Promise<EntryFeed> {
-  const Api = globals.Api
-  let { data: feed } = await Api.getJSON({
-    dataKey: 'entries/top',
+export async function fetchTopEntries(ref: ControlRef): Promise<EntryFeed> {
+  const Api = ref.current.Api
+  let { data: feed } = await Api.getJSON<EntryFeed>({
+    dataKey: key('entries/top'),
   })
   return feed || emptyFeed
 }
 
-export async function cacheAllEntries(entries: Entry[]) {
-  const Api = globals.Api
+export async function fetchActivity(ref: ControlRef): Promise<ActivityFeed> {
+  const { Api } = ref.current
+  let { data: feed } = await Api.getJSON<ActivityFeed>({
+    dataKey: key('activity'),
+  })
+  return feed || emptyActivityFeed
+}
+
+export async function cacheAllEntries(ref: ControlRef, entries: Entry[]) {
+  const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: 'entries',
+    dataKey: key('entries'),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries,
@@ -91,10 +119,10 @@ export async function compileUserEntries(userId: string): Promise<Entry[]> {
   return allUserEntries
 }
 
-export async function cacheTopEntries(entries: Entry[]) {
-  const Api = globals.Api
+export async function cacheTopEntries(ref: ControlRef, entries: Entry[]) {
+  const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: 'entries/top',
+    dataKey: key('entries/top'),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries.slice(0, 100),
@@ -102,7 +130,18 @@ export async function cacheTopEntries(entries: Entry[]) {
   })
 }
 
-export function needsRefresh<T>(feed: Feed<T>, minutes: number = 0.5) {
+export async function cacheActivity(ref: ControlRef, activities: Activity[]) {
+  const { Api } = ref.current
+  return await Api.setJSON({
+    dataKey: key('activity'),
+    json: {
+      updatedAt: new Date().getTime(),
+      entries: activities,
+    } as ActivityFeed,
+  })
+}
+
+export function needsRefresh<T>(feed: Feed<T>, minutes: number = 5) {
   if (feed && feed.updatedAt > new Date().getTime() - 1000 * 60 * minutes) {
     return false
   }

@@ -7,7 +7,6 @@ import { Link } from '../../_shared/Link'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useProfile } from '../../../hooks/useProfile'
 import { useFeed } from '../../../hooks/feed'
-import { ProfileContextMenu } from './ProfileContextMenu'
 import { UserContextMenu } from '../../_shared/UserContextMenu'
 
 export function SocialProfile() {

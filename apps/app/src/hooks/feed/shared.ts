@@ -141,7 +141,7 @@ export async function cacheActivity(ref: ControlRef, activities: Activity[]) {
   })
 }
 
-export function needsRefresh<T>(feed: Feed<T>, minutes: number = 5) {
+export function needsRefresh<T>(feed: Feed<T>, minutes: number = 0.5) {
   if (feed && feed.updatedAt > new Date().getTime() - 1000 * 60 * minutes) {
     return false
   }

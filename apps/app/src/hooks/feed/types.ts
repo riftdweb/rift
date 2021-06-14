@@ -24,6 +24,7 @@ type Match = {
 export type Entry = {
   id: string
   userId: string
+  isPending?: boolean
   post: Post
   score?: number
   scoreDetails?: {

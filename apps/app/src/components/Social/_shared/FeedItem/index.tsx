@@ -1,4 +1,4 @@
-import { TriangleUpIcon } from '@radix-ui/react-icons'
+import { CheckIcon, TriangleUpIcon } from '@radix-ui/react-icons'
 import { Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -12,6 +12,7 @@ import { Link } from '../../../_shared/Link'
 import { PostTime } from '../PostTime'
 import { User } from '../User'
 import { Keyword } from './Keyword'
+import { Status } from './Status'
 // import { People } from './People'
 // import { Reactions } from './Reactions'
 
@@ -125,8 +126,7 @@ export function FeedItem({ entry, index }: Props) {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       css={{
-        // py: '$3',
-        p: '$3',
+        p: '$2',
         flexDirection: 'column',
         gap: '$2',
         position: 'relative',
@@ -260,6 +260,7 @@ export function FeedItem({ entry, index }: Props) {
                 </Flex>
               ))}
             <PostTime entry={entry} />
+            <Status entry={entry} />
           </Flex>
         </Flex>
       </Flex>

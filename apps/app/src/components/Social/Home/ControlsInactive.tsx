@@ -26,7 +26,6 @@ type Props = {
 export function ControlsInactive({ setEditing }: Props) {
   const {
     current,
-    loadingState,
     mode,
     setMode,
     isVisibilityEnabled,

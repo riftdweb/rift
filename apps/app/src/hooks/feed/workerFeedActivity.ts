@@ -8,19 +8,19 @@ import {
 } from './shared'
 import { Activity, ActivityFeed, Entry } from './types'
 
-function log(...args) {
-  logger('workerFeedActivity', ...args)
-}
-
 type Params = {
   force?: boolean
   callback?: () => void
 }
 
-export async function workerFeedActivity(
+export async function workerFeedActivityUpdate(
   ref: ControlRef,
   params: Params = {}
 ): Promise<ActivityFeed> {
+  function log(...args) {
+    logger('feedActivityUpdate', ...args)
+  }
+
   const { force = false } = params
 
   log('Running')

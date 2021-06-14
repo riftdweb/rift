@@ -1,8 +1,8 @@
-import useSWR, { SWRResponse } from 'swr'
+import useSWR from 'swr'
 import { ActivityFeed } from './types'
 import { fetchActivity } from './shared'
 import { useSkynet } from '../skynet'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'
 
 type Props = {
@@ -21,9 +21,15 @@ export function useFeedActivity({ ref }: Props) {
     }
   )
 
-  return {
+  const values = {
     response,
     loadingState,
     setLoadingState,
   }
+
+  useEffect(() => {
+    ref.current.feeds.activity = values
+  }, [response, loadingState, setLoadingState])
+
+  return values
 }

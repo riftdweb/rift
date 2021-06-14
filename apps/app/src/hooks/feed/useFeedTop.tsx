@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { EntryFeed } from './types'
 import { fetchTopEntries } from './shared'
 import { useSkynet } from '../skynet'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'
 
 type Props = { ref: ControlRef }
@@ -19,9 +19,15 @@ export function useFeedTop({ ref }: Props) {
     }
   )
 
-  return {
+  const values = {
     response,
     loadingState,
     setLoadingState,
   }
+
+  useEffect(() => {
+    ref.current.feeds.top = values
+  }, [response, loadingState, setLoadingState])
+
+  return values
 }

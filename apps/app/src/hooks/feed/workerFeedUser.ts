@@ -1,105 +1,138 @@
+import * as CAF from 'caf'
+import { JSONResponse } from 'skynet-js'
 import { logger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import {
-  cacheAllEntries,
   cacheUserEntries,
-  fetchAllEntries,
   compileUserEntries,
-  upsertAllEntries,
+  fetchUserEntries,
 } from './shared'
-import { Entry } from './types'
-import { workerFeedTop } from './workerFeedTop'
+import { handleToken } from './tokens'
+import { Entry, EntryFeed } from './types'
+import { workerFeedActivityUpdate } from './workerFeedActivity'
+import { workerFeedLatestUpdate } from './workerFeedLatest'
+import { workerFeedTopUpdate } from './workerFeedTop'
 
-function logRemoveUser(...args) {
-  logger('workerRemoveUserData', ...args)
-}
-
-export async function removeUserData(ref: ControlRef, userId: string) {
-  logRemoveUser('Running')
-  ref.current.feeds.user.setLoadingState('Compiling')
-
-  logRemoveUser('Fetching all entries')
-  let allEntriesFeed = await fetchAllEntries(ref)
-  let entries = allEntriesFeed.entries.filter(
-    (entry) => entry.userId !== userId
-  )
-
-  logRemoveUser('Caching all entries')
-  await cacheAllEntries(ref, entries)
-
-  logRemoveUser('Returning')
-  return entries
-}
-
-function logUpdateUser(...args) {
-  logger('workerUpdateUserData', ...args)
-}
-
-export async function updateUserData(ref: ControlRef, userId: string) {
-  logUpdateUser('Running')
-  const myUserId = ref.current.userId
-  const viewingUserId = ref.current.viewingUserId
-  const isSelf = myUserId === userId
-  const isFollowingUser = !!ref.current.followings.find(
-    (user) => user.userId === userId
-  )
-  ref.current.feeds.user.setLoadingState(userId, 'Compiling feed')
-
-  logUpdateUser(`Compiling entries for user ${userId}`)
-  let allUserEntries = await compileUserEntries(userId)
-  logUpdateUser(allUserEntries)
-
-  logUpdateUser(`Caching entries for user ${userId}`)
-  ref.current.feeds.user.setLoadingState(userId, 'Caching feed')
-  await cacheUserEntries(ref, userId, allUserEntries)
-
-  // If following user, update the latest feed
-  if (isSelf || isFollowingUser) {
-    // Fork off async process to update latest feed
-    addUserEntriesToLatestFeed(ref, userId, allUserEntries)
-  }
-
-  logUpdateUser('Trigger mutate')
-
-  ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')
-  if (userId === viewingUserId) {
-    await ref.current.feeds.user.response.mutate()
-  }
-  await ref.current.feeds.user.setLoadingState(userId)
-
-  // Start Feeed worker, do not wait
-  logUpdateUser('Starting Feed worker')
-  workerFeedTop(ref, { force: true })
-
-  logUpdateUser('Returning')
-  return {
-    updatedAt: new Date().getTime(),
-    entries: allUserEntries,
-  }
-}
-
-async function addUserEntriesToLatestFeed(
+/**
+ *  If feedUserUpdate finds new data, it will trigger:
+ *    1. updateFeedLatest
+ *    2. And then async after in parallel:
+ *      - updateFeedTop
+ *      - updateFeedActivity
+ */
+export const cafFeedUserUpdate = CAF(function* feedUserUpdate(
+  signal: any,
   ref: ControlRef,
   userId: string,
-  allUserEntries: Entry[]
+  userFeed?: EntryFeed
+): Generator<Promise<EntryFeed | Entry[] | JSONResponse>, any, any> {
+  function log(...args) {
+    logger('feedUserUpdate', ...args)
+  }
+
+  try {
+    log('Running')
+    ref.current.feeds.user.setLoadingState(userId, 'Compiling feed')
+
+    // If caller already fetched the userFeed no need to fetch
+    if (!userFeed) {
+      userFeed = yield fetchUserEntries(ref, userId)
+    }
+    let existingUserEntries = userFeed.entries
+
+    log(`Compiling entries for user ${userId}`)
+    let newUserEntries: Entry[] = yield compileUserEntries(userId)
+
+    log(`Caching entries for user ${userId}`)
+    ref.current.feeds.user.setLoadingState(userId, 'Caching feed')
+    yield cacheUserEntries(ref, userId, newUserEntries)
+
+    const newEntryExists = newUserEntries.find(
+      (entry) =>
+        !existingUserEntries.find(
+          (existingEntry) => existingEntry.id === entry.id
+        )
+    )
+
+    // If there are any new entries trigger update sequence
+    // if (newEntryExists) {
+    // Do not wait
+    workerAfterFeedUserUpdate(ref, userId, {
+      updatedAt: new Date().getTime(),
+      entries: newUserEntries,
+    })
+    // }
+
+    log('Trigger mutate')
+    ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')
+    const viewingUserId = ref.current.viewingUserId
+    if (userId === viewingUserId) {
+      yield ref.current.feeds.user.response.mutate()
+    }
+    ref.current.feeds.user.setLoadingState(userId, '')
+
+    log('Returning')
+  } finally {
+    log('Finally')
+    if (signal.aborted) {
+      log('Aborted')
+    }
+    ref.current.feeds.user.setLoadingState(userId, '')
+  }
+})
+
+// Method capturing all the downstream updates that should take place after
+// a followed user's data has been updated.
+const cafAfterFeedUserUpdate = CAF(function* afterFeedUserUpdate(
+  signal: any,
+  ref: ControlRef,
+  userId: string,
+  userFeed: EntryFeed
 ) {
-  logUpdateUser('Fetching all entries')
-  ref.current.feeds.latest.setLoadingState('Compiling feed')
-  let allEntriesFeed = await fetchAllEntries(ref)
-  let allEntries = allEntriesFeed.entries
+  function log(...args) {
+    logger('afterFeedUserUpdate', ...args)
+  }
+  try {
+    log('Running')
+    const myUserId = ref.current.userId
+    const isSelf = myUserId === userId
+    const isFollowingUser = !!ref.current.followings.find(
+      (user) => user.userId === userId
+    )
 
-  // Remove existing user entries
-  allEntries = allEntries.filter((entry) => entry.userId !== userId)
+    // If following user, update the latest feed
+    if (isSelf || isFollowingUser) {
+      yield workerFeedLatestUpdate(ref, userId, userFeed)
+    }
 
-  // Add new user entries
-  allEntries = upsertAllEntries(allEntries, allUserEntries)
+    log('Starting feedTopUpdate and feedActivityUpdate')
+    // Do not return, so consumers do not wait for these downstream updates
+    Promise.all([
+      workerFeedTopUpdate(ref, { force: true }),
+      workerFeedActivityUpdate(ref, { force: true }),
+    ])
+  } finally {
+    log('Finally')
+    if (signal.aborted) {
+      log('Aborted')
+    }
+  }
+})
 
-  logUpdateUser('Caching all entries')
-  ref.current.feeds.latest.setLoadingState('Caching feed')
-  await cacheAllEntries(ref, allEntries)
+export async function workerFeedUserUpdate(
+  ref: ControlRef,
+  userId: string,
+  userFeed?: EntryFeed
+): Promise<any> {
+  const token = await handleToken(ref, 'feedUserUpdate')
+  return cafFeedUserUpdate(token.signal, ref, userId, userFeed)
+}
 
-  logUpdateUser('Fetching feed')
-  ref.current.feeds.latest.setLoadingState()
-  // Fork off a mutate to fetch new feed
-  ref.current.feeds.latest.response.mutate()
+export async function workerAfterFeedUserUpdate(
+  ref: ControlRef,
+  userId: string,
+  userFeed: EntryFeed
+): Promise<any> {
+  const token = await handleToken(ref, 'afterFeedUserUpdate')
+  return cafAfterFeedUserUpdate(token.signal, ref, userId, userFeed)
 }

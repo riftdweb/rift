@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { EntryFeed } from './types'
 import { fetchUserEntries } from './shared'
 import { useSkynet } from '../skynet'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParamUserId } from './useParamUserId'
 import { ControlRef } from '../skynet/useControlRef'
 
@@ -32,12 +32,12 @@ export function useFeedUser({ ref }: Props) {
 
   const setLoadingState = useCallback(
     (userId: string, state?: string) => {
-      setLoadingStateMap({
+      setLoadingStateMap((loadingStateMap) => ({
         ...loadingStateMap,
         [userId]: state,
-      })
+      }))
     },
-    [setLoadingStateMap, loadingStateMap]
+    [setLoadingStateMap]
   )
 
   const loadingState = useMemo(() => getLoadingState(viewingUserId), [
@@ -45,10 +45,23 @@ export function useFeedUser({ ref }: Props) {
     viewingUserId,
   ])
 
-  return {
+  const values = {
     response,
     loadingStateCurrentUser: loadingState,
+    loadingStateMap,
     getLoadingState,
     setLoadingState,
   }
+
+  useEffect(() => {
+    ref.current.feeds.user = values
+  }, [
+    response,
+    loadingState,
+    getLoadingState,
+    setLoadingState,
+    loadingStateMap,
+  ])
+
+  return values
 }

@@ -9,22 +9,22 @@ import {
 } from './shared'
 import { EntryFeed } from './types'
 
-function log(...args) {
-  logger('workerFeedTop', ...args)
-}
-
 type Params = {
   force?: boolean
   callback?: () => void
 }
 
-export async function workerFeedTop(
+export async function workerFeedTopUpdate(
   ref: ControlRef,
   params: Params = {}
 ): Promise<EntryFeed> {
+  function log(...args) {
+    logger('feedTopUpdate', ...args)
+  }
+
   const { force = false } = params
   log('Running')
-  ref.current.feeds.latest.setLoadingState('Checking feed status')
+  ref.current.feeds.top.setLoadingState('Checking feed status')
 
   if (!force) {
     log('Fetching cached top entries')

@@ -2,6 +2,7 @@ import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
 import { User } from '../users'
 import { Api } from './buildApi'
+import * as CAF from 'caf'
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
@@ -16,6 +17,12 @@ const controlRefDefaults = {
   },
   loadingState: undefined as string | undefined,
   setLoadingState: (state?: string) => {},
+  tokens: {
+    feedUserUpdate: null,
+    feedLatestUpdate: null,
+    afterFeedUserUpdate: null,
+    crawlerUsers: null,
+  },
   feeds: {} as {
     user: {
       response: SWRResponse<any, any>
@@ -29,7 +36,8 @@ const controlRefDefaults = {
     }
   },
 }
-export type ControlRef = RefObject<typeof controlRefDefaults>
+export type ControlRefDefaults = typeof controlRefDefaults
+export type ControlRef = RefObject<ControlRefDefaults>
 
 export function useControlRef() {
   const ref = useRef(controlRefDefaults)

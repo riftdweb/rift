@@ -3,8 +3,6 @@ import {
   ExternalLinkIcon,
 } from '@radix-ui/react-icons'
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
-import bytes from 'bytes'
-import { useMemo } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { Link } from './Link'
@@ -15,24 +13,17 @@ type Props = {
 }
 
 export function SkylinkInfo({ skylink: rawSkylink }: Props) {
-  const { skylink, data, isApp, isValidating, weblink } = useSkylink(rawSkylink)
-
-  const size = useMemo(() => {
-    if (!data) {
-      return
-    }
-    return bytes(data.metadata.length, {
-      unitSeparator: ' ',
-      decimalPlaces: '1',
-    })
-  }, [data])
-
-  const fileCount = useMemo(() => {
-    if (!data) {
-      return
-    }
-    return Object.keys(data.metadata.subfiles).length
-  }, [data])
+  const {
+    skylink,
+    data,
+    isApp,
+    isDirectory,
+    contentType,
+    fileCount,
+    size,
+    isValidating,
+    weblink,
+  } = useSkylink(rawSkylink)
 
   if (rawSkylink && !skylink) {
     return (
@@ -83,12 +74,12 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
               color: '$gray800',
             }}
           >
-            {fileCount > 1
+            {isDirectory
               ? `${isApp ? 'App' : 'Directory'} with ${fileCount} files`
               : 'File'}
           </Text>
           <Text size="1" css={{ color: '$gray800' }}>
-            {data.contentType}
+            {contentType}
           </Text>
           <Text size="1" css={{ color: '$gray800' }}>
             •

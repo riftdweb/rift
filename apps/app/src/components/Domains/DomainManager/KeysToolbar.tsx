@@ -20,6 +20,7 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
+import { useMemo } from 'react'
 import { copyToClipboard } from '../../../shared/clipboard'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 
@@ -66,12 +67,14 @@ export function KeysToolbar({
       message = 'Showing unsaved changes'
     }
   }
+  const cleanSkylink = useMemo(() => skylink.replace('sia://', ''), [skylink])
+
   return (
     <Flex css={{ margin: '$2 0 $2', alignItems: 'center', width: '100%' }}>
       <Tooltip
         align="start"
         content={
-          !skylink && !isValidating ? 'No Skylink yet' : 'Latest Skylink'
+          !cleanSkylink && !isValidating ? 'No Skylink yet' : 'Latest Skylink'
         }
       >
         <Code
@@ -84,9 +87,13 @@ export function KeysToolbar({
               textDecoration: 'underline',
             },
           }}
-          onClick={() => skylink && copyToClipboard(skylink, 'skylink')}
+          onClick={() =>
+            cleanSkylink && copyToClipboard(cleanSkylink, 'skylink')
+          }
         >
-          {!skylink && !isValidating ? 'N/A' : `${skylink.slice(0, 10)}...`}
+          {!cleanSkylink && !isValidating
+            ? 'N/A'
+            : `${cleanSkylink.slice(0, 10)}...`}
         </Code>
       </Tooltip>
       {isReadOnly ? (

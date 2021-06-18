@@ -33,10 +33,10 @@ export function LocalSeed() {
   const { data: skyDbData } = useSWR<{ data: Domain[] }>(
     [localRootSeed, SKYDB_DATA_KEY],
     () =>
-      (Api.getJSON({
+      Api.getJSON({
         seed: localRootSeed,
         dataKey: SKYDB_DATA_KEY,
-      }) as unknown) as Promise<{
+      }) as unknown as Promise<{
         data: Domain[]
       }>
   )
@@ -44,10 +44,10 @@ export function LocalSeed() {
   const { data: skyfilesData } = useSWR<{ data: Skyfile[] }>(
     [localRootSeed, SKYFILES_DATA_KEY],
     () =>
-      (Api.getJSON({
+      Api.getJSON({
         seed: localRootSeed,
         dataKey: SKYFILES_DATA_KEY,
-      }) as unknown) as Promise<{
+      }) as unknown as Promise<{
         data: Skyfile[]
       }>
   )
@@ -55,10 +55,10 @@ export function LocalSeed() {
   const { data: appsData } = useSWR<{ data: App[] }>(
     [localRootSeed, APPS_DATA_KEY],
     () =>
-      (Api.getJSON({
+      Api.getJSON({
         seed: localRootSeed,
         dataKey: APPS_DATA_KEY,
-      }) as unknown) as Promise<{
+      }) as unknown as Promise<{
         data: App[]
       }>
   )
@@ -89,8 +89,16 @@ export function LocalSeed() {
   return (
     <Box css={{ margin: '$3 0' }}>
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-        <Heading>Local seed</Heading>
-        <Paragraph css={{ color: '$gray900' }}>
+        <Heading
+          css={{
+            borderBottom: '1px solid $gray300',
+            paddingBottom: '$2',
+            marginBottom: '$2',
+          }}
+        >
+          Local seed
+        </Heading>
+        <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
           Using Rift without a MySky indentity saves App data to a locally
           cached seed.{' '}
           {userId && 'Log out of MySky to switch back to this data.'}

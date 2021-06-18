@@ -4,6 +4,7 @@ import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
 import { useSkynet } from './skynet'
 import { useSelectedPortal } from './useSelectedPortal'
+import bytes from 'bytes'
 
 export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
   const [portal] = useSelectedPortal()
@@ -44,15 +45,60 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
 
   const isApp = useMemo(() => {
     if (data) {
-      return data.contentType === 'text/html'
+      return (
+        data.metadata.subfiles['index.html'] ||
+        data.metadata.subfiles['index.htm']
+      )
     }
     return true
   }, [data])
+
+  const isDirectory = useMemo(() => {
+    if (data) {
+      return Object.keys(data.metadata.subfiles).length > 1
+    }
+    return true
+  }, [data])
+
+  const size = useMemo(() => {
+    if (!data) {
+      return
+    }
+    return bytes(data.metadata.length, {
+      unitSeparator: ' ',
+      decimalPlaces: '1',
+    })
+  }, [data])
+
+  const subfileKeys = useMemo(() => {
+    if (!data) {
+      return []
+    }
+    return Object.keys(data.metadata.subfiles)
+  }, [data])
+
+  const fileCount = useMemo(() => {
+    return subfileKeys.length
+  }, [subfileKeys])
+
+  const contentType = useMemo(() => {
+    if (isApp) {
+      return 'text/html'
+    } else if (isDirectory) {
+      return 'application/zip'
+    } else {
+      return data?.metadata.subfiles[subfileKeys[0]].contenttype
+    }
+  }, [isApp, isDirectory, data, subfileKeys])
 
   const weblink = isApp ? weblinkSubdomain : weblinkPath
 
   return {
     isApp,
+    isDirectory,
+    fileCount,
+    size,
+    contentType,
     skylink,
     skylinkBase32,
     weblink,

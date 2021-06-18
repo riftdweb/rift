@@ -29,7 +29,7 @@ export function User({ userId, profile, size = '2', children }: Props) {
         }}
         to={`/users/${userId}`}
       >
-        {profile ? profile.username : ''}
+        {profile?.username || profile?.firstName || `${userId.slice(0, 5)}...`}
       </Link>
       {children}
     </Flex>

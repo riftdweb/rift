@@ -1,11 +1,16 @@
-import { Flex, Box, Heading, Text, Container } from '@riftdweb/design-system'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import {
+  Flex,
+  Box,
+  Heading,
+  Text,
+  Container,
+  Image,
+} from '@riftdweb/design-system'
 import { portals } from '../../shared/portals'
 import SkynetHandshakeIcon from '../_icons/SkynetHandshakeIcon'
 import { Link } from '../_shared/Link'
 
 export default function Footer() {
-  const [portal] = useSelectedPortal()
   return (
     <Box
       css={{
@@ -25,9 +30,11 @@ export default function Footer() {
               // textAlign: 'center',
             }}
           >
-            <Heading css={{ fontWeight: 'bold' }}>rift</Heading>
+            <Heading css={{ fontWeight: 'bold' }}>
+              <Image src="/wordmark.png" css={{ height: '25px' }} alt="Rift" />
+            </Heading>
             <Text css={{ color: '$gray800' }}>
-              Tools for the decentralized web.
+              Your decentralized workspace.
             </Text>
             <Text css={{ color: '$gray700', lineHeight: '20px' }}>
               As a{' '}

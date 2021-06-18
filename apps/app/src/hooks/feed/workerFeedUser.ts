@@ -55,13 +55,13 @@ export const cafFeedUserUpdate = CAF(function* feedUserUpdate(
     )
 
     // If there are any new entries trigger update sequence
-    // if (newEntryExists) {
-    // Do not wait
-    workerAfterFeedUserUpdate(ref, userId, {
-      updatedAt: new Date().getTime(),
-      entries: newUserEntries,
-    })
-    // }
+    if (newEntryExists) {
+      // Do not wait
+      workerAfterFeedUserUpdate(ref, userId, {
+        updatedAt: new Date().getTime(),
+        entries: newUserEntries,
+      })
+    }
 
     log('Trigger mutate')
     ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')

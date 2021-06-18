@@ -4,13 +4,12 @@ import { ControlRef } from '../skynet/useControlRef'
 import { cacheAllEntries, fetchAllEntries, upsertAllEntries } from './shared'
 import { handleToken } from './tokens'
 import { Entry, EntryFeed } from './types'
-import { cafFeedUserUpdate } from './workerFeedUser'
 
 export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   signal: any,
   ref: ControlRef,
   userId: string,
-  allUserEntries: Entry[]
+  allUserEntries: EntryFeed
 ) {
   function log(...args) {
     logger('feedLatestUpdate', ...args)
@@ -25,7 +24,7 @@ export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
     allEntries = allEntries.filter((entry) => entry.userId !== userId)
 
     // Add new user entries
-    allEntries = upsertAllEntries(allEntries, allUserEntries)
+    allEntries = upsertAllEntries(allEntries, allUserEntries.entries)
 
     log('Caching all entries')
     ref.current.feeds.latest.setLoadingState('Caching feed')
@@ -49,7 +48,6 @@ export async function workerFeedLatestUpdate(
   userId: string,
   userFeed?: EntryFeed
 ): Promise<any> {
-  logger('herehere')
   const token = await handleToken(ref, 'feedLatestUpdate')
-  return cafFeedUserUpdate(token.signal, ref, userId, userFeed)
+  return cafFeedLatestUpdate(token.signal, ref, userId, userFeed)
 }

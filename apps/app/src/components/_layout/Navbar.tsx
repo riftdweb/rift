@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
   Flex,
   Heading,
+  Image,
   Select,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -50,20 +51,22 @@ export default function Navbar({ toggleTheme }: Props) {
     <Box css={{ borderBottom: '1px solid $gray200' }}>
       <Container size="3">
         <Flex css={{ py: '$3', alignItems: 'center' }}>
-          <Tooltip content="Tools for the decentralized web">
+          <Tooltip align="start" content="Your decentralized workspace">
             <Heading
               css={{
-                mr: '$3',
+                mr: '$2',
                 fontWeight: 'bold',
-                top: '-1px',
+                top: '-4px',
                 position: 'relative',
               }}
             >
-              <Flex>
-                <Link to="/" css={{ textDecoration: 'none' }}>
-                  rift
-                </Link>
-              </Flex>
+              <Link to="/" css={{ textDecoration: 'none' }}>
+                <Image
+                  src="/wordmark.png"
+                  css={{ height: '25px' }}
+                  alt="Rift"
+                />
+              </Link>
             </Heading>
           </Tooltip>
           <Searchbar />

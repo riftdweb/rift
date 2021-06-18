@@ -23,16 +23,17 @@ export function Keyword({ value, stem, debugMode, isHovering }: Props) {
   // otherwise everything will eventually be dark green etc
   let intensity = null
 
-  if (score > 80) {
-    intensity = '$blue600'
-  } else if (score > 40) {
-    intensity = '$blue500'
-  } else if (score > 20) {
-    intensity = '$blue400'
-  } else if (score > 10) {
-    intensity = '$blue300'
-  } else if (score > 0) {
-    intensity = '$blue200'
+  // if (score > 80) {
+  //   intensity = '$violet700'
+  // } else if (score > 40) {
+  //   intensity = '$violet600'
+  // } else if (score > 20) {
+  //   intensity = '$violet500'
+  // } else if (score > 10) {
+  //   intensity = '$violet400'
+  // } else if (score > 0) {
+  if (score > 0) {
+    intensity = '$violet700'
   }
 
   const noop = useCallback((e) => {
@@ -45,7 +46,9 @@ export function Keyword({ value, stem, debugMode, isHovering }: Props) {
         css={{
           ...textStyles,
           position: 'relative',
-          backgroundColor: intensity || (isHovering ? '$green200' : 'none'),
+          borderRadius: '2px',
+          backgroundColor: intensity || (isHovering ? '$teal700' : 'none'),
+          transition: 'background-color 0.2s ease-out',
         }}
       >
         {value}

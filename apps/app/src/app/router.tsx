@@ -14,6 +14,7 @@ const Dns = lazy(() => import('../pages/Dns'))
 const Tools = lazy(() => import('../pages/Tools'))
 const Ecosystem = lazy(() => import('../pages/Ecosystem'))
 const Settings = lazy(() => import('../pages/Settings'))
+const Graph = lazy(() => import('../pages/Graph'))
 
 export function App() {
   return (
@@ -62,6 +63,9 @@ export function App() {
             </Route>
             <Route path="/tools">
               <Tools />
+            </Route>
+            <Route path="/graph">
+              <Graph />
             </Route>
             <Route path="/settings">
               <Settings />

@@ -106,15 +106,20 @@ export async function cacheAllEntries(ref: ControlRef, entries: Entry[]) {
 
 export async function compileUserEntries(userId: string): Promise<Entry[]> {
   let allUserEntries: Entry[] = []
-  for await (let batchOfUserEntries of feedDAC.loadPostsForUser(userId)) {
-    allUserEntries = allUserEntries.concat(
-      batchOfUserEntries.map((post) => ({
-        // TODO: Move to fetching manually, because these ids are not unique
-        id: `${userId}/posts/${post.id}`,
-        userId: userId,
-        post,
-      }))
-    )
+  try {
+    for await (let batchOfUserEntries of feedDAC.loadPostsForUser(userId)) {
+      allUserEntries = allUserEntries.concat(
+        batchOfUserEntries.map((post) => ({
+          // TODO: Move to fetching manually, because these ids are not unique
+          id: `${userId}/posts/${post.id}`,
+          userId: userId,
+          post,
+        }))
+      )
+    }
+  } catch (e) {
+    console.log(e)
+    return allUserEntries
   }
   return allUserEntries
 }

@@ -54,7 +54,6 @@ export async function workerFeedTopUpdate(
     a.score < b.score ? 1 : -1
   )
 
-  log(sortedEntries)
   log('Caching top entries')
   await cacheTopEntries(ref, sortedEntries)
 

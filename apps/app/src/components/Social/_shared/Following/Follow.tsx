@@ -5,20 +5,15 @@ import { User } from '../User'
 type Props = {
   userId: string
   profile: IUserProfile
-  handleUnfollow?: (userId: string) => void
 }
 
-export function Follow({ profile, userId, handleUnfollow }: Props) {
+export function Follow({ profile, userId }: Props) {
   return (
     <User userId={userId} profile={profile}>
       {/* <Link to={`/data/mysky/${userId}/profile-dac.hns/profileIndex.json`}>
         Data
       </Link> */}
-      <UserContextMenu
-        userId={userId}
-        profile={profile}
-        handleUnfollow={handleUnfollow}
-      />
+      <UserContextMenu userId={userId} profile={profile} />
     </User>
   )
 }

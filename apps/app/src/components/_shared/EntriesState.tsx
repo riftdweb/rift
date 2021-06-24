@@ -1,28 +1,10 @@
 import { Fragment } from 'react'
-import { Flex, Box, Subheading, Text } from '@riftdweb/design-system'
+import { Flex, Text } from '@riftdweb/design-system'
 import { useHasNoEntries } from '../../hooks/useHasNoEntries'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { SWRResponse } from 'swr'
 import { Feed } from '../../hooks/feed/types'
-
-function NonIdealState({ title, message }) {
-  return (
-    <Flex
-      css={{
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '$2',
-        margin: '30px auto',
-        color: '$gray900',
-      }}
-    >
-      <Subheading>{title}</Subheading>
-      <Text size="2" css={{ color: '$gray900' }}>
-        {message}
-      </Text>
-    </Flex>
-  )
-}
+import { NonIdealState } from './NonIdealState'
 
 function LoadingState({ message }) {
   return (
@@ -48,14 +30,16 @@ type Response<T> = SWRResponse<Feed<T>, any>
 type Props<T> = {
   response: Response<T>
   loadingState?: string
-  emptyTitle: string
-  emptyMessage: string
+  emptyTitle?: string
+  emptyMessage?: string
+  validatingMessage?: string
   children: React.ReactNode
 }
 
 export function EntriesState<T>({
   response,
   loadingState,
+  validatingMessage,
   emptyTitle,
   emptyMessage,
   children,
@@ -74,7 +58,7 @@ export function EntriesState<T>({
   }
   // If SWR is validating, render generic loading state
   if (response.isValidating) {
-    return <LoadingState message="Loading feed" />
+    return <LoadingState message={validatingMessage || 'Loading feed'} />
   }
 
   // If data has been previously fetched and no entries exist yet

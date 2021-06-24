@@ -8,7 +8,7 @@ const controlRefDefaults = {
   Api: undefined as Api | undefined,
   userId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
-  followings: [] as User[],
+  followingUserIds: [] as string[],
   domains: {} as {
     [domain: string]: number
   },
@@ -17,6 +17,8 @@ const controlRefDefaults = {
   },
   loadingState: undefined as string | undefined,
   setLoadingState: (state?: string) => {},
+  nonIdealState: undefined as string | undefined,
+  setNonIdealState: (state?: string) => {},
   tokens: {
     feedUserUpdate: null,
     feedLatestUpdate: null,

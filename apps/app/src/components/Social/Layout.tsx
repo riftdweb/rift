@@ -20,6 +20,7 @@ export function Layout({ children, overflow = 'hidden' }: Props) {
               flex: 1,
               flexDirection: 'column',
               my: '$3',
+              zIndex: 1,
               overflow,
             }}
           >

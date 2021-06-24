@@ -26,7 +26,7 @@ export const useLocalRootSeed = () => {
     setLocalRootSeed({
       uuid: uuid(),
     })
-    window.location.reload()
+    window.location.href = '/'
   }, [setLocalRootSeed])
 
   return {

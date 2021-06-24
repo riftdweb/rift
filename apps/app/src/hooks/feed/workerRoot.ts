@@ -1,5 +1,5 @@
-import { logger } from '../../shared/logger'
-import { scheduleCrawlerUsers, workerCrawlerUsers } from './workerCrawlerUsers'
+import { createLogger } from '../../shared/logger'
+import { scheduleCrawlerUsers } from './workerCrawlerUsers'
 import { ControlRef } from '../skynet/useControlRef'
 
 /**
@@ -14,9 +14,8 @@ import { ControlRef } from '../skynet/useControlRef'
  */
 
 export async function workerRoot(ref: ControlRef): Promise<any> {
-  function log(...args) {
-    logger('root', ...args)
-  }
+  const log = createLogger('root')
+
   log('Running')
 
   log('Starting crawlerUsers')

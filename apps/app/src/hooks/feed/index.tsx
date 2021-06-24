@@ -15,14 +15,16 @@ import { workerFeedUserUpdate } from './workerFeedUser'
 import { ActivityFeed, Entry, EntryFeed } from './types'
 import { workerFeedTopUpdate } from './workerFeedTop'
 import { workerFeedActivityUpdate } from './workerFeedActivity'
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 import { useParamUserId } from './useParamUserId'
 import { useFeedActivity } from './useFeedActivity'
 import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
-import { useUsers } from '../users'
 import { workerCrawlerUsers } from './workerCrawlerUsers'
+import { clearAllTokens } from './tokens'
+
+const log = createLogger('feed')
 
 const RESOURCE_DATA_KEY = 'feed'
 
@@ -99,7 +101,6 @@ export function FeedProvider({ children }: Props) {
     controlRef: ref,
   } = useSkynet()
   const viewingUserId = useParamUserId()
-  const { followings } = useUsers()
 
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
@@ -108,6 +109,8 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
+  const [nonIdealState, setNonIdealState] = useState<string>()
+
   const activity = useFeedActivity({ ref })
   const latest = useFeedLatest({ ref })
   const top = useFeedTop({ ref })
@@ -115,11 +118,12 @@ export function FeedProvider({ children }: Props) {
 
   // Update controlRef
   useEffect(() => {
-    ref.current.viewingUserId = viewingUserId
-    ref.current.followings = followings
+    ref.current.nonIdealState = nonIdealState
+    ref.current.setNonIdealState = setNonIdealState
     ref.current.keywords = keywords
     ref.current.domains = domains
-  }, [viewingUserId, keywords, domains, followings])
+    ref.current.viewingUserId = viewingUserId
+  }, [viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
 
   useEffect(() => {
     if (isInitializing || isReseting) {
@@ -152,7 +156,9 @@ export function FeedProvider({ children }: Props) {
 
   const refreshUser = useCallback((userId: string) => {
     const func = async () => {
-      await workerFeedUserUpdate(ref, userId)
+      try {
+        await workerFeedUserUpdate(ref, userId, { force: true })
+      } catch (e) {}
     }
     return func()
   }, [])
@@ -161,10 +167,10 @@ export function FeedProvider({ children }: Props) {
   // the user feed has never been compiled
   useEffect(() => {
     if (!user.loadingStateCurrentUser && user.response.data?.null) {
-      logger('feed', `building a feed for ${viewingUserId}`)
+      log(`Building a feed for ${viewingUserId}`)
       refreshUser(viewingUserId)
     }
-  }, [user])
+  }, [user.response.data])
 
   const incrementKeywords = useCallback(
     (keywords) => {
@@ -228,9 +234,7 @@ export function FeedProvider({ children }: Props) {
 
   const createPost = useCallback(
     ({ text }: { text: string }) => {
-      function log(...args) {
-        logger('createPost', ...args)
-      }
+      const localLog = log.createLogger('createPost')
       const func = async () => {
         const cid = uuid()
         const pendingPost = ({
@@ -247,13 +251,10 @@ export function FeedProvider({ children }: Props) {
         } as unknown) as Entry
 
         // Abort all
-        log('Abort all signals')
-        ref.current.tokens.crawlerUsers?.abort()
-        ref.current.tokens.feedUserUpdate?.abort()
-        ref.current.tokens.feedLatestUpdate?.abort()
-        ref.current.tokens.afterFeedUserUpdate?.abort()
+        localLog('Abort all signals')
+        clearAllTokens(ref)
 
-        log('Optimistic updates')
+        localLog('Optimistic updates')
         // Optimistically update local latest feed
         latest.response.mutate(
           (data) => ({
@@ -272,11 +273,11 @@ export function FeedProvider({ children }: Props) {
           false
         )
 
-        log('Feed DAC createPost')
+        localLog('Feed DAC createPost')
         // Create post
         await feedDAC.createPost({ text })
 
-        log('Start workerFeedUserUpdate')
+        localLog('Start workerFeedUserUpdate')
         // Update all entries and user entries caches
         await workerFeedUserUpdate(ref, myUserId)
         await workerCrawlerUsers(ref)

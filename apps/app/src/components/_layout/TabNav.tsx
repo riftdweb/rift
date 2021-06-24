@@ -18,7 +18,7 @@ export function TabNav() {
       <TabLink
         as={Link}
         to="/"
-        active={['', 'feed'].includes(route.split('/')[1])}
+        active={['', 'feed', 'users'].includes(route.split('/')[1])}
       >
         <Box css={{ mr: '$1' }}>
           <HomeIcon />

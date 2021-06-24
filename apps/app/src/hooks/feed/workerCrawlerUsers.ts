@@ -1,29 +1,20 @@
 import * as CAF from 'caf'
-import { logger } from '../../shared/logger'
-import { socialDAC } from '../skynet'
+import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
-import { suggestionUserIds } from '../users'
-import { fetchAllEntries, fetchUserEntries, needsRefresh } from './shared'
+import { fetchAllEntries, needsRefresh } from './shared'
 import { workerFeedUserUpdate } from './workerFeedUser'
-import { EntryFeed } from './types'
-import { handleToken } from './tokens'
+import { EntryFeed, WorkerParams } from './types'
+import { clearAllTokens, handleToken } from './tokens'
 
 const SCHEDULE_INTERVAL_CRAWLER = 5 * 60
 const REFRESH_INTERVAL_CRAWLER = 0
-const REFRESH_INTERVAL_USER = 0
-
-type Params = {
-  force?: boolean
-}
 
 const cafCrawlerUsers = CAF(function* crawlerUsers(
   signal: any,
   ref: ControlRef,
-  params: Params = {}
+  params: WorkerParams = {}
 ): Generator<Promise<EntryFeed | string[]>, any, any> {
-  function log(...args) {
-    logger('crawlerUsers', ...args)
-  }
+  const log = createLogger('crawler/users')
 
   try {
     log('Running')
@@ -41,26 +32,31 @@ const cafCrawlerUsers = CAF(function* crawlerUsers(
       ref.current.feeds.latest.setLoadingState('')
       return
     }
-    ref.current.feeds.latest.setLoadingState('')
 
     log('Fetching following')
-    let followingUserIds = suggestionUserIds.slice(0, 2)
+    let followingUserIds = ref.current.followingUserIds
+
+    // If no entries exist yet and following at least 1 user
+    // Probably a new user, so render onboarding message in feed UI
+    if (!allEntriesFeed.entries.length && followingUserIds.length) {
+      ref.current.feeds.top.setLoadingState('Building your feed')
+      ref.current.feeds.latest.setLoadingState('Building your feed')
+    } else {
+      ref.current.feeds.latest.setLoadingState('')
+    }
+
+    // // If no entries exist yet and not followings anyone
+    // if (!allEntriesFeed.entries.length && !followingUserIds.length) {
+    //   ref.current.setNonIdealState('Follow some users to get started!')
+    //   return
+    // }
 
     if (myUserId) {
-      followingUserIds = yield socialDAC.getFollowingForUser(myUserId)
       followingUserIds = [myUserId, ...followingUserIds]
     }
 
     for (let userId of followingUserIds) {
-      log(`Fetching cached entries for user ${userId}`)
-      let userFeed = yield fetchUserEntries(ref, userId)
-
-      if (!needsRefresh(userFeed, REFRESH_INTERVAL_USER)) {
-        log(`User ${userId} is up to date`)
-        continue
-      }
-
-      yield workerFeedUserUpdate(ref, userId, userFeed)
+      yield workerFeedUserUpdate(ref, userId)
     }
 
     log('Returning')
@@ -70,33 +66,48 @@ const cafCrawlerUsers = CAF(function* crawlerUsers(
     if (signal.aborted) {
       log('Aborted')
     }
-    ref.current.feeds.latest.setLoadingState('')
+    // Only clear loading states if no downstream worker has set a new state
+    // This will only occur if no followings have any data
+    if (ref.current.feeds.latest.loadingState === 'Building your feed') {
+      ref.current.feeds.latest.setLoadingState('')
+    }
+    if (ref.current.feeds.top.loadingState === 'Building your feed') {
+      ref.current.feeds.top.setLoadingState('')
+    }
   }
 })
 
 export async function workerCrawlerUsers(
   ref: ControlRef,
-  params: Params = {}
+  params: WorkerParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, 'crawlerUsers')
   return cafCrawlerUsers(token.signal, ref, params)
 }
 
+let interval = null
+
 export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
-  function log(...args) {
-    logger('scheduleCrawlerUsers', ...args)
+  const log = createLogger('schedule/crawler/users')
+
+  // If crawler is already running skip
+  if (ref.current.tokens.crawlerUsers?.signal) {
+    log(`Crawler already running, skipping at ${new Date()}`)
+  } else {
+    await clearAllTokens(ref)
+    workerCrawlerUsers(ref)
   }
 
-  workerCrawlerUsers(ref)
+  if (!interval) {
+    interval = setInterval(() => {
+      // TODO: ADD CHECK FOR USER POST IN PROGRESS
 
-  setInterval(() => {
-    // TODO: ADD CHECK FOR USER POST IN PROGRESS
-
-    // If crawler is already running skip
-    if (ref.current.tokens.crawlerUsers?.signal) {
-      log('crawler already running, skipping')
-    } else {
-      workerCrawlerUsers(ref)
-    }
-  }, SCHEDULE_INTERVAL_CRAWLER * 1000)
+      // If crawler is already running skip
+      if (ref.current.tokens.crawlerUsers?.signal) {
+        log(`Crawler already running, skipping at ${new Date()}`)
+      } else {
+        workerCrawlerUsers(ref)
+      }
+    }, SCHEDULE_INTERVAL_CRAWLER * 1000)
+  }
 }

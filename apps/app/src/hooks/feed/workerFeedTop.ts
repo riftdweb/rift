@@ -1,4 +1,4 @@
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import { scoreEntries } from './scoring'
 import {
@@ -7,20 +7,13 @@ import {
   fetchTopEntries,
   needsRefresh,
 } from './shared'
-import { EntryFeed } from './types'
-
-type Params = {
-  force?: boolean
-  callback?: () => void
-}
+import { EntryFeed, WorkerParams } from './types'
 
 export async function workerFeedTopUpdate(
   ref: ControlRef,
-  params: Params = {}
+  params: WorkerParams = {}
 ): Promise<EntryFeed> {
-  function log(...args) {
-    logger('feedTopUpdate', ...args)
-  }
+  const log = createLogger('feed/top/update')
 
   const { force = false } = params
   log('Running')

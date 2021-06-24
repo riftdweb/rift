@@ -1,9 +1,9 @@
 import * as CAF from 'caf'
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import { cacheAllEntries, fetchAllEntries, upsertAllEntries } from './shared'
 import { handleToken } from './tokens'
-import { Entry, EntryFeed } from './types'
+import { EntryFeed } from './types'
 
 export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   signal: any,
@@ -11,9 +11,8 @@ export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   userId: string,
   allUserEntries: EntryFeed
 ) {
-  function log(...args) {
-    logger('feedLatestUpdate', ...args)
-  }
+  const log = createLogger('feed/latest/update')
+
   try {
     log('Fetching all entries')
     ref.current.feeds.latest.setLoadingState('Compiling feed')

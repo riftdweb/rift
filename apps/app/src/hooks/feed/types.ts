@@ -78,3 +78,7 @@ export type ActivityFeedResponse = {
   data?: ActivityFeed
   dataLink?: string
 }
+
+export type WorkerParams = {
+  force?: boolean
+}

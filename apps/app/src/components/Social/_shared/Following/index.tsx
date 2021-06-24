@@ -7,10 +7,18 @@ import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { Follow } from './Follow'
 import { SuggestedFollow } from './SuggestedFollow'
+import { NonIdealState } from '../../../_shared/NonIdealState'
+import { EntriesState } from '../../../_shared/EntriesState'
 
 export function Following() {
   const { userId, myProfile, login } = useSkynet()
-  const { followings, suggestions, handleFollow, handleUnfollow } = useUsers()
+  const {
+    followings,
+    suggestions,
+    suggestionUserIds,
+    handleFollow,
+    handleUnfollow,
+  } = useUsers()
 
   if (!userId) {
     return (
@@ -64,19 +72,20 @@ export function Following() {
             width: '100%',
             gap: '$2',
             paddingBottom: '$2',
-            flex: 1,
+            flexShrink: 1,
           }}
         >
-          {followings.map(({ userId, profile }) => (
-            <Follow
-              key={userId}
-              profile={profile}
-              userId={userId}
-              handleUnfollow={handleUnfollow}
-            />
-          ))}
+          <EntriesState
+            response={followings}
+            validatingMessage="Loading"
+            emptyMessage="Not following anyone yet."
+          >
+            {followings.data?.entries.map(({ userId, profile }) => (
+              <Follow key={userId} profile={profile} userId={userId} />
+            ))}
+          </EntriesState>
         </Flex>
-        {!!suggestions.length && (
+        {!!suggestionUserIds.data?.length && (
           <Fragment>
             <StickyHeading title="Suggestions" />
             <Flex
@@ -85,17 +94,23 @@ export function Following() {
                 width: '100%',
                 gap: '$2',
                 paddingBottom: '$2',
-                flex: 1,
+                flexShrink: 1,
               }}
             >
-              {suggestions.map(({ userId, profile }) => (
-                <SuggestedFollow
-                  key={userId}
-                  userId={userId}
-                  profile={profile}
-                  handleFollow={handleFollow}
-                />
-              ))}
+              <EntriesState
+                response={suggestions}
+                validatingMessage="Loading"
+                emptyMessage="No suggestions."
+              >
+                {suggestions.data?.entries.map(({ userId, profile }) => (
+                  <SuggestedFollow
+                    key={userId}
+                    userId={userId}
+                    profile={profile}
+                    handleFollow={handleFollow}
+                  />
+                ))}
+              </EntriesState>
             </Flex>
           </Fragment>
         )}

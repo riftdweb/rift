@@ -1,4 +1,4 @@
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import {
   cacheActivity,
@@ -6,20 +6,13 @@ import {
   fetchAllEntries,
   needsRefresh,
 } from './shared'
-import { Activity, ActivityFeed, Entry } from './types'
-
-type Params = {
-  force?: boolean
-  callback?: () => void
-}
+import { Activity, ActivityFeed, Entry, WorkerParams } from './types'
 
 export async function workerFeedActivityUpdate(
   ref: ControlRef,
-  params: Params = {}
+  params: WorkerParams = {}
 ): Promise<ActivityFeed> {
-  function log(...args) {
-    logger('feedActivityUpdate', ...args)
-  }
+  const log = createLogger('feed/activity/update')
 
   const { force = false } = params
 

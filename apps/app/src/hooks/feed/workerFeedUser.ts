@@ -1,17 +1,20 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import {
   cacheUserEntries,
   compileUserEntries,
   fetchUserEntries,
+  needsRefresh,
 } from './shared'
 import { handleToken } from './tokens'
-import { Entry, EntryFeed } from './types'
+import { Entry, EntryFeed, WorkerParams } from './types'
 import { workerFeedActivityUpdate } from './workerFeedActivity'
 import { workerFeedLatestUpdate } from './workerFeedLatest'
 import { workerFeedTopUpdate } from './workerFeedTop'
+
+const REFRESH_INTERVAL_USER = 5
 
 /**
  *  If feedUserUpdate finds new data, it will trigger:
@@ -24,49 +27,58 @@ export const cafFeedUserUpdate = CAF(function* feedUserUpdate(
   signal: any,
   ref: ControlRef,
   userId: string,
-  userFeed?: EntryFeed
+  params: WorkerParams = {}
 ): Generator<Promise<EntryFeed | Entry[] | JSONResponse>, any, any> {
-  function log(...args) {
-    logger('feedUserUpdate', ...args)
-  }
+  const shortUserId = userId.slice(0, 5)
+  const log = createLogger(`feed/user/${shortUserId}/update`)
 
   try {
     log('Running')
     ref.current.feeds.user.setLoadingState(userId, 'Compiling feed')
 
     // If caller already fetched the userFeed no need to fetch
-    if (!userFeed) {
-      userFeed = yield fetchUserEntries(ref, userId)
-    }
-    let existingUserEntries = userFeed.entries
+    log('Fetching cached entries')
+    const userFeed = yield fetchUserEntries(ref, userId)
 
-    log(`Compiling entries for user ${userId}`)
+    if (!params.force && !needsRefresh(userFeed, REFRESH_INTERVAL_USER)) {
+      log('Up to date')
+      return
+    }
+
+    // let existingUserEntries = userFeed.entries
+
+    log('Compiling entries')
     let newUserEntries: Entry[] = yield compileUserEntries(userId)
 
-    log(`Caching entries for user ${userId}`)
+    log('Caching entries')
     ref.current.feeds.user.setLoadingState(userId, 'Caching feed')
     yield cacheUserEntries(ref, userId, newUserEntries)
 
-    const newEntryExists = newUserEntries.find(
-      (entry) =>
-        !existingUserEntries.find(
-          (existingEntry) => existingEntry.id === entry.id
-        )
-    )
+    // wokerAfterFeedUserUpdate should logically only run if new entries exist,
+    // this check is disabled for the time being as it can return false when other
+    // bugs put data in a partially updated state.
+    // const newEntryExists = newUserEntries.find(
+    //   (entry) =>
+    //     !existingUserEntries.find(
+    //       (existingEntry) => existingEntry.id === entry.id
+    //     )
+    // )
 
     // If there are any new entries trigger update sequence
-    if (newEntryExists) {
-      // Do not wait
-      workerAfterFeedUserUpdate(ref, userId, {
-        updatedAt: new Date().getTime(),
-        entries: newUserEntries,
-      })
-    }
+    // if (newEntryExists) {
+    // }
 
-    log('Trigger mutate')
+    // Do not wait
+    workerAfterFeedUserUpdate(ref, userId, {
+      updatedAt: new Date().getTime(),
+      entries: newUserEntries,
+    })
+
+    log('Maybe mutate')
     ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')
     const viewingUserId = ref.current.viewingUserId
     if (userId === viewingUserId) {
+      log('Trigger mutate')
       yield ref.current.feeds.user.response.mutate()
     }
     ref.current.feeds.user.setLoadingState(userId, '')
@@ -89,28 +101,28 @@ const cafAfterFeedUserUpdate = CAF(function* afterFeedUserUpdate(
   userId: string,
   userFeed: EntryFeed
 ) {
-  function log(...args) {
-    logger('afterFeedUserUpdate', ...args)
-  }
+  const shortUserId = userId.slice(0, 5)
+  const log = createLogger(`feed/user/${shortUserId}/update/after`)
+
   try {
     log('Running')
     const myUserId = ref.current.userId
     const isSelf = myUserId === userId
-    const isFollowingUser = !!ref.current.followings.find(
-      (user) => user.userId === userId
+    const isFollowingUser = !!ref.current.followingUserIds.find(
+      (followingUserId) => followingUserId === userId
     )
 
     // If following user, update the latest feed
     if (isSelf || isFollowingUser) {
       yield workerFeedLatestUpdate(ref, userId, userFeed)
-    }
 
-    log('Starting feedTopUpdate and feedActivityUpdate')
-    // Do not return, so consumers do not wait for these downstream updates
-    Promise.all([
-      workerFeedTopUpdate(ref, { force: true }),
-      workerFeedActivityUpdate(ref, { force: true }),
-    ])
+      log('Starting feedTopUpdate and feedActivityUpdate')
+      // Do not return, so consumers do not wait for these downstream updates
+      Promise.all([
+        workerFeedTopUpdate(ref, { force: true }),
+        workerFeedActivityUpdate(ref, { force: true }),
+      ])
+    }
   } finally {
     log('Finally')
     if (signal.aborted) {
@@ -122,10 +134,10 @@ const cafAfterFeedUserUpdate = CAF(function* afterFeedUserUpdate(
 export async function workerFeedUserUpdate(
   ref: ControlRef,
   userId: string,
-  userFeed?: EntryFeed
+  params: WorkerParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, 'feedUserUpdate')
-  return cafFeedUserUpdate(token.signal, ref, userId, userFeed)
+  return cafFeedUserUpdate(token.signal, ref, userId, params)
 }
 
 export async function workerAfterFeedUserUpdate(

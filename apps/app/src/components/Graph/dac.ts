@@ -1,10 +1,8 @@
 import { makeObservable, observable, computed, action } from 'mobx'
 import { computedFn } from 'mobx-utils'
-import { logger } from '../../shared/logger'
+import { createLogger } from '../../shared/logger'
 
-function log(...args) {
-  logger('mobx', ...args)
-}
+const log = createLogger('mobx')
 
 export type Node = {
   id: string

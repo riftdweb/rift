@@ -18,11 +18,11 @@ import { dataVersion } from '../../hooks/feed/shared'
 import { Fragment, useMemo } from 'react'
 import { useFeed } from '../../hooks/feed'
 import SpinnerIcon from '../_icons/SpinnerIcon'
+import { useUsers } from '../../hooks/users'
 
 type Props = {
   userId: string
   profile: IUserProfile
-  handleUnfollow?: (userId: string) => void
   variant?: ButtonVariants['variant']
   right?: string
   size?: string
@@ -31,15 +31,16 @@ type Props = {
 export function UserContextMenu({
   userId,
   profile,
-  handleUnfollow,
   variant = 'ghost',
   right = '0',
   size = '1',
 }: Props) {
   const { userId: myUserId, dataDomain: appDomain } = useSkynet()
   const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
+  const { followingUserIds, handleFollow, handleUnfollow } = useUsers()
   const self = userId === myUserId
   const isViewingUser = userId === viewingUserId
+  const isFollowingUser = followingUserIds.data?.includes(userId)
 
   const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
     feedUser,
@@ -79,15 +80,24 @@ export function UserContextMenu({
                 User {userId.slice(0, 6)}...
               </DropdownMenuLabel>
             )}
-            {!self && (
+            {!self && isFollowingUser && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                {handleUnfollow && (
-                  <DropdownMenuItem onSelect={() => handleUnfollow(userId)}>
-                    Unfollow
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem onSelect={() => handleUnfollow(userId)}>
+                  Unfollow
+                </DropdownMenuItem>
+              </Fragment>
+            )}
+            {!self && !isFollowingUser && (
+              <Fragment>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onSelect={() => handleFollow(userId, profile)}
+                >
+                  Follow
+                </DropdownMenuItem>
               </Fragment>
             )}
           </Fragment>

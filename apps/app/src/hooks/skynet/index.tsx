@@ -30,7 +30,7 @@ type State = {
   isReseting: boolean
   myProfile: IUserProfile
   Api: ReturnType<typeof buildApi>
-  getKey: (resourceKeys: string[]) => string[] | null
+  getKey: (resourceKeys: any[]) => any[] | null
   mySky: MySky
   loggedIn: boolean
   userId: string
@@ -190,7 +190,7 @@ export function SkynetProvider({ children }: Props) {
 
   // Method for getting a namespaced SWR key
   const getKey = useMemo(() => {
-    return (keys: string[]) => {
+    return (keys: any[]): any[] | null => {
       if (isInitializing || !Api || isReseting) {
         return null
       }

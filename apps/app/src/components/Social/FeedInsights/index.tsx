@@ -20,7 +20,7 @@ export function FeedInsights() {
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
               <Flex css={{ alignItems: 'center' }}>
                 <Subheading css={{ color: '$gray900' }}>
-                  Content ranking over time
+                  Content relevancy scoring over time
                 </Subheading>
                 <Box css={{ flex: 1 }} />
                 <Algorithm />

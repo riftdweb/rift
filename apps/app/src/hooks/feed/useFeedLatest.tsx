@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { EntryFeed } from './types'
 import { fetchAllEntries } from './shared'
 import { useSkynet } from '../skynet'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'
 
 type Props = { ref: ControlRef }
@@ -19,15 +19,18 @@ export function useFeedLatest({ ref }: Props) {
     }
   )
 
-  const values = {
-    response,
-    loadingState,
-    setLoadingState,
-  }
+  const values = useMemo(
+    () => ({
+      response,
+      loadingState,
+      setLoadingState,
+    }),
+    [response, loadingState, setLoadingState]
+  )
 
   useEffect(() => {
     ref.current.feeds.latest = values
-  }, [response, loadingState, setLoadingState])
+  }, [ref, values])
 
   return values
 }

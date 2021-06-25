@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import { ActivityFeed } from './types'
 import { fetchActivity } from './shared'
 import { useSkynet } from '../skynet'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'
 
 type Props = {
@@ -21,15 +21,18 @@ export function useFeedActivity({ ref }: Props) {
     }
   )
 
-  const values = {
-    response,
-    loadingState,
-    setLoadingState,
-  }
+  const values = useMemo(
+    () => ({
+      response,
+      loadingState,
+      setLoadingState,
+    }),
+    [response, loadingState, setLoadingState]
+  )
 
   useEffect(() => {
     ref.current.feeds.activity = values
-  }, [response, loadingState, setLoadingState])
+  }, [ref, values])
 
   return values
 }

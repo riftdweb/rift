@@ -1,9 +1,7 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import { Link } from '../../_shared/Link'
 
-type Props = {}
-
-export function Nav({}: Props) {
+export function Nav() {
   return (
     <Heading>
       <Flex css={{ gap: '$1', alignItems: 'center', height: '30px' }}>

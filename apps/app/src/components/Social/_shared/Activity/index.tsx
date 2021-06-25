@@ -4,7 +4,6 @@ import { useProfile } from '../../../../hooks/useProfile'
 import { Link } from '../../../_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'
 import { Avatar } from '../../../_shared/Avatar'
-import { RelativeTime } from '../RelativeTime'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { EntriesState } from '../../../_shared/EntriesState'
@@ -57,6 +56,7 @@ export function Activity() {
       <EntriesState
         response={activity.response}
         loadingState={activity.loadingState}
+        validatingMessage="Loading"
         emptyMessage="No activity yet."
       >
         <Flex

@@ -7,18 +7,11 @@ import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { Follow } from './Follow'
 import { SuggestedFollow } from './SuggestedFollow'
-import { NonIdealState } from '../../../_shared/NonIdealState'
 import { EntriesState } from '../../../_shared/EntriesState'
 
 export function Following() {
   const { userId, myProfile, login } = useSkynet()
-  const {
-    followings,
-    suggestions,
-    suggestionUserIds,
-    handleFollow,
-    handleUnfollow,
-  } = useUsers()
+  const { followings, suggestions, suggestionUserIds } = useUsers()
 
   if (!userId) {
     return (
@@ -107,7 +100,6 @@ export function Following() {
                     key={userId}
                     userId={userId}
                     profile={profile}
-                    handleFollow={handleFollow}
                   />
                 ))}
               </EntriesState>

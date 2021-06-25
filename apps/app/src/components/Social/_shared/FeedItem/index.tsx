@@ -1,11 +1,8 @@
-import { CheckIcon, TriangleUpIcon } from '@radix-ui/react-icons'
+import { TriangleUpIcon } from '@radix-ui/react-icons'
 import { Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
-import useSWR from 'swr'
 import { useFeed } from '../../../../hooks/feed'
 import { Entry } from '../../../../hooks/feed/types'
-import { userProfileDAC } from '../../../../hooks/skynet'
-import { useAvatarUrl } from '../../../../hooks/useAvatarUrl'
 import { useProfile } from '../../../../hooks/useProfile'
 import { useSelectedPortal } from '../../../../hooks/useSelectedPortal'
 import { Link } from '../../../_shared/Link'
@@ -19,7 +16,6 @@ import { Status } from './Status'
 const textStyles: any = {
   lineHeight: '25px',
   display: 'inline',
-  // whiteSpace: 'pre',
 }
 
 type Props = { entry: Entry; index?: number }
@@ -52,8 +48,6 @@ export function FeedItem({ entry, index }: Props) {
 
   let hostname = link ? new URL(link).hostname : undefined
 
-  const keywordStems = entry.nlp?.data.keywords.map((k) => k.stem) || []
-
   const titleElements = useMemo(() => {
     let title = post.content.title || post.content.text || ''
 
@@ -63,8 +57,6 @@ export function FeedItem({ entry, index }: Props) {
           css={{
             ...textStyles,
             overflow: 'hidden',
-            // textOverflow: 'ellipsis',
-            // whiteSpace: 'nowrap',
           }}
         >
           {title}
@@ -112,11 +104,12 @@ export function FeedItem({ entry, index }: Props) {
   }, [isVisibilityEnabled, isHovering, entry, post])
 
   const incrementCounters = useCallback(() => {
+    const keywordStems = entry.nlp?.data.keywords.map((k) => k.stem) || []
     incrementKeywords(keywordStems)
     if (hostname) {
       incrementDomain(hostname)
     }
-  }, [keywordStems, hostname, incrementKeywords, incrementDomain])
+  }, [entry, hostname, incrementKeywords, incrementDomain])
 
   const userId = entry.userId
   const creatorProfile = useProfile(userId)
@@ -176,7 +169,6 @@ export function FeedItem({ entry, index }: Props) {
           <Flex
             css={{
               color: '$hiContrast',
-              // flexWrap: 'wrap',
             }}
           >
             <Box css={{ flex: 1, overflow: 'hidden' }}>
@@ -188,8 +180,6 @@ export function FeedItem({ entry, index }: Props) {
                   css={{
                     display: 'block',
                     overflow: 'hidden',
-                    // textOverflow: 'ellipsis',
-                    // whiteSpace: 'nowrap',
                     textDecoration: 'none',
                     '&:hover': {
                       textDecoration: 'none',
@@ -227,15 +217,6 @@ export function FeedItem({ entry, index }: Props) {
               ) : (
                 <Flex css={{ position: 'relative', marginLeft: '$1' }}>
                   {/* <Score domain={hostname} /> */}
-                  {/* <Text
-                    css={{
-                      ...textStyles,
-                      fontSize: '$1',
-                      color: '$gray900',
-                    }}
-                  >
-                    (
-                  </Text> */}
                   <Link
                     target="_blank"
                     onClick={incrementCounters}
@@ -248,15 +229,6 @@ export function FeedItem({ entry, index }: Props) {
                   >
                     {hostname}
                   </Link>
-                  {/* <Text
-                    css={{
-                      ...textStyles,
-                      fontSize: '$1',
-                      color: '$gray900',
-                    }}
-                  >
-                    )
-                  </Text> */}
                 </Flex>
               ))}
             <PostTime entry={entry} />

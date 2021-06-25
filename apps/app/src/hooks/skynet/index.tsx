@@ -15,7 +15,6 @@ import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
-import { globals } from '../../shared/globals'
 import { useProfile } from '../useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { ControlRef, useControlRef } from './useControlRef'
@@ -61,7 +60,7 @@ export function SkynetProvider({ children }: Props) {
       controlRef.current.userId = userId
       _setUserId(userId)
     },
-    [_setUserId]
+    [controlRef, _setUserId]
   )
   const [Api, setApi] = useState<ReturnType<typeof buildApi>>()
   const myProfile = useProfile(userId)
@@ -89,7 +88,7 @@ export function SkynetProvider({ children }: Props) {
       controlRef.current.Api = api
       setApi(api)
     },
-    [portal, localRootSeed, dataDomain, setApi]
+    [controlRef, portal, localRootSeed, dataDomain, setApi]
   )
 
   // On app init set up MySky

@@ -45,23 +45,20 @@ export function useFeedUser({ ref }: Props) {
     viewingUserId,
   ])
 
-  const values = {
-    response,
-    loadingStateCurrentUser: loadingState,
-    loadingStateMap,
-    getLoadingState,
-    setLoadingState,
-  }
+  const values = useMemo(
+    () => ({
+      response,
+      loadingStateCurrentUser: loadingState,
+      loadingStateMap,
+      getLoadingState,
+      setLoadingState,
+    }),
+    [response, loadingState, loadingStateMap, getLoadingState, setLoadingState]
+  )
 
   useEffect(() => {
     ref.current.feeds.user = values
-  }, [
-    response,
-    loadingState,
-    getLoadingState,
-    setLoadingState,
-    loadingStateMap,
-  ])
+  }, [ref, values])
 
   return values
 }

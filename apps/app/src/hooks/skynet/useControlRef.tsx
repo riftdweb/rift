@@ -1,14 +1,12 @@
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
-import { User } from '../users'
 import { Api } from './buildApi'
-import * as CAF from 'caf'
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
   userId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
-  followingUserIds: [] as string[],
+  followingUserIds: {} as SWRResponse<string[], any>,
   domains: {} as {
     [domain: string]: number
   },

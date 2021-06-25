@@ -95,7 +95,7 @@ export function ScoreGraph({ width, height }: Props) {
       return allData.slice(0, 100).reverse()
     }
     return allData.sort((a, b) => (a.isMatch ? 1 : -1)).slice(0, 100)
-  }, [allData])
+  }, [filterValue, allData])
 
   // And then scale the graph by our data
   const xScale = useMemo(
@@ -166,7 +166,7 @@ export function ScoreGraph({ width, height }: Props) {
     [xScale, showTooltip]
   )
 
-  const hideTooltip = useCallback(() => showTooltip({}), [])
+  const hideTooltip = useCallback(() => showTooltip({}), [showTooltip])
 
   return (
     <Box css={{ position: 'relative' }}>

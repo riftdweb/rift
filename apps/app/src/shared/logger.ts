@@ -1,5 +1,3 @@
-import chalk from 'chalk'
-
 export function createLogger(namespace: string) {
   const fullNamespace = `rift/${namespace}`
   const fn = (...args) =>

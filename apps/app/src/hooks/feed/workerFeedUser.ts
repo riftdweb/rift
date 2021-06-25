@@ -108,7 +108,7 @@ const cafAfterFeedUserUpdate = CAF(function* afterFeedUserUpdate(
     log('Running')
     const myUserId = ref.current.userId
     const isSelf = myUserId === userId
-    const isFollowingUser = !!ref.current.followingUserIds.find(
+    const isFollowingUser = !!ref.current.followingUserIds.data?.find(
       (followingUserId) => followingUserId === userId
     )
 

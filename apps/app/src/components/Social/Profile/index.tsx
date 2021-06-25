@@ -4,12 +4,7 @@ import { Feed } from './Feed'
 import { Layout } from '../Layout'
 import { User } from '../_shared/User'
 import { Link } from '../../_shared/Link'
-import {
-  ArrowLeftIcon,
-  ChatBubbleIcon,
-  GlobeIcon,
-  SewingPinFilledIcon,
-} from '@radix-ui/react-icons'
+import { ArrowLeftIcon, ChatBubbleIcon, GlobeIcon } from '@radix-ui/react-icons'
 import { useProfile } from '../../../hooks/useProfile'
 import { useFeed } from '../../../hooks/feed'
 import { UserContextMenu } from '../../_shared/UserContextMenu'

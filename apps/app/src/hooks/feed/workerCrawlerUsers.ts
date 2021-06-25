@@ -34,7 +34,7 @@ const cafCrawlerUsers = CAF(function* crawlerUsers(
     }
 
     log('Fetching following')
-    let followingUserIds = ref.current.followingUserIds
+    let followingUserIds = ref.current.followingUserIds.data || []
 
     // If no entries exist yet and following at least 1 user
     // Probably a new user, so render onboarding message in feed UI
@@ -90,13 +90,16 @@ let interval = null
 export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
   const log = createLogger('schedule/crawler/users')
 
-  // If crawler is already running skip
-  if (ref.current.tokens.crawlerUsers?.signal) {
-    log(`Crawler already running, skipping at ${new Date()}`)
-  } else {
-    await clearAllTokens(ref)
-    workerCrawlerUsers(ref)
-  }
+  // TODO: DOUBLE CHEcK ON RELOAD THE CRAWER HAS ACCESS TO THE FOLLOWINGS
+  setTimeout(async () => {
+    // If crawler is already running skip
+    if (ref.current.tokens.crawlerUsers?.signal) {
+      log(`Crawler already running, skipping at ${new Date()}`)
+    } else {
+      await clearAllTokens(ref)
+      workerCrawlerUsers(ref)
+    }
+  }, 5000)
 
   if (!interval) {
     interval = setInterval(() => {

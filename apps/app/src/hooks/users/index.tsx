@@ -181,13 +181,13 @@ export function UsersProvider({ children }: Props) {
       }
       func()
     },
-    [followings, suggestions, followingUserIds.mutate]
+    [followings, followingUserIds]
   )
 
   // Update controlRef
   useEffect(() => {
-    ref.current.followingUserIds = followingUserIds.data || []
-  }, [followingUserIds])
+    ref.current.followingUserIds = followingUserIds
+  }, [ref, followingUserIds])
 
   const value = {
     followingUserIds,

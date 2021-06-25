@@ -1,4 +1,4 @@
-import { DotsHorizontalIcon, UpdateIcon } from '@radix-ui/react-icons'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
   ButtonVariants,
@@ -8,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Text,
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'

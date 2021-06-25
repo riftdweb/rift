@@ -1,5 +1,4 @@
 import {
-  ActivityLogIcon,
   FilePlusIcon,
   GearIcon,
   HomeIcon,

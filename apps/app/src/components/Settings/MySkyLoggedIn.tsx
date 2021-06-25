@@ -2,10 +2,8 @@ import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
-  Code,
   Flex,
   Heading,
-  Paragraph,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'

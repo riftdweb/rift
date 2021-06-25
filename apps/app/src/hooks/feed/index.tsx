@@ -94,7 +94,6 @@ type Props = {
 
 export function FeedProvider({ children }: Props) {
   const {
-    Api,
     userId: myUserId,
     isReseting,
     isInitializing,
@@ -123,21 +122,21 @@ export function FeedProvider({ children }: Props) {
     ref.current.keywords = keywords
     ref.current.domains = domains
     ref.current.viewingUserId = viewingUserId
-  }, [viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
+  }, [ref, viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
 
   useEffect(() => {
     if (isInitializing || isReseting) {
       return
     }
     workerRoot(ref)
-  }, [isInitializing, isReseting])
+  }, [ref, isInitializing, isReseting])
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
       await workerFeedTopUpdate(ref, { force: true })
     }
     return func()
-  }, [])
+  }, [ref])
 
   const refreshLatestFeed = useCallback(() => {
     const func = async () => {
@@ -145,31 +144,35 @@ export function FeedProvider({ children }: Props) {
       await workerCrawlerUsers(ref, { force: true })
     }
     return func()
-  }, [])
+  }, [ref])
 
   const refreshActivity = useCallback(() => {
     const func = async () => {
       await workerFeedActivityUpdate(ref, { force: true })
     }
     return func()
-  }, [])
+  }, [ref])
 
-  const refreshUser = useCallback((userId: string) => {
-    const func = async () => {
-      try {
-        await workerFeedUserUpdate(ref, userId, { force: true })
-      } catch (e) {}
-    }
-    return func()
-  }, [])
+  const refreshUser = useCallback(
+    (userId: string) => {
+      const func = async () => {
+        try {
+          await workerFeedUserUpdate(ref, userId, { force: true })
+        } catch (e) {}
+      }
+      return func()
+    },
+    [ref]
+  )
 
-  // If cached user feed returns null flag true,
-  // the user feed has never been compiled
+  // If cached user feed returns null flag true, the user feed has never been compiled.
+  // Check this whenever the response data changes.
   useEffect(() => {
     if (!user.loadingStateCurrentUser && user.response.data?.null) {
       log(`Building a feed for ${viewingUserId}`)
       refreshUser(viewingUserId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.response.data])
 
   const incrementKeywords = useCallback(
@@ -284,7 +287,7 @@ export function FeedProvider({ children }: Props) {
       }
       func()
     },
-    [latest, user, myUserId]
+    [ref, latest, user, myUserId]
   )
 
   const current = useMemo(() => (mode === 'latest' ? latest : top), [

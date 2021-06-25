@@ -8,7 +8,7 @@ import {
   fetchUserEntries,
   needsRefresh,
 } from './shared'
-import { handleToken } from './tokens'
+import { clearToken, handleToken } from './tokens'
 import { Entry, EntryFeed, WorkerParams } from './types'
 import { workerFeedActivityUpdate } from './workerFeedActivity'
 import { workerFeedLatestUpdate } from './workerFeedLatest'
@@ -137,7 +137,8 @@ export async function workerFeedUserUpdate(
   params: WorkerParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, 'feedUserUpdate')
-  return cafFeedUserUpdate(token.signal, ref, userId, params)
+  await cafFeedUserUpdate(token.signal, ref, userId, params)
+  clearToken(ref, 'feedUserUpdate')
 }
 
 export async function workerAfterFeedUserUpdate(
@@ -146,5 +147,6 @@ export async function workerAfterFeedUserUpdate(
   userFeed: EntryFeed
 ): Promise<any> {
   const token = await handleToken(ref, 'afterFeedUserUpdate')
-  return cafAfterFeedUserUpdate(token.signal, ref, userId, userFeed)
+  await cafAfterFeedUserUpdate(token.signal, ref, userId, userFeed)
+  clearToken(ref, 'afterFeedUserUpdate')
 }

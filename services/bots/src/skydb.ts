@@ -74,8 +74,8 @@ export async function updateProfile(section: SectionData) {
       lastName: '',
       emailID: '',
       contact: '',
-      aboutMe: '',
-      location: '',
+      aboutMe: `Hello, I'm a bot that shares the best content from ${section.name} onto Skynet! Follow me to keep up with the latest stories!`,
+      location: 'Decentralized',
       topics: [],
       connections: [
         {

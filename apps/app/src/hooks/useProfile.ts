@@ -20,7 +20,6 @@ export function useProfile(userId: string): IUserProfile | undefined {
     () => fetchProfile(userId),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 30000,
     }
   )
   return profile

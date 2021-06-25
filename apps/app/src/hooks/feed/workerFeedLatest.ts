@@ -2,7 +2,7 @@ import * as CAF from 'caf'
 import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import { cacheAllEntries, fetchAllEntries, upsertAllEntries } from './shared'
-import { handleToken } from './tokens'
+import { clearToken, handleToken } from './tokens'
 import { EntryFeed } from './types'
 
 export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
@@ -48,5 +48,6 @@ export async function workerFeedLatestUpdate(
   userFeed?: EntryFeed
 ): Promise<any> {
   const token = await handleToken(ref, 'feedLatestUpdate')
-  return cafFeedLatestUpdate(token.signal, ref, userId, userFeed)
+  await cafFeedLatestUpdate(token.signal, ref, userId, userFeed)
+  clearToken(ref, 'feedLatestUpdate')
 }

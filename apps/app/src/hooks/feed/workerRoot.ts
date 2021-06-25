@@ -18,7 +18,7 @@ export async function workerRoot(ref: ControlRef): Promise<any> {
 
   log('Running')
 
-  log('Starting crawlerUsers')
+  log('Starting users crawler')
   await scheduleCrawlerUsers(ref)
 
   log('Returning')

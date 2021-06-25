@@ -4,7 +4,7 @@ import { ControlRef } from '../skynet/useControlRef'
 import { fetchAllEntries, needsRefresh } from './shared'
 import { workerFeedUserUpdate } from './workerFeedUser'
 import { EntryFeed, WorkerParams } from './types'
-import { clearAllTokens, handleToken } from './tokens'
+import { clearAllTokens, clearToken, handleToken } from './tokens'
 
 const SCHEDULE_INTERVAL_CRAWLER = 5 * 60
 const REFRESH_INTERVAL_CRAWLER = 0
@@ -82,7 +82,8 @@ export async function workerCrawlerUsers(
   params: WorkerParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, 'crawlerUsers')
-  return cafCrawlerUsers(token.signal, ref, params)
+  await cafCrawlerUsers(token.signal, ref, params)
+  clearToken(ref, 'crawlerUsers')
 }
 
 let interval = null
@@ -93,7 +94,7 @@ export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
   // TODO: DOUBLE CHEcK ON RELOAD THE CRAWER HAS ACCESS TO THE FOLLOWINGS
   setTimeout(async () => {
     // If crawler is already running skip
-    if (ref.current.tokens.crawlerUsers?.signal) {
+    if (ref.current.tokens.crawlerUsers) {
       log(`Crawler already running, skipping at ${new Date()}`)
     } else {
       await clearAllTokens(ref)
@@ -106,7 +107,7 @@ export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
       // TODO: ADD CHECK FOR USER POST IN PROGRESS
 
       // If crawler is already running skip
-      if (ref.current.tokens.crawlerUsers?.signal) {
+      if (ref.current.tokens.crawlerUsers) {
         log(`Crawler already running, skipping at ${new Date()}`)
       } else {
         workerCrawlerUsers(ref)

@@ -160,7 +160,7 @@ export function FeedItem({ entry, index }: Props) {
         <Flex
           css={{
             flexDirection: 'column',
-            overflow: 'hidden',
+            // overflow: 'hidden',
             gap: '$1',
             marginLeft: index ? '26px' : 0,
             width: '100%',
@@ -171,7 +171,12 @@ export function FeedItem({ entry, index }: Props) {
               color: '$hiContrast',
             }}
           >
-            <Box css={{ flex: 1, overflow: 'hidden' }}>
+            <Box
+              css={{
+                flex: 1,
+                // overflow: 'hidden'
+              }}
+            >
               {link ? (
                 <Link
                   target="_blank"
@@ -179,7 +184,7 @@ export function FeedItem({ entry, index }: Props) {
                   href={link}
                   css={{
                     display: 'block',
-                    overflow: 'hidden',
+                    // overflow: 'hidden',
                     textDecoration: 'none',
                     '&:hover': {
                       textDecoration: 'none',

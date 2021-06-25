@@ -26,6 +26,8 @@ type State = {
   suggestions: SWRResponse<Feed<User>, any>
   handleFollow: (userId: string, profile: IUserProfile) => void
   handleUnfollow: (userId: string) => void
+  checkIsFollowingUser: (userId: string) => boolean
+  checkIsMyself: (userId: string) => boolean
 }
 
 const UsersContext = createContext({} as State)
@@ -184,12 +186,25 @@ export function UsersProvider({ children }: Props) {
     [followings, followingUserIds]
   )
 
+  const checkIsFollowingUser = useCallback(
+    (userId: string) => {
+      // Use followings instead of followingUserIds in case there is an inflight optimistic update
+      return !!followings.data?.entries.find((user) => user.userId === userId)
+    },
+    [followings]
+  )
+  const checkIsMyself = useCallback((userId: string) => myUserId === userId, [
+    myUserId,
+  ])
+
   // Update controlRef
   useEffect(() => {
     ref.current.followingUserIds = followingUserIds
   }, [ref, followingUserIds])
 
   const value = {
+    checkIsFollowingUser,
+    checkIsMyself,
     followingUserIds,
     suggestionUserIds,
     followings,

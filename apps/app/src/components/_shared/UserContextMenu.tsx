@@ -37,10 +37,20 @@ export function UserContextMenu({
 }: Props) {
   const { userId: myUserId, dataDomain: appDomain } = useSkynet()
   const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
-  const { followingUserIds, handleFollow, handleUnfollow } = useUsers()
-  const self = userId === myUserId
+  const {
+    handleFollow,
+    handleUnfollow,
+    checkIsFollowingUser,
+    checkIsMyself,
+  } = useUsers()
+
+  const isMyself = useMemo(() => checkIsMyself(userId), [checkIsMyself, userId])
+  const isFollowingUser = useMemo(() => checkIsFollowingUser(userId), [
+    checkIsFollowingUser,
+    userId,
+  ])
+
   const isViewingUser = userId === viewingUserId
-  const isFollowingUser = followingUserIds.data?.includes(userId)
 
   const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
     feedUser,
@@ -80,7 +90,7 @@ export function UserContextMenu({
                 User {userId.slice(0, 6)}...
               </DropdownMenuLabel>
             )}
-            {!self && isFollowingUser && (
+            {!isMyself && isFollowingUser && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -89,7 +99,7 @@ export function UserContextMenu({
                 </DropdownMenuItem>
               </Fragment>
             )}
-            {!self && !isFollowingUser && (
+            {!isMyself && !isFollowingUser && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>

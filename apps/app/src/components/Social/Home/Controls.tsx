@@ -1,9 +1,11 @@
 import { Box, Button, Flex, Textarea } from '@riftdweb/design-system'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFeed } from '../../../hooks/feed'
+import { useSkynet } from '../../../hooks/skynet'
 import { ControlsInactive } from './ControlsInactive'
 
 export function Controls() {
+  const { userId: myUserId, login } = useSkynet()
   const { createPost, setMode } = useFeed()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [value, setValue] = useState<string>('')
@@ -39,7 +41,11 @@ export function Controls() {
             <Button variant="ghost" onClick={() => setIsEditing(!isEditing)}>
               Cancel
             </Button>
-            <Button onClick={() => createPostAndNavigate(value)}>Post</Button>
+            {myUserId ? (
+              <Button onClick={() => createPostAndNavigate(value)}>Post</Button>
+            ) : (
+              <Button onClick={() => login()}>Log in with MySky to post</Button>
+            )}
           </Flex>
         </Flex>
       )}

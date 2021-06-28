@@ -9,8 +9,8 @@ import { getPostsHn } from './bot/hn';
 export type PostMap = { [id: string]: Post };
 
 export async function main() {
-  const rootSeed = process.env.SEED || 'bot';
-  console.log('seed: ', rootSeed);
+  // const rootSeed = process.env.BOTS_SEED || 'bot';
+  // console.log('seed: ', rootSeed);
   // const postMapCnn = await getPostsCnn();
   // await writeFeed(postMapCnn);
   const postMapHn = await getPostsHn();

@@ -1,7 +1,7 @@
 import { deriveChildSeed } from '@riftdweb/skynet-js-iso';
 import { Post, PostMap } from './types';
 
-const rootSeed = process.env.SEED || 'bot';
+const rootSeed = process.env.BOTS_SEED || 'bot';
 const seedHn = deriveChildSeed(rootSeed, 'hn');
 
 export async function getPostsHn(): Promise<PostMap> {

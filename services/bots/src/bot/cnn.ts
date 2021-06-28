@@ -2,7 +2,7 @@ import { deriveChildSeed } from '@riftdweb/skynet-js-iso';
 import { getPosts, RssSourceMeta } from './rss';
 import { Post, PostMap } from './types';
 
-const rootSeed = process.env.SEED || 'bot';
+const rootSeed = process.env.BOTS_SEED || 'bot';
 
 export const meta: RssSourceMeta = {
   name: 'cnn',

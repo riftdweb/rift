@@ -1,36 +1,33 @@
-import { deriveChildSeed } from '@riftdweb/skynet-js-iso';
 import { getPosts, RssSourceMeta } from './rss';
 import { Post, PostMap } from './types';
 
-const rootSeed = process.env.BOTS_SEED || 'bot';
-
-export const meta: RssSourceMeta = {
+export const getMeta = (): RssSourceMeta => ({
   name: 'reddit',
   baseUrl: 'https://reddit.com/r/',
   dataPath: ['feed', 'entry'],
   sections: [
     {
-      seed: deriveChildSeed(rootSeed, 'reddit popular'),
+      seed: process.env.BOTS_PHRASE_REDDIT_POPULAR as string,
       section: 'popular',
       name: 'Reddit Popular',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'reddit tech'),
+      seed: process.env.BOTS_PHRASE_REDDIT_TECH as string,
       section: 'tech',
       name: 'Reddit Tech',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'reddit cryptocurrency'),
+      seed: process.env.BOTS_PHRASE_REDDIT_CRYPTOCURRENCY as string,
       section: 'cryptocurrency',
       name: 'Reddit CryptoCurrency',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'reddit siacoin'),
+      seed: process.env.BOTS_PHRASE_REDDIT_SIACOIN as string,
       section: 'siacoin',
       name: 'Reddit Siacoin',
     },
   ],
-};
+});
 
 type RssEntryReddit = {
   author: {
@@ -67,5 +64,5 @@ function entriesToPosts(entries: RssEntryReddit[]): Post[] {
 }
 
 export async function getPostsReddit(): Promise<PostMap> {
-  return await getPosts(meta, entriesToPosts);
+  return await getPosts(getMeta(), entriesToPosts);
 }

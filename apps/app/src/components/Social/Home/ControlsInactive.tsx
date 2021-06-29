@@ -53,7 +53,10 @@ export function ControlsInactive({ setEditing }: Props) {
               variant={mode === 'top' ? 'blue' : 'gray'}
               onClick={() => setMode('top')}
             >
-              <ThickArrowUpIcon />
+              <Box css={{ mr: '$1' }}>
+                <ThickArrowUpIcon />
+              </Box>
+              Top
             </Button>
           </Tooltip>
           <Tooltip align="end" content="Latest">
@@ -61,7 +64,10 @@ export function ControlsInactive({ setEditing }: Props) {
               variant={mode === 'latest' ? 'blue' : 'gray'}
               onClick={() => setMode('latest')}
             >
-              <ClockIcon />
+              <Box css={{ mr: '$1' }}>
+                <ClockIcon />
+              </Box>
+              Latest
             </Button>
           </Tooltip>
           <FeedContextMenu />

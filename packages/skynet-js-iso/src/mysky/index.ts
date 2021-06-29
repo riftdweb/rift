@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 export type { CustomConnectorOptions } from "./connector";
 export { DacLibrary } from "./dac";
 
@@ -11,11 +13,12 @@ import {
   Permission,
   PermType,
 } from "skynet-mysky-utils";
+import type { CustomUserIDOptions } from "skynet-mysky-utils";
 
 import { Connector, CustomConnectorOptions, defaultConnectorOptions } from "./connector";
 import { SkynetClient } from "../client";
 import { DacLibrary } from "./dac";
-import { defaultSetEntryOptions, RegistryEntry } from "../registry";
+import { CustomGetEntryOptions, defaultGetEntryOptions, defaultSetEntryOptions, RegistryEntry } from "../registry";
 import {
   defaultGetJSONOptions,
   defaultSetJSONOptions,
@@ -24,14 +27,43 @@ import {
   getOrCreateRegistryEntry,
   JsonData,
   JSONResponse,
+  getNextRegistryEntry,
 } from "../skydb";
-import { hexToUint8Array } from "../utils/string";
 import { Signature } from "../crypto";
 import { deriveDiscoverableTweak } from "./tweak";
 import { popupCenter } from "./utils";
-import { validateObject, validateOptionalObject, validateString } from "../utils/validation";
 import { extractOptions } from "../utils/options";
+import {
+  throwValidationError,
+  validateObject,
+  validateOptionalObject,
+  validateString,
+  validateUint8Array,
+} from "../utils/validation";
+import { decodeSkylink, RAW_SKYLINK_SIZE } from "../skylink/sia";
 
+export const mySkyDomain = "skynet-mysky.hns";
+export const mySkyDevDomain = "skynet-mysky-dev.hns";
+export const mySkyAlphaDomain = "sandbridge.hns";
+
+export const MAX_ENTRY_LENGTH = 70;
+
+const mySkyUiRelativeUrl = "ui.html";
+const mySkyUiTitle = "MySky UI";
+const [mySkyUiW, mySkyUiH] = [600, 600];
+
+export type EntryData = {
+  data: Uint8Array | null;
+};
+
+/**
+ * Loads MySky. Note that this does not log in the user.
+ *
+ * @param this - The Skynet client.
+ * @param skappDomain - The domain of the host skapp. For this domain permissions will be requested and, by default, automatically granted.
+ * @param [customOptions] - Additional settings that can optionally be set.
+ * @returns - Loaded (but not logged-in) MySky instance.
+ */
 export async function loadMySky(
   this: SkynetClient,
   skappDomain?: string,
@@ -42,17 +74,16 @@ export async function loadMySky(
   return mySky;
 }
 
-export const mySkyDomain = "skynet-mysky.hns";
-export const mySkyDevDomain = "sandbridge.hns";
-const mySkyUiRelativeUrl = "ui.html";
-const mySkyUiTitle = "MySky UI";
-const [mySkyUiW, mySkyUiH] = [500, 500];
-
 export class MySky {
   static instance: MySky | null = null;
 
+  // Holds the loaded DACs.
   dacs: DacLibrary[] = [];
+
+  // Holds the currently granted permissions.
   grantedPermissions: Permission[] = [];
+
+  // Holds permissions that have not been granted.
   pendingPermissions: Permission[];
 
   // ============
@@ -72,7 +103,9 @@ export class MySky {
     }
 
     let domain = mySkyDomain;
-    if (opts.dev) {
+    if (opts.alpha) {
+      domain = mySkyAlphaDomain;
+    } else if (opts.dev) {
       domain = mySkyDevDomain;
     }
     const connector = await Connector.init(client, domain, customOptions);
@@ -96,6 +129,8 @@ export class MySky {
 
   /**
    * Loads the given DACs.
+   *
+   * @param dacs - The DAC library instances to call `init` on.
    */
   async loadDacs(...dacs: DacLibrary[]): Promise<void> {
     const promises: Promise<void>[] = [];
@@ -113,10 +148,9 @@ export class MySky {
   }
 
   async checkLogin(): Promise<boolean> {
-    const [seedFound, permissionsResponse]: [
-      boolean,
-      CheckPermissionsResponse
-    ] = await this.connector.connection.remoteHandle().call("checkLogin", this.pendingPermissions);
+    const [seedFound, permissionsResponse]: [boolean, CheckPermissionsResponse] = await this.connector.connection
+      .remoteHandle()
+      .call("checkLogin", this.pendingPermissions);
 
     // Save granted and failed permissions.
     const { grantedPermissions, failedPermissions } = permissionsResponse;
@@ -131,11 +165,13 @@ export class MySky {
   /**
    * Destroys the mysky connection by:
    *
-   * 1. Destroying the connected DACs,
+   * 1. Destroying the connected DACs.
    *
-   * 2. Closing the connection,
+   * 2. Closing the connection.
    *
-   * 3. Closing the child iframe
+   * 3. Closing the child iframe.
+   *
+   * @throws - Will throw if there is an unexpected DOM error.
    */
   async destroy(): Promise<void> {
     // TODO: For all connected dacs, send a destroy call.
@@ -146,8 +182,13 @@ export class MySky {
     this.connector.connection.close();
 
     // Close the child iframe.
-    if (this.connector.childFrame) {
-      this.connector.childFrame.parentNode!.removeChild(this.connector.childFrame);
+    const frame = this.connector.childFrame;
+    if (frame) {
+      // The parent node should always exist. Sanity check + make TS happy.
+      if (!frame.parentNode) {
+        throw new Error("'childFrame.parentNode' was not set");
+      }
+      frame.parentNode.removeChild(frame);
     }
   }
 
@@ -185,10 +226,9 @@ export class MySky {
         // Send the UI the list of required permissions.
 
         // TODO: This should be a dual-promise that also calls ping() on an interval and rejects if no response was found in a given amount of time.
-        const [seedFoundResponse, permissionsResponse]: [
-          boolean,
-          CheckPermissionsResponse
-        ] = await uiConnection.remoteHandle().call("requestLoginAccess", this.pendingPermissions);
+        const [seedFoundResponse, permissionsResponse]: [boolean, CheckPermissionsResponse] = await uiConnection
+          .remoteHandle()
+          .call("requestLoginAccess", this.pendingPermissions);
         seedFound = seedFoundResponse;
 
         // Save failed permissions.
@@ -225,12 +265,12 @@ export class MySky {
     return loggedIn;
   }
 
-  async userID(): Promise<string> {
-    return await this.connector.connection.remoteHandle().call("userID");
+  async userID(opts?: CustomUserIDOptions): Promise<string> {
+    return await this.connector.connection.remoteHandle().call("userID", opts);
   }
 
   /**
-   * Gets Discoverable JSON at the given path through MySky, if the user has given permissions to do so.
+   * Gets Discoverable JSON at the given path through MySky, if the user has given Read permissions to do so.
    *
    * @param path - The data path.
    * @param [customOptions] - Additional settings that can optionally be set.
@@ -254,7 +294,25 @@ export class MySky {
   }
 
   /**
-   * Sets Discoverable JSON at the given path through MySky, if the user has given permissions to do so.
+   * Gets the entry link for the entry at the given path. This is a v2 skylink.
+   * This link stays the same even if the content at the entry changes.
+   *
+   * @param path - The data path.
+   * @returns - The entry link.
+   */
+  async getEntryLink(path: string): Promise<string> {
+    validateString("path", path, "parameter");
+
+    const publicKey = await this.userID();
+    const dataKey = deriveDiscoverableTweak(path);
+    // Do not hash the tweak anymore.
+    const opts = { ...defaultGetEntryOptions, hashedDataKeyHex: true };
+
+    return await this.connector.client.registry.getEntryLink(publicKey, dataKey, opts);
+  }
+
+  /**
+   * Sets Discoverable JSON at the given path through MySky, if the user has given Write permissions to do so.
    *
    * @param path - The data path.
    * @param json - The json to set.
@@ -276,20 +334,161 @@ export class MySky {
     const dataKey = deriveDiscoverableTweak(path);
     opts.hashedDataKeyHex = true; // Do not hash the tweak anymore.
 
-    const [entry, skylink] = await getOrCreateRegistryEntry(
-      this.connector.client,
-      hexToUint8Array(publicKey),
-      dataKey,
-      json,
-      opts
-    );
+    const [entry, dataLink] = await getOrCreateRegistryEntry(this.connector.client, publicKey, dataKey, json, opts);
 
     const signature = await this.signRegistryEntry(entry, path);
 
     const setEntryOpts = extractOptions(opts, defaultSetEntryOptions);
     await this.connector.client.registry.postSignedEntry(publicKey, entry, signature, setEntryOpts);
 
-    return { data: json, skylink };
+    return { data: json, dataLink };
+  }
+
+  /**
+   * Sets entry at the given path to point to the data link. Like setJSON, but it doesn't upload a file.
+   *
+   * @param path - The data path.
+   * @param dataLink - The data link to set at the path.
+   * @param [customOptions] - Additional settings that can optionally be set.
+   * @returns - An empty promise.
+   */
+  async setDataLink(path: string, dataLink: string, customOptions?: CustomSetJSONOptions): Promise<void> {
+    validateString("path", path, "parameter");
+    validateString("dataLink", dataLink, "parameter");
+    validateOptionalObject("customOptions", customOptions, "parameter", defaultSetJSONOptions);
+
+    const opts = {
+      ...defaultSetJSONOptions,
+      ...this.connector.client.customOptions,
+      ...customOptions,
+    };
+
+    const publicKey = await this.userID();
+    const dataKey = deriveDiscoverableTweak(path);
+    opts.hashedDataKeyHex = true; // Do not hash the tweak anymore.
+
+    const getEntryOpts = extractOptions(opts, defaultGetEntryOptions);
+    const entry = await getNextRegistryEntry(
+      this.connector.client,
+      publicKey,
+      dataKey,
+      decodeSkylink(dataLink),
+      getEntryOpts
+    );
+
+    const signature = await this.signRegistryEntry(entry, path);
+
+    const setEntryOpts = extractOptions(opts, defaultSetEntryOptions);
+    await this.connector.client.registry.postSignedEntry(publicKey, entry, signature, setEntryOpts);
+  }
+
+  /**
+   * Deletes Discoverable JSON at the given path through MySky, if the user has given Write permissions to do so.
+   *
+   * @param path - The data path.
+   * @param [customOptions] - Additional settings that can optionally be set.
+   * @returns - An empty promise.
+   * @throws - Will throw if the revision is already the maximum value.
+   */
+  async deleteJSON(path: string, customOptions?: CustomSetJSONOptions): Promise<void> {
+    validateString("path", path, "parameter");
+    validateOptionalObject("customOptions", customOptions, "parameter", defaultSetJSONOptions);
+
+    const opts = {
+      ...defaultSetJSONOptions,
+      ...this.connector.client.customOptions,
+      ...customOptions,
+    };
+
+    const publicKey = await this.userID();
+    const dataKey = deriveDiscoverableTweak(path);
+    opts.hashedDataKeyHex = true; // Do not hash the tweak anymore.
+
+    const getEntryOpts = extractOptions(opts, defaultGetEntryOptions);
+    const entry = await getNextRegistryEntry(
+      this.connector.client,
+      publicKey,
+      dataKey,
+      new Uint8Array(RAW_SKYLINK_SIZE),
+      getEntryOpts
+    );
+
+    const signature = await this.signRegistryEntry(entry, path);
+
+    const setEntryOpts = extractOptions(opts, defaultSetEntryOptions);
+    await this.connector.client.registry.postSignedEntry(publicKey, entry, signature, setEntryOpts);
+  }
+
+  /**
+   * Gets the raw registry entry data for the given path, if the user has given READ permissions.
+   *
+   * @param path - The data path.
+   * @param [customOptions] - Additional settings that can optionally be set.
+   * @returns - The entry data.
+   */
+  async getEntryData(path: string, customOptions?: CustomGetEntryOptions): Promise<EntryData> {
+    validateString("path", path, "parameter");
+    validateOptionalObject("customOptions", customOptions, "parameter", defaultGetEntryOptions);
+
+    const opts = {
+      ...defaultGetEntryOptions,
+      ...this.connector.client.customOptions,
+      ...customOptions,
+    };
+
+    const publicKey = await this.userID();
+    const dataKey = deriveDiscoverableTweak(path);
+    opts.hashedDataKeyHex = true; // Do not hash the tweak anymore.
+
+    const { entry } = await this.connector.client.registry.getEntry(publicKey, dataKey, opts);
+    if (!entry) {
+      return { data: null };
+    }
+    return { data: entry.data };
+  }
+
+  /**
+   * Sets the entry data at the given path, if the user has given WRITE permissions.
+   *
+   * @param path - The data path.
+   * @param data - The raw entry data to set.
+   * @param [customOptions] - Additional settings that can optionally be set.
+   * @returns - The entry data.
+   * @throws - Will throw if the length of the data is > 70 bytes.
+   */
+  async setEntryData(path: string, data: Uint8Array, customOptions?: CustomSetJSONOptions): Promise<EntryData> {
+    validateString("path", path, "parameter");
+    validateUint8Array("data", data, "parameter");
+    validateOptionalObject("customOptions", customOptions, "parameter", defaultGetEntryOptions);
+
+    if (data.length > MAX_ENTRY_LENGTH) {
+      throwValidationError(
+        "data",
+        data,
+        "parameter",
+        `'Uint8Array' of length <= ${MAX_ENTRY_LENGTH}, was length ${data.length}`
+      );
+    }
+
+    const opts = {
+      ...defaultSetJSONOptions,
+      ...this.connector.client.customOptions,
+      ...customOptions,
+    };
+
+    const publicKey = await this.userID();
+    const dataKey = deriveDiscoverableTweak(path);
+    opts.hashedDataKeyHex = true; // Do not hash the tweak anymore.
+
+    const getEntryOpts = extractOptions(opts, defaultGetEntryOptions);
+    const entry = await getNextRegistryEntry(this.connector.client, publicKey, dataKey, data, getEntryOpts);
+
+    const signature = await this.signRegistryEntry(entry, path);
+
+    const setEntryOpts = extractOptions(opts, defaultSetEntryOptions);
+    await this.connector.client.registry.postSignedEntry(publicKey, entry, signature, setEntryOpts);
+
+    return { data: entry.data };
   }
 
   // ================

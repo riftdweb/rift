@@ -89,6 +89,23 @@ export function validateString(name: string, value: unknown, valueKind: string):
 }
 
 /**
+ * Validates the given value as a string of the given length.
+ *
+ * @param name - The name of the value.
+ * @param value - The actual value.
+ * @param valueKind - The kind of value that is being checked (e.g. "parameter", "response field", etc.)
+ * @param len - The length to check.
+ * @throws - Will throw if not a valid string of the given length.
+ */
+export function validateStringLen(name: string, value: unknown, valueKind: string, len: number): void {
+  validateString(name, value, valueKind);
+  const actualLen = (value as string).length;
+  if (actualLen !== len) {
+    throwValidationError(name, value, valueKind, `type 'string' of length ${len}, was length ${actualLen}`);
+  }
+}
+
+/**
  * Validates the given value as a hex-encoded string.
  *
  * @param name - The name of the value.
@@ -104,6 +121,37 @@ export function validateHexString(name: string, value: unknown, valueKind: strin
 }
 
 /**
+ * Validates the given value as a uint8array.
+ *
+ * @param name - The name of the value.
+ * @param value - The actual value.
+ * @param valueKind - The kind of value that is being checked (e.g. "parameter", "response field", etc.)
+ * @throws - Will throw if not a valid uint8array.
+ */
+export function validateUint8Array(name: string, value: unknown, valueKind: string): void {
+  if (!(value instanceof Uint8Array)) {
+    throwValidationError(name, value, valueKind, "type 'Uint8Array'");
+  }
+}
+
+/**
+ * Validates the given value as a uint8array of the given length.
+ *
+ * @param name - The name of the value.
+ * @param value - The actual value.
+ * @param valueKind - The kind of value that is being checked (e.g. "parameter", "response field", etc.)
+ * @param len - The length to check.
+ * @throws - Will throw if not a valid uint8array of the given length.
+ */
+export function validateUint8ArrayLen(name: string, value: unknown, valueKind: string, len: number): void {
+  validateUint8Array(name, value, valueKind);
+  const actualLen = (value as Uint8Array).length;
+  if (actualLen !== len) {
+    throwValidationError(name, value, valueKind, `type 'Uint8Array' of length ${len}, was length ${actualLen}`);
+  }
+}
+
+/**
  * Throws an error for the given value
  *
  * @param name - The name of the value.
@@ -113,5 +161,13 @@ export function validateHexString(name: string, value: unknown, valueKind: strin
  * @throws - Will always throw.
  */
 export function throwValidationError(name: string, value: unknown, valueKind: string, expected: string): void {
-  throw new Error(`Expected ${valueKind} '${name}' to be ${expected}, was '${value}'`);
+  let actualValue: string;
+  if (value === undefined) {
+    actualValue = "type 'undefined'";
+  } else if (value === null) {
+    actualValue = "type 'null'";
+  } else {
+    actualValue = `type '${typeof value}', value '${value}'`;
+  }
+  throw new Error(`Expected ${valueKind} '${name}' to be ${expected}, was ${actualValue}`);
 }

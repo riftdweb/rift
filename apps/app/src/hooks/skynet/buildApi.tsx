@@ -4,6 +4,7 @@ import {
   MySky,
   SkynetClient,
 } from 'skynet-js'
+import { createLogger } from '../../shared/logger'
 
 type BuildApi = {
   portal: string
@@ -14,6 +15,8 @@ type BuildApi = {
 }
 
 export type Api = ReturnType<typeof buildApi>
+
+const log = createLogger('api')
 
 export const buildApi = ({
   portal,
@@ -39,9 +42,9 @@ export const buildApi = ({
   }) {
     if (seed) {
       const { publicKey } = genKeyPairFromSeed(seed)
-      console.log(`client.db.getJSON - explicit seed`)
-      console.log(`\tpublic key: ${publicKey}`)
-      console.log(`\tdata key: ${dataKey}`)
+      log(`client.db.getJSON - explicit seed
+        \tpublic key: ${publicKey}
+        \tdata key: ${dataKey}`)
       return (client.db.getJSON(publicKey, dataKey) as unknown) as Promise<{
         data: T | null
         dataLink: string | null
@@ -49,9 +52,9 @@ export const buildApi = ({
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
     if (customPublicKey) {
-      console.log(`mySky.getJSON - mysky`)
-      console.log(`\tdata path: ${dataPath}`)
-      console.log(`\tpublic key: ${customPublicKey}`)
+      log(`mySky.getJSON - mysky
+        \tdata path: ${dataPath}
+        \tpublic key: ${customPublicKey}`)
       return (client.file.getJSON(
         customPublicKey,
         dataPath
@@ -61,17 +64,17 @@ export const buildApi = ({
       }>
     }
     if (userId) {
-      console.log(`mySky.getJSON - mysky`)
-      console.log(`\tdata path: ${dataPath}`)
+      log(`mySky.getJSON - mysky
+        \tdata path: ${dataPath}`)
       return (mySky.getJSON(dataPath) as unknown) as Promise<{
         data: T | null
         dataLink: string | null
       }>
     }
     const { publicKey } = genKeyPairFromSeed(localRootSeed)
-    console.log(`client.db.getJSON - local app seed`)
-    console.log(`\tpublic key: ${publicKey}`)
-    console.log(`\tdata key: ${dataKey}`)
+    log(`client.db.getJSON - local app seed
+      \tpublic key: ${publicKey}
+      \tdata key: ${dataKey}`)
     return (client.db.getJSON(publicKey, dataKey) as unknown) as Promise<{
       data: T | null
       dataLink: string | null
@@ -90,21 +93,21 @@ export const buildApi = ({
   }) {
     if (seed) {
       const { privateKey } = genKeyPairFromSeed(seed)
-      console.log(`client.db.setJSON - explicit seed`)
-      console.log(`\tprivate key: ${privateKey}`)
-      console.log(`\tdata key: ${dataKey}`)
+      log(`client.db.setJSON - explicit seed
+        \tprivate key: ${privateKey}
+        \tdata key: ${dataKey}`)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     if (!userId) {
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
-      console.log(`client.db.setJSON - local app seed`)
-      console.log(`\tprivate key: ${privateKey}`)
-      console.log(`\tdata key: ${dataKey}`)
+      log(`client.db.setJSON - local app seed
+        \tprivate key: ${privateKey}
+        \tdata key: ${dataKey}`)
       return client.db.setJSON(privateKey, dataKey, json)
     }
     const dataPath = (customDataDomain || dataDomain) + '/' + dataKey
-    console.log(`mySky.setJSON - mysky`)
-    console.log(`\tdata path: ${dataPath}`)
+    log(`mySky.setJSON - mysky
+      \tdata path: ${dataPath}`)
     return mySky.setJSON(dataPath, json)
   }
   function uploadDirectory(

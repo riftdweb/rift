@@ -1,10 +1,8 @@
-import { deriveChildSeed } from '@riftdweb/skynet-js-iso';
 import { Post, PostMap } from './types';
 
-const rootSeed = process.env.BOTS_SEED || 'bot';
-const seedHn = deriveChildSeed(rootSeed, 'hn');
-
 export async function getPostsHn(): Promise<PostMap> {
+  const seed = process.env.BOTS_PHRASE_HN as string;
+
   let _results: Partial<Post>[] = [];
 
   try {
@@ -24,8 +22,8 @@ export async function getPostsHn(): Promise<PostMap> {
   } catch (e) {
     // Sometimes the API rejects the request
     return {
-      [seedHn]: {
-        seed: seedHn,
+      [seed]: {
+        seed: seed,
         name: 'Hacker News',
         posts: [],
       },
@@ -43,8 +41,8 @@ export async function getPostsHn(): Promise<PostMap> {
   })) as Post[];
 
   return {
-    [seedHn]: {
-      seed: seedHn,
+    [seed]: {
+      seed: seed,
       name: 'Hacker News',
       posts: results,
     },

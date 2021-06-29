@@ -59,6 +59,8 @@
     "dotenv": "^9.0.2",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
+    "skynet-mysky-utils": "^0.2.3",
+    "tweetnacl": "^1.0.3",
     "uuid": "^8.3.2",
     "xml2json": "^0.12.0"
   }

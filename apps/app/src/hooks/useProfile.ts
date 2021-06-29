@@ -1,25 +1,48 @@
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
+import {
+  IProfileIndex,
+  IUserProfile,
+} from '@skynethub/userprofile-library/dist/types'
 import useSWR from 'swr'
-import { userProfileDAC } from './skynet'
+import { useSkynet } from './skynet'
+import { ControlRef } from './skynet/useControlRef'
 
 const getKey = (userId: string): string => `users/${userId}`
 
-export async function fetchProfile(userId: string) {
-  const profile = await userProfileDAC.getProfile(userId)
+export async function fetchProfile(
+  ref: ControlRef,
+  userId: string
+): Promise<IUserProfile> {
+  try {
+    const profile = await ref.current.Api.getJSON<IProfileIndex>({
+      publicKey: userId,
+      dataDomain: 'profile-dac.hns',
+      dataKey: 'profileIndex.json',
+    })
 
-  if (profile.error) {
-    throw Error('getProfile failed')
-  } else {
-    return profile
+    if (!profile.data?.profile) {
+      return {
+        version: 1,
+        username: '',
+      }
+    } else {
+      return profile.data.profile
+    }
+  } catch (e) {
+    return {
+      version: 1,
+      username: '',
+    }
   }
 }
 
 export function useProfile(userId: string): IUserProfile | undefined {
+  const { controlRef: ref } = useSkynet()
   const { data: profile } = useSWR(
     userId ? getKey(userId) : null,
-    () => fetchProfile(userId),
+    () => fetchProfile(ref, userId),
     {
       revalidateOnFocus: false,
+      dedupingInterval: 20_000,
     }
   )
   return profile

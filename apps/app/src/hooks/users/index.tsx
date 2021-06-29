@@ -88,7 +88,7 @@ export function UsersProvider({ children }: Props) {
 
       const profiles = []
       for (let userId of userIds) {
-        const profile = await fetchProfile(userId)
+        const profile = await fetchProfile(ref, userId)
         profiles.push({
           userId,
           profile,
@@ -110,7 +110,7 @@ export function UsersProvider({ children }: Props) {
     async () => {
       const profiles = []
       for (let userId of suggestionUserIds.data) {
-        const profile = await fetchProfile(userId)
+        const profile = await fetchProfile(ref, userId)
         profiles.push({
           userId,
           profile,

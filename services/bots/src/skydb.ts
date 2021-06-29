@@ -9,6 +9,8 @@ const profileAvatarMap = {
 };
 
 export async function writePosts(section: SectionData) {
+  const { publicKey } = genKeyPairFromSeed(section.seed);
+
   updateProfile(section);
 
   const namespace = 'riftapp.hns';
@@ -34,9 +36,8 @@ export async function writePosts(section: SectionData) {
     items: section.posts,
   });
 
-  const { publicKey } = genKeyPairFromSeed(section.seed);
-
   console.log(`${section.name}`);
+  console.log(`userId: ${publicKey}`);
   console.log(`${section.posts.length} posts`);
   console.log(
     `https://riftapp.hns.siasky.net/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/index.json`

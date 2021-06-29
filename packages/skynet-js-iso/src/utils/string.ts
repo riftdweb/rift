@@ -3,7 +3,21 @@ import { Buffer } from "buffer";
 import { throwValidationError, validateHexString, validateString } from "./validation";
 
 /**
- * Removes a prefix from the beginning of the string.
+ * Prepends the prefix to the given string only if the string does not already start with the prefix.
+ *
+ * @param str - The string.
+ * @param prefix - The prefix.
+ * @returns - The prefixed string.
+ */
+export function ensurePrefix(str: string, prefix: string): string {
+  if (!str.startsWith(prefix)) {
+    str = `${prefix}${str}`;
+  }
+  return str;
+}
+
+/**
+ * Removes slashes from the beginning and end of the string.
  *
  * @param str - The string to process.
  * @returns - The processed string.
@@ -12,6 +26,7 @@ export function trimForwardSlash(str: string): string {
   return trimPrefix(trimSuffix(str, "/"), "/");
 }
 
+// TODO: Move to mysky-utils
 /**
  * Removes a prefix from the beginning of the string.
  *
@@ -33,6 +48,7 @@ export function trimPrefix(str: string, prefix: string, limit?: number): string 
   return str;
 }
 
+// TODO: Move to mysky-utils
 /**
  * Removes a suffix from the end of the string.
  *
@@ -62,14 +78,14 @@ export function trimSuffix(str: string, suffix: string, limit?: number): string 
  * @returns - The processed string.
  */
 export function trimUriPrefix(str: string, prefix: string): string {
-  const longPrefix = `${prefix}//`;
-  if (str.startsWith(longPrefix)) {
-    // longPrefix is exactly at the beginning
-    return str.slice(longPrefix.length);
-  }
+  const shortPrefix = trimSuffix(prefix, "/");
   if (str.startsWith(prefix)) {
-    // else prefix is exactly at the beginning
+    // longPrefix is exactly at the beginning
     return str.slice(prefix.length);
+  }
+  if (str.startsWith(shortPrefix)) {
+    // else prefix is exactly at the beginning
+    return str.slice(shortPrefix.length);
   }
   return str;
 }

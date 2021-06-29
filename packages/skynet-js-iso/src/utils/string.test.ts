@@ -1,10 +1,10 @@
 import { fromByteArray } from "base64-js";
 import randomBytes from "randombytes";
-import { uriHandshakePrefix, uriHandshakeResolverPrefix } from "./skylink";
+
+import { uriHandshakePrefix } from "./url";
 import { hexToUint8Array, stringToUint8ArrayUtf8, trimUriPrefix, uint8ArrayToStringUtf8 } from "./string";
 
 const hnsLink = "doesn";
-const hnsresLink = "doesn";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -62,7 +62,7 @@ describe("hexToUint8Array", () => {
 
   it.each(invalidHexStrings)("should throw on invalid input '%s'", (str) => {
     expect(() => hexToUint8Array(str)).toThrowError(
-      `Expected parameter 'str' to be a hex-encoded string, was '${str}'`
+      `Expected parameter 'str' to be a hex-encoded string, was type 'string', value '${str}'`
     );
   });
 });
@@ -70,13 +70,9 @@ describe("hexToUint8Array", () => {
 describe("trimUriPrefix", () => {
   it("should correctly parse hns prefixed link", () => {
     const validHnsLinkVariations = [hnsLink, `hns:${hnsLink}`, `hns://${hnsLink}`];
-    const validHnsresLinkVariations = [hnsresLink, `hnsres:${hnsresLink}`, `hnsres://${hnsresLink}`];
 
     validHnsLinkVariations.forEach((input) => {
       expect(trimUriPrefix(input, uriHandshakePrefix)).toEqual(hnsLink);
-    });
-    validHnsresLinkVariations.forEach((input) => {
-      expect(trimUriPrefix(input, uriHandshakeResolverPrefix)).toEqual(hnsresLink);
     });
   });
 });

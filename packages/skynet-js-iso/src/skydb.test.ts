@@ -1,14 +1,16 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
+import { getSkylinkUrlForPortal } from "./download";
 import { MAX_REVISION } from "./utils/number";
-import { defaultSkynetPortalUrl, getEntryUrlForPortal, getSkylinkUrlForPortal } from "./utils/url";
+import { defaultSkynetPortalUrl, uriSkynetPrefix } from "./utils/url";
 import { SkynetClient, genKeyPairFromSeed } from "./index";
-import { regexRevisionNoQuotes } from "./registry";
+import { getEntryUrlForPortal, regexRevisionNoQuotes } from "./registry";
 
 const { publicKey, privateKey } = genKeyPairFromSeed("insecure test seed");
 const dataKey = "app";
 const skylink = "CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg";
+const sialink = `${uriSkynetPrefix}${skylink}`;
 const jsonData = { data: "thisistext" };
 const fullJsonData = { _data: jsonData, _v: 2 };
 const legacyJsonData = jsonData;
@@ -22,6 +24,7 @@ const registryLookupUrl = getEntryUrlForPortal(portalUrl, publicKey, dataKey);
 const uploadUrl = `${portalUrl}/skynet/skyfile`;
 const skylinkUrl = getSkylinkUrlForPortal(portalUrl, skylink);
 
+// Hex-encoded skylink.
 const data = "43414241425f31447430464a73787173755f4a34546f644e4362434776744666315579735f3345677a4f6c546367";
 const revision = 11;
 const entryData = {
@@ -45,8 +48,30 @@ describe("getJSON", () => {
     mock.onGet(registryLookupUrl).replyOnce(200, JSON.stringify(entryData));
     mock.onGet(skylinkUrl).replyOnce(200, fullJsonData, {});
 
-    const jsonReturned = await client.db.getJSON(publicKey, dataKey);
-    expect(jsonReturned.data).toEqual(jsonData);
+    const { data, dataLink } = await client.db.getJSON(publicKey, dataKey);
+    expect(data).toEqual(jsonData);
+    expect(dataLink).toEqual(sialink);
+    expect(mock.history.get.length).toBe(2);
+  });
+
+  it("should perform a lookup but not a skylink GET if the cachedDataLink is a hit", async () => {
+    // mock a successful registry lookup
+    mock.onGet(registryLookupUrl).replyOnce(200, JSON.stringify(entryData));
+
+    const { data, dataLink } = await client.db.getJSON(publicKey, dataKey, { cachedDataLink: skylink });
+    expect(data).toBeNull();
+    expect(dataLink).toEqual(sialink);
+    expect(mock.history.get.length).toBe(1);
+  });
+
+  it("should perform a lookup and a skylink GET if the cachedDataLink is not a hit", async () => {
+    // mock a successful registry lookup
+    mock.onGet(registryLookupUrl).replyOnce(200, JSON.stringify(entryData));
+    mock.onGet(skylinkUrl).replyOnce(200, fullJsonData, {});
+
+    const { data, dataLink } = await client.db.getJSON(publicKey, dataKey, { cachedDataLink: "asdf" });
+    expect(data).toEqual(jsonData);
+    expect(dataLink).toEqual(sialink);
     expect(mock.history.get.length).toBe(2);
   });
 
@@ -63,9 +88,9 @@ describe("getJSON", () => {
   it("should return null if no entry is found", async () => {
     mock.onGet(registryLookupUrl).reply(404);
 
-    const { data, skylink } = await client.db.getJSON(publicKey, dataKey);
+    const { data, dataLink } = await client.db.getJSON(publicKey, dataKey);
     expect(data).toBeNull();
-    expect(skylink).toBeNull();
+    expect(dataLink).toBeNull();
   });
 
   it("should throw if the returned file data is not JSON", async () => {
@@ -75,6 +100,26 @@ describe("getJSON", () => {
 
     await expect(client.db.getJSON(publicKey, dataKey)).rejects.toThrowError(
       `File data for the entry at data key '${dataKey}' is not JSON.`
+    );
+  });
+
+  it("should throw if the returned _data field in the file data is not JSON", async () => {
+    // mock a successful registry lookup
+    mock.onGet(registryLookupUrl).reply(200, JSON.stringify(entryData));
+    mock.onGet(skylinkUrl).reply(200, { _data: "thisistext", _v: 1 }, {});
+
+    await expect(client.db.getJSON(publicKey, dataKey)).rejects.toThrowError(
+      "File data '_data' for the entry at data key 'app' is not JSON."
+    );
+  });
+
+  it("should throw if invalid entry data is returned", async () => {
+    const client = new SkynetClient(portalUrl);
+    const mockedFn = jest.fn();
+    mockedFn.mockReturnValueOnce({ entry: { data: new Uint8Array() } });
+    client.registry.getEntry = mockedFn;
+    await expect(client.db.getJSON(publicKey, dataKey)).rejects.toThrowError(
+      "Expected returned entry data 'entry.data' to be length 34 bytes, was type 'object', value ''"
     );
   });
 });
@@ -98,9 +143,9 @@ describe("setJSON", () => {
     mock.onPost(registryUrl).replyOnce(204);
 
     // set data
-    const { data: returnedData, skylink: returnedSkylink } = await client.db.setJSON(privateKey, dataKey, jsonData);
+    const { data: returnedData, dataLink: returnedSkylink } = await client.db.setJSON(privateKey, dataKey, jsonData);
     expect(returnedData).toEqual(jsonData);
-    expect(returnedSkylink).toEqual(`sia:${skylink}`);
+    expect(returnedSkylink).toEqual(sialink);
 
     // assert our request history contains the expected amount of requests
     expect(mock.history.get.length).toBe(1);
@@ -153,21 +198,21 @@ describe("setJSON", () => {
 
   it("Should throw an error if the private key is not hex-encoded", async () => {
     await expect(client.db.setJSON("foo", dataKey, {})).rejects.toThrowError(
-      "Expected parameter 'privateKey' to be a hex-encoded string, was 'foo'"
+      "Expected parameter 'privateKey' to be a hex-encoded string, was type 'string', value 'foo'"
     );
   });
 
   it("Should throw an error if the data key is not provided", async () => {
     // @ts-expect-error We do not pass the data key on purpose.
     await expect(client.db.setJSON(privateKey)).rejects.toThrowError(
-      "Expected parameter 'dataKey' to be type 'string', was 'undefined'"
+      "Expected parameter 'dataKey' to be type 'string', was type 'undefined'"
     );
   });
 
   it("Should throw an error if the json is not provided", async () => {
     // @ts-expect-error We do not pass the json on purpose.
     await expect(client.db.setJSON(privateKey, dataKey)).rejects.toThrowError(
-      "Expected parameter 'json' to be type 'object', was 'undefined'"
+      "Expected parameter 'json' to be type 'object', was type 'undefined'"
     );
   });
 });

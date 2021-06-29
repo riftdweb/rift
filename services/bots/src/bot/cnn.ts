@@ -1,8 +1,5 @@
-import { deriveChildSeed } from '@riftdweb/skynet-js-iso';
 import { getPosts, RssSourceMeta } from './rss';
 import { Post, PostMap } from './types';
-
-const rootSeed = process.env.BOTS_SEED || 'bot';
 
 export const meta: RssSourceMeta = {
   name: 'cnn',
@@ -10,22 +7,22 @@ export const meta: RssSourceMeta = {
   dataPath: ['rss', 'channel', 'item'],
   sections: [
     {
-      seed: deriveChildSeed(rootSeed, 'cnn cnn_topstories'),
+      seed: process.env.BOTS_PHRASE_CNN_TOPSTOIRES as string,
       section: 'cnn_topstories',
       name: 'CNN Top Stories',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'cnn cnn_world'),
+      seed: process.env.BOTS_PHRASE_CNN_WORLD as string,
       section: 'cnn_world',
       name: 'CNN World',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'cnn cnn_us'),
+      seed: process.env.BOTS_PHRASE_CNN_US as string,
       section: 'cnn_us',
       name: 'CNN US',
     },
     {
-      seed: deriveChildSeed(rootSeed, 'cnn money_latest'),
+      seed: process.env.BOTS_PHRASE_CNN_MONEY_LATEST as string,
       section: 'money_latest',
       name: 'CNN Money Latest',
     },

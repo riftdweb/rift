@@ -41,5 +41,9 @@ jobs:
 
       - name: Run bots
         env:
-          BOTS_SECRET: ${{ secrets.BOTS_SECRET }}
+          BOTS_PHRASE_HN: ${{ secrets.BOTS_PHRASE_HN }}
+          BOTS_PHRASE_REDDIT_POPULAR: ${{ secrets.BOTS_PHRASE_REDDIT_POPULAR }}
+          BOTS_PHRASE_REDDIT_TECH: ${{ secrets.BOTS_PHRASE_REDDIT_TECH }}
+          BOTS_PHRASE_REDDIT_CRYPTOCURRENCY: ${{ secrets.BOTS_PHRASE_REDDIT_CRYPTOCURRENCY }}
+          BOTS_PHRASE_REDDIT_SIACOIN: ${{ secrets.BOTS_PHRASE_REDDIT_SIACOIN }}
         run: node services/bots/dist/index.js

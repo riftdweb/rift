@@ -1,17 +1,16 @@
 import parse from "url-parse";
 import urljoin from "url-join";
 
-import { isHexString, toHexString, trimPrefix, trimSuffix } from "./string";
-import { defaultGetEntryOptions, CustomGetEntryOptions, DEFAULT_GET_ENTRY_TIMEOUT } from "../registry";
-import { hashDataKey } from "../crypto";
-import { defaultDownloadOptions, CustomDownloadOptions } from "../download";
-import { convertSkylinkToBase32, parseSkylink } from "./skylink";
-import { throwValidationError, validateOptionalObject, validateString } from "./validation";
+import { trimForwardSlash, trimSuffix, trimUriPrefix } from "./string";
+import { throwValidationError, validateString } from "./validation";
 
 export const defaultSkynetPortalUrl = "https://siasky.net";
 
+export const uriHandshakePrefix = "hns://";
+export const uriSkynetPrefix = "sia://";
+
 // TODO: This will be smarter. See
-// https://github.com/NebulousLabs/skynet-docs/issues/21.
+// https://github.com/SkynetLabs/skynet-docs/issues/5.
 /**
  * Returns the default portal URL.
  *
@@ -21,6 +20,32 @@ export function defaultPortalUrl(): string {
   /* istanbul ignore next */
   if (typeof window === "undefined") return "/"; // default to path root on ssr
   return window.location.origin;
+}
+
+/**
+ * Adds a path to the given URL.
+ *
+ * @param url - The URL.
+ * @param path - The given path.
+ * @returns - The final URL.
+ */
+export function addPath(url: string, path: string): string {
+  validateString("url", url, "parameter");
+  validateString("path", path, "parameter");
+  path = trimForwardSlash(path);
+
+  let str;
+  if (url === "localhost") {
+    // Special handling for localhost.
+    str = `localhost/${path}`;
+  } else {
+    // Construct a URL object and set the pathname property.
+    const urlObj = new URL(url);
+    urlObj.pathname = path;
+    str = urlObj.toString();
+  }
+
+  return trimSuffix(str, "/");
 }
 
 /**
@@ -67,131 +92,8 @@ export function makeUrl(...args: string[]): string {
 }
 
 /**
- * Gets the registry entry URL without an initialized client.
- *
- * @param portalUrl - The portal URL.
- * @param publicKey - The user public key.
- * @param dataKey - The key of the data to fetch for the given user.
- * @param [customOptions] - Additional settings that can optionally be set.
- * @returns - The full get entry URL.
- * @throws - Will throw if the provided timeout is invalid or the given key is not valid.
- */
-export function getEntryUrlForPortal(
-  portalUrl: string,
-  publicKey: string,
-  dataKey: string,
-  customOptions?: CustomGetEntryOptions
-): string {
-  validateString("portalUrl", portalUrl, "parameter");
-  validateString("publicKey", publicKey, "parameter");
-  validateString("dataKey", dataKey, "parameter");
-  validateOptionalObject("customOptions", customOptions, "parameter", defaultGetEntryOptions);
-
-  const opts = {
-    ...defaultGetEntryOptions,
-    ...customOptions,
-  };
-
-  // Trim the prefix if it was passed in.
-  publicKey = trimPrefix(publicKey, "ed25519:");
-  if (!isHexString(publicKey)) {
-    throw new Error(`Given public key '${publicKey}' is not a valid hex-encoded string or contains an invalid prefix`);
-  }
-
-  // Hash and hex encode the given data key if it is not a hash already.
-  let dataKeyHashHex = dataKey;
-  if (!opts.hashedDataKeyHex) {
-    dataKeyHashHex = toHexString(hashDataKey(dataKey));
-  }
-
-  const query = {
-    publickey: `ed25519:${publicKey}`,
-    datakey: dataKeyHashHex,
-    timeout: DEFAULT_GET_ENTRY_TIMEOUT,
-  };
-
-  let url = makeUrl(portalUrl, opts.endpointGetEntry);
-  url = addUrlQuery(url, query);
-
-  return url;
-}
-
-/**
- * Gets the skylink URL without an initialized client.
- *
- * @param portalUrl - The portal URL.
- * @param skylinkUrl - Skylink string. See `downloadFile`.
- * @param [customOptions] - Additional settings that can optionally be set.
- * @returns - The full URL for the skylink.
- * @throws - Will throw if the skylinkUrl does not contain a skylink or if the path option is not a string.
- */
-export function getSkylinkUrlForPortal(
-  portalUrl: string,
-  skylinkUrl: string,
-  customOptions?: CustomDownloadOptions
-): string {
-  validateString("portalUrl", portalUrl, "parameter");
-  validateString("skylinkUrl", skylinkUrl, "parameter");
-  validateOptionalObject("customOptions", customOptions, "parameter", defaultDownloadOptions);
-
-  const opts = { ...defaultDownloadOptions, ...customOptions };
-
-  const query = opts.query ?? {};
-  if (opts.download) {
-    // Set the "attachment" parameter.
-    query.attachment = true;
-  }
-  if (opts.noResponseMetadata) {
-    // Set the "no-response-metadata" parameter.
-    query["no-response-metadata"] = true;
-  }
-
-  // URL-encode the path.
-  let path = "";
-  if (opts.path) {
-    if (typeof opts.path !== "string") {
-      throw new Error(`opts.path has to be a string, ${typeof opts.path} provided`);
-    }
-
-    // Encode each element of the path separately and join them.
-    //
-    // Don't use encodeURI because it does not encode characters such as '?'
-    // etc. These are allowed as filenames on Skynet and should be encoded so
-    // they are not treated as URL separators.
-    path = opts.path
-      .split("/")
-      .map((element: string) => encodeURIComponent(element))
-      .join("/");
-  }
-
-  let url;
-  if (opts.subdomain) {
-    // Get the path from the skylink. Use the empty string if not found.
-    const skylinkPath = parseSkylink(skylinkUrl, { onlyPath: true }) ?? "";
-    // Get just the skylink.
-    let skylink = parseSkylink(skylinkUrl);
-    if (skylink === null) {
-      throw new Error(`Could not get skylink out of input '${skylinkUrl}'`);
-    }
-    // Convert the skylink (without the path) to base32.
-    skylink = convertSkylinkToBase32(skylink);
-    url = addSubdomain(portalUrl, skylink);
-    url = makeUrl(url, skylinkPath, path);
-  } else {
-    // Get the skylink including the path.
-    const skylink = parseSkylink(skylinkUrl, { includePath: true });
-    if (skylink === null) {
-      throw new Error(`Could not get skylink with path out of input '${skylinkUrl}'`);
-    }
-    // Add additional path if passed in.
-    url = makeUrl(portalUrl, opts.endpointDownload, skylink, path);
-  }
-  return addUrlQuery(url, query);
-}
-
-/**
  * Constructs the full URL for the given domain,
- * e.g. ("https://siasky.net", "dac.hns") => "https://dac.hns.siasky.net"
+ * e.g. ("https://siasky.net", "dac.hns/path/file") => "https://dac.hns.siasky.net/path/file"
  *
  * @param portalUrl - The portal URL.
  * @param domain - Domain.
@@ -201,13 +103,31 @@ export function getFullDomainUrlForPortal(portalUrl: string, domain: string): st
   validateString("portalUrl", portalUrl, "parameter");
   validateString("domain", domain, "parameter");
 
-  domain = trimSuffix(domain, "/");
-  return addSubdomain(portalUrl, domain);
+  domain = trimUriPrefix(domain, uriSkynetPrefix);
+  domain = trimForwardSlash(domain);
+
+  // Split on first / to get the path.
+  let path;
+  [domain, path] = domain.split(/\/(.+)/);
+
+  // Add to subdomain.
+  let url;
+  if (domain === "localhost") {
+    // Special handling for localhost.
+    url = "localhost";
+  } else {
+    url = addSubdomain(portalUrl, domain);
+  }
+  // Add back the path if there was one.
+  if (path) {
+    url = addPath(url, path);
+  }
+  return url;
 }
 
 /**
  * Extracts the domain from the given portal URL,
- * e.g. ("https://siasky.net", "dac.hns.siasky.net") => "dac.hns"
+ * e.g. ("https://siasky.net", "dac.hns.siasky.net/path/file") => "dac.hns/path/file"
  *
  * @param portalUrl - The portal URL.
  * @param fullDomain - Full URL.
@@ -217,21 +137,33 @@ export function extractDomainForPortal(portalUrl: string, fullDomain: string): s
   validateString("portalUrl", portalUrl, "parameter");
   validateString("fullDomain", fullDomain, "parameter");
 
-  // Try to extract the domain from the fullDomain.
+  let path;
   try {
+    // Try to extract the domain from the fullDomain.
     const fullDomainObj = new URL(fullDomain);
     fullDomain = fullDomainObj.hostname;
+    path = fullDomainObj.pathname;
+    path = trimForwardSlash(path);
   } catch {
     // If fullDomain is not a URL, ignore the error and use it as-is.
+    //
+    // Trim any slashes from the input URL.
+    fullDomain = trimForwardSlash(fullDomain);
+    // Split on first / to get the path.
+    [fullDomain, path] = fullDomain.split(/\/(.+)/);
   }
-
-  // Trim any slashes from the input URL.
-  fullDomain = trimSuffix(fullDomain, "/");
 
   // Get the portal domain.
   const portalUrlObj = new URL(portalUrl);
-  const portalDomain = trimSuffix(portalUrlObj.hostname, "/");
+  const portalDomain = trimForwardSlash(portalUrlObj.hostname);
 
-  const domain = trimSuffix(fullDomain, portalDomain, 1);
-  return trimSuffix(domain, ".");
+  // Remove the portal domain from the domain.
+  let domain = trimSuffix(fullDomain, portalDomain, 1);
+  domain = trimSuffix(domain, ".");
+  // Add back the path if there is one.
+  if (path && path !== "") {
+    path = trimForwardSlash(path);
+    domain = `${domain}/${path}`;
+  }
+  return domain;
 }

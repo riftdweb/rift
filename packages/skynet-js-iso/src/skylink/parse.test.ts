@@ -1,29 +1,8 @@
-import { convertSkylinkToBase32, formatSkylink, parseSkylink, parseSkylinkBase32 } from "./skylink";
+import { parseSkylink, parseSkylinkBase32 } from "./parse";
 import { combineStrings, extractNonSkylinkPath } from "../../utils/testing";
 
 const skylink = "XABvi7JtJbQSMAcDwnUnmp2FKDPjg8_tTTFP4BwMSxVdEg";
 const skylinkBase32 = "bg06v2tidkir84hg0s1s4t97jaeoaa1jse1svrad657u070c9calq4g";
-
-describe("convertSkylinkToBase32", () => {
-  it("should convert the base64 skylink to base32", () => {
-    const encoded = convertSkylinkToBase32(skylink);
-
-    expect(encoded).toEqual(skylinkBase32);
-  });
-});
-
-describe("formatSkylink", () => {
-  it("should ensure the skylink starts with the prefix", () => {
-    const prefixedSkylink = `sia:${skylink}`;
-
-    expect(formatSkylink(skylink)).toEqual(prefixedSkylink);
-    expect(formatSkylink(prefixedSkylink)).toEqual(prefixedSkylink);
-  });
-
-  it("should not prepend a prefix for the empty string", () => {
-    expect(formatSkylink("")).toEqual("");
-  });
-});
 
 describe("parseSkylink", () => {
   const basicCases = combineStrings(
@@ -59,15 +38,20 @@ describe("parseSkylink", () => {
     expect(parseSkylinkBase32(fullSkylink)).toEqual(skylinkBase32);
 
     // Test the fromSubdomain and onlyPath options together.
-    const path = extractNonSkylinkPath(fullSkylink, ""); // Don't need to remove the skylink from the path portion here.
-    expect(parseSkylink(fullSkylink, { fromSubdomain: true, onlyPath: true })).toEqual(path);
+    const expectedPath = extractNonSkylinkPath(fullSkylink, ""); // Don't need to remove the skylink from the path portion here.
+    const path = parseSkylink(fullSkylink, { fromSubdomain: true, onlyPath: true });
+    expect(path).toEqual(expectedPath);
   });
 
   it("should return null on invalid skylink", () => {
     // @ts-expect-error we only check this use case in case someone ignores typescript typing
-    expect(() => parseSkylink()).toThrowError("Expected parameter 'skylinkUrl' to be type 'string', was 'undefined'");
+    expect(() => parseSkylink()).toThrowError(
+      "Expected parameter 'skylinkUrl' to be type 'string', was type 'undefined'"
+    );
     // @ts-expect-error we only check this use case in case someone ignores typescript typing
-    expect(() => parseSkylink(123)).toThrowError("Expected parameter 'skylinkUrl' to be type 'string', was '123'");
+    expect(() => parseSkylink(123)).toThrowError(
+      "Expected parameter 'skylinkUrl' to be type 'string', was type 'number', value '123'"
+    );
   });
 
   const invalidCases = ["123", `${skylink}xxx`, `${skylink}xxx/foo`, `${skylink}xxx?foo`];

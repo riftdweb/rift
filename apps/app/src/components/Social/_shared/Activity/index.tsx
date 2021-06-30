@@ -7,6 +7,7 @@ import { Avatar } from '../../../_shared/Avatar'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { EntriesState } from '../../../_shared/EntriesState'
+import { ScrollArea } from '../../../_shared/ScrollArea'
 
 function ActivityItem({ userId, message, at }) {
   const profile = useProfile(userId)
@@ -14,6 +15,7 @@ function ActivityItem({ userId, message, at }) {
     <Flex
       css={{
         gap: '$2',
+        paddingRight: '$1',
       }}
     >
       <Box css={{ marginTop: '$1' }}>
@@ -39,7 +41,8 @@ function ActivityItem({ userId, message, at }) {
               display: 'inline',
             }}
           >
-            {` ${message.slice(0, 50)}${message.length > 50 ? '...' : ''}`}
+            {/* {` ${message.slice(0, 50)}${message.length > 50 ? '...' : ''}`} */}
+            {` ${message}`}
           </Text>
         </Text>
         {/* <RelativeTime time={at} /> */}
@@ -51,7 +54,7 @@ function ActivityItem({ userId, message, at }) {
 export function Activity() {
   const { activity } = useFeed()
   return (
-    <StickySection gap="0">
+    <StickySection gap="0" width="250px">
       <StickyHeading title="Activity" contextMenu={<ActivityContextMenu />} />
       <EntriesState
         response={activity.response}
@@ -59,21 +62,27 @@ export function Activity() {
         validatingMessage="Loading"
         emptyMessage="No activity yet."
       >
-        <Flex
+        <Box
           css={{
-            flexDirection: 'column',
-            width: '100%',
-            gap: '$4',
             flex: 1,
-            padding: '$3 0',
-            overflow: 'auto',
+            overflow: 'hidden',
             borderBottom: '1px solid $gray200',
           }}
         >
-          {activity.response.data?.entries.map((item) => (
-            <ActivityItem key={item.id} {...item} />
-          ))}
-        </Flex>
+          <ScrollArea>
+            <Flex
+              css={{
+                flexDirection: 'column',
+                padding: '$3 $1',
+                gap: '$4',
+              }}
+            >
+              {activity.response.data?.entries.map((item) => (
+                <ActivityItem key={item.id} {...item} />
+              ))}
+            </Flex>
+          </ScrollArea>
+        </Box>
       </EntriesState>
     </StickySection>
   )

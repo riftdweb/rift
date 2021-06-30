@@ -2,10 +2,12 @@ import { Flex } from '@riftdweb/design-system'
 
 type Props = {
   gap?: string
+  width?: string
+  css?: {}
   children: React.ReactNode
 }
 
-export function StickySection({ children, gap }: Props) {
+export function StickySection({ children, gap, width, css = {} }: Props) {
   return (
     <Flex
       css={{
@@ -13,10 +15,11 @@ export function StickySection({ children, gap }: Props) {
         top: 0,
         flexDirection: 'column',
         gap: gap || '$3',
-        width: '200px',
-        height: '100vh',
+        width: width || '200px',
+        height: '90vh',
         overflow: 'hidden',
-        pt: '$3',
+        pt: '$2',
+        ...css,
       }}
     >
       {children}

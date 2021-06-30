@@ -5,14 +5,13 @@ import { cacheAllEntries, fetchAllEntries, upsertAllEntries } from './shared'
 import { clearToken, handleToken } from './tokens'
 import { EntryFeed } from './types'
 
+const log = createLogger('feed/latest/update')
 export const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   signal: any,
   ref: ControlRef,
   userId: string,
   allUserEntries: EntryFeed
 ) {
-  const log = createLogger('feed/latest/update')
-
   try {
     log('Fetching all entries')
     ref.current.feeds.latest.setLoadingState('Compiling feed')
@@ -48,6 +47,11 @@ export async function workerFeedLatestUpdate(
   userFeed?: EntryFeed
 ): Promise<any> {
   const token = await handleToken(ref, 'feedLatestUpdate')
-  await cafFeedLatestUpdate(token.signal, ref, userId, userFeed)
-  clearToken(ref, 'feedLatestUpdate')
+  try {
+    await cafFeedLatestUpdate(token.signal, ref, userId, userFeed)
+  } catch (e) {
+    log('Error', e)
+  } finally {
+    clearToken(ref, 'feedLatestUpdate')
+  }
 }

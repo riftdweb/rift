@@ -1,12 +1,7 @@
+import { getDataKeyFeeds } from '../../shared/dataKeys'
 import { feedDAC } from '../skynet'
 import { ControlRef } from '../skynet/useControlRef'
 import { Feed, Entry, EntryFeed, ActivityFeed, Activity } from './types'
-
-export const dataVersion = 'v3'
-
-function key(str: string) {
-  return `${dataVersion}/${str}`
-}
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,
@@ -27,7 +22,7 @@ export async function cacheUserEntries(
 ) {
   const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: key(`entries/${userId}`),
+    dataKey: getDataKeyFeeds(`entries/${userId}`),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries,
@@ -54,7 +49,7 @@ export function upsertAllEntries(
 export async function fetchAllEntries(ref: ControlRef): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
-    dataKey: key('entries'),
+    dataKey: getDataKeyFeeds('entries'),
   })
   return feed
     ? {
@@ -72,7 +67,7 @@ export async function fetchUserEntries(
 ): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
-    dataKey: key(`entries/${userId}`),
+    dataKey: getDataKeyFeeds(`entries/${userId}`),
   })
   return feed || emptyFeed
 }
@@ -80,7 +75,7 @@ export async function fetchUserEntries(
 export async function fetchTopEntries(ref: ControlRef): Promise<EntryFeed> {
   const Api = ref.current.Api
   let { data: feed } = await Api.getJSON<EntryFeed>({
-    dataKey: key('entries/top'),
+    dataKey: getDataKeyFeeds('entries/top'),
   })
   return feed || emptyFeed
 }
@@ -88,7 +83,7 @@ export async function fetchTopEntries(ref: ControlRef): Promise<EntryFeed> {
 export async function fetchActivity(ref: ControlRef): Promise<ActivityFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<ActivityFeed>({
-    dataKey: key('activity'),
+    dataKey: getDataKeyFeeds('activity'),
   })
   return feed || emptyActivityFeed
 }
@@ -96,7 +91,7 @@ export async function fetchActivity(ref: ControlRef): Promise<ActivityFeed> {
 export async function cacheAllEntries(ref: ControlRef, entries: Entry[]) {
   const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: key('entries'),
+    dataKey: getDataKeyFeeds('entries'),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries,
@@ -111,7 +106,8 @@ export async function compileUserEntries(userId: string): Promise<Entry[]> {
       allUserEntries = allUserEntries.concat(
         batchOfUserEntries.map((post) => ({
           // TODO: Move to fetching manually, because these ids are not unique
-          id: `${userId}/posts/${post.id}`,
+          // Added timestamp to the end since posts from different skapps can have same ID
+          id: `${userId}/posts/${post.id}/${post.ts}`,
           userId: userId,
           post,
         }))
@@ -127,7 +123,7 @@ export async function compileUserEntries(userId: string): Promise<Entry[]> {
 export async function cacheTopEntries(ref: ControlRef, entries: Entry[]) {
   const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: key('entries/top'),
+    dataKey: getDataKeyFeeds('entries/top'),
     json: {
       updatedAt: new Date().getTime(),
       entries: entries.slice(0, 100),
@@ -138,7 +134,7 @@ export async function cacheTopEntries(ref: ControlRef, entries: Entry[]) {
 export async function cacheActivity(ref: ControlRef, activities: Activity[]) {
   const { Api } = ref.current
   return await Api.setJSON({
-    dataKey: key('activity'),
+    dataKey: getDataKeyFeeds('activity'),
     json: {
       updatedAt: new Date().getTime(),
       entries: activities,

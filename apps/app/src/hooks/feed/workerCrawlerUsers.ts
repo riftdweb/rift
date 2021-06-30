@@ -6,16 +6,15 @@ import { workerFeedUserUpdate } from './workerFeedUser'
 import { EntryFeed, WorkerParams } from './types'
 import { clearAllTokens, clearToken, handleToken } from './tokens'
 
-const SCHEDULE_INTERVAL_CRAWLER = 5 * 60
+const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5
 const REFRESH_INTERVAL_CRAWLER = 0
 
+const log = createLogger('crawler/users')
 const cafCrawlerUsers = CAF(function* crawlerUsers(
   signal: any,
   ref: ControlRef,
   params: WorkerParams = {}
 ): Generator<Promise<EntryFeed | string[]>, any, any> {
-  const log = createLogger('crawler/users')
-
   try {
     log('Running')
     const myUserId = ref.current.userId
@@ -66,6 +65,7 @@ const cafCrawlerUsers = CAF(function* crawlerUsers(
     if (signal.aborted) {
       log('Aborted')
     }
+    // clearToken(ref, 'crawlerUsers')
     // Only clear loading states if no downstream worker has set a new state
     // This will only occur if no followings have any data
     if (ref.current.feeds.latest.loadingState === 'Building your feed') {
@@ -82,36 +82,54 @@ export async function workerCrawlerUsers(
   params: WorkerParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, 'crawlerUsers')
-  await cafCrawlerUsers(token.signal, ref, params)
-  clearToken(ref, 'crawlerUsers')
+  try {
+    await cafCrawlerUsers(token.signal, ref, params)
+  } catch (e) {
+    log('Error', e)
+  } finally {
+    clearToken(ref, 'crawlerUsers')
+  }
+}
+
+const logScheduler = createLogger('crawler/users/schedule')
+
+async function maybeRunCrawlerUsers(ref: ControlRef): Promise<any> {
+  // TODO: ADD CHECK FOR USER POST IN PROGRESS
+
+  // If crawler is already running skip
+  if (ref.current.tokens.crawlerUsers) {
+    logScheduler(`Crawler already running, skipping`)
+  } else {
+    logScheduler(`Crawler starting`)
+    await clearAllTokens(ref)
+    workerCrawlerUsers(ref)
+  }
 }
 
 let interval = null
 
 export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
-  const log = createLogger('schedule/crawler/users')
+  log('Starting scheduler')
+  // Try running the crawler a few times in case followings list has not loaded
+  // If followings have not loaded the list is only the users own ID, so this
+  // first run will finish quickly
+  maybeRunCrawlerUsers(ref)
 
-  // TODO: DOUBLE CHEcK ON RELOAD THE CRAWER HAS ACCESS TO THE FOLLOWINGS
   setTimeout(async () => {
-    // If crawler is already running skip
-    if (ref.current.tokens.crawlerUsers) {
-      log(`Crawler already running, skipping at ${new Date()}`)
-    } else {
-      await clearAllTokens(ref)
-      workerCrawlerUsers(ref)
-    }
+    maybeRunCrawlerUsers(ref)
   }, 5000)
 
-  if (!interval) {
-    interval = setInterval(() => {
-      // TODO: ADD CHECK FOR USER POST IN PROGRESS
+  setTimeout(async () => {
+    maybeRunCrawlerUsers(ref)
+  }, 10_000)
 
-      // If crawler is already running skip
-      if (ref.current.tokens.crawlerUsers) {
-        log(`Crawler already running, skipping at ${new Date()}`)
-      } else {
-        workerCrawlerUsers(ref)
-      }
-    }, SCHEDULE_INTERVAL_CRAWLER * 1000)
-  }
+  setTimeout(async () => {
+    maybeRunCrawlerUsers(ref)
+  }, 20_000)
+
+  clearInterval(interval)
+
+  interval = setInterval(() => {
+    maybeRunCrawlerUsers(ref)
+  }, SCHEDULE_INTERVAL_CRAWLER)
 }

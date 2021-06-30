@@ -16,6 +16,7 @@ export function User({ userId, profile, size = '2', children }: Props) {
       css={{
         alignItems: 'center',
         gap: '$1',
+        width: '200px',
       }}
     >
       <Avatar size={size} profile={profile} />

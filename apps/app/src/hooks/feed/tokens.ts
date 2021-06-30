@@ -1,4 +1,5 @@
 import * as CAF from 'caf'
+import { createLogger } from '../../shared/logger'
 import { ControlRef, ControlRefDefaults } from '../skynet/useControlRef'
 
 export async function handleToken(
@@ -18,13 +19,19 @@ export async function clearToken(
   ref: ControlRef,
   tokenKey: keyof ControlRefDefaults['tokens']
 ): Promise<any> {
+  const log = createLogger('clearToken')
+
   const existingToken = ref.current.tokens[tokenKey]
 
+  try {
   if (existingToken) {
     // Abort any running worker
-    await ref.current.tokens[tokenKey].abort()
-    ref.current.tokens[tokenKey].discard()
+    await existingToken.abort()
+    existingToken.discard()
     ref.current.tokens[tokenKey] = null
+  }
+  } catch (e) {
+    log('Error', e)
   }
 }
 

@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { App, Domain, Skyfile } from '@riftdweb/types'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { useDomains } from '../../hooks/domains'
@@ -17,11 +17,16 @@ import { useSkynet } from '../../hooks/skynet'
 import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { copyToClipboard } from '../../shared/clipboard'
 import {
-  APPS_DATA_KEY,
-  SKYDB_DATA_KEY,
-  SKYFILES_DATA_KEY,
+  dataKeysExportList,
+  getDataKeyDomains,
+  getDataKeyApps,
+  getDataKeyFiles,
 } from '../../shared/dataKeys'
 import { exportData } from './_shared/exportData'
+
+const dataKeyDomains = getDataKeyDomains()
+const dataKeyApps = getDataKeyApps()
+const dataKeyFiles = getDataKeyFiles()
 
 export function LocalSeed() {
   const { Api, userId } = useSkynet()
@@ -31,33 +36,33 @@ export function LocalSeed() {
 
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
   const { data: skyDbData } = useSWR<{ data: Domain[] }>(
-    [localRootSeed, SKYDB_DATA_KEY],
+    [localRootSeed, dataKeyDomains],
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: SKYDB_DATA_KEY,
+        dataKey: dataKeyDomains,
       }) as unknown as Promise<{
         data: Domain[]
       }>
   )
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
   const { data: skyfilesData } = useSWR<{ data: Skyfile[] }>(
-    [localRootSeed, SKYFILES_DATA_KEY],
+    [localRootSeed, dataKeyFiles],
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: SKYFILES_DATA_KEY,
+        dataKey: dataKeyFiles,
       }) as unknown as Promise<{
         data: Skyfile[]
       }>
   )
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
   const { data: appsData } = useSWR<{ data: App[] }>(
-    [localRootSeed, APPS_DATA_KEY],
+    [localRootSeed, dataKeyApps],
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: APPS_DATA_KEY,
+        dataKey: dataKeyApps,
       }) as unknown as Promise<{
         data: App[]
       }>
@@ -78,7 +83,7 @@ export function LocalSeed() {
       parentSeed: localRootSeed,
       childSeed: '',
       addedAt: new Date().toISOString(),
-      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY].map((key) => ({
+      keys: dataKeysExportList.map((key) => ({
         id: key,
         key,
       })),

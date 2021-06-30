@@ -73,7 +73,7 @@ export function ControlsInactive({ setEditing }: Props) {
           <FeedContextMenu />
         </ControlGroup>
         <ControlGroup>
-          <Tooltip align="end" content="Toggle algorithmic visibility">
+          <Tooltip align="end" content="Toggle algorithmic transparency">
             <Button
               variant="ghost"
               css={{ mixBlendMode: 'inherit' }}

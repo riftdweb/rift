@@ -254,7 +254,6 @@ export function FeedProvider({ children }: Props) {
         } as unknown) as Entry
 
         // Abort all
-        // TODO: DOUBLE CHECK ABORT ACTUALLY WORKS
         localLog('Abort all signals')
         clearAllTokens(ref)
 
@@ -284,8 +283,10 @@ export function FeedProvider({ children }: Props) {
         localLog('Start user feed update')
         // Update all entries and user entries caches
         await workerFeedUserUpdate(ref, myUserId, { force: true })
-        localLog('Start users crawler')
-        await workerCrawlerUsers(ref)
+
+        // localLog('Start users crawler')
+        // TODO: running this cancels the async fetch latest that the above worker triggers
+        // await workerCrawlerUsers(ref)
       }
       func()
     },

@@ -13,6 +13,7 @@ import {
 import { Link as RLink } from 'react-router-dom'
 import { useFeed } from '../../../../hooks/feed'
 import { useSkynet } from '../../../../hooks/skynet'
+import { getDataKeyFeeds } from '../../../../shared/dataKeys'
 import SpinnerIcon from '../../../_icons/SpinnerIcon'
 
 type Props = {
@@ -62,7 +63,9 @@ export function ActivityContextMenu({
         <DropdownMenuLabel>Data</DropdownMenuLabel>
         <DropdownMenuItem
           as={RLink}
-          to={`/data/mysky/${myUserId}/${appDomain}/activity`}
+          to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
+            'activity'
+          )}`}
           css={{
             textDecoration: 'none',
             cursor: 'pointer',

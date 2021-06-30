@@ -12,9 +12,11 @@ import { useHistory } from 'react-router-dom'
 import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
-import { SKYDB_DATA_KEY } from '../shared/dataKeys'
+import { getDataKeyDomains } from '../shared/dataKeys'
 import { DATA_MYSKY_BASE_PATH, usePath } from './path'
 import { useSkynet } from './skynet'
+
+const dataKeyDomains = getDataKeyDomains()
 
 type State = {
   domains: Domain[]
@@ -47,12 +49,12 @@ export function DomainsProvider({ children }: Props) {
   const { Api, identityKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const key = [identityKey, dataDomain, SKYDB_DATA_KEY]
+  const key = [identityKey, dataDomain, dataKeyDomains]
   const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
     key,
     () =>
       (Api.getJSON({
-        dataKey: SKYDB_DATA_KEY,
+        dataKey: dataKeyDomains,
       }) as unknown) as Promise<{
         data: Domain[]
       }>
@@ -76,7 +78,7 @@ export function DomainsProvider({ children }: Props) {
         mutate({ data: domains }, false)
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: SKYDB_DATA_KEY,
+          dataKey: dataKeyDomains,
           json: domains,
         })
         // Sync latest, will likely be the same

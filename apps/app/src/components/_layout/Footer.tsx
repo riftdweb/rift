@@ -55,8 +55,8 @@ export default function Footer() {
               >
                 MySky
               </Link>
-              ). The Rift application and all user data will load identically
-              from from any public or private Skynet portal.
+              ) that only you control. The Rift application and all user data
+              loads identically from from any public or private Skynet portal.
             </Text>
           </Flex>
           <Box css={{ flex: 1 }} />

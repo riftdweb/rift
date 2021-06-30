@@ -7,7 +7,7 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDomains } from '../../hooks/domains'
 import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
@@ -15,11 +15,7 @@ import { useSkynet } from '../../hooks/skynet'
 import { useApps } from '../../hooks/useApps'
 import { useSkyfiles } from '../../hooks/useSkyfiles'
 import { copyToClipboard } from '../../shared/clipboard'
-import {
-  APPS_DATA_KEY,
-  SKYDB_DATA_KEY,
-  SKYFILES_DATA_KEY,
-} from '../../shared/dataKeys'
+import { dataKeysExportList } from '../../shared/dataKeys'
 import { User } from '../Social/_shared/User'
 import { exportData } from './_shared/exportData'
 
@@ -35,7 +31,7 @@ export function MySkyLoggedIn() {
       name: appDomain,
       dataDomain: appDomain,
       addedAt: new Date().toISOString(),
-      keys: [APPS_DATA_KEY, SKYFILES_DATA_KEY, SKYDB_DATA_KEY].map((key) => ({
+      keys: dataKeysExportList.map((key) => ({
         id: key,
         key,
       })),

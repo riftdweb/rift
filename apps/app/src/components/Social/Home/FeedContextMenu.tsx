@@ -12,8 +12,8 @@ import {
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
 import { useFeed } from '../../../hooks/feed'
-import { dataVersion } from '../../../hooks/feed/shared'
 import { useSkynet } from '../../../hooks/skynet'
+import { getDataKeyFeeds } from '../../../shared/dataKeys'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 
 type Props = {
@@ -61,7 +61,9 @@ export function FeedContextMenu({
         <DropdownMenuLabel>Data</DropdownMenuLabel>
         <DropdownMenuItem
           as={RLink}
-          to={`/data/mysky/${myUserId}/${appDomain}/${dataVersion}/entries/top`}
+          to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
+            'entries/top'
+          )}`}
           css={{
             textDecoration: 'none',
             cursor: 'pointer',

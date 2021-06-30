@@ -56,7 +56,7 @@ export default function Navbar({ toggleTheme }: Props) {
               css={{
                 mr: '$2',
                 fontWeight: 'bold',
-                top: '-4px',
+                top: '-5px',
                 position: 'relative',
               }}
             >
@@ -69,9 +69,30 @@ export default function Navbar({ toggleTheme }: Props) {
               </Link>
             </Heading>
           </Tooltip>
-          <Searchbar />
+          <Box
+            css={{
+              display: 'none',
+              '@bp1': {
+                display: 'block',
+              },
+            }}
+          >
+            <Searchbar />
+          </Box>
+          <Box
+            css={{
+              flex: 1,
+            }}
+          />
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
-            <ControlGroup>
+            <ControlGroup
+              css={{
+                display: 'none',
+                '@bp1': {
+                  display: 'flex',
+                },
+              }}
+            >
               <Link to="/files" as="button" content="Upload files">
                 <PlusIcon />
               </Link>
@@ -97,7 +118,14 @@ export default function Navbar({ toggleTheme }: Props) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </ControlGroup>
-            <ControlGroup>
+            <ControlGroup
+              css={{
+                display: 'none',
+                '@bp1': {
+                  display: 'flex',
+                },
+              }}
+            >
               <Tooltip content="Visit Portal">
                 <Button as="a" href={`https://${portal}`} target="_blank">
                   <SkynetIcon />

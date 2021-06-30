@@ -16,7 +16,7 @@ type BuildApi = {
 
 export type Api = ReturnType<typeof buildApi>
 
-const log = createLogger('api')
+const log = createLogger('api', true)
 
 export const buildApi = ({
   portal,

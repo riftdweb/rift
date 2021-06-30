@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from '@riftdweb/design-system'
+import { Box, Button, Flex, Text } from '@riftdweb/design-system'
 import { Fragment } from 'react'
 import { useSkynet } from '../../../../hooks/skynet'
 import { useUsers } from '../../../../hooks/users'
@@ -8,9 +8,10 @@ import { StickyHeading } from '../StickyHeading'
 import { Follow } from './Follow'
 import { SuggestedFollow } from './SuggestedFollow'
 import { EntriesState } from '../../../_shared/EntriesState'
+import { ScrollArea } from '../../../_shared/ScrollArea'
 
 export function Following() {
-  const { userId, myProfile, login } = useSkynet()
+  const { userId, login } = useSkynet()
   const { followings, suggestions, suggestionUserIds } = useUsers()
 
   if (!userId) {
@@ -43,44 +44,27 @@ export function Following() {
   }
 
   return (
-    <StickySection>
-      <Follow key={userId} profile={myProfile} userId={userId} />
-      <Flex
+    <StickySection css={{ pt: '$3' }}>
+      <Follow key={userId} userId={userId} />
+      <Box
         css={{
-          flexDirection: 'column',
-          width: '100%',
           flex: 1,
-          overflow: 'auto',
-          gap: '$2',
+          overflow: 'hidden',
           borderBottom: '1px solid $gray200',
         }}
       >
-        <StickyHeading
-          title="Following"
-          contextMenu={<FollowingContextMenu />}
-        />
-        <Flex
-          css={{
-            flexDirection: 'column',
-            width: '100%',
-            gap: '$2',
-            paddingBottom: '$2',
-            flexShrink: 1,
-          }}
-        >
-          <EntriesState
-            response={followings}
-            validatingMessage="Loading"
-            emptyMessage="Not following anyone yet."
+        <ScrollArea>
+          <Flex
+            css={{
+              flexDirection: 'column',
+              flex: 1,
+              gap: '$2',
+            }}
           >
-            {followings.data?.entries.map(({ userId, profile }) => (
-              <Follow key={userId} profile={profile} userId={userId} />
-            ))}
-          </EntriesState>
-        </Flex>
-        {!!suggestionUserIds.data?.length && (
-          <Fragment>
-            <StickyHeading title="Suggestions" />
+            <StickyHeading
+              title="Following"
+              contextMenu={<FollowingContextMenu />}
+            />
             <Flex
               css={{
                 flexDirection: 'column',
@@ -91,22 +75,42 @@ export function Following() {
               }}
             >
               <EntriesState
-                response={suggestions}
+                response={followings}
                 validatingMessage="Loading"
-                emptyMessage="No suggestions."
+                emptyMessage="Not following anyone yet."
               >
-                {suggestions.data?.entries.map(({ userId, profile }) => (
-                  <SuggestedFollow
-                    key={userId}
-                    userId={userId}
-                    profile={profile}
-                  />
+                {followings.data?.entries.map(({ userId, profile }) => (
+                  <Follow key={userId} userId={userId} />
                 ))}
               </EntriesState>
             </Flex>
-          </Fragment>
-        )}
-      </Flex>
+            {!!suggestionUserIds.data?.length && (
+              <Fragment>
+                <StickyHeading title="Suggestions" />
+                <Flex
+                  css={{
+                    flexDirection: 'column',
+                    width: '100%',
+                    gap: '$2',
+                    paddingBottom: '$2',
+                    flexShrink: 1,
+                  }}
+                >
+                  <EntriesState
+                    response={suggestions}
+                    validatingMessage="Loading"
+                    emptyMessage="No suggestions."
+                  >
+                    {suggestions.data?.entries.map(({ userId, profile }) => (
+                      <SuggestedFollow key={userId} userId={userId} />
+                    ))}
+                  </EntriesState>
+                </Flex>
+              </Fragment>
+            )}
+          </Flex>
+        </ScrollArea>
+      </Box>
     </StickySection>
   )
 }

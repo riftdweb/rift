@@ -136,9 +136,16 @@ export async function workerFeedUserUpdate(
   userId: string,
   params: WorkerParams = {}
 ): Promise<any> {
+  const shortUserId = userId.slice(0, 5)
+  const log = createLogger(`feed/user/${shortUserId}/update`)
   const token = await handleToken(ref, 'feedUserUpdate')
-  await cafFeedUserUpdate(token.signal, ref, userId, params)
-  clearToken(ref, 'feedUserUpdate')
+  try {
+    await cafFeedUserUpdate(token.signal, ref, userId, params)
+  } catch (e) {
+    log('Error', e)
+  } finally {
+    clearToken(ref, 'feedUserUpdate')
+  }
 }
 
 export async function workerAfterFeedUserUpdate(
@@ -146,7 +153,14 @@ export async function workerAfterFeedUserUpdate(
   userId: string,
   userFeed: EntryFeed
 ): Promise<any> {
+  const shortUserId = userId.slice(0, 5)
+  const log = createLogger(`feed/user/${shortUserId}/update/after`)
   const token = await handleToken(ref, 'afterFeedUserUpdate')
-  await cafAfterFeedUserUpdate(token.signal, ref, userId, userFeed)
-  clearToken(ref, 'afterFeedUserUpdate')
+  try {
+    await cafAfterFeedUserUpdate(token.signal, ref, userId, userFeed)
+  } catch (e) {
+    log('Error', e)
+  } finally {
+    clearToken(ref, 'afterFeedUserUpdate')
+  }
 }

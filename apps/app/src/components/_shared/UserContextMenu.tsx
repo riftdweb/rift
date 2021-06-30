@@ -14,11 +14,11 @@ import { copyToClipboard } from '../../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useSkynet } from '../../hooks/skynet'
-import { dataVersion } from '../../hooks/feed/shared'
 import { Fragment, useMemo } from 'react'
 import { useFeed } from '../../hooks/feed'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { useUsers } from '../../hooks/users'
+import { getDataKeyFeeds } from '../../shared/dataKeys'
 
 type Props = {
   userId: string
@@ -135,7 +135,9 @@ export function UserContextMenu({
         </DropdownMenuItem>
         <DropdownMenuItem
           as={RLink}
-          to={`/data/mysky/${myUserId}/${appDomain}/${dataVersion}/entries/${userId}`}
+          to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
+            `entries/${userId}`
+          )}`}
           css={{
             textDecoration: 'none',
             cursor: 'pointer',

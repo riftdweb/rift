@@ -9,7 +9,8 @@ export function StickyHeading({ title, contextMenu }: Props) {
   return (
     <Box
       css={{
-        top: 0,
+        // Sometimes can see 1px of color from below
+        top: '-1px',
         backgroundColor: '$loContrast',
         position: 'sticky',
         zIndex: 1,

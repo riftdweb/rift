@@ -11,6 +11,8 @@ export const suggestionUserIds = [
   '5f403987aea877f63a295f13c354862c7d60d16ffed29501a94364d8887a7db1',
   // Redsolver
   '611f0e3730c028d618362aaaa19b00aa50bdf31480c627baf006abcc88f1c97a',
+  // Napster
+  '000d74966f9a6466bad354733df962a5fa55ba55cf767be4d1e8068f14912f94',
   // Italy
   '300c42cdd890af7c21021eff4491c8dc04f5f0c856b35a63a5ba84b4c6081e68',
   // Toto

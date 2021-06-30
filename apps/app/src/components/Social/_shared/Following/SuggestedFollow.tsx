@@ -1,15 +1,15 @@
 import { Button } from '@riftdweb/design-system'
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
+import { useProfile } from '../../../../hooks/useProfile'
 import { useUsers } from '../../../../hooks/users'
 import { User } from '../User'
 
 type Props = {
   userId: string
-  profile: IUserProfile
 }
 
-export function SuggestedFollow({ profile, userId }: Props) {
+export function SuggestedFollow({ userId }: Props) {
   const { handleFollow } = useUsers()
+  const profile = useProfile(userId)
   return (
     <User userId={userId} profile={profile}>
       <Button onClick={() => handleFollow(userId, profile)}>Follow</Button>

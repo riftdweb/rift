@@ -1,6 +1,7 @@
 import { createLogger } from '../../shared/logger'
 import { scheduleCrawlerUsers } from './workerCrawlerUsers'
 import { ControlRef } from '../skynet/useControlRef'
+import { clearAllTokens } from './tokens'
 
 /**
  *  Background process
@@ -13,10 +14,13 @@ import { ControlRef } from '../skynet/useControlRef'
  *  pending post.
  */
 
-export async function workerRoot(ref: ControlRef): Promise<any> {
-  const log = createLogger('root')
+const log = createLogger('root')
 
+export async function workerRoot(ref: ControlRef): Promise<any> {
   log('Running')
+
+  log('Clearing any existing workers')
+  clearAllTokens(ref)
 
   log('Starting users crawler')
   await scheduleCrawlerUsers(ref)

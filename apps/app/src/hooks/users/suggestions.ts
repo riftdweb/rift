@@ -1,16 +1,16 @@
 export const suggestionUserIds = [
   // Hacker News
-  'fcce132d7a0a35debcaaafe0341f897dc676ee0c427ed909e49233fc46e4586d',
+  '21f1ba2a2b56d3f21ea72b6aeea180ee5b8c7bae755fff6158787acc0a0848ac',
   // Reddit CryptoCurrency
-  '888e9a6bc62b17b14065dca74e548ac5be05f5d635669661a098c919195ae6fe',
+  '4607b2f2e3bcc3bf2a655054123e60fcdfd43876fa6c27f3e7156f7754c72e86',
   // Reddit Popular
-  '5a08a4d7ceda25c0783063c799305188f2aba8849c6398f697acab48c7e8af46',
+  '4e34c8015071301fa56fc8f567911cb963a93a1d056dbe28de7e3c44dcbd9882',
   // Reddit Tech
-  'dbf094e66ed6354acd1a91b7c902c230f0199a00434417ffaa65783edcd8fc99',
+  'dc627f9c5118a3dff01db5e2ef4c00ebc47220bec9adac1d84cda30a6aa22cb4',
+  // Reddit Siacoin
+  'b6fba65c4e001ab6e3e6088a95d277c6c9e5e7f1bbf0aec1cc7cb40605d9484b',
   // parox
   'eeeedd5b20a83cd6c485742dbc0469c06af0b7ad318ad6a6b0a77e217a3f9692',
-  // Reddit Siacoin
-  '5f403987aea877f63a295f13c354862c7d60d16ffed29501a94364d8887a7db1',
   // Redsolver
   '611f0e3730c028d618362aaaa19b00aa50bdf31480c627baf006abcc88f1c97a',
   // Napster

@@ -1,6 +1,7 @@
 import { PostMap, SectionData } from './bot/types';
 import { setJSON } from './bot/skynet';
-import { genKeyPairFromSeed } from '@riftdweb/skynet-js-iso';
+import { phraseToSeed } from './bot/mysky';
+import { genKeyPairFromSeed } from './bot/mysky/utils';
 
 const profileAvatarMap = {
   cnn: 'sia:OAC_gz0VGFL_Pkg92YOswG7rgy8KXRK_Ph9_HyiPNiPjww',
@@ -9,7 +10,10 @@ const profileAvatarMap = {
 };
 
 export async function writePosts(section: SectionData) {
-  const { publicKey } = genKeyPairFromSeed(section.seed);
+  // const { publicKey } = genKeyPairFromSeed(section.seed);
+  const seed = phraseToSeed(section.seed);
+  // genKeyPairFromSeed is NOT from skynet-js
+  const { publicKey } = genKeyPairFromSeed(seed);
 
   updateProfile(section);
 

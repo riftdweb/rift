@@ -165,7 +165,7 @@ export function UsersProvider({ children }: Props) {
       }
       func()
     },
-    [followings, suggestions, followingUserIds]
+    [ref, followings, suggestions, followingUserIds]
   )
 
   const handleUnfollow = useCallback(

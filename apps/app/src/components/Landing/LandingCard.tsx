@@ -1,4 +1,4 @@
-import { Box, Card, Subheading, Text } from '@riftdweb/design-system'
+import { Box, Subheading, Text } from '@riftdweb/design-system'
 
 type Props = {
   title: string

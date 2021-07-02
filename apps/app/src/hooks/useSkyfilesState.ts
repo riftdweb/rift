@@ -1,6 +1,6 @@
 import { Skyfile } from '@riftdweb/types'
 import throttle from 'lodash/throttle'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
 import { useSkynet } from './skynet'
 

@@ -187,7 +187,8 @@ export function SkynetProvider({ children }: Props) {
       window.location.href = '/'
     }
     func()
-  }, [mySky, setLoggedIn, setUserId, generateApi, setIsReseting])
+    // }, [mySky, setLoggedIn, setUserId, generateApi, setIsReseting])
+  }, [mySky, setIsReseting])
 
   // Key that can be used for SWR revalidation when identity changes
   const identityKey = useMemo(() => {

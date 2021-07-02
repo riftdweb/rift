@@ -48,10 +48,10 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, getKey, identityKey, dataDomain } = useSkynet()
+  const { Api, getKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const { data, mutate, revalidate, isValidating } = useSWR<{ data: Domain[] }>(
+  const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
     getKey([dataDomain, dataKeyDomains]),
     () =>
       (Api.getJSON({

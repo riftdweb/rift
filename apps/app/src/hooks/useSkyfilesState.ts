@@ -1,14 +1,16 @@
 import { Skyfile } from '@riftdweb/types'
 import throttle from 'lodash/throttle'
 import { useCallback, useEffect, useState } from 'react'
-import { SKYFILES_DATA_KEY } from '../shared/dataKeys'
+import { getDataKeyFiles } from '../shared/dataKeys'
 import { useSkynet } from './skynet'
+
+const dataKeyFiles = getDataKeyFiles()
 
 const throttledSyncState = throttle(async (Api, state) => {
   try {
     // console.log('syncing start', SKYFILES_DATA_KEY, state)
     await Api.setJSON({
-      dataKey: SKYFILES_DATA_KEY,
+      dataKey: dataKeyFiles,
       json: state,
     })
     // console.log('syncing success', SKYFILES_DATA_KEY, state)
@@ -26,7 +28,7 @@ export const useSkyfilesState = () => {
     const func = async () => {
       try {
         const { data }: { data?: Skyfile[] } = ((await Api.getJSON({
-          dataKey: SKYFILES_DATA_KEY,
+          dataKey: dataKeyFiles,
         })) as unknown) as {
           data: Skyfile[]
         }
@@ -34,15 +36,21 @@ export const useSkyfilesState = () => {
         setLocalState(data || ([] as Skyfile[]))
       } catch (e) {
         console.log(e)
+        setTimeout(() => {
+          // Error, probably too many requests, try again
+          fetchData()
+        }, 5000)
       }
     }
     func()
   }, [Api, setLocalState])
 
-  // Only called successfully once on init, or when identity changes
+  // Only called successfully once on init, or when identity key changes
   useEffect(() => {
-    setLocalState([] as Skyfile[])
-    fetchData()
+    if (identityKey) {
+      setLocalState([] as Skyfile[])
+      fetchData()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identityKey])
 

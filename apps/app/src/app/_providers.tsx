@@ -1,9 +1,11 @@
 import { DomainsProvider } from '../hooks/domains'
 import { FeedProvider } from '../hooks/feed'
 import { useSkynet } from '../hooks/skynet'
+import { UsersProvider } from '../hooks/users'
 import { AppsProvider } from '../hooks/useApps'
 import { DnsProvider } from '../hooks/useDns'
 import { SkyfilesProvider } from '../hooks/useSkyfiles'
+import { ThemeProvider } from '../hooks/theme'
 
 export function Providers({ children }) {
   const { isInitializing } = useSkynet()
@@ -15,14 +17,18 @@ export function Providers({ children }) {
   }
 
   return (
-    <AppsProvider>
-      <DomainsProvider>
-        <DnsProvider>
-          <FeedProvider>
-            <SkyfilesProvider>{children}</SkyfilesProvider>
-          </FeedProvider>
-        </DnsProvider>
-      </DomainsProvider>
-    </AppsProvider>
+    <ThemeProvider>
+      <AppsProvider>
+        <DomainsProvider>
+          <DnsProvider>
+            <UsersProvider>
+              <FeedProvider>
+                <SkyfilesProvider>{children}</SkyfilesProvider>
+              </FeedProvider>
+            </UsersProvider>
+          </DnsProvider>
+        </DomainsProvider>
+      </AppsProvider>
+    </ThemeProvider>
   )
 }

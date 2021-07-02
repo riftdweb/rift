@@ -32,7 +32,9 @@ export function SkyfilesProvider({ children }: Props) {
 
   // When identity changes reset data cleaning flag
   useEffect(() => {
-    setHasCleanedData(false)
+    if (identityKey) {
+      setHasCleanedData(false)
+    }
   }, [identityKey])
 
   // On identity init, clean up stalled out uploads.

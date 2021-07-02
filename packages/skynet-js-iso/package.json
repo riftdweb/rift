@@ -1,0 +1,104 @@
+{
+  "name": "@riftdweb/skynet-js-iso",
+  "version": "0.0.1",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
+  "author": "Alex Freska",
+  "description": "Sia Skynet Javascript client fork with rudimentary server-side support",
+  "main": "dist/riftdweb-skynet-js-iso.cjs.js",
+  "files": [
+    "dist/*"
+  ],
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not OperaMini all"
+  ],
+  "scripts": {
+    "build": "rimraf dist && babel src --out-dir dist --extensions .ts --ignore src/**/*.test.ts && tsc --project tsconfig.build.json",
+    "lint": "yarn lint:tsc && yarn lint:eslint",
+    "lint:eslint": "eslint --ext .ts utils src --max-warnings 30",
+    "lint:tsc": "tsc",
+    "prepublishOnly": "yarn build",
+    "test": "jest --coverage --coverageDirectory ../coverage"
+  },
+  "jest": {
+    "testTimeout": 60000,
+    "clearMocks": true,
+    "collectCoverageFrom": [
+      "**/*.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "rootDir": "src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --ext .ts --fix",
+      "tsc --esModuleInterop --noemit",
+      "prettier --write"
+    ],
+    "*.{json,yml,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "axios": "^0.21.0",
+    "base32-decode": "^1.0.0",
+    "base32-encode": "^1.1.1",
+    "base64-js": "^1.3.1",
+    "blakejs": "^1.1.0",
+    "buffer": "^6.0.1",
+    "form-data": "^2.3.3",
+    "mime": "^2.5.2",
+    "path-browserify": "^1.0.1",
+    "post-me": "^0.4.5",
+    "randombytes": "^2.1.0",
+    "sjcl": "^1.0.8",
+    "skynet-mysky-utils": "^0.2.3",
+    "tus-js-client": "^2.3.0",
+    "tweetnacl": "^1.0.3",
+    "url-join": "^4.0.1",
+    "url-parse": "1.4.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/base64-js": "^1.3.0",
+    "@types/jest": "^26.0.22",
+    "@types/mime": "^2.0.3",
+    "@types/node": "^14.11.2",
+    "@types/randombytes": "^2.0.0",
+    "@types/sjcl": "^1.0.29",
+    "@types/url-join": "^4.0.0",
+    "@types/url-parse": "^1.4.3",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "axios-mock-adapter": "^1.18.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "eslint": "^7.11.0",
+    "eslint-plugin-jsdoc": "^32.0.0",
+    "husky": "^6.0.0",
+    "jest": "26.6.0",
+    "lint-staged": "^10.3.0",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.2.4"
+  }
+}

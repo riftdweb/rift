@@ -1,10 +1,10 @@
 import retext from 'retext'
 import keywords from 'retext-keywords'
 import pos from 'retext-pos'
-import { Post, ProcessedPost } from './types'
+import { Entry } from './types'
 
-function extractKeywords(post: Post): Promise<Partial<ProcessedPost>> {
-  const text = post.content.title
+function extractKeywords(entry: Entry): Promise<Entry> {
+  const text = entry.post.content.title || entry.post.content.text
   return new Promise((resolve, reject) => {
     retext()
       .use(pos) // Make sure to use `retext-pos` before `retext-keywords`.
@@ -12,9 +12,9 @@ function extractKeywords(post: Post): Promise<Partial<ProcessedPost>> {
       .process(text, (err, file) => {
         if (!err) {
           resolve({
-            post,
+            ...entry,
             nlp: file,
-          } as Partial<ProcessedPost>)
+          } as Entry)
         } else {
           reject(err)
         }
@@ -22,8 +22,6 @@ function extractKeywords(post: Post): Promise<Partial<ProcessedPost>> {
   })
 }
 
-export async function processPosts(
-  posts: Post[]
-): Promise<Partial<ProcessedPost>[]> {
+export async function processEntries(posts: Entry[]): Promise<Entry[]> {
   return await Promise.all(posts.map((post) => extractKeywords(post)))
 }

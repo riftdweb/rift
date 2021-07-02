@@ -1,0 +1,67 @@
+{
+  "name": "@riftdweb/bots",
+  "version": "0.1.0",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "author": "Alex Freska",
+  "module": "dist/bots.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/bots.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/bots.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^4.10.2",
+    "@types/uuid": "^8.3.0",
+    "husky": "^6.0.0",
+    "size-limit": "^4.10.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@riftdweb/skynet-js-iso": "^0.0.1",
+    "@types/lodash": "^4.14.168",
+    "dotenv": "^9.0.2",
+    "isomorphic-fetch": "^3.0.0",
+    "lodash": "^4.17.21",
+    "skynet-mysky-utils": "^0.2.3",
+    "tweetnacl": "^1.0.3",
+    "uuid": "^8.3.2",
+    "xml2json": "^0.12.0"
+  }
+}

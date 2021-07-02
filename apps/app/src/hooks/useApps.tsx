@@ -12,9 +12,10 @@ import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
+import { getDataKeyApps } from '../shared/dataKeys'
 import { useSkynet } from './skynet'
 
-const RESOURCE_DATA_KEY = 'apps'
+const dataKeyApps = getDataKeyApps()
 
 type State = {
   apps: App[]
@@ -38,18 +39,20 @@ const debouncedMutate = debounce((mutate) => {
 export function AppsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain } = useSkynet()
+  const { Api, getKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const key = [identityKey, dataDomain, RESOURCE_DATA_KEY]
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
-    key,
+    getKey([dataDomain, dataKeyApps]),
     () =>
       (Api.getJSON({
-        dataKey: RESOURCE_DATA_KEY,
+        dataKey: dataKeyApps,
       }) as unknown) as Promise<{
         data: App[]
-      }>
+      }>,
+    {
+      revalidateOnFocus: false,
+    }
   )
 
   // Track whether the user has no apps yet so that we can adjust
@@ -70,7 +73,7 @@ export function AppsProvider({ children }: Props) {
         mutate({ data: apps }, false)
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: RESOURCE_DATA_KEY,
+          dataKey: dataKeyApps,
           json: apps,
         })
         // Sync latest, will likely be the same

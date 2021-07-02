@@ -7,13 +7,15 @@
     "packages:build": "preconstruct build",
     "start": "manypkg run @riftdweb/app start",
     "build": "yarn packages:build && manypkg run @riftdweb/app build",
+    "bots:build": "yarn packages:build && manypkg run @riftdweb/bots build",
     "format": "prettier --write './**/src/**/*.{ts,tsx}'",
     "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
     "fresh": "yarn clean && yarn"
   },
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "services/*"
   ],
   "dependencies": {
     "@babel/preset-react": "^7.13.13",

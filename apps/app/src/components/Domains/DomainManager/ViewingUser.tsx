@@ -8,33 +8,15 @@ import {
   Tooltip,
   Box,
 } from '@riftdweb/design-system'
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { useSkynet } from '../../../hooks/skynet'
+import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { useDomainParams } from '../../../hooks/useDomainParams'
-import { useSelectedPortal } from '../../../hooks/useSelectedPortal'
-
-type UserAvatar = {
-  url: string
-}
-
-type Profile = {
-  username: string
-  aboutMe: string
-  avatar: UserAvatar[]
-  connections: Object[]
-  contact: string
-  emailID: string
-  firstName: string
-  lastName: string
-  location: string
-  topicsDiscoverable: string[]
-  topicsHidden: string[]
-}
 
 export function ViewingUser() {
-  const [portal] = useSelectedPortal()
   const { Api, userId } = useSkynet()
   const {
     viewingUserId,
@@ -45,7 +27,7 @@ export function ViewingUser() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
 
-  const { data } = useSWR<{ data: { profile: Profile } }>(
+  const { data } = useSWR<{ data: { profile: IUserProfile } }>(
     viewingUserId || 'local',
     () =>
       (Api.getJSON({
@@ -53,7 +35,7 @@ export function ViewingUser() {
         dataDomain: 'profile-dac.hns',
         dataKey: 'profileIndex.json',
       }) as unknown) as Promise<{
-        data: { profile: Profile }
+        data: { profile: IUserProfile }
       }>
   )
 
@@ -81,10 +63,7 @@ export function ViewingUser() {
     username = 'local (me)'
   }
 
-  const avatarUrl =
-    profile && profile.avatar && profile.avatar.length
-      ? profile.avatar[0].url
-      : null
+  const avatarUrl = useAvatarUrl(profile)
 
   const onSubmit = useCallback(
     (vals) => {
@@ -116,11 +95,7 @@ export function ViewingUser() {
           }}
         >
           <Avatar
-            src={
-              avatarUrl
-                ? `https://${portal}/${avatarUrl.replace('sia:', '')}`
-                : undefined
-            }
+            src={avatarUrl}
             onClick={toggleEditing}
             interactive
             css={{

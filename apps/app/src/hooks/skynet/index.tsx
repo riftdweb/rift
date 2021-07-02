@@ -14,14 +14,22 @@ import { useSelectedPortal } from '../useSelectedPortal'
 import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
+import { SocialDAC } from 'social-dac-library'
+import { useProfile } from '../useProfile'
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
+import { ControlRef, useControlRef } from './useControlRef'
 
 export const feedDAC = new FeedDAC()
 export const contentRecord = new ContentRecordDAC()
 export const userProfileDAC = new UserProfileDAC()
+export const socialDAC = new SocialDAC()
 
 type State = {
   isInitializing: boolean
+  isReseting: boolean
+  myProfile: IUserProfile
   Api: ReturnType<typeof buildApi>
+  getKey: (resourceKeys: any[]) => any[] | null
   mySky: MySky
   loggedIn: boolean
   userId: string
@@ -29,6 +37,7 @@ type State = {
   login: () => void
   logout: () => void
   identityKey: string
+  controlRef: ControlRef
 }
 
 const SkynetContext = createContext({} as State)
@@ -40,10 +49,21 @@ type Props = {
 
 export function SkynetProvider({ children }: Props) {
   const [portal] = useSelectedPortal()
+  const controlRef = useControlRef()
   const { localRootSeed } = useLocalRootSeed()
 
   const [isInitializing, setIsInitializing] = useState<boolean>(true)
-  const [userId, setUserId] = useState<string>()
+  const [isReseting, setIsReseting] = useState<boolean>(false)
+  const [userId, _setUserId] = useState<string>()
+  const setUserId = useCallback(
+    (userId: string) => {
+      controlRef.current.userId = userId
+      _setUserId(userId)
+    },
+    [controlRef, _setUserId]
+  )
+  const [Api, setApi] = useState<ReturnType<typeof buildApi>>()
+  const myProfile = useProfile(userId)
   const [mySky, setMySky] = useState<MySky>()
   const [loggedIn, setLoggedIn] = useState(null)
 
@@ -55,14 +75,30 @@ export function SkynetProvider({ children }: Props) {
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])
 
+  const generateApi = useCallback(
+    ({ userId, mySky }: { userId: string; mySky: any }) => {
+      const api = buildApi({
+        portal,
+        localRootSeed,
+        dataDomain,
+        // passed params to ensure latest value
+        mySky,
+        userId,
+      })
+      controlRef.current.Api = api
+      setApi(api)
+    },
+    [controlRef, portal, localRootSeed, dataDomain, setApi]
+  )
+
   // On app init set up MySky
   useEffect(() => {
-    async function initMySky() {
+    const func = async () => {
       try {
         console.log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
-        console.log('Data domain: ', dataDomain)
+        console.log('App domain: ', dataDomain)
         const _mySky = await client.loadMySky(dataDomain, {
           // dev: true,
           // debug: true,
@@ -71,16 +107,21 @@ export function SkynetProvider({ children }: Props) {
         await _mySky.loadDacs(
           contentRecord as any,
           feedDAC as any,
-          userProfileDAC as any
+          userProfileDAC as any,
+          socialDAC as any
         )
         setMySky(_mySky)
 
         // check if user is already logged in with permissions
         const loggedIn = await _mySky.checkLogin()
         setLoggedIn(loggedIn)
+        let userId = null
         if (loggedIn) {
-          setUserId(await _mySky.userID())
+          userId = await _mySky.userID()
+          setUserId(userId)
         }
+
+        generateApi({ userId, mySky: _mySky })
 
         setIsInitializing(false)
         console.log('Skynet Provider: done initializing')
@@ -89,8 +130,7 @@ export function SkynetProvider({ children }: Props) {
       }
     }
 
-    // call async setup function
-    initMySky()
+    func()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -100,6 +140,7 @@ export function SkynetProvider({ children }: Props) {
       if (isInitializing) {
         return
       }
+      setIsReseting(true)
 
       const status = await mySky.requestLoginAccess()
 
@@ -109,47 +150,78 @@ export function SkynetProvider({ children }: Props) {
       if (status) {
         const userId = await mySky.userID()
         setUserId(userId)
+        generateApi({
+          userId,
+          mySky,
+        })
         triggerToast(`Successfully logged in as ${userId.slice(0, 6)}...`)
       }
+
+      setIsReseting(false)
     }
     func()
-  }, [isInitializing, mySky, setLoggedIn, setUserId])
+  }, [
+    isInitializing,
+    mySky,
+    setLoggedIn,
+    setUserId,
+    generateApi,
+    setIsReseting,
+  ])
 
   const logout = useCallback(() => {
     const func = async () => {
+      setIsReseting(true)
       await mySky.logout()
 
-      setLoggedIn(false)
-      setUserId('')
+      // Try to avoid glitchiness with resetting state across app by just reloading app on logout
+
+      // setLoggedIn(false)
+      // setUserId('')
+      // generateApi({
+      //   userId: null,
+      //   mySky,
+      // })
+      // setIsReseting(false)
+
+      window.location.href = '/'
     }
     func()
-  }, [mySky, setLoggedIn, setUserId])
-
-  const Api = useMemo(
-    () =>
-      buildApi({
-        portal,
-        mySky,
-        localRootSeed,
-        dataDomain,
-        userId,
-      }),
-    [mySky, portal, userId, dataDomain, localRootSeed]
-  )
+    // }, [mySky, setLoggedIn, setUserId, generateApi, setIsReseting])
+  }, [mySky, setIsReseting])
 
   // Key that can be used for SWR revalidation when identity changes
-  const identityKey = userId ? userId : localRootSeed
+  const identityKey = useMemo(() => {
+    if (isInitializing || !Api || isReseting) {
+      return null
+    }
+    return userId ? userId : localRootSeed
+  }, [Api, isInitializing, isReseting, userId, localRootSeed])
+
+  // Method for getting a namespaced SWR key
+  const getKey = useMemo(() => {
+    return (keys: any[]): any[] | null => {
+      if (isInitializing || !Api || isReseting) {
+        return null
+      }
+      return [identityKey, ...keys]
+    }
+  }, [identityKey, Api, isInitializing, isReseting])
 
   const value = {
     isInitializing,
+    isReseting,
     loggedIn,
     login,
     logout,
     mySky,
     userId,
     Api,
+    getKey,
     identityKey,
     dataDomain,
+    myProfile,
+    controlRef,
   }
 
   return (

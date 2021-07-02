@@ -20,9 +20,17 @@ export function MySky() {
   return (
     <Box css={{ margin: '$3 0' }}>
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-        <Heading>MySky</Heading>
+        <Heading
+          css={{
+            borderBottom: '1px solid $gray300',
+            paddingBottom: '$2',
+            marginBottom: '$2',
+          }}
+        >
+          MySky
+        </Heading>
         <Flex css={{ gap: '$1', alignItems: 'center', marginTop: '$2' }}>
-          <Paragraph css={{ color: '$gray900' }}>
+          <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
             Currently not logged in to a MySky identity.
           </Paragraph>
           <Box css={{ flex: 1 }} />

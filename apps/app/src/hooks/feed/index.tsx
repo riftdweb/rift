@@ -1,23 +1,88 @@
-import { createContext, useCallback, useContext, useState } from 'react'
-import useSWR from 'swr'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { SWRResponse } from 'swr'
 import useLocalStorageState from 'use-local-storage-state'
-import { useSkynet } from '../skynet'
-import { getPosts } from './posts'
-import { rankPosts } from './ranking'
-import { Post, ProcessedPost } from './types'
+import { v4 as uuid } from 'uuid'
+import { feedDAC, useSkynet } from '../skynet'
+import { workerRoot } from './workerRoot'
+import { workerFeedUserUpdate } from './workerFeedUser'
+import { ActivityFeed, Entry, EntryFeed } from './types'
+import { workerFeedTopUpdate } from './workerFeedTop'
+import { workerFeedActivityUpdate } from './workerFeedActivity'
+import { createLogger } from '../../shared/logger'
+import { useParamUserId } from './useParamUserId'
+import { useFeedActivity } from './useFeedActivity'
+import { useFeedLatest } from './useFeedLatest'
+import { useFeedTop } from './useFeedTop'
+import { useFeedUser } from './useFeedUser'
+import { workerCrawlerUsers } from './workerCrawlerUsers'
+import { clearAllTokens } from './tokens'
+
+const log = createLogger('feed')
 
 const RESOURCE_DATA_KEY = 'feed'
 
+type Mode = 'latest' | 'top'
+
 type State = {
-  rankedPosts: ProcessedPost[]
-  keywords: { [keyword: string]: number }
-  domains: { [domain: string]: number }
+  current: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  top: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  latest: {
+    response: SWRResponse<EntryFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  activity: {
+    response: SWRResponse<ActivityFeed, any>
+    loadingState?: string
+    setLoadingState: (state?: string) => void
+  }
+  user: {
+    response: SWRResponse<EntryFeed, any>
+    loadingStateCurrentUser?: string
+    getLoadingState: (userId: string) => string
+    setLoadingState: (userId: string, state?: string) => void
+  }
+
+  // refresh methods
+  refreshTopFeed: () => void
+  refreshLatestFeed: () => void
+  refreshCurrentFeed: () => void
+  refreshActivity: () => void
+  refreshUser: (userId) => void
+
+  createPost: ({ text: string }) => void
   incrementKeywords: (keywords: string[]) => void
   setKeywordValue: (keyword: string, value: number) => void
   incrementDomain: (domain: string) => void
   decrementDomain: (domain: string) => void
+
+  // data
+  userId?: string
+
+  // algorithm data
+  keywords: { [keyword: string]: number }
+  domains: { [domain: string]: number }
+
+  // config methods
   isVisibilityEnabled: boolean
   setIsVisibilityEnabled: (val: boolean) => void
+  mode: 'latest' | 'top'
+  setMode: (mode: Mode) => void
 }
 
 const FeedContext = createContext({} as State)
@@ -28,7 +93,14 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { Api } = useSkynet()
+  const {
+    userId: myUserId,
+    isReseting,
+    isInitializing,
+    controlRef: ref,
+  } = useSkynet()
+  const viewingUserId = useParamUserId()
+
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
   }>(`${RESOURCE_DATA_KEY}/keywords`, {})
@@ -36,15 +108,72 @@ export function FeedProvider({ children }: Props) {
     [domain: string]: number
   }>(`${RESOURCE_DATA_KEY}/domains`, {})
 
-  const { data: posts } = useSWR<Post[]>('posts', () => getPosts(Api))
-  const { data: rankedPosts } = useSWR<ProcessedPost[]>(
-    () => (posts ? [posts, keywords, domains] : null),
-    () =>
-      rankPosts(posts, {
-        keywords,
-        domains,
-      })
+  const [nonIdealState, setNonIdealState] = useState<string>()
+
+  const activity = useFeedActivity({ ref })
+  const latest = useFeedLatest({ ref })
+  const top = useFeedTop({ ref })
+  const user = useFeedUser({ ref })
+
+  // Update controlRef
+  useEffect(() => {
+    ref.current.nonIdealState = nonIdealState
+    ref.current.setNonIdealState = setNonIdealState
+    ref.current.keywords = keywords
+    ref.current.domains = domains
+    ref.current.viewingUserId = viewingUserId
+  }, [ref, viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
+
+  useEffect(() => {
+    if (isInitializing || isReseting) {
+      return
+    }
+    workerRoot(ref)
+  }, [ref, isInitializing, isReseting])
+
+  const refreshTopFeed = useCallback(() => {
+    const func = async () => {
+      await workerFeedTopUpdate(ref, { force: true })
+    }
+    return func()
+  }, [ref])
+
+  const refreshLatestFeed = useCallback(() => {
+    const func = async () => {
+      // Could start workerFeedLatestUpdate, but this probably makes more sense
+      await workerCrawlerUsers(ref, { force: true })
+    }
+    return func()
+  }, [ref])
+
+  const refreshActivity = useCallback(() => {
+    const func = async () => {
+      await workerFeedActivityUpdate(ref, { force: true })
+    }
+    return func()
+  }, [ref])
+
+  const refreshUser = useCallback(
+    (userId: string) => {
+      const func = async () => {
+        try {
+          await workerFeedUserUpdate(ref, userId, { force: true })
+        } catch (e) {}
+      }
+      return func()
+    },
+    [ref]
   )
+
+  // If cached user feed returns null flag true, the user feed has never been compiled.
+  // Check this whenever the response data changes.
+  useEffect(() => {
+    if (!user.loadingStateCurrentUser && user.response.data?.null) {
+      log(`Building a feed for ${viewingUserId}`)
+      refreshUser(viewingUserId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.response.data])
 
   const incrementKeywords = useCallback(
     (keywords) => {
@@ -104,9 +233,88 @@ export function FeedProvider({ children }: Props) {
   )
 
   const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
+  const [mode, setMode] = useState<Mode>('top')
+
+  const createPost = useCallback(
+    ({ text }: { text: string }) => {
+      const localLog = log.createLogger('createPost')
+      const func = async () => {
+        const cid = uuid()
+        const pendingPost = ({
+          userId: myUserId,
+          post: {
+            // skystandards is number
+            id: cid,
+            content: {
+              text,
+            },
+            ts: new Date().getTime(),
+          },
+          isPending: true,
+        } as unknown) as Entry
+
+        // Abort all
+        localLog('Abort all signals')
+        clearAllTokens(ref)
+
+        localLog('Optimistic updates')
+        // Optimistically update local latest feed
+        latest.response.mutate(
+          (data) => ({
+            updatedAt: data.updatedAt,
+            entries: [pendingPost, ...data.entries],
+          }),
+          false
+        )
+
+        // Optimistically update local user feed
+        user.response.mutate(
+          (data) => ({
+            updatedAt: data.updatedAt,
+            entries: [pendingPost, ...data.entries],
+          }),
+          false
+        )
+
+        localLog('Feed DAC createPost')
+        // Create post
+        await feedDAC.createPost({ text })
+
+        localLog('Start user feed update')
+        await workerFeedUserUpdate(ref, myUserId, { force: true })
+
+        localLog('Restart users crawler')
+        await workerCrawlerUsers(ref)
+      }
+      func()
+    },
+    [ref, latest, user, myUserId]
+  )
+
+  const current = useMemo(() => (mode === 'latest' ? latest : top), [
+    mode,
+    latest,
+    top,
+  ])
+
+  const refreshCurrentFeed = useMemo(
+    () => (mode === 'latest' ? refreshLatestFeed : refreshTopFeed),
+    [mode, refreshLatestFeed, refreshTopFeed]
+  )
 
   const value = {
-    rankedPosts,
+    current,
+    latest,
+    top,
+    activity,
+    user,
+    refreshCurrentFeed,
+    refreshTopFeed,
+    refreshLatestFeed,
+    refreshActivity,
+    refreshUser,
+    userId: viewingUserId,
+    createPost,
     keywords,
     domains,
     incrementKeywords,
@@ -115,7 +323,12 @@ export function FeedProvider({ children }: Props) {
     decrementDomain,
     isVisibilityEnabled,
     setIsVisibilityEnabled,
+    mode,
+    setMode,
   }
+
+  // @ts-ignore
+  window.feed = value
 
   return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>
 }

@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
   Flex,
   Heading,
+  Image,
   Select,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -17,6 +18,7 @@ import { useCallback } from 'react'
 import { Link as RLink } from 'react-router-dom'
 import { extractDomainForPortal } from 'skynet-js'
 import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
+import { useTheme } from '../../hooks/theme'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
@@ -24,11 +26,8 @@ import { Link } from '../_shared/Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
 import { Searchbar } from './Searchbar'
 
-type Props = {
-  toggleTheme: () => void
-}
-
-export default function Navbar({ toggleTheme }: Props) {
+export default function Navbar() {
+  const { toggleTheme } = useTheme()
   const [portal, setPortal] = useSelectedPortal()
 
   const handleChangePortal = useCallback(
@@ -50,25 +49,48 @@ export default function Navbar({ toggleTheme }: Props) {
     <Box css={{ borderBottom: '1px solid $gray200' }}>
       <Container size="3">
         <Flex css={{ py: '$3', alignItems: 'center' }}>
-          <Tooltip content="Tools for the decentralized web">
+          <Tooltip align="start" content="Your decentralized workspace">
             <Heading
               css={{
-                mr: '$3',
+                mr: '$2',
                 fontWeight: 'bold',
-                top: '-1px',
+                top: '-5px',
                 position: 'relative',
               }}
             >
-              <Flex>
-                <Link to="/" css={{ textDecoration: 'none' }}>
-                  rift
-                </Link>
-              </Flex>
+              <Link to="/" css={{ textDecoration: 'none' }}>
+                <Image
+                  src="/wordmark.png"
+                  css={{ height: '25px' }}
+                  alt="Rift"
+                />
+              </Link>
             </Heading>
           </Tooltip>
-          <Searchbar />
+          <Box
+            css={{
+              display: 'none',
+              '@bp1': {
+                display: 'block',
+              },
+            }}
+          >
+            <Searchbar />
+          </Box>
+          <Box
+            css={{
+              flex: 1,
+            }}
+          />
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
-            <ControlGroup>
+            <ControlGroup
+              css={{
+                display: 'none',
+                '@bp1': {
+                  display: 'flex',
+                },
+              }}
+            >
               <Link to="/files" as="button" content="Upload files">
                 <PlusIcon />
               </Link>
@@ -94,7 +116,14 @@ export default function Navbar({ toggleTheme }: Props) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </ControlGroup>
-            <ControlGroup>
+            <ControlGroup
+              css={{
+                display: 'none',
+                '@bp1': {
+                  display: 'flex',
+                },
+              }}
+            >
               <Tooltip content="Visit Portal">
                 <Button as="a" href={`https://${portal}`} target="_blank">
                   <SkynetIcon />

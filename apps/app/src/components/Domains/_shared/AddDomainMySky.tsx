@@ -143,7 +143,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                   value={formik.values.dataDomain}
                   onChange={formik.handleChange}
                   size="3"
-                  placeholder="eg: skyfeed.hns"
+                  placeholder="eg: feed-dac.hns"
                   css={{
                     boxShadow:
                       'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',

@@ -15,6 +15,7 @@ import {
 import { useState } from 'react'
 import { useSkynet } from '../../hooks/skynet'
 import { copyToClipboard } from '../../shared/clipboard'
+import { Avatar } from '../_shared/Avatar'
 
 const pulse = keyframes({
   '0%': {
@@ -38,7 +39,7 @@ export function IdentityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId, logout, login } = useSkynet()
+  const { userId, myProfile, logout, login } = useSkynet()
   const [isOpen, setIsOpen] = useState<boolean>()
 
   if (!userId) {
@@ -101,20 +102,30 @@ export function IdentityContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open MySky menu">
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-          }}
-        >
-          <PersonIcon />
-        </DropdownMenuTrigger>
+        {!myProfile ? (
+          <DropdownMenuTrigger
+            as={Button}
+            variant={variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+            }}
+          >
+            <PersonIcon />
+          </DropdownMenuTrigger>
+        ) : (
+          <DropdownMenuTrigger>
+            <Avatar profile={myProfile} />
+          </DropdownMenuTrigger>
+        )}
       </Tooltip>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>User {userId.slice(0, 6)}...</DropdownMenuLabel>
+        {myProfile ? (
+          <DropdownMenuLabel>{myProfile.username}</DropdownMenuLabel>
+        ) : (
+          <DropdownMenuLabel>User {userId.slice(0, 6)}...</DropdownMenuLabel>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onSelect={logout}>Log out</DropdownMenuItem>

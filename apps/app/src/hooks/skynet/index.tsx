@@ -156,6 +156,7 @@ export function SkynetProvider({ children }: Props) {
         })
         triggerToast(`Successfully logged in as ${userId.slice(0, 6)}...`)
       }
+
       setIsReseting(false)
     }
     func()
@@ -173,19 +174,28 @@ export function SkynetProvider({ children }: Props) {
       setIsReseting(true)
       await mySky.logout()
 
-      setLoggedIn(false)
-      setUserId('')
-      generateApi({
-        userId: null,
-        mySky,
-      })
-      setIsReseting(false)
+      // Try to avoid glitchiness with resetting state across app by just reloading app on logout
+
+      // setLoggedIn(false)
+      // setUserId('')
+      // generateApi({
+      //   userId: null,
+      //   mySky,
+      // })
+      // setIsReseting(false)
+
+      window.location.href = '/'
     }
     func()
   }, [mySky, setLoggedIn, setUserId, generateApi, setIsReseting])
 
   // Key that can be used for SWR revalidation when identity changes
-  const identityKey = userId ? userId : localRootSeed
+  const identityKey = useMemo(() => {
+    if (isInitializing || !Api || isReseting) {
+      return null
+    }
+    return userId ? userId : localRootSeed
+  }, [Api, isInitializing, isReseting, userId, localRootSeed])
 
   // Method for getting a namespaced SWR key
   const getKey = useMemo(() => {

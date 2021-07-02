@@ -50,7 +50,6 @@ export function Following() {
         css={{
           flex: 1,
           overflow: 'hidden',
-          borderBottom: '1px solid $gray200',
         }}
       >
         <ScrollArea>

@@ -7,6 +7,8 @@ export const suggestionUserIds = [
   '5a08a4d7ceda25c0783063c799305188f2aba8849c6398f697acab48c7e8af46',
   // Reddit Tech
   'dbf094e66ed6354acd1a91b7c902c230f0199a00434417ffaa65783edcd8fc99',
+  // parox
+  'eeeedd5b20a83cd6c485742dbc0469c06af0b7ad318ad6a6b0a77e217a3f9692',
   // Reddit Siacoin
   '5f403987aea877f63a295f13c354862c7d60d16ffed29501a94364d8887a7db1',
   // Redsolver

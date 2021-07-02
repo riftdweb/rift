@@ -39,18 +39,20 @@ const debouncedMutate = debounce((mutate) => {
 export function AppsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain } = useSkynet()
+  const { Api, getKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const key = [identityKey, dataDomain, dataKeyApps]
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
-    key,
+    getKey([dataDomain, dataKeyApps]),
     () =>
       (Api.getJSON({
         dataKey: dataKeyApps,
       }) as unknown) as Promise<{
         data: App[]
-      }>
+      }>,
+    {
+      revalidateOnFocus: false,
+    }
   )
 
   // Track whether the user has no apps yet so that we can adjust

@@ -11,11 +11,11 @@ import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
-import { getDataKeyDomains } from '../shared/dataKeys'
+import { getDataKeyDns } from '../shared/dataKeys'
 import { triggerToast } from '../shared/toast'
 import { useSkynet } from './skynet'
 
-const dataKeyDomains = getDataKeyDomains()
+const dataKeyDns = getDataKeyDns()
 
 type State = {
   dnsEntries: DnsEntry[]
@@ -39,15 +39,14 @@ type Props = {
 export function DnsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDnsEntries, setUserHasNoDnsEntries] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain } = useSkynet()
+  const { Api, getKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const key = [identityKey, dataDomain, dataKeyDomains]
   const { data, mutate, isValidating } = useSWR<{ data: DnsEntry[] }>(
-    key,
+    getKey([dataDomain, dataKeyDns]),
     () =>
       Api.getJSON({
-        dataKey: dataKeyDomains,
+        dataKey: dataKeyDns,
       }) as unknown as Promise<{
         data: DnsEntry[]
       }>
@@ -71,7 +70,7 @@ export function DnsProvider({ children }: Props) {
         mutate({ data: dnsEntries }, false)
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: dataKeyDomains,
+          dataKey: dataKeyDns,
           json: dnsEntries,
         })
         // Sync latest, will likely be the same

@@ -7,6 +7,8 @@ import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { suggestionUserIds as _suggestionUserIds } from './suggestions'
 import { Feed } from '../feed/types'
 import { RequestQueue } from '../../shared/requestQueue'
+import { workerFeedUserUpdate } from '../feed/workerFeedUser'
+import { clearAllTokens } from '../feed/tokens'
 
 const requestQueue = RequestQueue('users')
 
@@ -61,12 +63,14 @@ export function UsersProvider({ children }: Props) {
       if (!myUserId) {
         return []
       } else {
-        return _suggestionUserIds.filter(
-          (suggestionUserId) =>
-            !(followingUserIds.data || []).find(
-              (userId) => userId === suggestionUserId
-            )
-        )
+        return _suggestionUserIds.filter((suggestionUserId) => {
+          if (suggestionUserId === myUserId) {
+            return false
+          }
+          return !(followingUserIds.data || []).find(
+            (userId) => userId === suggestionUserId
+          )
+        })
       }
     },
     {
@@ -153,6 +157,10 @@ export function UsersProvider({ children }: Props) {
           if (requestQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
+
+          // Trigger update user
+          clearAllTokens(ref)
+          workerFeedUserUpdate(ref, userId, { force: true })
         } catch (e) {}
       }
       func()

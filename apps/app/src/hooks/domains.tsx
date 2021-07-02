@@ -13,10 +13,12 @@ import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDomains } from '../shared/dataKeys'
+import { createLogger } from '../shared/logger'
 import { DATA_MYSKY_BASE_PATH, usePath } from './path'
 import { useSkynet } from './skynet'
 
 const dataKeyDomains = getDataKeyDomains()
+const log = createLogger('domains')
 
 type State = {
   domains: Domain[]
@@ -46,18 +48,20 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, identityKey, dataDomain } = useSkynet()
+  const { Api, getKey, identityKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const key = [identityKey, dataDomain, dataKeyDomains]
-  const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
-    key,
+  const { data, mutate, revalidate, isValidating } = useSWR<{ data: Domain[] }>(
+    getKey([dataDomain, dataKeyDomains]),
     () =>
       (Api.getJSON({
         dataKey: dataKeyDomains,
       }) as unknown) as Promise<{
         data: Domain[]
-      }>
+      }>,
+    {
+      revalidateOnFocus: false,
+    }
   )
 
   // Track whether the user has no domains yet so that we can adjust
@@ -91,6 +95,7 @@ export function DomainsProvider({ children }: Props) {
 
   const addDomain = useCallback(
     (domain: Partial<Domain>): boolean => {
+      log('addDomain')
       // Add MySky domain
       if (domain.dataDomain) {
         const validatedDomain: Domain = {
@@ -141,6 +146,7 @@ export function DomainsProvider({ children }: Props) {
 
   const addKey = useCallback(
     (domainId: string, key: DomainKey): boolean => {
+      log('addKey')
       const domain = domains.find((domain) => domain.id === domainId)
 
       if (!domain) {
@@ -167,6 +173,7 @@ export function DomainsProvider({ children }: Props) {
 
   const removeKey = useCallback(
     (domainId: string, keyId: string, routeToNextKey?: boolean): boolean => {
+      log('removeKey')
       const domain = domains.find((domain) => domain.id === domainId)
 
       if (!domain) {
@@ -212,6 +219,7 @@ export function DomainsProvider({ children }: Props) {
 
   const removeDomain = useCallback(
     (domainId: string, redirect?: boolean) => {
+      log('removeDomain')
       if (!domainId) {
         return
       }

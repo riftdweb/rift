@@ -36,7 +36,7 @@ export async function workerFeedActivityUpdate(
     let entries = allEntriesFeed.entries
 
     log('Generating activity')
-    const activities = await generateActivity(entries)
+    const activities = await generateActivity(ref, entries)
 
     log('Caching activity')
     await cacheActivity(ref, activities)
@@ -57,10 +57,17 @@ export async function workerFeedActivityUpdate(
   }
 }
 
-function generateActivity(entries: Entry[]): Activity[] {
+function generateActivity(ref: ControlRef, entries: Entry[]): Activity[] {
+  const myUserId = ref.current.userId
+
   const stats = entries.reduce(
     (acc, entry) => {
       const userId = entry.userId
+
+      if (userId === myUserId) {
+        return acc
+      }
+
       const record = acc[userId] || {
         userId,
         buckets: {

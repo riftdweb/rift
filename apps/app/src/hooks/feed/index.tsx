@@ -281,12 +281,10 @@ export function FeedProvider({ children }: Props) {
         await feedDAC.createPost({ text })
 
         localLog('Start user feed update')
-        // Update all entries and user entries caches
         await workerFeedUserUpdate(ref, myUserId, { force: true })
 
-        // localLog('Start users crawler')
-        // TODO: running this cancels the async fetch latest that the above worker triggers
-        // await workerCrawlerUsers(ref)
+        localLog('Restart users crawler')
+        await workerCrawlerUsers(ref)
       }
       func()
     },

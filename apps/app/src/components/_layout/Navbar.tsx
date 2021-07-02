@@ -18,6 +18,7 @@ import { useCallback } from 'react'
 import { Link as RLink } from 'react-router-dom'
 import { extractDomainForPortal } from 'skynet-js'
 import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
+import { useTheme } from '../../hooks/theme'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
 import { portals } from '../../shared/portals'
 import SkynetIcon from '../_icons/SkynetIcon'
@@ -25,11 +26,8 @@ import { Link } from '../_shared/Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
 import { Searchbar } from './Searchbar'
 
-type Props = {
-  toggleTheme: () => void
-}
-
-export default function Navbar({ toggleTheme }: Props) {
+export default function Navbar() {
+  const { toggleTheme } = useTheme()
   const [portal, setPortal] = useSelectedPortal()
 
   const handleChangePortal = useCallback(

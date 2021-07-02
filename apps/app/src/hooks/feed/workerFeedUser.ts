@@ -114,6 +114,10 @@ const cafAfterFeedUserUpdate = CAF(function* afterFeedUserUpdate(
 
     // If following user, update the latest feed
     if (isSelf || isFollowingUser) {
+      // Synchronous so that we know it completes
+      // TODO: Running this function is not captured in the user feed updatedAt timestamp.
+      // If the user worker gets canceled, this may lead to user entries that do not
+      // make it into the main feeds.
       yield workerFeedLatestUpdate(ref, userId, userFeed)
 
       log('Starting feedTopUpdate and feedActivityUpdate')

@@ -1,6 +1,6 @@
 import { Skyfile } from '@riftdweb/types'
 import throttle from 'lodash/throttle'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
 import { useSkynet } from './skynet'
 
@@ -36,15 +36,21 @@ export const useSkyfilesState = () => {
         setLocalState(data || ([] as Skyfile[]))
       } catch (e) {
         console.log(e)
+        setTimeout(() => {
+          // Error, probably too many requests, try again
+          fetchData()
+        }, 5000)
       }
     }
     func()
   }, [Api, setLocalState])
 
-  // Only called successfully once on init, or when identity changes
+  // Only called successfully once on init, or when identity key changes
   useEffect(() => {
-    setLocalState([] as Skyfile[])
-    fetchData()
+    if (identityKey) {
+      setLocalState([] as Skyfile[])
+      fetchData()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identityKey])
 

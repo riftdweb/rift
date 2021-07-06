@@ -6,8 +6,14 @@ export const links = [
       'An introduction and a point of reference for people wanting to know more about Skynet.',
   },
   {
-    url: 'https://skynetwiki.tech/',
-    title: 'Skynet Wiki',
+    url:
+      'https://blog.sia.tech/mysky-your-home-on-the-global-operating-system-of-the-future-5a288f89825c',
+    title: 'MySky: Your Home on the Global Operating System of the Future',
+    description: 'An introduction to the MySky identity protocol.',
+  },
+  {
+    url: 'https://sky-guide.hns.siasky.net/',
+    title: 'Sky Guide',
     description: 'Learn all about the decentralized world of Sia and Skynet.',
   },
   {
@@ -22,7 +28,8 @@ export const links = [
     description: 'Extensive charts and metrics for the Sia network.',
   },
   {
-    url: 'https://skynetwiki.tech/storage-chains-compared/',
+    url:
+      'https://sky-guide.hns.siasky.net/discover/storage-chains-compared/index.html',
     title: 'Storage Chains Compared',
     description:
       'Pros and cons of the “leading” projects in decentralized storage.',

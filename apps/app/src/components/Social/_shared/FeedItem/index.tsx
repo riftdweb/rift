@@ -3,8 +3,8 @@ import { Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../../hooks/feed'
 import { Entry } from '../../../../hooks/feed/types'
+import { useLink } from '../../../../hooks/useLink'
 import { useProfile } from '../../../../hooks/useProfile'
-import { useSelectedPortal } from '../../../../hooks/useSelectedPortal'
 import { Link } from '../../../_shared/Link'
 import { PostTime } from '../PostTime'
 import { User } from '../User'
@@ -21,32 +21,11 @@ const textStyles: any = {
 type Props = { entry: Entry; index?: number }
 
 export function FeedItem({ entry, index }: Props) {
-  const [portal] = useSelectedPortal()
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const { incrementKeywords, incrementDomain, isVisibilityEnabled } = useFeed()
 
   const { post } = entry
-  let link = post.content.link
-  let hnsDomain = ''
-
-  // Format: sia://skychess.hns/#/watch/...
-  if (link && link.includes('sia://') && link.includes('hns')) {
-    link = link.replace('sia://', '')
-    const parts = link.split('.hns')
-    const hnsName = parts[0]
-    hnsDomain = `${hnsName}.hns`
-    link = `https://${hnsDomain}.${portal}${parts[1]}`
-  }
-
-  // Format: https://skychess.hns.siasky.net/#/watch/...
-  if (link && link.includes('hns')) {
-    const _link = link.replace('https://', '')
-    const parts = _link.split('.hns')
-    const hnsName = parts[0]
-    hnsDomain = `${hnsName}.hns`
-  }
-
-  let hostname = link ? new URL(link).hostname : undefined
+  const { link, hostname, hnsDomain } = useLink(post.content.link)
 
   const titleElements = useMemo(() => {
     let title = post.content.title || post.content.text || ''

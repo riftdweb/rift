@@ -93,11 +93,22 @@ export async function workerCrawlerUsers(
 
 const logScheduler = createLogger('crawler/users/schedule')
 
+const WAIT_SECONDS = 2
+
 async function maybeRunCrawlerUsers(ref: ControlRef): Promise<any> {
   // TODO: ADD CHECK FOR USER POST IN PROGRESS
 
   // If crawler is already running skip
-  if (ref.current.tokens.crawlerUsers) {
+  if (!ref.current.followingUserIdsHasFetched) {
+    logScheduler(
+      `Follower list not ready, trying again in ${WAIT_SECONDS} seconds`
+    )
+    setTimeout(() => {
+      maybeRunCrawlerUsers(ref)
+    }, WAIT_SECONDS * 1000)
+  }
+  // If crawler is already running skip
+  else if (ref.current.tokens.crawlerUsers) {
     logScheduler(`Crawler already running, skipping`)
   } else {
     logScheduler(`Crawler starting`)
@@ -110,25 +121,10 @@ let interval = null
 
 export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
   log('Starting scheduler')
-  // Try running the crawler a few times in case followings list has not loaded
-  // If followings have not loaded the list is only the users own ID, so this
-  // first run will finish quickly
+
   maybeRunCrawlerUsers(ref)
 
-  setTimeout(async () => {
-    maybeRunCrawlerUsers(ref)
-  }, 5000)
-
-  setTimeout(async () => {
-    maybeRunCrawlerUsers(ref)
-  }, 10_000)
-
-  setTimeout(async () => {
-    maybeRunCrawlerUsers(ref)
-  }, 20_000)
-
   clearInterval(interval)
-
   interval = setInterval(() => {
     maybeRunCrawlerUsers(ref)
   }, SCHEDULE_INTERVAL_CRAWLER)

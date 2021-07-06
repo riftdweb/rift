@@ -207,6 +207,10 @@ export function UsersProvider({ children }: Props) {
 
   // Update controlRef
   useEffect(() => {
+    // If not null
+    if (followingUserIds.data) {
+      ref.current.followingUserIdsHasFetched = true
+    }
     ref.current.followingUserIds = followingUserIds
   }, [ref, followingUserIds])
 

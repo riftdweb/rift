@@ -7,6 +7,7 @@ const controlRefDefaults = {
   userId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
   followingUserIds: {} as SWRResponse<string[], any>,
+  followingUserIdsHasFetched: false as boolean,
   domains: {} as {
     [domain: string]: number
   },

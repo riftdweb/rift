@@ -1,32 +1,26 @@
 import { DnsEntry } from '@riftdweb/types'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { createContext, useCallback, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
-import useSWR from 'swr'
+import useSWR, { SWRResponse } from 'swr'
 import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDns } from '../shared/dataKeys'
 import { triggerToast } from '../shared/toast'
+import { Feed } from './feed/types'
 import { useSkynet } from './skynet'
 
 const dataKeyDns = getDataKeyDns()
 
+type DnsEntryFeed = Feed<DnsEntry>
+
 type State = {
-  dnsEntries: DnsEntry[]
+  dns: SWRResponse<DnsEntryFeed, any>
   addDnsEntry: (dnsEntry: Partial<DnsEntry>) => Promise<boolean>
   updateDnsEntry: (
     id: string,
     dnsEntryUpdates: Partial<DnsEntry>
   ) => Promise<boolean>
   removeDnsEntry: (dnsEntryId: string, redirect?: boolean) => void
-  isValidating: boolean
-  userHasNoDnsEntries: boolean
 }
 
 const DnsContext = createContext({} as State)
@@ -37,41 +31,39 @@ type Props = {
 }
 
 export function DnsProvider({ children }: Props) {
-  const [hasValidated, setHasValidated] = useState<boolean>(false)
-  const [userHasNoDnsEntries, setUserHasNoDnsEntries] = useState<boolean>(false)
   const { Api, getKey, dataDomain } = useSkynet()
   const history = useHistory()
 
-  const { data, mutate, isValidating } = useSWR<{ data: DnsEntry[] }>(
+  const dns = useSWR<DnsEntryFeed>(
     getKey([dataDomain, dataKeyDns]),
-    () =>
-      Api.getJSON({
+    async (): Promise<DnsEntryFeed> => {
+      const result = await Api.getJSON<DnsEntry[]>({
         dataKey: dataKeyDns,
-      }) as unknown as Promise<{
-        data: DnsEntry[]
-      }>
+      })
+      return {
+        updatedAt: 0,
+        entries: result.data || [],
+      }
+    }
   )
 
-  // Track whether the user has no dns entries yet so that we can adjust
-  // how data validating states are handled
-  useEffect(() => {
-    if (!hasValidated && data) {
-      setHasValidated(true)
-      setUserHasNoDnsEntries(!data.data || !data.data.length)
-    }
-  }, [data, hasValidated, setHasValidated, setUserHasNoDnsEntries])
-
-  const dnsEntries = useMemo(() => (data && data.data ? data.data : []), [data])
+  const { data, mutate } = dns
 
   const setDnsEntries = useCallback(
-    (dnsEntries: DnsEntry[]) => {
+    (dnsEntry: DnsEntry, upsertKey: string) => {
       const func = async () => {
         // Update cache immediately
-        mutate({ data: dnsEntries }, false)
+        const dnsFeed = await mutate(
+          (feed) => ({
+            updatedAt: new Date().getTime(),
+            entries: upsertItem(feed.entries, dnsEntry, upsertKey),
+          }),
+          false
+        )
         // Save changes to SkyDB
         await Api.setJSON({
           dataKey: dataKeyDns,
-          json: dnsEntries,
+          json: dnsFeed,
         })
         // Sync latest, will likely be the same
         await mutate()
@@ -81,29 +73,27 @@ export function DnsProvider({ children }: Props) {
     [Api, mutate]
   )
 
-  // const saveEntry = useCallback(
-  //   (id: string) => {
-  //     const func = async () => {
-  //       const dnsEntry = dnsEntries.find((e) => e.id === id)
+  const updateRegistry = useCallback(
+    (id: string) => {
+      const func = async () => {
+        const dnsEntry = data?.entries.find((e) => e.id === id)
 
-  //       if (!dnsEntry) {
-  //         return false
-  //       }
+        if (!dnsEntry) {
+          return false
+        }
 
-  //       await Api.setJSON({
-  //         dataKey: `${RESOURCE_DATA_KEY}/${dnsEntry.name}`,
-  //         json: {
-  //           domain: dnsEntry.name,
-  //           skylink: dnsEntry.skylink,
-  //         },
-  //       })
+        // await Api.setRegistryEntry({
+        //   dataKey: getDataKeyDns(dnsEntry.name),
+        //   data: dnsEntry.skylink,
+        // })
 
-  //       return true
-  //     }
-  //     return func()
-  //   },
-  //   [Api, dnsEntries]
-  // )
+        return true
+      }
+      return func()
+    },
+    [data]
+    // [Api, data]
+  )
 
   const addDnsEntry = useCallback(
     (dnsEntry: Partial<DnsEntry>): Promise<boolean> => {
@@ -120,18 +110,19 @@ export function DnsProvider({ children }: Props) {
           updatedAt: new Date().toISOString(),
         }
 
-        setDnsEntries(upsertItem(dnsEntries, cleanDnsEntry, 'name'))
+        setDnsEntries(cleanDnsEntry, 'name')
+        updateRegistry(cleanDnsEntry.id)
         return true
       }
       return func()
     },
-    [dnsEntries, setDnsEntries]
+    [setDnsEntries, updateRegistry]
   )
 
   const updateDnsEntry = useCallback(
     (id: string, dnsEntryUpdates: Partial<DnsEntry>): Promise<boolean> => {
       const func = async () => {
-        const dnsEntry = dnsEntries.find((e) => e.id === id)
+        const dnsEntry = data?.entries.find((e) => e.id === id)
 
         if (!dnsEntry) {
           return false
@@ -143,14 +134,15 @@ export function DnsProvider({ children }: Props) {
           updatedAt: new Date().toISOString(),
         }
 
-        setDnsEntries(upsertItem(dnsEntries, cleanDnsEntry, 'id'))
+        setDnsEntries(cleanDnsEntry, 'id')
+        updateRegistry(cleanDnsEntry.id)
 
         triggerToast(`DNS entry '${cleanDnsEntry.name}' has been updated.`)
         return true
       }
       return func()
     },
-    [dnsEntries, setDnsEntries]
+    [data, setDnsEntries, updateRegistry]
   )
 
   const removeDnsEntry = useCallback(
@@ -158,23 +150,39 @@ export function DnsProvider({ children }: Props) {
       if (!id) {
         return
       }
+      const func = async () => {
+        // Update cache immediately
+        const dnsFeed = await mutate(
+          (dnsFeed) => ({
+            updatedAt: new Date().getTime(),
+            entries: dnsFeed.entries.filter((item) => item.id !== id),
+          }),
+          false
+        )
 
-      setDnsEntries(dnsEntries.filter((item) => item.id !== id))
+        if (redirect) {
+          history.push('/dns')
+        }
 
-      if (redirect) {
-        history.push('/dns')
+        // Save changes to SkyDB
+        await Api.setJSON({
+          dataKey: dataKeyDns,
+          json: dnsFeed,
+        })
+
+        // Sync latest, will likely be the same
+        await mutate()
       }
+      func()
     },
-    [history, dnsEntries, setDnsEntries]
+    [Api, mutate, history]
   )
 
   const value = {
-    dnsEntries,
+    dns,
     addDnsEntry,
     updateDnsEntry,
     removeDnsEntry,
-    isValidating,
-    userHasNoDnsEntries,
   }
 
   return <DnsContext.Provider value={value}>{children}</DnsContext.Provider>

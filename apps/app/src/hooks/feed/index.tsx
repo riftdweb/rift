@@ -157,6 +157,7 @@ export function FeedProvider({ children }: Props) {
     (userId: string) => {
       const func = async () => {
         try {
+          await clearAllTokens(ref)
           await workerFeedUserUpdate(ref, userId, { force: true })
         } catch (e) {}
       }

@@ -38,7 +38,7 @@ const buildSchema = (existingNames: string[] = []) =>
 
 export function AddDnsEntry() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { dnsEntries, addDnsEntry } = useDns()
+  const { dns, addDnsEntry } = useDns()
 
   const openDialog = useCallback(() => {
     setIsOpen(true)
@@ -76,13 +76,15 @@ export function AddDnsEntry() {
     [addDnsEntry, setIsOpen]
   )
 
-  const existingNames = useMemo(() => dnsEntries.map((e) => e.name), [
-    dnsEntries,
-  ])
+  const existingNames = useMemo(
+    () => dns.data?.entries.map((e) => e.name) || [],
+    [dns.data]
+  )
 
-  const validationSchema = useMemo(() => buildSchema(existingNames), [
-    existingNames,
-  ])
+  const validationSchema = useMemo(
+    () => buildSchema(existingNames),
+    [existingNames]
+  )
 
   const formik = useFormik({
     initialValues: {

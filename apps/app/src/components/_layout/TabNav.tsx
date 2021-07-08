@@ -1,6 +1,7 @@
 import {
   FilePlusIcon,
   GearIcon,
+  GlobeIcon,
   HomeIcon,
   MixIcon,
   StackIcon,
@@ -40,12 +41,12 @@ export function TabNav() {
         </Box>
         Data
       </TabLink>
-      {/* <TabLink as={Link} to="/dns" active={route.split('/')[1] === 'dns'}>
+      <TabLink as={Link} to="/dns" active={route.split('/')[1] === 'dns'}>
         <Box css={{ mr: '$1' }}>
           <GlobeIcon />
         </Box>
         DNS
-      </TabLink> */}
+      </TabLink>
       {/* <TabLink as={Link} to="/tools" active={route.split('/')[1] === 'tools'}>
         <Box css={{ mr: '$1' }}>
           <MixIcon />

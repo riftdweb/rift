@@ -1,21 +1,11 @@
-import { Box, Flex, Subheading, Text } from '@riftdweb/design-system'
+import { Box, Flex } from '@riftdweb/design-system'
 import { useDns } from '../../hooks/useDns'
+import { EntriesState } from '../_shared/EntriesState'
 import { DnsRow } from './DnsRow'
 import { Nav } from './_shared/Nav'
 
-function NonIdealState() {
-  return (
-    <Box css={{ textAlign: 'center', padding: '$3 0' }}>
-      <Subheading css={{ margin: '$2 0' }}>
-        Manage and edit DNS entries
-      </Subheading>
-      <Text css={{ color: '$gray900' }}>Add a DNS entry to get started!</Text>
-    </Box>
-  )
-}
-
 export function Dns() {
-  const { dnsEntries, isValidating, userHasNoDnsEntries } = useDns()
+  const { dns } = useDns()
 
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
@@ -72,21 +62,17 @@ export function Dns() {
               Last updated
             </Box>
           </Flex>
-          {dnsEntries.length ? (
-            <Box>
-              {dnsEntries
-                .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-                .map((dnsEntry) => (
-                  <DnsRow key={dnsEntry.id} dnsEntry={dnsEntry} />
-                ))}
-            </Box>
-          ) : isValidating ? (
-            userHasNoDnsEntries ? (
-              <NonIdealState />
-            ) : null
-          ) : (
-            <NonIdealState />
-          )}
+          <EntriesState
+            response={dns}
+            emptyTitle="Manage and edit DNS entries"
+            emptyMessage="Add a DNS entry to get started!"
+          >
+            {dns.data.entries
+              ?.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
+              .map((dnsEntry) => (
+                <DnsRow key={dnsEntry.id} dnsEntry={dnsEntry} />
+              ))}
+          </EntriesState>
         </Box>
       </Box>
     </Box>

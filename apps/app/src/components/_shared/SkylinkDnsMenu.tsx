@@ -26,7 +26,7 @@ export function SkylinkDnsMenu({
   size = '1',
   onOpenChange,
 }: Props) {
-  const { dnsEntries, updateDnsEntry } = useDns()
+  const { dns, updateDnsEntry } = useDns()
   return (
     <DropdownMenu onOpenChange={onOpenChange}>
       <Tooltip content="Update DNS entry">
@@ -44,7 +44,7 @@ export function SkylinkDnsMenu({
       </Tooltip>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>DNS Entries</DropdownMenuLabel>
-        {dnsEntries.map((dnsEntry) => (
+        {dns.data?.entries.map((dnsEntry) => (
           <DropdownMenuItem
             onSelect={() =>
               updateDnsEntry(dnsEntry.id, {

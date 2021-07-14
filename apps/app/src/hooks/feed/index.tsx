@@ -93,12 +93,7 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const {
-    userId: myUserId,
-    isReseting,
-    isInitializing,
-    controlRef: ref,
-  } = useSkynet()
+  const { myUserId, isReseting, isInitializing, controlRef: ref } = useSkynet()
   const viewingUserId = useParamUserId()
 
   const [keywords, setKeywords] = useLocalStorageState<{

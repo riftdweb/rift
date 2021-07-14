@@ -11,10 +11,10 @@ import { EntriesState } from '../../../_shared/EntriesState'
 import { ScrollArea } from '../../../_shared/ScrollArea'
 
 export function Following() {
-  const { userId, login } = useSkynet()
+  const { myUserId, login } = useSkynet()
   const { followings, suggestions, suggestionUserIds } = useUsers()
 
-  if (!userId) {
+  if (!myUserId) {
     return (
       <StickySection>
         <StickyHeading title="Following" />
@@ -45,7 +45,7 @@ export function Following() {
 
   return (
     <StickySection css={{ pt: '$3' }}>
-      <Follow key={userId} userId={userId} />
+      <Follow key={myUserId} userId={myUserId} />
       <Box
         css={{
           flex: 1,

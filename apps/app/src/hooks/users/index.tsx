@@ -40,7 +40,7 @@ type Props = {
 }
 
 export function UsersProvider({ children }: Props) {
-  const { userId: myUserId, getKey, controlRef: ref } = useSkynet()
+  const { myUserId, getKey, controlRef: ref } = useSkynet()
 
   const followingUserIds = useSWR(
     getKey(['users', 'followingUserIds']),
@@ -152,7 +152,7 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.follow(userId)
-          await requestQueue.add(task)
+          await requestQueue.append(task)
 
           if (requestQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
@@ -182,7 +182,7 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.unfollow(userId)
-          await requestQueue.add(task)
+          await requestQueue.append(task)
 
           if (requestQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)

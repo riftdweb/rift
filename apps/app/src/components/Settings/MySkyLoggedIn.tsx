@@ -20,7 +20,7 @@ import { User } from '../Social/_shared/User'
 import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {
-  const { userId, myProfile, logout, dataDomain: appDomain } = useSkynet()
+  const { myUserId, myProfile, logout, appDomain } = useSkynet()
   const history = useHistory()
   const { domains, addDomain } = useDomains()
   const { skyfiles } = useSkyfiles()
@@ -57,7 +57,7 @@ export function MySkyLoggedIn() {
         </Heading>
         <Flex css={{ alignItems: 'center', gap: '$2' }}>
           <Text css={{ color: '$gray900' }}>Currently logged in as</Text>
-          <User userId={userId} profile={myProfile} />
+          <User userId={myUserId} profile={myProfile} />
         </Flex>
         <Text>
           {apps.length
@@ -76,7 +76,7 @@ export function MySkyLoggedIn() {
         </Text>
         <Flex css={{ gap: '$1', alignItems: 'center', marginTop: '$2' }}>
           <Tooltip content="Copy user ID to clipboard">
-            <Button onClick={() => copyToClipboard(userId, 'user ID')}>
+            <Button onClick={() => copyToClipboard(myUserId, 'user ID')}>
               <Box css={{ mr: '$1' }}>
                 <ClipboardIcon />
               </Box>

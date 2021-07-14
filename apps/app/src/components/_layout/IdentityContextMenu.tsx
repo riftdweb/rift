@@ -39,10 +39,10 @@ export function IdentityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId, myProfile, logout, login } = useSkynet()
+  const { myUserId, myProfile, logout, login } = useSkynet()
   const [isOpen, setIsOpen] = useState<boolean>()
 
-  if (!userId) {
+  if (!myUserId) {
     return (
       <DropdownMenu onOpenChange={setIsOpen}>
         <Tooltip align="end" content="Log in with MySky">
@@ -124,14 +124,14 @@ export function IdentityContextMenu({
         {myProfile ? (
           <DropdownMenuLabel>{myProfile.username}</DropdownMenuLabel>
         ) : (
-          <DropdownMenuLabel>User {userId.slice(0, 6)}...</DropdownMenuLabel>
+          <DropdownMenuLabel>User {myUserId.slice(0, 6)}...</DropdownMenuLabel>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onSelect={logout}>Log out</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={() => copyToClipboard(userId, 'user ID')}>
+        <DropdownMenuItem onSelect={() => copyToClipboard(myUserId, 'user ID')}>
           User ID
         </DropdownMenuItem>
       </DropdownMenuContent>

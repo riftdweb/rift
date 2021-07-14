@@ -48,14 +48,14 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, getKey, dataDomain } = useSkynet()
+  const { Api, getKey, appDomain } = useSkynet()
   const history = useHistory()
 
   const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
-    getKey([dataDomain, dataKeyDomains]),
+    getKey([appDomain, dataKeyDomains]),
     () =>
       (Api.getJSON({
-        dataKey: dataKeyDomains,
+        path: dataKeyDomains,
       }) as unknown) as Promise<{
         data: Domain[]
       }>,
@@ -82,7 +82,7 @@ export function DomainsProvider({ children }: Props) {
         mutate({ data: domains }, false)
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: dataKeyDomains,
+          path: dataKeyDomains,
           json: domains,
         })
         // Sync latest, will likely be the same

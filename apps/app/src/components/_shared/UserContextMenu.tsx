@@ -35,7 +35,7 @@ export function UserContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { myUserId, appDomain } = useSkynet()
   const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
   const {
     handleFollow,

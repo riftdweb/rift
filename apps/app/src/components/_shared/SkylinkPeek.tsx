@@ -1,4 +1,5 @@
 import { Code, Tooltip } from '@riftdweb/design-system'
+import { isSkylinkV2 } from 'skynet-js'
 import { copyToClipboard } from '../../shared/clipboard'
 
 type Props = {
@@ -6,8 +7,11 @@ type Props = {
 }
 
 export function SkylinkPeek({ skylink }: Props) {
+  const plainSkylink = skylink && skylink.replace('sia://', '')
+  const isEntryLink = skylink && isSkylinkV2(plainSkylink)
+  const content = isEntryLink ? 'Copy entry link' : 'Copy data link'
   return (
-    <Tooltip align="start" content="Copy skylink">
+    <Tooltip align="start" content={content}>
       <Code
         css={{
           padding: '2px',
@@ -22,11 +26,14 @@ export function SkylinkPeek({ skylink }: Props) {
         onClick={(e) => {
           e.stopPropagation()
           if (skylink) {
-            copyToClipboard(skylink, 'skylink')
+            copyToClipboard(
+              plainSkylink,
+              isEntryLink ? 'entry link' : 'data link'
+            )
           }
         }}
       >
-        {`${skylink.slice(0, 10)}...`}
+        {skylink ? `${plainSkylink.slice(0, 10)}...` : '-'}
       </Code>
     </Tooltip>
   )

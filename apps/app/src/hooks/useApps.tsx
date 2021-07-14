@@ -39,14 +39,14 @@ const debouncedMutate = debounce((mutate) => {
 export function AppsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoApps, setUserHasNoApps] = useState<boolean>(false)
-  const { Api, getKey, dataDomain } = useSkynet()
+  const { Api, getKey, appDomain } = useSkynet()
   const history = useHistory()
 
   const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
-    getKey([dataDomain, dataKeyApps]),
+    getKey([appDomain, dataKeyApps]),
     () =>
       (Api.getJSON({
-        dataKey: dataKeyApps,
+        path: dataKeyApps,
       }) as unknown) as Promise<{
         data: App[]
       }>,
@@ -73,7 +73,7 @@ export function AppsProvider({ children }: Props) {
         mutate({ data: apps }, false)
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: dataKeyApps,
+          path: dataKeyApps,
           json: apps,
         })
         // Sync latest, will likely be the same
@@ -99,7 +99,7 @@ export function AppsProvider({ children }: Props) {
           hnsDomain: app.hnsDomain,
           description: app.description,
           lockedOn: undefined,
-          addedAt: new Date().toISOString(),
+          addedAt: new Date().getTime(),
           tags: app.tags || [],
           revisions,
         }

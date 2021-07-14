@@ -17,7 +17,7 @@ import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { useDomainParams } from '../../../hooks/useDomainParams'
 
 export function ViewingUser() {
-  const { Api, userId } = useSkynet()
+  const { Api, myUserId } = useSkynet()
   const {
     viewingUserId,
     isViewingSelf,
@@ -32,8 +32,8 @@ export function ViewingUser() {
     () =>
       (Api.getJSON({
         publicKey: viewingUserId,
-        dataDomain: 'profile-dac.hns',
-        dataKey: 'profileIndex.json',
+        domain: 'profile-dac.hns',
+        path: 'profileIndex.json',
       }) as unknown) as Promise<{
         data: { profile: IUserProfile }
       }>
@@ -101,7 +101,7 @@ export function ViewingUser() {
             css={{
               cursor: 'pointer',
             }}
-            alt={userId}
+            alt={myUserId}
             fallback=""
           />
         </Box>

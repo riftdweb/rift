@@ -27,7 +27,7 @@ export function FeedContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { myUserId, appDomain } = useSkynet()
   const { refreshCurrentFeed, current } = useFeed()
 
   return (

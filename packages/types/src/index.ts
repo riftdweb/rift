@@ -82,7 +82,7 @@ export type App = {
   name: string
   hnsDomain: string
   description: string
-  addedAt: string
+  addedAt: number
   tags: string[]
   // Revision's Skyfile
   lockedOn?: string
@@ -92,9 +92,8 @@ export type App = {
 export type DnsEntry = {
   id: string
   name: string
-  skylink: string
-  addedAt: string
-  updatedAt: string
+  entryLink: string
+  dataLink: string
+  addedAt: number
+  updatedAt: number
 }
-
-export const foo = ''

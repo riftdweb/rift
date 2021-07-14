@@ -10,7 +10,7 @@ const throttledSyncState = throttle(async (Api, state) => {
   try {
     // console.log('syncing start', SKYFILES_DATA_KEY, state)
     await Api.setJSON({
-      dataKey: dataKeyFiles,
+      dataPath: dataKeyFiles,
       json: state,
     })
     // console.log('syncing success', SKYFILES_DATA_KEY, state)
@@ -28,7 +28,7 @@ export const useSkyfilesState = () => {
     const func = async () => {
       try {
         const { data }: { data?: Skyfile[] } = ((await Api.getJSON({
-          dataKey: dataKeyFiles,
+          path: dataKeyFiles,
         })) as unknown) as {
           data: Skyfile[]
         }

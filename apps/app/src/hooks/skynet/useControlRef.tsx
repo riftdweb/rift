@@ -4,7 +4,7 @@ import { Api } from './buildApi'
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
-  userId: undefined as string | undefined,
+  myUserId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
   followingUserIds: {} as SWRResponse<string[], any>,
   followingUserIdsHasFetched: false as boolean,
@@ -19,10 +19,12 @@ const controlRefDefaults = {
   nonIdealState: undefined as string | undefined,
   setNonIdealState: (state?: string) => {},
   tokens: {
-    feedUserUpdate: null,
     feedLatestUpdate: null,
-    afterFeedUserUpdate: null,
+    feedTopUpdate: null,
+    feedActivityUpdate: null,
     crawlerUsers: null,
+    feedUserUpdate: null,
+    afterFeedUserUpdate: null,
   },
   feeds: {} as {
     user: {

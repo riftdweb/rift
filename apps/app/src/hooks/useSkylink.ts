@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { parseSkylink } from 'skynet-js'
+import { isSkylinkV2, parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
 import { useSkynet } from './skynet'
@@ -93,9 +93,12 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
 
   const weblink = isApp ? weblinkSubdomain : weblinkPath
 
+  const isV2 = skylink && isSkylinkV2(skylink)
+
   return {
     isApp,
     isDirectory,
+    isV2,
     fileCount,
     size,
     contentType,

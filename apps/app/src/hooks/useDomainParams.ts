@@ -21,7 +21,7 @@ type Return = {
 export function useDomainParams(): Return {
   const history = useHistory()
   const { pathname } = useLocation()
-  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { myUserId, appDomain } = useSkynet()
   const {
     viewingUserId,
     domainName: encodedDomainName,

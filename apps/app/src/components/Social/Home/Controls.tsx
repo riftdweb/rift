@@ -5,7 +5,7 @@ import { useSkynet } from '../../../hooks/skynet'
 import { ControlsInactive } from './ControlsInactive'
 
 export function Controls() {
-  const { userId: myUserId, login } = useSkynet()
+  const { myUserId, login } = useSkynet()
   const { createPost, setMode } = useFeed()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [value, setValue] = useState<string>('')

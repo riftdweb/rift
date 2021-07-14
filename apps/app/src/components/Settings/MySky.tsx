@@ -11,9 +11,9 @@ import { useSkynet } from '../../hooks/skynet'
 import { MySkyLoggedIn } from './MySkyLoggedIn'
 
 export function MySky() {
-  const { userId, login } = useSkynet()
+  const { myUserId, login } = useSkynet()
 
-  if (userId) {
+  if (myUserId) {
     return <MySkyLoggedIn />
   }
 

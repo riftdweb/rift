@@ -32,8 +32,8 @@ type State = {
   getKey: (resourceKeys: any[]) => any[] | null
   mySky: MySky
   loggedIn: boolean
-  userId: string
-  dataDomain: string
+  myUserId: string
+  appDomain: string
   login: () => void
   logout: () => void
   identityKey: string
@@ -54,23 +54,23 @@ export function SkynetProvider({ children }: Props) {
 
   const [isInitializing, setIsInitializing] = useState<boolean>(true)
   const [isReseting, setIsReseting] = useState<boolean>(false)
-  const [userId, _setUserId] = useState<string>()
-  const setUserId = useCallback(
+  const [myUserId, _setMyUserId] = useState<string>()
+  const setMyUserId = useCallback(
     (userId: string) => {
-      controlRef.current.userId = userId
-      _setUserId(userId)
+      controlRef.current.myUserId = userId
+      _setMyUserId(userId)
     },
-    [controlRef, _setUserId]
+    [controlRef, _setMyUserId]
   )
   const [Api, setApi] = useState<ReturnType<typeof buildApi>>()
-  const myProfile = useProfile(userId)
+  const myProfile = useProfile(myUserId)
   const [mySky, setMySky] = useState<MySky>()
   const [loggedIn, setLoggedIn] = useState(null)
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
   const parts = hostname.split('.')
   const subdomain = parts.slice(0, parts.length - 2).join('.')
-  const dataDomain = subdomain || 'localhost'
+  const appDomain = subdomain || 'localhost'
 
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])
@@ -80,7 +80,7 @@ export function SkynetProvider({ children }: Props) {
       const api = buildApi({
         portal,
         localRootSeed,
-        dataDomain,
+        appDomain,
         // passed params to ensure latest value
         mySky,
         userId,
@@ -88,7 +88,7 @@ export function SkynetProvider({ children }: Props) {
       controlRef.current.Api = api
       setApi(api)
     },
-    [controlRef, portal, localRootSeed, dataDomain, setApi]
+    [controlRef, portal, localRootSeed, appDomain, setApi]
   )
 
   // On app init set up MySky
@@ -98,8 +98,8 @@ export function SkynetProvider({ children }: Props) {
         console.log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
-        console.log('App domain: ', dataDomain)
-        const _mySky = await client.loadMySky(dataDomain, {
+        console.log('App domain: ', appDomain)
+        const _mySky = await client.loadMySky(appDomain, {
           // dev: true,
           // debug: true,
         })
@@ -118,7 +118,7 @@ export function SkynetProvider({ children }: Props) {
         let userId = null
         if (loggedIn) {
           userId = await _mySky.userID()
-          setUserId(userId)
+          setMyUserId(userId)
         }
 
         generateApi({ userId, mySky: _mySky })
@@ -149,7 +149,7 @@ export function SkynetProvider({ children }: Props) {
 
       if (status) {
         const userId = await mySky.userID()
-        setUserId(userId)
+        setMyUserId(userId)
         generateApi({
           userId,
           mySky,
@@ -164,7 +164,7 @@ export function SkynetProvider({ children }: Props) {
     isInitializing,
     mySky,
     setLoggedIn,
-    setUserId,
+    setMyUserId,
     generateApi,
     setIsReseting,
   ])
@@ -195,8 +195,8 @@ export function SkynetProvider({ children }: Props) {
     if (isInitializing || !Api || isReseting) {
       return null
     }
-    return userId ? userId : localRootSeed
-  }, [Api, isInitializing, isReseting, userId, localRootSeed])
+    return myUserId ? myUserId : localRootSeed
+  }, [Api, isInitializing, isReseting, myUserId, localRootSeed])
 
   // Method for getting a namespaced SWR key
   const getKey = useMemo(() => {
@@ -215,11 +215,11 @@ export function SkynetProvider({ children }: Props) {
     login,
     logout,
     mySky,
-    userId,
+    myUserId,
     Api,
     getKey,
     identityKey,
-    dataDomain,
+    appDomain,
     myProfile,
     controlRef,
   }

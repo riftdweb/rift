@@ -69,19 +69,20 @@ export default function Navbar() {
           </Tooltip>
           <Box
             css={{
-              display: 'none',
-              '@bp1': {
-                display: 'block',
-              },
-            }}
-          >
-            <Searchbar />
-          </Box>
-          <Box
-            css={{
               flex: 1,
             }}
-          />
+          >
+            <Box
+              css={{
+                display: 'none',
+                '@bp1': {
+                  display: 'block',
+                },
+              }}
+            >
+              <Searchbar />
+            </Box>
+          </Box>
           <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
             <ControlGroup
               css={{

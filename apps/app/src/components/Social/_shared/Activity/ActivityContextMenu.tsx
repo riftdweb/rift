@@ -27,7 +27,7 @@ export function ActivityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { myUserId, appDomain } = useSkynet()
   const { activity, refreshActivity } = useFeed()
   return (
     <DropdownMenu>

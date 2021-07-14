@@ -69,7 +69,7 @@ type Props = {
 
 export function AddDomainMySky({ closeDialog }: Props) {
   const { domains, addDomain } = useDomains()
-  const { Api, dataDomain: appDomain } = useSkynet()
+  const { Api, appDomain } = useSkynet()
 
   const onSubmit = useCallback(
     (vals) => {

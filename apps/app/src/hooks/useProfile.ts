@@ -35,8 +35,8 @@ export async function fetchProfile(
 
   const response = await ref.current.Api.getJSON<IProfileIndex>({
     publicKey: userId,
-    dataDomain: 'profile-dac.hns',
-    dataKey: 'profileIndex.json',
+    domain: 'profile-dac.hns',
+    path: 'profileIndex.json',
   })
 
   if (!response.data?.profile) {

@@ -6,7 +6,7 @@ import { contentRecord, feedDAC, useSkynet } from '../../hooks/skynet'
 export function MySkyLearn() {
   const [skylink, setSkylink] = useState<string>('')
   const [value, setValue] = useState<string>('')
-  const { userId } = useSkynet()
+  const { myUserId } = useSkynet()
 
   const recordNewContent = useCallback(() => {
     const func = async () => {
@@ -42,7 +42,7 @@ export function MySkyLearn() {
   const fetchPosts = useCallback(() => {
     const func = async () => {
       let _posts = []
-      const feed = feedDAC.loadPostsForUser(userId)
+      const feed = feedDAC.loadPostsForUser(myUserId)
       for await (let batch of feed) {
         console.log(batch)
         _posts = _posts.concat(batch)
@@ -51,7 +51,7 @@ export function MySkyLearn() {
       setPosts(_posts)
     }
     func()
-  }, [userId, setPosts])
+  }, [myUserId, setPosts])
 
   return (
     <Box>

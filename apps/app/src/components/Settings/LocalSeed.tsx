@@ -29,7 +29,7 @@ const dataKeyApps = getDataKeyApps()
 const dataKeyFiles = getDataKeyFiles()
 
 export function LocalSeed() {
-  const { Api, userId } = useSkynet()
+  const { Api, myUserId } = useSkynet()
   const { localRootSeed, regenerate } = useLocalRootSeed()
   const { addDomain } = useDomains()
   const history = useHistory()
@@ -40,7 +40,7 @@ export function LocalSeed() {
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: dataKeyDomains,
+        path: dataKeyDomains,
       }) as unknown as Promise<{
         data: Domain[]
       }>
@@ -51,7 +51,7 @@ export function LocalSeed() {
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: dataKeyFiles,
+        path: dataKeyFiles,
       }) as unknown as Promise<{
         data: Skyfile[]
       }>
@@ -62,7 +62,7 @@ export function LocalSeed() {
     () =>
       Api.getJSON({
         seed: localRootSeed,
-        dataKey: dataKeyApps,
+        path: dataKeyApps,
       }) as unknown as Promise<{
         data: App[]
       }>
@@ -106,7 +106,7 @@ export function LocalSeed() {
         <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
           Using Rift without a MySky indentity saves App data to a locally
           cached seed.{' '}
-          {userId && 'Log out of MySky to switch back to this data.'}
+          {myUserId && 'Log out of MySky to switch back to this data.'}
         </Paragraph>
         <Text>
           {appsData?.data?.length
@@ -157,7 +157,7 @@ export function LocalSeed() {
           <Tooltip content="Regenerating Rift seed will clear all data">
             <Button
               variant="red"
-              disabled={!!userId}
+              disabled={!!myUserId}
               onClick={() => regenerate()}
             >
               Regenerate

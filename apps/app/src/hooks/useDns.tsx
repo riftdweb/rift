@@ -201,13 +201,17 @@ export function DnsProvider({ children }: Props) {
         }
 
         // Save changes to SkyDB
-        await Api.setJSON({
-          path: dataKeyDns,
-          json: dnsFeed,
-        })
+        const task = () =>
+          Api.setJSON({
+            path: dataKeyDns,
+            json: dnsFeed,
+          })
+        await requestQueue.append(task)
 
         // Sync latest, will likely be the same
-        await mutate()
+        if (requestQueue.queue.length === 0) {
+          await mutate()
+        }
       }
       func()
     },

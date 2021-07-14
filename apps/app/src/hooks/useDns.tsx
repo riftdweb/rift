@@ -1,15 +1,22 @@
 import { DnsEntry } from '@riftdweb/types'
 import { createContext, useCallback, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
+import { parseSkylink } from 'skynet-js'
 import useSWR, { SWRResponse } from 'swr'
 import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDns } from '../shared/dataKeys'
+import { createLogger } from '../shared/logger'
+import { RequestQueue } from '../shared/requestQueue'
 import { triggerToast } from '../shared/toast'
 import { Feed } from './feed/types'
 import { useSkynet } from './skynet'
 
 const dataKeyDns = getDataKeyDns()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const log = createLogger('dns')
+
+const requestQueue = RequestQueue('dns')
 
 type DnsEntryFeed = Feed<DnsEntry>
 
@@ -31,19 +38,21 @@ type Props = {
 }
 
 export function DnsProvider({ children }: Props) {
-  const { Api, getKey, dataDomain } = useSkynet()
+  const { Api, getKey, appDomain } = useSkynet()
   const history = useHistory()
 
   const dns = useSWR<DnsEntryFeed>(
-    getKey([dataDomain, dataKeyDns]),
+    getKey([appDomain, dataKeyDns]),
     async (): Promise<DnsEntryFeed> => {
-      const result = await Api.getJSON<DnsEntry[]>({
-        dataKey: dataKeyDns,
+      const result = await Api.getJSON<DnsEntryFeed>({
+        path: dataKeyDns,
       })
-      return {
-        updatedAt: 0,
-        entries: result.data || [],
-      }
+      return (
+        result.data || {
+          updatedAt: 0,
+          entries: [],
+        }
+      )
     }
   )
 
@@ -61,12 +70,17 @@ export function DnsProvider({ children }: Props) {
           false
         )
         // Save changes to SkyDB
-        await Api.setJSON({
-          dataKey: dataKeyDns,
-          json: dnsFeed,
-        })
+        const task = () =>
+          Api.setJSON({
+            path: dataKeyDns,
+            json: dnsFeed,
+          })
+        await requestQueue.append(task)
+
         // Sync latest, will likely be the same
-        await mutate()
+        if (requestQueue.queue.length === 0) {
+          await mutate()
+        }
       }
       func()
     },
@@ -74,49 +88,63 @@ export function DnsProvider({ children }: Props) {
   )
 
   const updateRegistry = useCallback(
-    (id: string) => {
+    (name: string, dataLink: string) => {
       const func = async () => {
-        const dnsEntry = data?.entries.find((e) => e.id === id)
-
-        if (!dnsEntry) {
-          return false
-        }
-
-        // await Api.setRegistryEntry({
-        //   dataKey: getDataKeyDns(dnsEntry.name),
-        //   data: dnsEntry.skylink,
-        // })
+        await Api.setDataLink({
+          path: getDataKeyDns(name),
+          dataLink,
+        })
 
         return true
       }
       return func()
     },
-    [data]
-    // [Api, data]
+    [Api]
   )
 
   const addDnsEntry = useCallback(
     (dnsEntry: Partial<DnsEntry>): Promise<boolean> => {
       const func = async () => {
-        if (!dnsEntry.name || !dnsEntry.skylink) {
+        const { name, dataLink } = dnsEntry
+        if (!name || !dataLink) {
+          return false
+        }
+
+        const cleanDataLink = parseSkylink(dataLink)
+
+        try {
+          await updateRegistry(name, cleanDataLink)
+        } catch (e) {
+          triggerToast(`Failed to create DNS record '${name}'.`)
+          return false
+        }
+
+        let entryLink = ''
+        try {
+          entryLink = await Api.getEntryLink({
+            path: getDataKeyDns(name),
+          })
+        } catch (e) {
+          triggerToast(`Failed to create DNS record '${name}'.`)
           return false
         }
 
         const cleanDnsEntry: DnsEntry = {
           id: uuid(),
-          name: dnsEntry.name,
-          skylink: dnsEntry.skylink,
-          addedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          name,
+          dataLink: cleanDataLink,
+          addedAt: new Date().getTime(),
+          updatedAt: new Date().getTime(),
+          entryLink,
         }
 
         setDnsEntries(cleanDnsEntry, 'name')
-        updateRegistry(cleanDnsEntry.id)
+        triggerToast(`DNS record '${name}' has been created.`)
         return true
       }
       return func()
     },
-    [setDnsEntries, updateRegistry]
+    [Api, setDnsEntries, updateRegistry]
   )
 
   const updateDnsEntry = useCallback(
@@ -128,17 +156,25 @@ export function DnsProvider({ children }: Props) {
           return false
         }
 
+        const cleanDataLink = parseSkylink(dnsEntryUpdates.dataLink)
+
         const cleanDnsEntry: DnsEntry = {
           ...dnsEntry,
-          skylink: dnsEntryUpdates.skylink,
-          updatedAt: new Date().toISOString(),
+          dataLink: cleanDataLink,
+          updatedAt: new Date().getTime(),
         }
 
-        setDnsEntries(cleanDnsEntry, 'id')
-        updateRegistry(cleanDnsEntry.id)
+        const { name, dataLink } = cleanDnsEntry
 
-        triggerToast(`DNS entry '${cleanDnsEntry.name}' has been updated.`)
-        return true
+        setDnsEntries(cleanDnsEntry, 'id')
+        try {
+          await updateRegistry(name, dataLink)
+          triggerToast(`DNS record '${name}' has been updated.`)
+          return true
+        } catch (e) {
+          triggerToast(`Failed to update DNS record '${name}'.`)
+          return false
+        }
       }
       return func()
     },
@@ -166,7 +202,7 @@ export function DnsProvider({ children }: Props) {
 
         // Save changes to SkyDB
         await Api.setJSON({
-          dataKey: dataKeyDns,
+          path: dataKeyDns,
           json: dnsFeed,
         })
 

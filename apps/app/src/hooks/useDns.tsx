@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDns } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
-import { RequestQueue } from '../shared/requestQueue'
+import { TaskQueue } from '../shared/taskQueue'
 import { triggerToast } from '../shared/toast'
 import { Feed } from './feed/types'
 import { useSkynet } from './skynet'
@@ -16,7 +16,7 @@ const dataKeyDns = getDataKeyDns()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const log = createLogger('dns')
 
-const requestQueue = RequestQueue('dns')
+const taskQueue = TaskQueue('dns')
 
 type DnsEntryFeed = Feed<DnsEntry>
 
@@ -75,10 +75,10 @@ export function DnsProvider({ children }: Props) {
             path: dataKeyDns,
             json: dnsFeed,
           })
-        await requestQueue.append(task)
+        await taskQueue.append(task)
 
         // Sync latest, will likely be the same
-        if (requestQueue.queue.length === 0) {
+        if (taskQueue.queue.length === 0) {
           await mutate()
         }
       }
@@ -206,10 +206,10 @@ export function DnsProvider({ children }: Props) {
             path: dataKeyDns,
             json: dnsFeed,
           })
-        await requestQueue.append(task)
+        await taskQueue.append(task)
 
         // Sync latest, will likely be the same
-        if (requestQueue.queue.length === 0) {
+        if (taskQueue.queue.length === 0) {
           await mutate()
         }
       }

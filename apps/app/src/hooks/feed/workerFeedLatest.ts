@@ -1,6 +1,6 @@
 import * as CAF from 'caf'
 import { createLogger } from '../../shared/logger'
-import { RequestQueue } from '../../shared/requestQueue'
+import { TaskQueue } from '../../shared/taskQueue'
 import { wait } from '../../shared/wait'
 import { ControlRef } from '../skynet/useControlRef'
 import { cacheAllEntries, fetchAllEntries } from './shared'
@@ -9,13 +9,15 @@ import { Entry, WorkerParams } from './types'
 import { workerFeedActivityUpdate } from './workerFeedActivity'
 import { workerFeedTopUpdate } from './workerFeedTop'
 
-const log = createLogger('feed/latest/update')
 const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   signal: any,
   ref: ControlRef,
   newEntries: Entry[],
   params: WorkerParams
 ) {
+  const log = createLogger('feed/latest/update', {
+    workflowId: params.workflowId,
+  })
   const { delay } = params
   try {
     log('Fetching all entries')
@@ -46,6 +48,9 @@ export async function feedLatestUpdate(
   entriesBatch: Entry[],
   params: WorkerParams = {}
 ): Promise<any> {
+  const log = createLogger('feed/latest/update', {
+    workflowId: params.workflowId,
+  })
   try {
     const token = await handleToken(ref, 'feedLatestUpdate')
     await cafFeedLatestUpdate(token.signal, ref, entriesBatch, params)
@@ -56,15 +61,18 @@ export async function feedLatestUpdate(
   }
 }
 
-const requestQueue = RequestQueue('feed/latest', 1)
+const taskQueue = TaskQueue('feed/latest')
 
 export async function workerFeedLatestUpdate(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
 ): Promise<any> {
+  const log = createLogger('feed/latest/update', {
+    workflowId: params.workflowId,
+  })
   const task = () => feedLatestUpdate(ref, entriesBatch, params)
-  await requestQueue.append(task)
+  await taskQueue.append(task)
 
   // Only mutate the latest feed if there are no user posts being saved,
   // this is to prevent optimistic updates from flickering.
@@ -111,7 +119,7 @@ let entriesBuffer = []
 const SCHEDULE_INTERVAL = 10_000
 
 export async function scheduleFeedLatestUpdate(ref: ControlRef) {
-  // log('Trying feed latest update')
+  const log = createLogger('feed/latest/scheduler')
 
   const entriesBatch = entriesBuffer
   entriesBuffer = []
@@ -119,7 +127,7 @@ export async function scheduleFeedLatestUpdate(ref: ControlRef) {
     log(`Running feed latest update: ${entriesBatch.length}`)
     await workerFeedLatestUpdate(ref, entriesBatch, {})
 
-    if (requestQueue.queue.length === 0) {
+    if (taskQueue.queue.length === 0) {
       Promise.all([
         workerFeedTopUpdate(ref, { force: true, delay: 1_000 }),
         workerFeedActivityUpdate(ref, { force: true, delay: 1_000 }),

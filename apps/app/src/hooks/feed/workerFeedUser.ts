@@ -1,7 +1,8 @@
 import * as CAF from 'caf'
+import { v4 as uuid } from 'uuid'
 import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
-import { RequestQueue } from '../../shared/requestQueue'
+import { TaskQueue } from '../../shared/taskQueue'
 import { ControlRef } from '../skynet/useControlRef'
 import {
   cacheUserEntries,
@@ -15,7 +16,9 @@ import { feedLatestAdd } from './workerFeedLatest'
 
 const REFRESH_INTERVAL_USER = 4
 
-const requestQueue = RequestQueue('feed/user', 5)
+const taskQueue = TaskQueue('feed/user', {
+  poolSize: 5,
+})
 
 const cafFeedUserUpdate = CAF(function* feedUserUpdate(
   signal: any,
@@ -24,7 +27,9 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
   params: WorkerParams
 ): Generator<Promise<EntryFeed | Entry[] | JSONResponse | void>, any, any> {
   const shortUserId = userId.slice(0, 5)
-  const log = createLogger(`feed/user/${shortUserId}/update`)
+  const log = createLogger(`feed/user/${shortUserId}/update`, {
+    workflowId: params.workflowId,
+  })
 
   try {
     log('Running')
@@ -100,11 +105,17 @@ export async function feedUserUpdate(
   userId: string,
   params: WorkerParams = {}
 ): Promise<any> {
+  const workflowId = uuid()
   const shortUserId = userId.slice(0, 5)
-  const log = createLogger(`feed/user/${shortUserId}/update`)
+  const log = createLogger(`feed/user/${shortUserId}/update`, {
+    workflowId,
+  })
   const token = await handleToken(ref, `feedUserUpdate/${userId}`)
   try {
-    await cafFeedUserUpdate(token.signal, ref, userId, params)
+    await cafFeedUserUpdate(token.signal, ref, userId, {
+      ...params,
+      workflowId,
+    })
   } catch (e) {
     if (e) {
       log('Error', e)
@@ -119,8 +130,8 @@ export async function workerFeedUserUpdate(
 ): Promise<any> {
   const task = () => feedUserUpdate(ref, userId, params)
   if (params.prioritize) {
-    await requestQueue.prepend(task)
+    await taskQueue.prepend(task)
   } else {
-    await requestQueue.append(task)
+    await taskQueue.append(task)
   }
 }

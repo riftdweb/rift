@@ -2,6 +2,7 @@ import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
 import { wait } from '../../shared/wait'
+import { v4 as uuid } from 'uuid'
 import { ControlRef } from '../skynet/useControlRef'
 import {
   cacheActivity,
@@ -11,8 +12,6 @@ import {
 } from './shared'
 import { clearToken, handleToken } from './tokens'
 import { Activity, ActivityFeed, Entry, EntryFeed, WorkerParams } from './types'
-
-const log = createLogger('feed/activity/update')
 
 const cafWorkerFeedActivityUpdate = CAF(function* (
   signal: any,
@@ -24,6 +23,9 @@ const cafWorkerFeedActivityUpdate = CAF(function* (
   any
 > {
   const { force = false, delay = 0 } = params
+  const log = createLogger('feed/activity/update', {
+    workflowId: params.workflowId,
+  })
   try {
     log('Running')
     if (delay) {
@@ -73,10 +75,16 @@ export async function workerFeedActivityUpdate(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<void> {
-  const log = createLogger('feed/activity/update')
+  const workflowId = uuid()
+  const log = createLogger('feed/activity/update', {
+    workflowId,
+  })
   const token = await handleToken(ref, 'feedActivityUpdate')
   try {
-    await cafWorkerFeedActivityUpdate(token.signal, ref, params)
+    await cafWorkerFeedActivityUpdate(token.signal, ref, {
+      ...params,
+      workflowId,
+    })
   } catch (e) {
     if (e) {
       log('Error', e)

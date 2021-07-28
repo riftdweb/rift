@@ -6,10 +6,10 @@ import { fetchProfile } from '../useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { suggestionUserIds as _suggestionUserIds } from './suggestions'
 import { Feed } from '../feed/types'
-import { RequestQueue } from '../../shared/requestQueue'
+import { TaskQueue } from '../../shared/taskQueue'
 import { workerFeedUserUpdate } from '../feed/workerFeedUser'
 
-const requestQueue = RequestQueue('users')
+const taskQueue = TaskQueue('users')
 
 const debouncedMutate = debounce((mutate) => {
   return mutate()
@@ -151,9 +151,9 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.follow(userId)
-          await requestQueue.append(task)
+          await taskQueue.append(task)
 
-          if (requestQueue.queue.length === 0) {
+          if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
 
@@ -180,9 +180,9 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.unfollow(userId)
-          await requestQueue.append(task)
+          await taskQueue.append(task)
 
-          if (requestQueue.queue.length === 0) {
+          if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
         } catch (e) {}

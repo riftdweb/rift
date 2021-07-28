@@ -1,7 +1,21 @@
 import { createLogger } from './logger'
 
-export function RequestQueue(namespace: string, taskPoolSize = 1) {
-  const log = createLogger(`${namespace}/RequestQueue`)
+type Params = {
+  poolSize?: number
+  maxQueueSize?: number
+}
+
+const defaultParams = {
+  poolSize: 1,
+}
+
+export function TaskQueue(namespace: string, params: Params = {}) {
+  const { poolSize, maxQueueSize } = {
+    ...defaultParams,
+    ...params,
+  }
+
+  const log = createLogger(`${namespace}/TaskQueue`)
 
   const queue = []
   // let tasksInflight = false
@@ -37,14 +51,16 @@ export function RequestQueue(namespace: string, taskPoolSize = 1) {
           tasksInflight,
           'Queue',
           queue.length,
-          'Max',
-          taskPoolSize
+          'Max Queue',
+          maxQueueSize || '∞',
+          'Pool',
+          poolSize
         )
       }
-      if (tasksInflight >= taskPoolSize) {
+      if (tasksInflight >= poolSize) {
         log('Waiting on tasks')
       }
-      while (queue.length && tasksInflight < taskPoolSize) {
+      while (queue.length && tasksInflight < poolSize) {
         startNextTask()
       }
     }, 2000)
@@ -59,6 +75,10 @@ export function RequestQueue(namespace: string, taskPoolSize = 1) {
         resolve,
         reject,
       })
+      while (maxQueueSize && queue.length > maxQueueSize) {
+        log('Dropping task from the front')
+        queue.shift()
+      }
     })
   }
 
@@ -71,6 +91,10 @@ export function RequestQueue(namespace: string, taskPoolSize = 1) {
         resolve,
         reject,
       })
+      while (maxQueueSize && queue.length > maxQueueSize) {
+        log('Dropping task from the back')
+        queue.pop()
+      }
     })
   }
 

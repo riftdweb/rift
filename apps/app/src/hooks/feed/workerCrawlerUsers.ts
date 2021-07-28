@@ -6,17 +6,20 @@ import { workerFeedUserUpdate } from './workerFeedUser'
 import { EntryFeed, WorkerParams } from './types'
 import { clearToken, handleToken } from './tokens'
 import { wait } from '../../shared/wait'
+import { v4 as uuid } from 'uuid'
 
 const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
 const REFRESH_INTERVAL_CRAWLER = 0
 
-const log = createLogger('crawler/users')
 const cafCrawlerUsers = CAF(function* crawlerUsers(
   signal: any,
   ref: ControlRef,
   params: WorkerParams
 ): Generator<Promise<EntryFeed | string[]>, any, any> {
+  const log = createLogger('crawler/users', {
+    workflowId: params.workflowId,
+  })
   let userWorkers = []
   try {
     log('Running')
@@ -85,9 +88,16 @@ export async function workerCrawlerUsers(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<any> {
+  const workflowId = uuid()
+  const log = createLogger('crawler/users', {
+    workflowId,
+  })
   const token = await handleToken(ref, 'crawlerUsers')
   try {
-    await cafCrawlerUsers(token.signal, ref, params)
+    await cafCrawlerUsers(token.signal, ref, {
+      ...params,
+      workflowId,
+    })
   } catch (e) {
     if (e) {
       log('Error', e)
@@ -97,7 +107,7 @@ export async function workerCrawlerUsers(
   }
 }
 
-const logScheduler = createLogger('crawler/users/schedule')
+const logScheduler = createLogger('crawler/users/scheduler')
 
 async function maybeRunCrawlerUsers(ref: ControlRef): Promise<any> {
   // If crawler is already running skip
@@ -123,7 +133,7 @@ async function maybeRunCrawlerUsers(ref: ControlRef): Promise<any> {
 let interval = null
 
 export async function scheduleCrawlerUsers(ref: ControlRef): Promise<any> {
-  log('Starting scheduler')
+  logScheduler('Starting scheduler')
 
   // Give the page render requests a few seconds to complete
   await wait(3000)

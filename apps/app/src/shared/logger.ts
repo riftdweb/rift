@@ -31,11 +31,10 @@ export function createLogger(namespace: string, params: LoggerParams = {}) {
       return
     }
     const time = format(new Date(), 'HH:mm:ss')
+    const formattedWorkflowId = workflowId ? workflowId.slice(0, 5) : '-----'
     const metaParts = [
-      `${
-        workflowId ? `%c${workflowId.slice(0, 5)} ` : '      '
-      }%c${time} rift/${rootNamespace}`,
-      workflowId ? `color: #${getColor(workflowId)}; font-weight: bold;` : null,
+      `%c${formattedWorkflowId} %c${time} rift/${rootNamespace}`,
+      `color: #${getColor(formattedWorkflowId)}; font-weight: bold;`,
       'color: blue; font-weight: bold;',
     ].filter((i) => !!i)
     console.log(...metaParts, ...args)

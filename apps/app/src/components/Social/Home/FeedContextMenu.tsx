@@ -10,9 +10,11 @@ import {
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
+import { Fragment } from 'react'
 import { Link as RLink } from 'react-router-dom'
 import { useFeed } from '../../../hooks/feed'
 import { useSkynet } from '../../../hooks/skynet'
+import { DATA_PRIVATE_FEATURES } from '../../../shared/config'
 import { getDataKeyFeeds } from '../../../shared/dataKeys'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 
@@ -52,28 +54,32 @@ export function FeedContextMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem
-          disabled={!!current.loadingState}
+          // disabled={!!current.loadingState}
           onSelect={() => refreshCurrentFeed()}
         >
           Refresh
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Data</DropdownMenuLabel>
-        <DropdownMenuItem
-          as={RLink}
-          to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
-            'entries/top'
-          )}`}
-          css={{
-            textDecoration: 'none',
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: '$blue800',
-            },
-          }}
-        >
-          Feed
-        </DropdownMenuItem>
+        {DATA_PRIVATE_FEATURES && (
+          <Fragment>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Data</DropdownMenuLabel>
+            <DropdownMenuItem
+              as={RLink}
+              to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
+                'entries/top'
+              )}`}
+              css={{
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '$blue800',
+                },
+              }}
+            >
+              Feed
+            </DropdownMenuItem>
+          </Fragment>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

@@ -37,14 +37,14 @@ export function Dns() {
                 flex: 1,
               }}
             >
-              Entry link (TXT)
+              Resolver skylink
             </Box>
             <Box
               css={{
                 flex: 1,
               }}
             >
-              Current data link
+              Target skylink
             </Box>
             <Box
               css={{
@@ -71,8 +71,8 @@ export function Dns() {
           </Flex>
           <EntriesState
             response={dns}
-            emptyTitle="Manage and edit entry links"
-            emptyMessage="Add a record to generate an entry link"
+            emptyTitle="Manage and edit resolver skylinks"
+            emptyMessage="Add a record to generate a resolver skylink"
           >
             {dns.data?.entries
               .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))

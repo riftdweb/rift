@@ -27,16 +27,15 @@ export function ViewingUser() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
 
-  const { data } = useSWR<{ data: { profile: IUserProfile } }>(
-    viewingUserId || 'local',
-    () =>
-      (Api.getJSON({
-        publicKey: viewingUserId,
-        domain: 'profile-dac.hns',
-        path: 'profileIndex.json',
-      }) as unknown) as Promise<{
-        data: { profile: IUserProfile }
-      }>
+  const { data } = useSWR(viewingUserId || 'local', () =>
+    Api.getJSON<{
+      profile: IUserProfile
+    }>({
+      publicKey: viewingUserId,
+      domain: 'profile-dac.hns',
+      path: 'profileIndex.json',
+      discoverable: true,
+    })
   )
 
   const toggleEditing = useCallback(() => {

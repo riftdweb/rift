@@ -82,7 +82,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
           </Text>
           <Fragment>
             <Text size="1" css={{ color: '$gray800' }}>
-              {isV2 ? 'Entry link' : 'Data link'}
+              {isV2 ? 'Resolver skylink' : 'Data skylink'}
             </Text>
             <Text size="1" css={{ color: '$gray800' }}>
               •

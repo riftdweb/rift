@@ -8,7 +8,6 @@ import { suggestionUserIds as _suggestionUserIds } from './suggestions'
 import { Feed } from '../feed/types'
 import { RequestQueue } from '../../shared/requestQueue'
 import { workerFeedUserUpdate } from '../feed/workerFeedUser'
-import { clearAllTokens } from '../feed/tokens'
 
 const requestQueue = RequestQueue('users')
 
@@ -159,8 +158,7 @@ export function UsersProvider({ children }: Props) {
           }
 
           // Trigger update user
-          clearAllTokens(ref)
-          workerFeedUserUpdate(ref, userId, { force: true })
+          workerFeedUserUpdate(ref, userId, { force: true, prioritize: true })
         } catch (e) {}
       }
       func()
@@ -212,7 +210,11 @@ export function UsersProvider({ children }: Props) {
       ref.current.followingUserIdsHasFetched = true
     }
     ref.current.followingUserIds = followingUserIds
-  }, [ref, followingUserIds])
+    ref.current.allUsers = [
+      ...(followings.data?.entries || []),
+      ...(suggestions.data?.entries || []),
+    ]
+  }, [ref, followingUserIds, followings, suggestions])
 
   const value = {
     checkIsFollowingUser,

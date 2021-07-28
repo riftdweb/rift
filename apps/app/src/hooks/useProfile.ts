@@ -23,7 +23,9 @@ export async function fetchProfile(
   ref: ControlRef,
   userId: string
 ): Promise<IUserProfile> {
-  const log = createLogger(`profiles/${userId.slice(0, 5)}/fetch`, true)
+  const log = createLogger(`profiles/${userId.slice(0, 5)}/fetch`, {
+    disable: true,
+  })
 
   const cacheEntry = cache[userId]
   const now = new Date().getTime()
@@ -37,6 +39,7 @@ export async function fetchProfile(
     publicKey: userId,
     domain: 'profile-dac.hns',
     path: 'profileIndex.json',
+    discoverable: true,
   })
 
   if (!response.data?.profile) {

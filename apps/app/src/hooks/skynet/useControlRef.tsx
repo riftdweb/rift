@@ -1,13 +1,25 @@
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
+import { ActivityFeed, EntryFeed } from '../feed/types'
+import { User } from '../users'
 import { Api } from './buildApi'
+
+type TokenKey =
+  | 'feedLatestUpdate'
+  | 'feedTopUpdate'
+  | 'feedActivityUpdate'
+  | 'crawlerUsers'
+  | 'afterFeedUserUpdate'
+  | string
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
   myUserId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
   followingUserIds: {} as SWRResponse<string[], any>,
+  allUsers: [] as User[],
   followingUserIdsHasFetched: false as boolean,
+  pendingUserPosts: 0 as number,
   domains: {} as {
     [domain: string]: number
   },
@@ -25,16 +37,26 @@ const controlRefDefaults = {
     crawlerUsers: null,
     feedUserUpdate: null,
     afterFeedUserUpdate: null,
-  },
+  } as Record<TokenKey, any>,
   feeds: {} as {
     user: {
-      response: SWRResponse<any, any>
+      response: SWRResponse<EntryFeed, any>
       getLoadingState: (userId: string) => string
       setLoadingState: (userId: string, state?: string) => void
     }
-    [feedName: string]: {
-      response: SWRResponse<any, any>
-      loadingState?: string
+    top: {
+      response: SWRResponse<EntryFeed, any>
+      loadingState: string
+      setLoadingState: (state?: string) => void
+    }
+    latest: {
+      response: SWRResponse<EntryFeed, any>
+      loadingState: string
+      setLoadingState: (state?: string) => void
+    }
+    activity: {
+      response: SWRResponse<ActivityFeed, any>
+      loadingState: string
       setLoadingState: (state?: string) => void
     }
   },

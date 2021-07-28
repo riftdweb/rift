@@ -1,4 +1,3 @@
-import { ContentRecordDAC } from '@skynetlabs/content-record-library'
 import {
   createContext,
   useCallback,
@@ -18,9 +17,9 @@ import { SocialDAC } from 'social-dac-library'
 import { useProfile } from '../useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { ControlRef, useControlRef } from './useControlRef'
+import { clearEntriesBuffer } from '../feed/workerFeedLatest'
 
 export const feedDAC = new FeedDAC()
-export const contentRecord = new ContentRecordDAC()
 export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
 
@@ -105,7 +104,6 @@ export function SkynetProvider({ children }: Props) {
         })
         // load necessary DACs and permissions
         await _mySky.loadDacs(
-          contentRecord as any,
           feedDAC as any,
           userProfileDAC as any,
           socialDAC as any
@@ -156,6 +154,9 @@ export function SkynetProvider({ children }: Props) {
         })
         triggerToast(`Successfully logged in as ${userId.slice(0, 6)}...`)
       }
+
+      // Initialization functions from other services
+      clearEntriesBuffer()
 
       setIsReseting(false)
     }

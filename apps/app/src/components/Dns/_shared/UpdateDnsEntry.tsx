@@ -90,7 +90,7 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                 <Flex>
-                  <Text>Data link</Text>
+                  <Text>Target skylink</Text>
                   {formik.errors.dataLink && (
                     <Text
                       css={{ color: '$red900', flex: 1, textAlign: 'right' }}

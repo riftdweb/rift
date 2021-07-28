@@ -3,20 +3,21 @@ import throttle from 'lodash/throttle'
 import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
 import { useSkynet } from './skynet'
+import { Api } from './skynet/buildApi'
 
 const dataKeyFiles = getDataKeyFiles()
 
-const throttledSyncState = throttle(async (Api, state) => {
+const throttledSyncState = throttle(async (Api: Api, state) => {
   try {
-    // console.log('syncing start', SKYFILES_DATA_KEY, state)
+    console.log('syncing start', dataKeyFiles, state)
     await Api.setJSON({
-      dataPath: dataKeyFiles,
+      path: dataKeyFiles,
       json: state,
     })
-    // console.log('syncing success', SKYFILES_DATA_KEY, state)
+    console.log('syncing success', dataKeyFiles, state)
   } catch (e) {
     console.log(e)
-    // console.log('syncing failed', SKYFILES_DATA_KEY, state)
+    console.log('syncing failed', dataKeyFiles, state)
   }
 }, 5000)
 
@@ -27,15 +28,13 @@ export const useSkyfilesState = () => {
   const fetchData = useCallback(() => {
     const func = async () => {
       try {
-        const { data }: { data?: Skyfile[] } = ((await Api.getJSON({
+        const { data } = await Api.getJSON<Skyfile[]>({
           path: dataKeyFiles,
-        })) as unknown) as {
-          data: Skyfile[]
-        }
+        })
         // console.log(data)
         setLocalState(data || ([] as Skyfile[]))
       } catch (e) {
-        console.log(e)
+        console.log('getJSON failed', e)
         setTimeout(() => {
           // Error, probably too many requests, try again
           fetchData()
@@ -76,7 +75,7 @@ export const useSkyfilesState = () => {
           return nextState
         })
       } else {
-        // console.log('nextState', SKYFILES_DATA_KEY, _nextState)
+        // console.log('nextState', dataKeyFiles, _nextState)
         setLocalState(_nextState)
         syncState(_nextState)
       }

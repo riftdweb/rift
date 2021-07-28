@@ -42,14 +42,12 @@ export function AppsProvider({ children }: Props) {
   const { Api, getKey, appDomain } = useSkynet()
   const history = useHistory()
 
-  const { data, mutate, isValidating } = useSWR<{ data: App[] }>(
+  const { data, mutate, isValidating } = useSWR(
     getKey([appDomain, dataKeyApps]),
     () =>
-      (Api.getJSON({
+      Api.getJSON<App[]>({
         path: dataKeyApps,
-      }) as unknown) as Promise<{
-        data: App[]
-      }>,
+      }),
     {
       revalidateOnFocus: false,
     }
@@ -70,7 +68,13 @@ export function AppsProvider({ children }: Props) {
     (apps: App[]) => {
       const func = async () => {
         // Update cache immediately
-        mutate({ data: apps }, false)
+        mutate(
+          (data) => ({
+            data: apps,
+            dataLink: data?.dataLink,
+          }),
+          false
+        )
         // Save changes to SkyDB
         await Api.setJSON({
           path: dataKeyApps,

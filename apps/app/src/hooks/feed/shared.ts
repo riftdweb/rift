@@ -19,9 +19,9 @@ export async function cacheUserEntries(
   ref: ControlRef,
   userId: string,
   entries: Entry[]
-) {
+): Promise<void> {
   const { Api } = ref.current
-  return await Api.setJSON({
+  await Api.setJSON({
     path: getDataKeyFeeds(`entries/${userId}`),
     json: {
       updatedAt: new Date().getTime(),
@@ -120,9 +120,12 @@ export async function compileUserEntries(userId: string): Promise<Entry[]> {
   return allUserEntries
 }
 
-export async function cacheTopEntries(ref: ControlRef, entries: Entry[]) {
+export async function cacheTopEntries(
+  ref: ControlRef,
+  entries: Entry[]
+): Promise<void> {
   const { Api } = ref.current
-  return await Api.setJSON({
+  await Api.setJSON({
     path: getDataKeyFeeds('entries/top'),
     json: {
       updatedAt: new Date().getTime(),
@@ -131,9 +134,12 @@ export async function cacheTopEntries(ref: ControlRef, entries: Entry[]) {
   })
 }
 
-export async function cacheActivity(ref: ControlRef, activities: Activity[]) {
+export async function cacheActivity(
+  ref: ControlRef,
+  activities: Activity[]
+): Promise<void> {
   const { Api } = ref.current
-  return await Api.setJSON({
+  await Api.setJSON({
     path: getDataKeyFeeds('activity'),
     json: {
       updatedAt: new Date().getTime(),

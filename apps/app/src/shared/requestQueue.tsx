@@ -32,7 +32,14 @@ export function RequestQueue(namespace: string, taskPoolSize = 1) {
     log('Starting up')
     interval = setInterval(async () => {
       if (queue.length) {
-        log('Queue size', queue.length, 'Pool size', taskPoolSize)
+        log(
+          'Pending',
+          tasksInflight,
+          'Queue',
+          queue.length,
+          'Max',
+          taskPoolSize
+        )
       }
       if (tasksInflight >= taskPoolSize) {
         log('Waiting on tasks')

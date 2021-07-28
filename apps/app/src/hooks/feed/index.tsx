@@ -22,7 +22,6 @@ import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
 import { workerCrawlerUsers } from './workerCrawlerUsers'
-import { clearAllTokens } from './tokens'
 
 const log = createLogger('feed')
 
@@ -152,8 +151,10 @@ export function FeedProvider({ children }: Props) {
     (userId: string) => {
       const func = async () => {
         try {
-          await clearAllTokens(ref)
-          await workerFeedUserUpdate(ref, userId, { force: true })
+          await workerFeedUserUpdate(ref, userId, {
+            force: true,
+            prioritize: true,
+          })
         } catch (e) {}
       }
       return func()
@@ -249,38 +250,41 @@ export function FeedProvider({ children }: Props) {
           isPending: true,
         } as unknown) as Entry
 
-        // Abort all
-        localLog('Abort all signals')
-        clearAllTokens(ref)
+        try {
+          localLog('Optimistic updates')
+          // Incrementing this value prevents feeds from refetching
+          ref.current.pendingUserPosts += 1
 
-        localLog('Optimistic updates')
-        // Optimistically update local latest feed
-        latest.response.mutate(
-          (data) => ({
-            updatedAt: data.updatedAt,
-            entries: [pendingPost, ...data.entries],
-          }),
-          false
-        )
+          // Optimistically update local latest feed
+          latest.response.mutate(
+            (data) => ({
+              updatedAt: data.updatedAt,
+              entries: [pendingPost, ...data.entries],
+            }),
+            false
+          )
 
-        // Optimistically update local user feed
-        user.response.mutate(
-          (data) => ({
-            updatedAt: data.updatedAt,
-            entries: [pendingPost, ...data.entries],
-          }),
-          false
-        )
+          // Optimistically update local user feed
+          user.response.mutate(
+            (data) => ({
+              updatedAt: data.updatedAt,
+              entries: [pendingPost, ...data.entries],
+            }),
+            false
+          )
 
-        localLog('Feed DAC createPost')
-        // Create post
-        await feedDAC.createPost({ text })
+          localLog('Feed DAC createPost')
+          // Create post
+          await feedDAC.createPost({ text })
 
-        localLog('Start user feed update')
-        await workerFeedUserUpdate(ref, myUserId, { force: true })
-
-        localLog('Restart users crawler')
-        await workerCrawlerUsers(ref)
+          localLog('Start user feed update')
+          await workerFeedUserUpdate(ref, myUserId, {
+            force: true,
+            prioritize: true,
+          })
+        } finally {
+          ref.current.pendingUserPosts -= 1
+        }
       }
       func()
     },

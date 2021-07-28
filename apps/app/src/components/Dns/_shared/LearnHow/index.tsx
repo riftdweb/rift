@@ -23,14 +23,15 @@ export function LearnHow() {
         <Paragraph css={{ color: '$gray900' }}>
           Setting up a Handshake domain as a Skynet website is easy. All it
           requires is configuring the Handshake domain with a TXT record
-          containing an entry link (mutable skylink). The Rift DNS interface
-          generates these entry links.
+          containing a resolver skylink (mutable skylink). The Rift DNS
+          interface generates these resolver skylinks for you.
         </Paragraph>
-        <Image src="/dns/entry-link.png" />
+        <Image src="/dns/resolver.png" />
         <Paragraph css={{ color: '$gray900' }}>
-          The entry link will resolve to the current data link configured in the
-          Rift DNS interface. You can update your Handshake website at any time
-          by updating the data link - the change will take effect immediately.
+          The resolver skylink will resolve to the current target skylink
+          configured in the Rift DNS interface. You can update your Handshake
+          website at any time by updating the target skylink - the change will
+          take effect immediately.
         </Paragraph>
         <Image src="/dns/manage.png" />
         <Paragraph css={{ color: '$gray900' }}>
@@ -40,7 +41,7 @@ export function LearnHow() {
         <Image src="/dns/txt.png" />
         <Paragraph css={{ color: '$gray900' }}>
           Create a new TXT record in the "Blockchain DNS records" section. Set
-          the value to be the entry link found on the Rift DNS interface.
+          the value to be the resolver skylink found on the Rift DNS interface.
         </Paragraph>
         <Image src="/dns/save.png" />
         <Paragraph css={{ color: '$gray900' }}>
@@ -51,8 +52,8 @@ export function LearnHow() {
           This initial setup takes about 10 minutes depending on the Handshake
           blockchain. Once the status indicator at the top of the page turns
           green, the configuration is complete. Note that after this initial
-          setup the website can be updated instantly by changing the data link
-          in the Rift DNS interface.
+          setup the website can be updated instantly by changing the target
+          skylink in the Rift DNS interface.
         </Paragraph>
       </Flex>
     </Dialog>

@@ -51,14 +51,12 @@ export function DomainsProvider({ children }: Props) {
   const { Api, getKey, appDomain } = useSkynet()
   const history = useHistory()
 
-  const { data, mutate, isValidating } = useSWR<{ data: Domain[] }>(
+  const { data, mutate, isValidating } = useSWR(
     getKey([appDomain, dataKeyDomains]),
     () =>
-      (Api.getJSON({
+      Api.getJSON<Domain[]>({
         path: dataKeyDomains,
-      }) as unknown) as Promise<{
-        data: Domain[]
-      }>,
+      }),
     {
       revalidateOnFocus: false,
     }
@@ -79,7 +77,13 @@ export function DomainsProvider({ children }: Props) {
     (domains: Domain[]) => {
       const func = async () => {
         // Update cache immediately
-        mutate({ data: domains }, false)
+        mutate(
+          (data) => ({
+            data: domains,
+            dataLink: data?.dataLink,
+          }),
+          false
+        )
         // Save changes to SkyDB
         await Api.setJSON({
           path: dataKeyDomains,

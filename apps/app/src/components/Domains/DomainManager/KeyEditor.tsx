@@ -48,6 +48,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       domain: dataDomain,
       publicKey: viewingUserId,
       path: dataKey.key,
+      discoverable: true,
     })
   })
 
@@ -145,6 +146,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
             domain: dataDomain,
             path: dataKey.key,
             json: newData,
+            discoverable: true,
           })
         } catch (e) {
           const customMessage =

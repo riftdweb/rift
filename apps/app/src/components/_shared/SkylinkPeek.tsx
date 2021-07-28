@@ -8,8 +8,8 @@ type Props = {
 
 export function SkylinkPeek({ skylink }: Props) {
   const plainSkylink = skylink && skylink.replace('sia://', '')
-  const isEntryLink = skylink && isSkylinkV2(plainSkylink)
-  const content = isEntryLink ? 'Copy entry link' : 'Copy data link'
+  const isResolverSkylink = skylink && isSkylinkV2(plainSkylink)
+  const content = isResolverSkylink ? 'Copy resolver skylink' : 'Copy skylink'
   return (
     <Tooltip align="start" content={content}>
       <Code
@@ -28,7 +28,7 @@ export function SkylinkPeek({ skylink }: Props) {
           if (skylink) {
             copyToClipboard(
               plainSkylink,
-              isEntryLink ? 'entry link' : 'data link'
+              isResolverSkylink ? 'resolver skylink' : 'skylink'
             )
           }
         }}

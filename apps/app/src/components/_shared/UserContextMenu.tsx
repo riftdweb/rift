@@ -18,6 +18,7 @@ import { Fragment, useMemo } from 'react'
 import { useFeed } from '../../hooks/feed'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { useUsers } from '../../hooks/users'
+import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
 
 type Props = {
@@ -133,21 +134,23 @@ export function UserContextMenu({
         >
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem
-          as={RLink}
-          to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
-            `entries/${userId}`
-          )}`}
-          css={{
-            textDecoration: 'none',
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: '$blue800',
-            },
-          }}
-        >
-          Feed
-        </DropdownMenuItem>
+        {DATA_PRIVATE_FEATURES && (
+          <DropdownMenuItem
+            as={RLink}
+            to={`/data/mysky/${myUserId}/${appDomain}/${getDataKeyFeeds(
+              `entries/${userId}`
+            )}`}
+            css={{
+              textDecoration: 'none',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '$blue800',
+              },
+            }}
+          >
+            Feed
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
         <DropdownMenuItem onSelect={() => copyToClipboard(userId, 'user ID')}>

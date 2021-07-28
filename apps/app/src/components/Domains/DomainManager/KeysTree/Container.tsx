@@ -1,6 +1,6 @@
 import { LockClosedIcon, Pencil2Icon, StackIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Tooltip } from '@riftdweb/design-system'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { VelocityComponent } from 'velocity-react'
 import { useSkynet } from '../../../../hooks/skynet'
 import SeedIcon from '../../../_icons/SeedIcon'
@@ -38,7 +38,7 @@ export function Container({
   animations,
   node,
 }: Props) {
-  const { dataDomain: appDomain } = useSkynet()
+  const { appDomain } = useSkynet()
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const toggleElement = useMemo(() => {

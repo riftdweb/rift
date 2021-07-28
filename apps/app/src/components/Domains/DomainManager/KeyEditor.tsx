@@ -31,11 +31,11 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [value, setValue] = useState<string>()
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
-  const { Api, identityKey, userId } = useSkynet()
+  const { Api, identityKey, myUserId } = useSkynet()
   const { removeKey } = useDomains()
   const { viewingUserId, isReadOnly } = useDomainParams()
   const key = [
-    userId === viewingUserId ? identityKey : viewingUserId,
+    myUserId === viewingUserId ? identityKey : viewingUserId,
     domain.id,
     dataKey.id,
   ]
@@ -45,9 +45,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     const { seed, dataDomain } = domain
     return Api.getJSON<{}>({
       seed,
-      dataDomain,
+      domain: dataDomain,
       publicKey: viewingUserId,
-      dataKey: dataKey.key,
+      path: dataKey.key,
+      discoverable: true,
     })
   })
 
@@ -142,9 +143,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
         try {
           await Api.setJSON({
             seed,
-            dataDomain,
-            dataKey: dataKey.key,
+            domain: dataDomain,
+            path: dataKey.key,
             json: newData,
+            discoverable: true,
           })
         } catch (e) {
           const customMessage =

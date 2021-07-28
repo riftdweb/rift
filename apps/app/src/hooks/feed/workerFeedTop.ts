@@ -1,3 +1,5 @@
+import * as CAF from 'caf'
+import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
 import { ControlRef } from '../skynet/useControlRef'
 import { scoreEntries } from './scoring'
@@ -7,13 +9,18 @@ import {
   fetchTopEntries,
   needsRefresh,
 } from './shared'
-import { EntryFeed, WorkerParams } from './types'
+import { clearToken, handleToken } from './tokens'
+import { v4 as uuid } from 'uuid'
+import { Entry, EntryFeed, WorkerParams } from './types'
 
-export async function workerFeedTopUpdate(
+const cafWorkerFeedTopUpdate = CAF(function* (
+  signal: any,
   ref: ControlRef,
-  params: WorkerParams = {}
-): Promise<EntryFeed> {
-  const log = createLogger('feed/top/update')
+  params: WorkerParams
+): Generator<Promise<EntryFeed | Entry[] | JSONResponse | void>, any, any> {
+  const log = createLogger('feed/top/update', {
+    workflowId: params.workflowId,
+  })
 
   try {
     const { force = false } = params
@@ -22,7 +29,7 @@ export async function workerFeedTopUpdate(
 
     if (!force) {
       log('Fetching cached top entries')
-      let feed = await fetchTopEntries(ref)
+      let feed = yield fetchTopEntries(ref)
 
       if (!needsRefresh(feed, 5)) {
         log('Up to date')
@@ -33,14 +40,14 @@ export async function workerFeedTopUpdate(
     ref.current.feeds.top.setLoadingState('Compiling')
 
     log('Fetching cached entries')
-    let allEntriesFeed = await fetchAllEntries(ref)
+    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref)
     let entries = allEntriesFeed.entries
 
     log('Scoring entries')
     ref.current.feeds.top.setLoadingState('Scoring')
     const keywords = ref.current.keywords
     const domains = ref.current.domains
-    const scoredEntries = await scoreEntries(entries, {
+    const scoredEntries: Entry[] = yield scoreEntries(entries, {
       keywords,
       domains,
     })
@@ -49,20 +56,44 @@ export async function workerFeedTopUpdate(
     )
 
     log('Caching top entries')
-    await cacheTopEntries(ref, sortedEntries)
+    yield cacheTopEntries(ref, sortedEntries)
 
     log('Trigger mutate')
-    await ref.current.feeds.top.response.mutate()
+    yield ref.current.feeds.top.response.mutate()
     ref.current.feeds.top.setLoadingState()
 
     log('Returning')
-    return {
-      updatedAt: new Date().getTime(),
-      entries: sortedEntries,
-    }
-  } catch (e) {
-    log('Error', e)
   } finally {
+    log('Finally')
+    if (signal.aborted) {
+      log('Aborted')
+    }
+    clearToken(ref, 'feedTopUpdate')
     ref.current.feeds.top.setLoadingState()
+  }
+})
+
+// Computes a new top feed
+// "Latest" - Subsequent calls to this worker will cancel previous runs.
+export async function workerFeedTopUpdate(
+  ref: ControlRef,
+  params: WorkerParams = {}
+): Promise<void> {
+  const workflowId = uuid()
+  const log = createLogger('feed/top/update', {
+    workflowId,
+  })
+  log('handling things before new run')
+  const token = await handleToken(ref, 'feedTopUpdate')
+  log('starting new run')
+  try {
+    await cafWorkerFeedTopUpdate(token.signal, ref, {
+      ...params,
+      workflowId,
+    })
+  } catch (e) {
+    if (e) {
+      log('Error', e)
+    }
   }
 }

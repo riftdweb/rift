@@ -21,7 +21,12 @@ import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { useSkynet } from '../../hooks/skynet'
 import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { TaskQueue } from '../../shared/taskQueue'
 import { getSize } from '../../shared/uploads'
+
+const taskQueue = TaskQueue('uploads', {
+  poolSize: 5,
+})
 
 const getRelativeFilePath = (filepath: string): string => {
   const { root, dir, base } = path.parse(filepath)
@@ -225,7 +230,7 @@ export function Uploader({
         return
       }
 
-      const startUpload = async () => {
+      const startUpload = async (): Promise<any> => {
         try {
           let response
 
@@ -256,12 +261,12 @@ export function Uploader({
             })
           }
 
+          updateSkyfile(skyfile.id, {
+            skylink: response.skylink,
+          })
           onUploadStateChange(skyfile.id, {
             status: 'complete',
             uploadedAt: new Date().toISOString(),
-          })
-          updateSkyfile(skyfile.id, {
-            skylink: response.skylink,
           })
         } catch (error) {
           if (
@@ -290,7 +295,8 @@ export function Uploader({
         }
       }
 
-      startUpload()
+      const task = () => startUpload()
+      taskQueue.append(task)
     })
   }
 

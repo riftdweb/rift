@@ -1,23 +1,35 @@
 import { Skyfile } from '@riftdweb/types'
-import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
 import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
+import { createLogger } from '../shared/logger'
+import { TaskQueue } from '../shared/taskQueue'
 import { useSkynet } from './skynet'
+import { Api } from './skynet/buildApi'
 
 const dataKeyFiles = getDataKeyFiles()
 
-const throttledSyncState = throttle(async (Api, state) => {
-  try {
-    // console.log('syncing start', SKYFILES_DATA_KEY, state)
-    await Api.setJSON({
-      dataKey: dataKeyFiles,
-      json: state,
-    })
-    // console.log('syncing success', SKYFILES_DATA_KEY, state)
-  } catch (e) {
-    console.log(e)
-    // console.log('syncing failed', SKYFILES_DATA_KEY, state)
+const taskQueue = TaskQueue('files', {
+  maxQueueSize: 1,
+})
+
+const log = createLogger('files')
+
+const debouncedSyncState = debounce(async (Api: Api, state) => {
+  log('Sync State task created')
+  const task = async () => {
+    try {
+      log('Syncing start')
+      await Api.setJSON({
+        path: dataKeyFiles,
+        json: state,
+      })
+      log('Syncing success')
+    } catch (e) {
+      log('Syncing failed', e)
+    }
   }
+  await taskQueue.append(task)
 }, 5000)
 
 export const useSkyfilesState = () => {
@@ -27,15 +39,13 @@ export const useSkyfilesState = () => {
   const fetchData = useCallback(() => {
     const func = async () => {
       try {
-        const { data }: { data?: Skyfile[] } = ((await Api.getJSON({
-          dataKey: dataKeyFiles,
-        })) as unknown) as {
-          data: Skyfile[]
-        }
+        const { data } = await Api.getJSON<Skyfile[]>({
+          path: dataKeyFiles,
+        })
         // console.log(data)
         setLocalState(data || ([] as Skyfile[]))
       } catch (e) {
-        console.log(e)
+        console.log('getJSON failed', e)
         setTimeout(() => {
           // Error, probably too many requests, try again
           fetchData()
@@ -58,9 +68,24 @@ export const useSkyfilesState = () => {
     fetchData()
   }, [fetchData])
 
-  const syncState = useCallback(
-    (nextState: Skyfile[]) => {
-      throttledSyncState(Api, nextState)
+  const maybeSyncState = useCallback(
+    (prevState: Skyfile[], nextState: Skyfile[]) => {
+      const prevCompleteCount = prevState.filter(
+        (file) => file.upload.status === 'complete'
+      ).length
+      const nextCompleteCount = nextState.filter(
+        (file) => file.upload.status === 'complete'
+      ).length
+      if (prevCompleteCount !== nextCompleteCount) {
+        log(
+          'Triggering debounced sync state',
+          'Prev',
+          prevCompleteCount,
+          'Next',
+          nextCompleteCount
+        )
+        debouncedSyncState(Api, nextState)
+      }
     },
     [Api]
   )
@@ -72,16 +97,16 @@ export const useSkyfilesState = () => {
           // @ts-ignore
           const nextState = _nextState(_localState)
           // console.log('nextState', nextState)
-          syncState(nextState)
+          maybeSyncState(_localState, nextState)
           return nextState
         })
       } else {
-        // console.log('nextState', SKYFILES_DATA_KEY, _nextState)
+        // console.log('nextState', dataKeyFiles, _nextState)
         setLocalState(_nextState)
-        syncState(_nextState)
+        maybeSyncState(localState, _nextState)
       }
     },
-    [setLocalState, syncState]
+    [localState, setLocalState, maybeSyncState]
   )
 
   return {

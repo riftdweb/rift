@@ -15,6 +15,7 @@ import { copyToClipboard } from '../../shared/clipboard'
 import { getSize } from '../../shared/uploads'
 import FolderIcon from '../_icons/FolderIcon'
 import SpinnerIcon from '../_icons/SpinnerIcon'
+import { SkylinkDnsMenu } from '../_shared/SkylinkDnsMenu'
 import { SkylinkPeek } from '../_shared/SkylinkPeek'
 
 const getProgressText = (progress) => {
@@ -40,7 +41,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   } = skyfile
   const portal = ingressPortals.length ? ingressPortals[0] : ''
   const [isHovering, setIsHovering] = useState<boolean>(false)
-  const [isMenuOpen] = useState<boolean>(false)
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
 
   const iconElement = useMemo(() => {
     if (status === 'complete') {
@@ -195,13 +196,13 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
               <MagnifyingGlassIcon />
             </Button>
           </Tooltip>
-          {/* <SkylinkDnsMenu
+          <SkylinkDnsMenu
             skylink={skylink}
             onOpenChange={(val) => {
               setIsMenuOpen(val)
               setIsHovering(val)
             }}
-          /> */}
+          />
           <Tooltip content="Open weblink">
             <Button variant="ghost" as="a" href={weblink} target="_blank">
               <ExternalLinkIcon />

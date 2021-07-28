@@ -6,11 +6,10 @@ import { fetchProfile } from '../useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { suggestionUserIds as _suggestionUserIds } from './suggestions'
 import { Feed } from '../feed/types'
-import { RequestQueue } from '../../shared/requestQueue'
+import { TaskQueue } from '../../shared/taskQueue'
 import { workerFeedUserUpdate } from '../feed/workerFeedUser'
-import { clearAllTokens } from '../feed/tokens'
 
-const requestQueue = RequestQueue('users')
+const taskQueue = TaskQueue('users')
 
 const debouncedMutate = debounce((mutate) => {
   return mutate()
@@ -40,7 +39,7 @@ type Props = {
 }
 
 export function UsersProvider({ children }: Props) {
-  const { userId: myUserId, getKey, controlRef: ref } = useSkynet()
+  const { myUserId, getKey, controlRef: ref } = useSkynet()
 
   const followingUserIds = useSWR(
     getKey(['users', 'followingUserIds']),
@@ -152,15 +151,14 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.follow(userId)
-          await requestQueue.add(task)
+          await taskQueue.append(task)
 
-          if (requestQueue.queue.length === 0) {
+          if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
 
           // Trigger update user
-          clearAllTokens(ref)
-          workerFeedUserUpdate(ref, userId, { force: true })
+          workerFeedUserUpdate(ref, userId, { force: true, prioritize: true })
         } catch (e) {}
       }
       func()
@@ -182,9 +180,9 @@ export function UsersProvider({ children }: Props) {
         )
         try {
           const task = async () => await socialDAC.unfollow(userId)
-          await requestQueue.add(task)
+          await taskQueue.append(task)
 
-          if (requestQueue.queue.length === 0) {
+          if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
         } catch (e) {}
@@ -212,7 +210,11 @@ export function UsersProvider({ children }: Props) {
       ref.current.followingUserIdsHasFetched = true
     }
     ref.current.followingUserIds = followingUserIds
-  }, [ref, followingUserIds])
+    ref.current.allUsers = [
+      ...(followings.data?.entries || []),
+      ...(suggestions.data?.entries || []),
+    ]
+  }, [ref, followingUserIds, followings, suggestions])
 
   const value = {
     checkIsFollowingUser,

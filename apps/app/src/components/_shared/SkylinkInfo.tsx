@@ -3,6 +3,7 @@ import {
   ExternalLinkIcon,
 } from '@radix-ui/react-icons'
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
+import { Fragment } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { Link } from './Link'
@@ -17,6 +18,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
     skylink,
     data,
     isApp,
+    isV2,
     isDirectory,
     contentType,
     fileCount,
@@ -78,6 +80,14 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
               ? `${isApp ? 'App' : 'Directory'} with ${fileCount} files`
               : 'File'}
           </Text>
+          <Fragment>
+            <Text size="1" css={{ color: '$gray800' }}>
+              {isV2 ? 'Resolver skylink' : 'Data skylink'}
+            </Text>
+            <Text size="1" css={{ color: '$gray800' }}>
+              •
+            </Text>
+          </Fragment>
           <Text size="1" css={{ color: '$gray800' }}>
             {contentType}
           </Text>
@@ -94,7 +104,12 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
         <SpinnerIcon />
       </Box>
     ) : (
-      <Box>Error</Box>
+      <Flex css={{ gap: '$2', alignItems: 'center', color: '$gray900' }}>
+        <ExclamationTriangleIcon />
+        <Text css={{ color: '$gray900', top: '-1px', position: 'relative' }}>
+          Error loading Skyfile
+        </Text>
+      </Flex>
     ))
   )
 }

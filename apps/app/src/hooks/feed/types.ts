@@ -51,6 +51,13 @@ export type Entry = {
   local?: boolean
 }
 
+export type Activity = {
+  id: string
+  userId: string
+  message: string
+  at: number
+}
+
 export type Feed<T> = {
   updatedAt: number
   entries: T[]
@@ -59,26 +66,11 @@ export type Feed<T> = {
 }
 
 export type EntryFeed = Feed<Entry>
-
-export type EntryFeedResponse = {
-  data?: EntryFeed
-  dataLink?: string
-}
-
-export type Activity = {
-  id: string
-  userId: string
-  message: string
-  at: number
-}
-
 export type ActivityFeed = Feed<Activity>
-
-export type ActivityFeedResponse = {
-  data?: ActivityFeed
-  dataLink?: string
-}
 
 export type WorkerParams = {
   force?: boolean
+  prioritize?: boolean
+  delay?: number
+  workflowId?: string
 }

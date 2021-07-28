@@ -18,26 +18,27 @@ export async function handleToken(
 export async function clearToken(
   ref: ControlRef,
   tokenKey: keyof ControlRefDefaults['tokens']
-): Promise<any> {
+): Promise<void> {
   const log = createLogger('clearToken')
 
   const existingToken = ref.current.tokens[tokenKey]
 
   try {
-  if (existingToken) {
-    // Abort any running worker
-    await existingToken.abort()
-    existingToken.discard()
-    ref.current.tokens[tokenKey] = null
-  }
+    if (existingToken) {
+      // Abort any running worker
+      existingToken.abort()
+      existingToken.discard()
+      ref.current.tokens[tokenKey] = null
+      delete ref.current.tokens[tokenKey]
+    }
   } catch (e) {
     log('Error', e)
   }
 }
 
 export async function clearAllTokens(ref) {
-  await clearToken(ref, 'crawlerUsers')
-  await clearToken(ref, 'feedUserUpdate')
-  await clearToken(ref, 'feedLatestUpdate')
-  await clearToken(ref, 'afterFeedUserUpdate')
+  const promises = Object.keys(ref.current.tokens).map((key) =>
+    clearToken(ref, key)
+  )
+  await Promise.all(promises)
 }

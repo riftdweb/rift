@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { DnsEntry } from '@riftdweb/types'
-import { formatDistance, parseISO } from 'date-fns'
+import { formatDistance } from 'date-fns'
 import { SkylinkPeek } from '../_shared/SkylinkPeek'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export function DnsRow({ dnsEntry }: Props) {
-  const { name, skylink, addedAt, updatedAt } = dnsEntry
+  const { name, dataLink, entryLink, addedAt, updatedAt } = dnsEntry
 
   return (
     <Box
@@ -39,7 +39,10 @@ export function DnsRow({ dnsEntry }: Props) {
             <Text>{name}</Text>
           </Box>
           <Box css={{ flex: 1, display: 'flex' }}>
-            <SkylinkPeek skylink={skylink} />
+            <SkylinkPeek skylink={entryLink} />
+          </Box>
+          <Box css={{ flex: 1, display: 'flex' }}>
+            <SkylinkPeek skylink={dataLink} />
           </Box>
           <Box
             css={{
@@ -59,7 +62,7 @@ export function DnsRow({ dnsEntry }: Props) {
               }}
             >
               {addedAt &&
-                formatDistance(parseISO(addedAt), new Date(), {
+                formatDistance(addedAt, new Date(), {
                   addSuffix: true,
                 })}
             </Text>
@@ -82,7 +85,7 @@ export function DnsRow({ dnsEntry }: Props) {
               }}
             >
               {updatedAt &&
-                formatDistance(parseISO(updatedAt), new Date(), {
+                formatDistance(updatedAt, new Date(), {
                   addSuffix: true,
                 })}
             </Text>

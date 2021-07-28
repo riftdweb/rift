@@ -1,33 +1,16 @@
-import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
-import { DnsEntry } from '@riftdweb/types'
+import { Box, Flex, Heading } from '@riftdweb/design-system'
 import { Link } from '../../_shared/Link'
 import { AddDnsEntry } from './AddDnsEntry'
+import { LearnHow } from './LearnHow'
 
-type Props = {
-  dnsEntry?: DnsEntry
-}
-
-export function Nav({ dnsEntry }: Props) {
+export function Nav() {
   return (
     <Heading css={{ my: '$5' }}>
       <Flex css={{ gap: '$1', alignItems: 'center', height: '30px' }}>
         <Link to="/dns">DNS</Link>
-        {dnsEntry && <Text>/</Text>}
-        {dnsEntry && (
-          <Link
-            css={{
-              flex: 1,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-            to={`/dns/${dnsEntry.id}`}
-          >
-            {dnsEntry.name}
-          </Link>
-        )}
-        {!dnsEntry && <Box css={{ flex: 1 }} />}
-        {!dnsEntry && <AddDnsEntry />}
+        <Box css={{ flex: 1 }} />
+        <LearnHow />
+        <AddDnsEntry />
       </Flex>
     </Heading>
   )

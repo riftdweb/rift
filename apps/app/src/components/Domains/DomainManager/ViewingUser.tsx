@@ -17,7 +17,7 @@ import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
 import { useDomainParams } from '../../../hooks/useDomainParams'
 
 export function ViewingUser() {
-  const { Api, userId } = useSkynet()
+  const { Api, myUserId } = useSkynet()
   const {
     viewingUserId,
     isViewingSelf,
@@ -27,16 +27,15 @@ export function ViewingUser() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const ref = useRef<HTMLInputElement>(null)
 
-  const { data } = useSWR<{ data: { profile: IUserProfile } }>(
-    viewingUserId || 'local',
-    () =>
-      (Api.getJSON({
-        publicKey: viewingUserId,
-        dataDomain: 'profile-dac.hns',
-        dataKey: 'profileIndex.json',
-      }) as unknown) as Promise<{
-        data: { profile: IUserProfile }
-      }>
+  const { data } = useSWR(viewingUserId || 'local', () =>
+    Api.getJSON<{
+      profile: IUserProfile
+    }>({
+      publicKey: viewingUserId,
+      domain: 'profile-dac.hns',
+      path: 'profileIndex.json',
+      discoverable: true,
+    })
   )
 
   const toggleEditing = useCallback(() => {
@@ -101,7 +100,7 @@ export function ViewingUser() {
             css={{
               cursor: 'pointer',
             }}
-            alt={userId}
+            alt={myUserId}
             fallback=""
           />
         </Box>

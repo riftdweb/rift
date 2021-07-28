@@ -23,7 +23,7 @@ export function FollowingContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { userId: myUserId, dataDomain: appDomain } = useSkynet()
+  const { myUserId, appDomain } = useSkynet()
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open following menu">

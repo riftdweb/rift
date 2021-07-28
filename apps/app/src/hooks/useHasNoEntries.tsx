@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Feed } from './feed/types'
 
-export function useHasNoEntries(data) {
+export function useHasNoEntries<T>(data: Feed<T>): boolean {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoEntities, setUserHasNoEntities] = useState<boolean>(false)
 
@@ -9,7 +10,7 @@ export function useHasNoEntries(data) {
   useEffect(() => {
     if (!hasValidated && data) {
       setHasValidated(true)
-      setUserHasNoEntities(!data.data || !data.data.length)
+      setUserHasNoEntities(!data.entries || !data.entries.length)
     }
   }, [data, hasValidated, setHasValidated, setUserHasNoEntities])
 

@@ -1,5 +1,10 @@
 import { Flex, Image, Paragraph, Subheading } from '@riftdweb/design-system'
 import { Dialog, useDialog } from '../../../_shared/Dialog'
+import resolverUrl from './images/resolver.png'
+import manageUrl from './images/manage.png'
+import txtUrl from './images/txt.png'
+import saveUrl from './images/save.png'
+import statusUrl from './images/status.png'
 
 export function LearnHow() {
   const dialogProps = useDialog()
@@ -26,28 +31,48 @@ export function LearnHow() {
           containing a resolver skylink (mutable skylink). The Rift DNS
           interface generates these resolver skylinks for you.
         </Paragraph>
-        <Image src="/dns/resolver.png" />
+        <Image
+          src={resolverUrl}
+          alt="resolver skylinks"
+          css={{ border: '1px solid $gray400' }}
+        />
         <Paragraph css={{ color: '$gray900' }}>
           The resolver skylink will resolve to the current target skylink
           configured in the Rift DNS interface. You can update your Handshake
           website at any time by updating the target skylink - the change will
           take effect immediately.
         </Paragraph>
-        <Image src="/dns/manage.png" />
+        <Image
+          src={manageUrl}
+          alt="manage handshake domain"
+          css={{ border: '1px solid $gray400' }}
+        />
         <Paragraph css={{ color: '$gray900' }}>
           To set up the Handshake domain, navigate to the domain on Namebase and
           select "Manage".
         </Paragraph>
-        <Image src="/dns/txt.png" />
+        <Image
+          src={txtUrl}
+          alt="set txt record"
+          css={{ border: '1px solid $gray400' }}
+        />
         <Paragraph css={{ color: '$gray900' }}>
           Create a new TXT record in the "Blockchain DNS records" section. Set
           the value to be the resolver skylink found on the Rift DNS interface.
         </Paragraph>
-        <Image src="/dns/save.png" />
+        <Image
+          src={saveUrl}
+          alt="save changes"
+          css={{ border: '1px solid $gray400' }}
+        />
         <Paragraph css={{ color: '$gray900' }}>
           Remember to save the changes, and note the required fees.
         </Paragraph>
-        <Image src="/dns/status.png" />
+        <Image
+          src={statusUrl}
+          alt="handshake status"
+          css={{ border: '1px solid $gray400' }}
+        />
         <Paragraph css={{ color: '$gray900' }}>
           This initial setup takes about 10 minutes depending on the Handshake
           blockchain. Once the status indicator at the top of the page turns

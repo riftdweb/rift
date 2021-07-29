@@ -4,8 +4,10 @@ export const portals = [
   },
   {
     domain: 'skyportal.xyz',
+    disabled: true,
   },
   {
     domain: 'skydrain.net',
+    disabled: true,
   },
 ]

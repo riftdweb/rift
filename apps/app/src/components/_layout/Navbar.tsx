@@ -139,7 +139,11 @@ export default function Navbar() {
                     value={portal}
                   >
                     {portals.map((portal) => (
-                      <option key={portal.domain} value={portal.domain}>
+                      <option
+                        key={portal.domain}
+                        value={portal.domain}
+                        disabled={portal.disabled}
+                      >
                         https://{portal.domain}
                       </option>
                     ))}

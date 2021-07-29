@@ -1,4 +1,4 @@
-import { Entry } from '../../../hooks/feed/types'
+import { Entry } from '../../../contexts/feed/types'
 import { RelativeTime } from './RelativeTime'
 
 type Props = {

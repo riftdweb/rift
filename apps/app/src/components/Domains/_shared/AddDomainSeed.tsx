@@ -14,7 +14,7 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { v4 as uuid } from 'uuid'
 import * as Yup from 'yup'
-import { useDomains } from '../../../hooks/domains'
+import { useDomains } from '../../../contexts/domains'
 
 const defaultDomainValues: Partial<Domain> = {
   parentSeed: '',
@@ -55,13 +55,15 @@ export function AddDomainSeed({ closeDialog }: Props) {
     [addDomain, closeDialog]
   )
 
-  const existingNames = useMemo(() => domains.map((domain) => domain.name), [
-    domains,
-  ])
+  const existingNames = useMemo(
+    () => domains.map((domain) => domain.name),
+    [domains]
+  )
 
-  const validationSchema = useMemo(() => buildDomainSchema(existingNames), [
-    existingNames,
-  ])
+  const validationSchema = useMemo(
+    () => buildDomainSchema(existingNames),
+    [existingNames]
+  )
 
   const formik = useFormik({
     initialValues: {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Feed } from './feed/types'
+import { Feed } from '../contexts/feed/types'
 
 export function useHasNoEntries<T>(data: Feed<T>): boolean {
   const [hasValidated, setHasValidated] = useState<boolean>(false)

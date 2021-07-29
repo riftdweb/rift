@@ -2,7 +2,7 @@ import { Flex } from '@riftdweb/design-system'
 import { useParams } from 'react-router-dom'
 import { FeedItem } from '../_shared/FeedItem'
 import { EntriesState } from '../../_shared/EntriesState'
-import { useFeed } from '../../../hooks/feed'
+import { useFeed } from '../../../contexts/feed'
 
 export function Feed() {
   const { userId } = useParams()

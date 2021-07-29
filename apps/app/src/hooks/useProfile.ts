@@ -4,8 +4,8 @@ import {
 } from '@skynethub/userprofile-library/dist/types'
 import useSWR from 'swr'
 import { createLogger } from '../shared/logger'
-import { useSkynet } from './skynet'
-import { ControlRef } from './skynet/useControlRef'
+import { useSkynet } from '../contexts/skynet'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 
 // 5 minutes
 const CACHE_TIMEOUT = 1000 * 5 * 60

@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Domain, DomainKey } from '../../../../packages/types/src'
 import { triggerToast } from '../shared/toast'
-import { useDomains } from './domains'
+import { useDomains } from '../contexts/domains'
 import { usePath } from './path'
-import { useSkynet } from './skynet'
+import { useSkynet } from '../contexts/skynet'
 
 type Return = {
   domain: Domain

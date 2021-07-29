@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
-import { useFeed } from '../../../../hooks/feed'
-import { useSkynet } from '../../../../hooks/skynet'
+import { useFeed } from '../../../../contexts/feed'
+import { useSkynet } from '../../../../contexts/skynet'
 import { getDataKeyFeeds } from '../../../../shared/dataKeys'
 import SpinnerIcon from '../../../_icons/SpinnerIcon'
 

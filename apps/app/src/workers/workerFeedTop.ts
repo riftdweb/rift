@@ -1,7 +1,7 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../../shared/logger'
-import { ControlRef } from '../skynet/useControlRef'
+import { createLogger } from '../shared/logger'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 import { scoreEntries } from './scoring'
 import {
   cacheTopEntries,
@@ -11,7 +11,7 @@ import {
 } from './shared'
 import { clearToken, handleToken } from './tokens'
 import { v4 as uuid } from 'uuid'
-import { Entry, EntryFeed, WorkerParams } from './types'
+import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 
 const cafWorkerFeedTopUpdate = CAF(function* (
   signal: any,

@@ -11,9 +11,9 @@ import {
   GlobeIcon,
 } from '@radix-ui/react-icons'
 import { useProfile } from '../../../hooks/useProfile'
-import { useFeed } from '../../../hooks/feed'
+import { useFeed } from '../../../contexts/feed'
 import { UserContextMenu } from '../../_shared/UserContextMenu'
-import { useUsers } from '../../../hooks/users'
+import { useUsers } from '../../../contexts/users'
 import { useMemo } from 'react'
 
 export function SocialProfile() {

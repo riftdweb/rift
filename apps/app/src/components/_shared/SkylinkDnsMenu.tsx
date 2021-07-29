@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useDns } from '../../hooks/useDns'
+import { useDns } from '../../contexts/dns'
 
 type Props = {
   skylink: string

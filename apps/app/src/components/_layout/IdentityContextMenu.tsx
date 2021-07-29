@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { useState } from 'react'
-import { useSkynet } from '../../hooks/skynet'
+import { useSkynet } from '../../contexts/skynet'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Avatar } from '../_shared/Avatar'
 

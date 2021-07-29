@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { isSkylinkV2, parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
-import { useSkynet } from './skynet'
+import { useSkynet } from '../contexts/skynet'
 import { usePortal } from './usePortal'
 import bytes from 'bytes'
 

@@ -14,7 +14,7 @@ import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDomains } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
-import { DATA_MYSKY_BASE_PATH, usePath } from './path'
+import { DATA_MYSKY_BASE_PATH, usePath } from '../hooks/path'
 import { useSkynet } from './skynet'
 
 const dataKeyDomains = getDataKeyDomains()

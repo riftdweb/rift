@@ -1,11 +1,11 @@
 import * as CAF from 'caf'
-import { createLogger } from '../../shared/logger'
-import { ControlRef } from '../skynet/useControlRef'
+import { createLogger } from '../shared/logger'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 import { fetchAllEntries, needsRefresh } from './shared'
 import { workerFeedUserUpdate } from './workerFeedUser'
-import { EntryFeed, WorkerParams } from './types'
+import { EntryFeed, WorkerParams } from '@riftdweb/types'
 import { clearToken, handleToken } from './tokens'
-import { wait } from '../../shared/wait'
+import { wait } from '../shared/wait'
 import { v4 as uuid } from 'uuid'
 
 const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5

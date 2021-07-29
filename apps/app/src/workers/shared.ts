@@ -1,7 +1,7 @@
-import { getDataKeyFeeds } from '../../shared/dataKeys'
-import { feedDAC } from '../skynet'
-import { ControlRef } from '../skynet/useControlRef'
-import { Feed, Entry, EntryFeed, ActivityFeed, Activity } from './types'
+import { getDataKeyFeeds } from '../shared/dataKeys'
+import { feedDAC } from '../contexts/skynet'
+import { ControlRef } from '../contexts/skynet/useControlRef'
+import { Feed, Entry, EntryFeed, ActivityFeed, Activity } from '@riftdweb/types'
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,

@@ -2,12 +2,12 @@ import { createContext, useCallback, useContext, useEffect } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 import debounce from 'lodash/debounce'
 import { socialDAC, useSkynet } from '../skynet'
-import { fetchProfile } from '../useProfile'
+import { fetchProfile } from '../../hooks/useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { suggestionUserIds as _suggestionUserIds } from './suggestions'
 import { Feed } from '../feed/types'
 import { TaskQueue } from '../../shared/taskQueue'
-import { workerFeedUserUpdate } from '../feed/workerFeedUser'
+import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
 
 const taskQueue = TaskQueue('users')
 

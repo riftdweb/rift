@@ -13,17 +13,13 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import React, { Fragment, useCallback, useMemo, useState } from 'react'
-import { useSkyfiles } from '../../hooks/useSkyfiles'
+import { useSkyfiles } from '../../contexts/skyfiles'
 import { SkyfileItem } from './SkyfileItem'
 import { Uploader } from './Uploader'
 
 export function Home() {
-  const {
-    skyfiles,
-    addSkyfiles,
-    updateSkyfile,
-    updateSkyfileUpload,
-  } = useSkyfiles()
+  const { skyfiles, addSkyfiles, updateSkyfile, updateSkyfileUpload } =
+    useSkyfiles()
 
   const [limit] = useState<number>(20)
   const [skip, setSkip] = useState<number>(0)

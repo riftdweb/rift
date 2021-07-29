@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { EntryFeed } from './types'
-import { fetchTopEntries } from './shared'
+import { fetchTopEntries } from '../../workers/shared'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'

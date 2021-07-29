@@ -1,9 +1,9 @@
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useMemo } from 'react'
-import { useSelectedPortal } from './useSelectedPortal'
+import { usePortal } from './usePortal'
 
 export const useAvatarUrl = (profile?: IUserProfile) => {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   return useMemo(() => {
     const avatarUrl =
       profile && profile.avatar && profile.avatar.length

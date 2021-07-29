@@ -1,7 +1,7 @@
-import { useSelectedPortal } from './useSelectedPortal'
+import { usePortal } from './usePortal'
 
 export const useLink = (link: string) => {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   let hnsDomain = ''
 
   // Format: sia://skychess.hns/#/watch/...

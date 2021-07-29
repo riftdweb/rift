@@ -1,13 +1,13 @@
 import { Box } from '@riftdweb/design-system'
 import { useParams } from 'react-router-dom'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { usePortal } from '../../hooks/usePortal'
 import { skapps } from '../../shared/skapps'
 import { Grid } from '../_shared/Grid'
 import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 
 export default function AppManager() {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   const { appId } = useParams()
   const isValidating = false
   const app = skapps.find((app) => app.id === appId)

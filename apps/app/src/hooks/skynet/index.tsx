@@ -9,7 +9,7 @@ import {
 import { MySky, SkynetClient } from 'skynet-js'
 import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../useLocalRootSeed'
-import { useSelectedPortal } from '../useSelectedPortal'
+import { usePortal } from '../usePortal'
 import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
@@ -47,7 +47,7 @@ type Props = {
 }
 
 export function SkynetProvider({ children }: Props) {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   const controlRef = useControlRef()
   const { localRootSeed } = useLocalRootSeed()
 

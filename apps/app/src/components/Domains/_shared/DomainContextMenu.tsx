@@ -12,7 +12,7 @@ import {
 import { Domain } from '@riftdweb/types'
 import { Fragment } from 'react'
 import { genKeyPairFromSeed } from 'skynet-js'
-import { useDomains } from '../../../hooks/domains'
+import { useDomains } from '../../../contexts/domains'
 import { copyToClipboard } from '../../../shared/clipboard'
 
 type Props = {

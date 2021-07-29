@@ -1,9 +1,9 @@
 import * as CAF from 'caf'
 import { v4 as uuid } from 'uuid'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../../shared/logger'
-import { TaskQueue } from '../../shared/taskQueue'
-import { ControlRef } from '../skynet/useControlRef'
+import { createLogger } from '../shared/logger'
+import { TaskQueue } from '../shared/taskQueue'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 import {
   cacheUserEntries,
   compileUserEntries,
@@ -11,7 +11,7 @@ import {
   needsRefresh,
 } from './shared'
 import { clearToken, handleToken } from './tokens'
-import { Entry, EntryFeed, WorkerParams } from './types'
+import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { feedLatestAdd } from './workerFeedLatest'
 
 const REFRESH_INTERVAL_USER = 4

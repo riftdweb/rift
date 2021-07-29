@@ -1,4 +1,4 @@
-import { SkynetProvider } from '../hooks/skynet'
+import { SkynetProvider } from '../contexts/skynet'
 
 export function Root({ children }) {
   return <SkynetProvider>{children}</SkynetProvider>

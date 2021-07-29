@@ -2,7 +2,7 @@
 // import { createLogger } from '../../shared/logger'
 // import { ControlRef } from '../skynet/useControlRef'
 // import { fetchAllEntries, needsRefresh } from './shared'
-// import { workerFeedUserUpdate } from './workerFeedUser'
+// import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
 // import { EntryFeed, WorkerParams } from './types'
 // import { clearAllTokens, clearToken, handleToken } from './tokens'
 // import { wait } from '../../shared/wait'

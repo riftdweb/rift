@@ -1,6 +1,9 @@
 import * as CAF from 'caf'
-import { createLogger } from '../../shared/logger'
-import { ControlRef, ControlRefDefaults } from '../skynet/useControlRef'
+import { createLogger } from '../shared/logger'
+import {
+  ControlRef,
+  ControlRefDefaults,
+} from '../contexts/skynet/useControlRef'
 
 export async function handleToken(
   ref: ControlRef,

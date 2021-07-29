@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
-import { useSkynet } from '../../../../hooks/skynet'
+import { useSkynet } from '../../../../contexts/skynet'
 
 type Props = {
   variant?: ButtonVariants['variant']

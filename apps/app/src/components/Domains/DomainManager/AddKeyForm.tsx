@@ -11,7 +11,7 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
-import { useDomains } from '../../../hooks/domains'
+import { useDomains } from '../../../contexts/domains'
 import { usePath } from '../../../hooks/path'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 

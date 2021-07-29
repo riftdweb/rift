@@ -1,5 +1,5 @@
 import { processEntries } from './processing'
-import { Entry } from './types'
+import { Entry } from '@riftdweb/types'
 
 type ScoreData = {
   keywords: {

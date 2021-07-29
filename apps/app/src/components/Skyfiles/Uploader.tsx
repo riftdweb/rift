@@ -19,8 +19,8 @@ import { useBeforeunload } from 'react-beforeunload'
 import { useDropzone } from 'react-dropzone'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
-import { useSkynet } from '../../hooks/skynet'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { useSkynet } from '../../contexts/skynet'
+import { usePortal } from '../../hooks/usePortal'
 import { TaskQueue } from '../../shared/taskQueue'
 import { getSize } from '../../shared/uploads'
 
@@ -91,7 +91,7 @@ export function Uploader({
     'directoryMode',
     false
   )
-  const [selectedPortal] = useSelectedPortal()
+  const { portal } = usePortal()
   const { Api } = useSkynet()
 
   useBeforeunload((e) => {
@@ -236,7 +236,7 @@ export function Uploader({
 
           // Set the portal before upload initiates
           onUploadStateChange(skyfile.id, {
-            ingressPortals: [selectedPortal],
+            ingressPortals: [portal],
           })
 
           if (skyfile.isDirectory) {
@@ -370,9 +370,8 @@ export function Uploader({
             }}
           >
             Drop {directoryMode ? 'a directory' : 'files'} here or click to
-            browse. Files will be uploaded to <Code>{selectedPortal}</Code>.
-            Files will be pinned according to the portal's policies on
-            retention.
+            browse. Files will be uploaded to <Code>{portal}</Code>. Files will
+            be pinned according to the portal's policies on retention.
           </Text>
         </Container>
         <Flex css={{ gap: '$3', alignItems: 'center' }}>

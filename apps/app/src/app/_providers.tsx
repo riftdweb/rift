@@ -1,11 +1,11 @@
-import { DomainsProvider } from '../hooks/domains'
-import { FeedProvider } from '../hooks/feed'
-import { useSkynet } from '../hooks/skynet'
-import { UsersProvider } from '../hooks/users'
-import { AppsProvider } from '../hooks/useApps'
-import { DnsProvider } from '../hooks/useDns'
-import { SkyfilesProvider } from '../hooks/useSkyfiles'
-import { ThemeProvider } from '../hooks/theme'
+import { DomainsProvider } from '../contexts/domains'
+import { FeedProvider } from '../contexts/feed'
+import { useSkynet } from '../contexts/skynet'
+import { UsersProvider } from '../contexts/users'
+import { AppsProvider } from '../contexts/apps'
+import { DnsProvider } from '../contexts/dns'
+import { SkyfilesProvider } from '../contexts/skyfiles'
+import { ThemeProvider } from '../contexts/theme'
 
 export function Providers({ children }) {
   const { isInitializing } = useSkynet()

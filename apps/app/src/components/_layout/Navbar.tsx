@@ -16,11 +16,10 @@ import {
 } from '@riftdweb/design-system'
 import { useCallback } from 'react'
 import { Link as RLink } from 'react-router-dom'
-import { extractDomainForPortal } from 'skynet-js'
 import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
-import { useTheme } from '../../hooks/theme'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
-import { portals } from '../../shared/portals'
+import { useSkynet } from '../../contexts/skynet'
+import { useTheme } from '../../contexts/theme'
+import { usePortal } from '../../hooks/usePortal'
 import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
@@ -28,21 +27,20 @@ import { Searchbar } from './Searchbar'
 
 export default function Navbar() {
   const { toggleTheme } = useTheme()
-  const [portal, setPortal] = useSelectedPortal()
+  const { portal, portals, setDevPortal } = usePortal()
+  const { appDomain } = useSkynet()
 
   const handleChangePortal = useCallback(
     (newPortal: string) => {
       const hostname = window.location.hostname
-      setPortal(newPortal)
       if (hostname === 'localhost') {
+        setDevPortal(newPortal)
         window.location.reload()
       } else {
-        //  e.g. ("https://siasky.net", "dac.hns.siasky.net") => "dac.hns"
-        const subdomain = extractDomainForPortal(`https://${portal}`, hostname)
-        window.location.href = `https://${subdomain}.${newPortal}`
+        window.location.href = `https://${appDomain}.${newPortal}`
       }
     },
-    [setPortal, portal]
+    [appDomain, setDevPortal]
   )
 
   return (
@@ -141,7 +139,11 @@ export default function Navbar() {
                     value={portal}
                   >
                     {portals.map((portal) => (
-                      <option key={portal.domain} value={portal.domain}>
+                      <option
+                        key={portal.domain}
+                        value={portal.domain}
+                        disabled={portal.disabled}
+                      >
                         https://{portal.domain}
                       </option>
                     ))}

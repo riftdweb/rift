@@ -1,6 +1,6 @@
-import { createLogger } from '../../shared/logger'
+import { createLogger } from '../shared/logger'
 import { scheduleCrawlerUsers } from './workerCrawlerUsers'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 import { clearAllTokens } from './tokens'
 import { scheduleFeedLatestUpdate } from './workerFeedLatest'
 // import { scheduleCrawlerNetwork } from './workerCrawlerNetwork'

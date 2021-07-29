@@ -11,7 +11,7 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
 import * as Yup from 'yup'
-import { useDns } from '../../../hooks/useDns'
+import { useDns } from '../../../contexts/dns'
 import SpinnerIcon from '../../_icons/SpinnerIcon'
 import { Dialog, useDialog } from '../../_shared/Dialog'
 import { SkylinkInfo } from '../../_shared/SkylinkInfo'
@@ -63,10 +63,9 @@ export function AddDnsEntry() {
     [dns.data]
   )
 
-  const validationSchema = useMemo(
-    () => buildSchema(existingNames),
-    [existingNames]
-  )
+  const validationSchema = useMemo(() => buildSchema(existingNames), [
+    existingNames,
+  ])
 
   const formik = useFormik({
     initialValues: {

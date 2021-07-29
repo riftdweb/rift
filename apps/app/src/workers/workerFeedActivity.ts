@@ -1,9 +1,9 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../../shared/logger'
-import { wait } from '../../shared/wait'
+import { createLogger } from '../shared/logger'
+import { wait } from '../shared/wait'
 import { v4 as uuid } from 'uuid'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/useControlRef'
 import {
   cacheActivity,
   fetchActivity,
@@ -11,7 +11,13 @@ import {
   needsRefresh,
 } from './shared'
 import { clearToken, handleToken } from './tokens'
-import { Activity, ActivityFeed, Entry, EntryFeed, WorkerParams } from './types'
+import {
+  Activity,
+  ActivityFeed,
+  Entry,
+  EntryFeed,
+  WorkerParams,
+} from '@riftdweb/types'
 
 const cafWorkerFeedActivityUpdate = CAF(function* (
   signal: any,

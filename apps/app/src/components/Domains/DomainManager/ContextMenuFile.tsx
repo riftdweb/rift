@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@riftdweb/design-system'
-import { useDomains } from '../../../hooks/domains'
+import { useDomains } from '../../../contexts/domains'
 import { copyToClipboard } from '../../../shared/clipboard'
 import { TreeNodeFile } from './KeysTree/transformKeys'
 

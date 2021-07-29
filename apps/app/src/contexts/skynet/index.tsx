@@ -8,16 +8,16 @@ import {
 } from 'react'
 import { MySky, SkynetClient } from 'skynet-js'
 import { triggerToast } from '../../shared/toast'
-import { useLocalRootSeed } from '../useLocalRootSeed'
-import { useSelectedPortal } from '../useSelectedPortal'
+import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
+import { usePortal } from '../../hooks/usePortal'
 import { buildApi } from './buildApi'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
-import { useProfile } from '../useProfile'
+import { useProfile } from '../../hooks/useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { ControlRef, useControlRef } from './useControlRef'
-import { clearEntriesBuffer } from '../feed/workerFeedLatest'
+import { clearEntriesBuffer } from '../../workers/workerFeedLatest'
 
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
@@ -47,7 +47,7 @@ type Props = {
 }
 
 export function SkynetProvider({ children }: Props) {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   const controlRef = useControlRef()
   const { localRootSeed } = useLocalRootSeed()
 

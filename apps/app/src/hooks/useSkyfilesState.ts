@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
-import { useSkynet } from './skynet'
-import { Api } from './skynet/buildApi'
+import { useSkynet } from '../contexts/skynet'
+import { Api } from '../contexts/skynet/buildApi'
 
 const dataKeyFiles = getDataKeyFiles()
 

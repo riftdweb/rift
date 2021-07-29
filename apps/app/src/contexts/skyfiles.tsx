@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { mergeItem } from '../shared/collection'
 import { useSkynet } from './skynet'
-import { useSkyfilesState } from './useSkyfilesState'
+import { useSkyfilesState } from '../hooks/useSkyfilesState'
 
 type State = {
   skyfiles: Skyfile[]

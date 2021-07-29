@@ -1,7 +1,7 @@
 import retext from 'retext'
 import keywords from 'retext-keywords'
 import pos from 'retext-pos'
-import { Entry } from './types'
+import { Entry } from '@riftdweb/types'
 
 function extractKeywords(entry: Entry): Promise<Entry> {
   const text = entry.post.content.title || entry.post.content.text

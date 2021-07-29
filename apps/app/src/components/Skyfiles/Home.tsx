@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import React, { Fragment, useCallback, useMemo, useState } from 'react'
-import { useSkyfiles } from '../../hooks/useSkyfiles'
+import { useSkyfiles } from '../../contexts/skyfiles'
 import { SkyfileItem } from './SkyfileItem'
 import { Uploader } from './Uploader'
 

@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading, Input } from '@riftdweb/design-system'
 import { Post } from 'feed-dac-library/dist/cjs/skystandards'
 import { useCallback, useState } from 'react'
-import { feedDAC, useSkynet } from '../../hooks/skynet'
+import { feedDAC, useSkynet } from '../../contexts/skynet'
 
 export function MySkyLearn() {
   const [value, setValue] = useState<string>('')

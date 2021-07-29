@@ -6,5 +6,8 @@
   "typings": "dist/riftdweb-types.cjs.d.ts",
   "author": "Alex Freska",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "feed-dac-library": "^0.2.2"
+  }
 }

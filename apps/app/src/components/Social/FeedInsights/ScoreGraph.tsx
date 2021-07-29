@@ -16,9 +16,9 @@ import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
 import { useCallback, useMemo, useState } from 'react'
-import { useFeed } from '../../../hooks/feed'
-import { scoreEntry } from '../../../hooks/feed/scoring'
-import { Entry } from '../../../hooks/feed/types'
+import { useFeed } from '../../../contexts/feed'
+import { scoreEntry } from '../../../workers/scoring'
+import { Entry } from '../../../contexts/feed/types'
 import { PostTime } from '../_shared/PostTime'
 
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }

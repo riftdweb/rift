@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
-import { useFeed } from '../../../../hooks/feed'
+import { useFeed } from '../../../../contexts/feed'
 import { useProfile } from '../../../../hooks/useProfile'
 import { Link } from '../../../_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'

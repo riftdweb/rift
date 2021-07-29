@@ -1,5 +1,5 @@
 import { Box, Heading } from '@riftdweb/design-system'
-import { useSelectedPortal } from '../../hooks/useSelectedPortal'
+import { usePortal } from '../../hooks/usePortal'
 import { links } from '../../shared/links'
 import { skapps } from '../../shared/skapps'
 import { Grid } from '../_shared/Grid'
@@ -8,7 +8,7 @@ import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 
 export function Ecosystem() {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>

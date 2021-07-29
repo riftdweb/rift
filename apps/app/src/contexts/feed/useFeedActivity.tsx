@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { ActivityFeed } from './types'
-import { fetchActivity } from './shared'
+import { fetchActivity } from '../../workers/shared'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/useControlRef'

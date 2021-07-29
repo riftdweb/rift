@@ -2,12 +2,12 @@ import { useMemo } from 'react'
 import { isSkylinkV2, parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
-import { useSkynet } from './skynet'
-import { useSelectedPortal } from './useSelectedPortal'
+import { useSkynet } from '../contexts/skynet'
+import { usePortal } from './usePortal'
 import bytes from 'bytes'
 
 export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
-  const [portal] = useSelectedPortal()
+  const { portal } = usePortal()
   const { Api } = useSkynet()
 
   const skylink = rawSkylink ? parseSkylink(rawSkylink) : null

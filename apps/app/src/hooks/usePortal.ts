@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { createLocalStorageStateHook } from 'use-local-storage-state'
+import { portals as defaultPortals } from '../shared/portals'
 
 export const useSelectedDevPortal = createLocalStorageStateHook<string>(
   'v0/devPortal',
@@ -22,8 +23,21 @@ export function usePortal() {
     return parts.slice(parts.length - 2, parts.length).join('.')
   }, [devPortal])
 
+  const portals = useMemo(() => {
+    if (defaultPortals.find(({ domain }) => domain === portal)) {
+      return defaultPortals
+    }
+    return [
+      {
+        domain: portal,
+      },
+      ...defaultPortals,
+    ]
+  }, [portal])
+
   return {
     portal,
+    portals,
     setDevPortal,
   }
 }

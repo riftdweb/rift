@@ -1,3 +1,4 @@
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { Post } from 'feed-dac-library/dist/cjs/skystandards'
 
 // The following is the Skynet Skyfile metadata structure
@@ -173,4 +174,12 @@ export type WorkerParams = {
   prioritize?: boolean
   delay?: number
   workflowId?: string
+}
+
+export type UserItem = {
+  userId: string
+  username?: string
+  profile?: IUserProfile
+  followingIds: string[]
+  followerIds: string[]
 }

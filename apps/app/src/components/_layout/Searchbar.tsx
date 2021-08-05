@@ -1,35 +1,35 @@
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
 import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SearchResults } from './SearchResults'
 
 export function Searchbar() {
   const [isFocused, setIsFocused] = useState<boolean>(false)
-  const [value, setValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>('')
   const ref = useRef()
 
   const onChange = useCallback(
     (e) => {
       e.preventDefault()
       e.stopPropagation()
-      setValue(e.target.value)
+      setSearchValue(e.target.value)
     },
-    [setValue]
+    [setSearchValue]
   )
 
   useEffect(() => {
-    if (value) {
+    if (searchValue) {
       if (!isFocused) {
         setIsFocused(true)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+  }, [searchValue])
 
-  const width = value ? '500px' : '200px'
+  const width = isFocused || searchValue ? '500px' : '210px'
 
-  const isOpen = isFocused && value
+  const isOpen = isFocused && searchValue
 
   return (
     <Box
@@ -60,16 +60,16 @@ export function Searchbar() {
           </Button>
           <Input
             ref={ref}
-            value={value}
+            value={searchValue}
             onChange={onChange}
             onFocus={() => setIsFocused(true)}
             css={{ padding: '0 $2' }}
-            placeholder="Look up a Skylink"
+            placeholder="Search users or skylinks"
             size="2"
           />
-          {value && (
+          {searchValue && (
             <Button
-              onClick={() => setValue('')}
+              onClick={() => setSearchValue('')}
               css={{
                 borderTopLeftRadius: '0',
                 borderBottomLeftRadius: '0',
@@ -81,11 +81,11 @@ export function Searchbar() {
             </Button>
           )}
         </ControlGroup>
-        {value && isFocused && (
+        {isFocused && (
           <DismissableLayer onDismiss={() => setIsFocused(false)}>
             {(props) => (
               <Box {...props}>
-                <SearchResults value={value} />
+                <SearchResults searchValue={searchValue} />
               </Box>
             )}
           </DismissableLayer>

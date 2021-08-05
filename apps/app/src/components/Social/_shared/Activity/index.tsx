@@ -19,7 +19,7 @@ function ActivityItem({ userId, message, at }) {
       }}
     >
       <Box css={{ marginTop: '$1' }}>
-        <Avatar profile={profile} />
+        <Avatar userId={userId} profile={profile} />
       </Box>
       <Flex
         css={{

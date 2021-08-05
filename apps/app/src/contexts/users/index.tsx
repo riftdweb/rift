@@ -210,10 +210,6 @@ export function UsersProvider({ children }: Props) {
       ref.current.followingUserIdsHasFetched = true
     }
     ref.current.followingUserIds = followingUserIds
-    ref.current.allUsers = [
-      ...(followings.data?.entries || []),
-      ...(suggestions.data?.entries || []),
-    ]
   }, [ref, followingUserIds, followings, suggestions])
 
   const value = {

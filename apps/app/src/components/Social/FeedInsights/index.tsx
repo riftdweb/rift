@@ -12,7 +12,7 @@ const HEIGHT = 500
 export function FeedInsights() {
   const [ref, { width }] = useDimensions()
   return (
-    <Layout overflow="visible">
+    <Layout>
       <Nav />
       <Box css={{ position: 'relative' }} ref={ref}>
         <Box css={{ my: '$3' }}>

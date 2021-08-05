@@ -1,7 +1,7 @@
 import { Button } from '@riftdweb/design-system'
 import { useProfile } from '../../../../hooks/useProfile'
 import { useUsers } from '../../../../contexts/users'
-import { User } from '../User'
+import { User } from '../../../_shared/User'
 
 type Props = {
   userId: string

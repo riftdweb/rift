@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode
 }
 
-export function Layout({ children, overflow = 'hidden' }: Props) {
+export function Layout({ children, overflow = 'visible' }: Props) {
   return (
     <Box css={{ py: '$3', position: 'relative' }}>
       <Box>

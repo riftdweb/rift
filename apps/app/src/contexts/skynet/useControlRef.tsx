@@ -1,7 +1,7 @@
+import { UserItem } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
 import { ActivityFeed, EntryFeed } from '../feed/types'
-import { User } from '../users'
 import { Api } from './buildApi'
 
 type TokenKey =
@@ -17,7 +17,7 @@ const controlRefDefaults = {
   myUserId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
   followingUserIds: {} as SWRResponse<string[], any>,
-  allUsers: [] as User[],
+  allUsers: {} as Record<string, UserItem>,
   followingUserIdsHasFetched: false as boolean,
   pendingUserPosts: 0 as number,
   domains: {} as {
@@ -66,5 +66,7 @@ export type ControlRef = RefObject<ControlRefDefaults>
 
 export function useControlRef() {
   const ref = useRef(controlRefDefaults)
+  // @ts-ignore
+  window.ref = ref
   return ref
 }

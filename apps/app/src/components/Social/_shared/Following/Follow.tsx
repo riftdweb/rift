@@ -1,6 +1,6 @@
 import { useProfile } from '../../../../hooks/useProfile'
 import { UserContextMenu } from '../../../_shared/UserContextMenu'
-import { User } from '../User'
+import { User } from '../../../_shared/User'
 
 type Props = {
   userId: string

@@ -1,25 +1,32 @@
 import { Flex } from '@riftdweb/design-system'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
-import { Link } from '../../_shared/Link'
-import { Avatar } from '../../_shared/Avatar'
+import { Link } from './Link'
+import { Avatar } from './Avatar'
 
 type Props = {
   userId: string
   profile?: IUserProfile
   children?: React.ReactNode
-  size?: string
+  width?: string
+  size?: '1' | '2' | '3'
 }
 
-export function User({ userId, profile, size = '2', children }: Props) {
+export function User({
+  userId,
+  profile,
+  size = '2',
+  width = '200px',
+  children,
+}: Props) {
   return (
     <Flex
       css={{
         alignItems: 'center',
         gap: '$1',
-        width: '200px',
+        width,
       }}
     >
-      <Avatar size={size} profile={profile} />
+      <Avatar userId={userId} size={size} profile={profile} link />
       <Link
         css={{
           color: '$hiContrast',

@@ -116,7 +116,7 @@ export function IdentityContextMenu({
           </DropdownMenuTrigger>
         ) : (
           <DropdownMenuTrigger>
-            <Avatar profile={myProfile} />
+            <Avatar userId={myUserId} profile={myProfile} />
           </DropdownMenuTrigger>
         )}
       </Tooltip>

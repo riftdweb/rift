@@ -17,7 +17,7 @@ import { useSkyfiles } from '../../contexts/skyfiles'
 import { copyToClipboard } from '../../shared/clipboard'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { dataKeysExportList } from '../../shared/dataKeys'
-import { User } from '../Social/_shared/User'
+import { User } from '../_shared/User'
 import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {

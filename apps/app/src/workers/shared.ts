@@ -1,7 +1,14 @@
 import { getDataKeyFeeds } from '../shared/dataKeys'
 import { feedDAC } from '../contexts/skynet'
 import { ControlRef } from '../contexts/skynet/useControlRef'
-import { Feed, Entry, EntryFeed, ActivityFeed, Activity } from '@riftdweb/types'
+import {
+  Feed,
+  Entry,
+  EntryFeed,
+  ActivityFeed,
+  Activity,
+  UserItem,
+} from '@riftdweb/types'
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,
@@ -153,4 +160,33 @@ export function needsRefresh<T>(feed: Feed<T>, minutes: number = 0.5) {
     return false
   }
   return true
+}
+
+export async function fetchUsersIndex(
+  ref: ControlRef
+): Promise<Feed<UserItem>> {
+  const response = await ref.current.Api.getJSON<Feed<UserItem>>({
+    path: 'v0/usersIndex',
+  })
+
+  return (
+    response.data || {
+      updatedAt: 0,
+      entries: [],
+    }
+  )
+}
+
+export async function cacheUsersIndex(
+  ref: ControlRef,
+  userItems: UserItem[]
+): Promise<void> {
+  const { Api } = ref.current
+  await Api.setJSON({
+    path: 'v0/usersIndex',
+    json: {
+      updatedAt: new Date().getTime(),
+      entries: userItems,
+    },
+  })
 }

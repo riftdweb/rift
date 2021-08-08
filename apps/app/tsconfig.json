@@ -16,6 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "src/components/Landing/Tilt.jsx"],
   "exclude": ["node_modules"]
 }

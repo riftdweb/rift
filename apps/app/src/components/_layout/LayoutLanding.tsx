@@ -17,10 +17,10 @@ export function LayoutLanding({ children }: Props) {
       }}
     >
       <Navbar />
-      <Container size="3" css={{ minHeight: '60vh', marginTop: '20px' }}>
+      <Box css={{ minHeight: '60vh', marginTop: '20px' }}>
         {/* <TabNav /> */}
         {children}
-      </Container>
+      </Box>
       <Footer />
     </Box>
   )

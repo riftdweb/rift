@@ -22,9 +22,13 @@ export const getDataKeyDomains = makeDataKeyFn(dataVersionDomains, 'domains')
 export const dataVersionDns = 'v1'
 export const getDataKeyDns = makeDataKeyFn(dataVersionDns, 'dns')
 
+export const dataVersionFs = 'v1'
+export const getDataKeyFs = makeDataKeyFn(dataVersionFs, 'fs')
+
 export const dataKeysExportList = [
   getDataKeyApps(),
   getDataKeyFiles(),
   getDataKeyDomains(),
   getDataKeyDns(),
+  getDataKeyFs(),
 ]

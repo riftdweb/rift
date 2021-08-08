@@ -14,6 +14,7 @@ import { buildApi } from './api'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
+import { FileSystemDAC } from 'fs-dac-library'
 import { ControlRef, useControlRef } from './ref'
 import { clearEntriesBuffer } from '../../workers/feedAggregator'
 import { clearAllTaskQueues } from '../../shared/taskQueue'
@@ -27,6 +28,10 @@ const log = createLogger('contexts/skynet', {
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
+export const fileSystemDAC = new FileSystemDAC()
+
+// @ts-ignore
+window.fileSystemDAC = fileSystemDAC
 
 type State = {
   isReady: boolean
@@ -105,6 +110,7 @@ export function SkynetProvider({ children }: Props) {
         })
         // load necessary DACs and permissions
         await _mySky.loadDacs(
+          fileSystemDAC,
           feedDAC as any,
           userProfileDAC as any,
           socialDAC as any

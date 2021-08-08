@@ -18,10 +18,15 @@ import { useProfile } from '../../hooks/useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { ControlRef, useControlRef } from './useControlRef'
 import { clearEntriesBuffer } from '../../workers/workerFeedLatest'
+import { FileSystemDAC } from 'fs-dac-library'
 
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
+export const fileSystemDAC = new FileSystemDAC()
+
+// @ts-ignore
+window.fileSystemDAC = fileSystemDAC
 
 type State = {
   isInitializing: boolean
@@ -104,6 +109,7 @@ export function SkynetProvider({ children }: Props) {
         })
         // load necessary DACs and permissions
         await _mySky.loadDacs(
+          fileSystemDAC,
           feedDAC as any,
           userProfileDAC as any,
           socialDAC as any

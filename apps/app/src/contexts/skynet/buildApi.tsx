@@ -5,6 +5,7 @@ import {
   SkynetClient,
 } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
+import { TaskQueue } from '../../shared/taskQueue'
 
 type BuildApi = {
   portal: string
@@ -19,6 +20,9 @@ export type Api = ReturnType<typeof buildApi>
 const log = createLogger('api', {
   disable: true,
 })
+
+const readQueue = TaskQueue('api/read')
+const writeQueue = TaskQueue('api/write')
 
 export const buildApi = ({
   portal,
@@ -44,6 +48,11 @@ export const buildApi = ({
     domain?: string
     discoverable?: boolean
   }) {
+    type GetJSONReturn = Promise<{
+      data: T | null
+      dataLink: string | null
+    }>
+
     const fullDataPath = (customDomain || appDomain) + '/' + path
     if (seed) {
       const { publicKey } = genKeyPairFromSeed(seed)
@@ -51,13 +60,9 @@ export const buildApi = ({
         \tpublic key: ${publicKey.slice(0, 10)}...
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
-      return (client.db.getJSON(
-        publicKey,
-        fullDataPath
-      ) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
+      return readQueue.append(task)
     }
     if (customPublicKey) {
       log(`client.file.getJSON - mysky
@@ -66,22 +71,20 @@ export const buildApi = ({
         \tdiscoverable: ${discoverable}`)
 
       if (discoverable) {
-        return (client.file.getJSON(
-          customPublicKey,
-          fullDataPath
-        ) as unknown) as Promise<{
-          data: T | null
-          dataLink: string | null
-        }>
+        const task = () =>
+          (client.file.getJSON(
+            customPublicKey,
+            fullDataPath
+          ) as unknown) as GetJSONReturn
+        return readQueue.append(task)
       }
 
-      return (client.file.getJSONEncrypted(
-        customPublicKey,
-        fullDataPath
-      ) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (client.file.getJSONEncrypted(
+          customPublicKey,
+          fullDataPath
+        ) as unknown) as GetJSONReturn
+      return readQueue.append(task)
     }
     if (userId) {
       log(`mySky.getJSON - mysky
@@ -89,25 +92,23 @@ export const buildApi = ({
         \tdiscoverable: ${discoverable}`)
 
       if (discoverable) {
-        return (mySky.getJSON(fullDataPath) as unknown) as Promise<{
-          data: T | null
-          dataLink: string | null
-        }>
+        const task = () =>
+          (mySky.getJSON(fullDataPath) as unknown) as GetJSONReturn
+        return readQueue.append(task)
       }
-      return (mySky.getJSONEncrypted(fullDataPath) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (mySky.getJSONEncrypted(fullDataPath) as unknown) as GetJSONReturn
+      return readQueue.append(task)
     }
     const { publicKey } = genKeyPairFromSeed(localRootSeed)
     log(`client.db.getJSON - local app seed
       \tpublic key: ${publicKey.slice(0, 10)}...
       \tdata path: ${fullDataPath}
       \tdiscoverable: N/A`)
-    return (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<{
-      data: T | null
-      dataLink: string | null
-    }>
+
+    const task = () =>
+      (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
+    return readQueue.append(task)
   }
 
   function setJSON({

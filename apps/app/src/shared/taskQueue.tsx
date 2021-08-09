@@ -67,7 +67,7 @@ export function TaskQueue(namespace: string, params: Params = {}) {
   }
 
   // Append task to the end of the queue
-  async function append(task: () => Promise<any>) {
+  async function append<T>(task: () => Promise<T>): Promise<T> {
     assertRunning()
     return new Promise((resolve, reject) => {
       queue.push({
@@ -83,7 +83,7 @@ export function TaskQueue(namespace: string, params: Params = {}) {
   }
 
   // Prepend task to the beginning of the queue
-  async function prepend(task: () => Promise<any>) {
+  async function prepend<T>(task: () => Promise<T>): Promise<T> {
     assertRunning()
     return new Promise((resolve, reject) => {
       queue.unshift({

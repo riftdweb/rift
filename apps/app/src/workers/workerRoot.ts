@@ -14,7 +14,7 @@ export async function workerRoot(ref: ControlRef): Promise<any> {
   clearAllTokens(ref)
 
   log('Starting users crawler')
-  // await scheduleCrawlerUsers(ref)
+  await scheduleCrawlerUsers(ref)
 
   // log('Starting users network crawler')
   await scheduleCrawlerNetwork(ref)

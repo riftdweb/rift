@@ -3,14 +3,17 @@ import { createLogger } from './logger'
 type Params = {
   poolSize?: number
   maxQueueSize?: number
+  processingInterval?: number
 }
 
 const defaultParams = {
   poolSize: 1,
+  processingInterval: 2_000,
+  ratePerMinute: 60,
 }
 
 export function TaskQueue(namespace: string, params: Params = {}) {
-  const { poolSize, maxQueueSize } = {
+  const { poolSize, maxQueueSize, processingInterval, ratePerMinute } = {
     ...defaultParams,
     ...params,
   }
@@ -20,6 +23,10 @@ export function TaskQueue(namespace: string, params: Params = {}) {
   const queue = []
   // let tasksInflight = false
   let tasksInflight = 0
+
+  let capacity = poolSize
+  let tokens = ratePerMinute
+  let lastFilled = Math.floor(Date.now() / 1000)
 
   let interval = null
 
@@ -38,32 +45,42 @@ export function TaskQueue(namespace: string, params: Params = {}) {
     tasksInflight -= 1
   }
 
+  const refillTokens = async () => {
+    const now = Math.floor(Date.now() / 1000)
+    const rate = (now - this.lastFilled) / this.fillPerSecond
+
+    tokens = Math.min(this.capacity, tokens + Math.floor(rate * this.capacity))
+    lastFilled = now
+  }
+
+  const processQueue = async () => {
+    if (queue.length) {
+      log(
+        'Pending',
+        tasksInflight,
+        'Queue',
+        queue.length,
+        'Max Queue',
+        maxQueueSize || '∞',
+        'Pool',
+        poolSize
+      )
+    }
+    if (tasksInflight >= poolSize) {
+      log('Waiting on tasks')
+    }
+    while (queue.length && tasksInflight < poolSize) {
+      startNextTask()
+    }
+  }
+
   const assertRunning = () => {
     if (interval) {
       return
     }
 
     log('Starting up')
-    interval = setInterval(async () => {
-      if (queue.length) {
-        log(
-          'Pending',
-          tasksInflight,
-          'Queue',
-          queue.length,
-          'Max Queue',
-          maxQueueSize || '∞',
-          'Pool',
-          poolSize
-        )
-      }
-      if (tasksInflight >= poolSize) {
-        log('Waiting on tasks')
-      }
-      while (queue.length && tasksInflight < poolSize) {
-        startNextTask()
-      }
-    }, 2000)
+    interval = setInterval(processQueue, processingInterval)
   }
 
   // Append task to the end of the queue

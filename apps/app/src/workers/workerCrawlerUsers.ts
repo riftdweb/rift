@@ -1,7 +1,7 @@
 import * as CAF from 'caf'
 import { createLogger } from '../shared/logger'
-import { ControlRef } from '../contexts/skynet/useControlRef'
-import { fetchAllEntries, needsRefresh } from './shared'
+import { ControlRef } from '../contexts/skynet/ref'
+import { fetchAllEntries, needsRefresh } from './workerApi'
 import { workerFeedUserUpdate } from './workerFeedUser'
 import { EntryFeed, WorkerParams } from '@riftdweb/types'
 import { clearToken, handleToken } from './tokens'
@@ -29,14 +29,14 @@ const cafCrawlerUsers = CAF(function* crawlerUsers(
     ref.current.feeds.latest.setLoadingState('Checking feed status')
     let allEntriesFeed = yield fetchAllEntries(ref)
 
-    if (
-      !params.force &&
-      !needsRefresh(allEntriesFeed, REFRESH_INTERVAL_CRAWLER)
-    ) {
-      log('Up to date')
-      ref.current.feeds.latest.setLoadingState('')
-      return
-    }
+    // if (
+    //   !params.force &&
+    //   !needsRefresh(allEntriesFeed, REFRESH_INTERVAL_CRAWLER)
+    // ) {
+    //   log('Up to date')
+    //   ref.current.feeds.latest.setLoadingState('')
+    //   return
+    // }
 
     log('Fetching following')
     let followingUserIds = ref.current.followingUserIds.data || []

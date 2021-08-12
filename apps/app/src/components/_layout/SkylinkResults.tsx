@@ -1,47 +1,9 @@
-import {
-  Badge,
-  Box,
-  Flex,
-  Panel,
-  Text,
-  Subtitle,
-  Paragraph,
-} from '@riftdweb/design-system'
-import { intersection } from 'lodash'
-import { useMemo } from 'react'
-import { parseSkylink } from 'skynet-js'
-import { useSkynet } from '../../contexts/skynet'
-import { useUsers } from '../../contexts/users'
-import { People } from '../_shared/People'
+import { Flex, Text } from '@riftdweb/design-system'
 import { SkylinkInfo } from '../_shared/SkylinkInfo'
-import { User } from '../_shared/User'
 
 export function SkylinkResults({ searchValue }) {
-  const isSkylink = searchValue && !!parseSkylink(searchValue)
-
-  if (!searchValue) {
-    return (
-      <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-        <Text
-          css={{
-            color: '$gray900',
-            fontWeight: '600',
-            flex: 1,
-          }}
-        >
-          Skylink
-        </Text>
-        <Flex css={{ flexDirection: 'column', gap: '$1' }}>
-          <Text css={{ color: '$gray900' }}>
-            Enter a skylink to view file details.
-          </Text>
-        </Flex>
-      </Flex>
-    )
-  }
-
   return (
-    <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+    <Flex css={{ flexDirection: 'column', gap: '$2', padding: '$1 $3 $2 $3' }}>
       <Text
         css={{
           color: '$gray900',
@@ -51,9 +13,13 @@ export function SkylinkResults({ searchValue }) {
       >
         Skylink
       </Text>
-      <Flex css={{ flexDirection: 'column', gap: '$1' }}>
+      {!searchValue ? (
+        <Text css={{ color: '$gray800' }}>
+          Enter a skylink to view file details.
+        </Text>
+      ) : (
         <SkylinkInfo skylink={searchValue} />
-      </Flex>
+      )}
     </Flex>
   )
 }

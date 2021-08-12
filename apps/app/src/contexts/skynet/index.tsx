@@ -10,14 +10,15 @@ import { MySky, SkynetClient } from 'skynet-js'
 import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { usePortal } from '../../hooks/usePortal'
-import { buildApi } from './buildApi'
+import { buildApi } from './api'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
-import { useProfile } from '../../hooks/useProfile'
+import { useUser } from '../../hooks/useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
-import { ControlRef, useControlRef } from './useControlRef'
+import { ControlRef, useControlRef } from './ref'
 import { clearEntriesBuffer } from '../../workers/workerFeedLatest'
+import { IUser } from '@riftdweb/types'
 
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
@@ -26,7 +27,7 @@ export const socialDAC = new SocialDAC()
 type State = {
   isInitializing: boolean
   isReseting: boolean
-  myProfile: IUserProfile
+  myUser: IUser
   Api: ReturnType<typeof buildApi>
   getKey: (resourceKeys: any[]) => any[] | null
   mySky: MySky
@@ -62,7 +63,7 @@ export function SkynetProvider({ children }: Props) {
     [controlRef, _setMyUserId]
   )
   const [Api, setApi] = useState<ReturnType<typeof buildApi>>()
-  const myProfile = useProfile(myUserId)
+  const myUser = useUser(myUserId)
   const [mySky, setMySky] = useState<MySky>()
   const [loggedIn, setLoggedIn] = useState(null)
 
@@ -221,7 +222,7 @@ export function SkynetProvider({ children }: Props) {
     getKey,
     identityKey,
     appDomain,
-    myProfile,
+    myUser,
     controlRef,
   }
 

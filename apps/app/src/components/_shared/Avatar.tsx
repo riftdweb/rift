@@ -8,9 +8,16 @@ type Props = {
   link?: boolean
   profile?: IUserProfile
   size?: '1' | '2' | '3'
+  color?: string
 }
 
-export function Avatar({ userId, profile, link = false, size = '2' }: Props) {
+export function Avatar({
+  userId,
+  profile,
+  link = false,
+  color,
+  size = '2',
+}: Props) {
   const avatarUrl = useAvatarUrl(profile)
 
   const avatar = (
@@ -19,23 +26,15 @@ export function Avatar({ userId, profile, link = false, size = '2' }: Props) {
       src={avatarUrl}
       title={profile?.username}
       interactive={link}
+      css={{
+        borderRadius: '100%',
+        border: color ? `2px solid $${color}` : 'inherit',
+      }}
     />
   )
 
   if (link) {
-    return (
-      <Link
-        css={{
-          color: '$hiContrast',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-        to={`/users/${userId}`}
-      >
-        {avatar}
-      </Link>
-    )
+    return <Link to={`/users/${userId}`}>{avatar}</Link>
   }
 
   return avatar

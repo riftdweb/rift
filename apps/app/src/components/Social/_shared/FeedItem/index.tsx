@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../../contexts/feed'
 import { Entry } from '../../../../contexts/feed/types'
 import { useLink } from '../../../../hooks/useLink'
-import { useProfile } from '../../../../hooks/useProfile'
+import { useUser } from '../../../../hooks/useProfile'
 import { Link } from '../../../_shared/Link'
 import { PostTime } from '../PostTime'
 import { User } from '../../../_shared/User'
@@ -91,7 +91,7 @@ export function FeedItem({ entry, index }: Props) {
   }, [entry, hostname, incrementKeywords, incrementDomain])
 
   const userId = entry.userId
-  const creatorProfile = useProfile(userId)
+  const creatorUser = useUser(userId)
 
   return (
     <Card
@@ -178,9 +178,7 @@ export function FeedItem({ entry, index }: Props) {
             </Box>
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            {userId && (
-              <User size="1" userId={userId} profile={creatorProfile} />
-            )}
+            {userId && <User size="1" userId={userId} />}
             <Box css={{ flex: 1 }} />
             {link &&
               (hnsDomain ? (

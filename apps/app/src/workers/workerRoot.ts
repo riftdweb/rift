@@ -1,6 +1,6 @@
 import { createLogger } from '../shared/logger'
 import { scheduleCrawlerUsers } from './workerCrawlerUsers'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/ref'
 import { clearAllTokens } from './tokens'
 import { scheduleFeedLatestUpdate } from './workerFeedLatest'
 import { scheduleCrawlerNetwork } from './workerCrawlerNetwork'
@@ -14,7 +14,7 @@ export async function workerRoot(ref: ControlRef): Promise<any> {
   clearAllTokens(ref)
 
   log('Starting users crawler')
-  await scheduleCrawlerUsers(ref)
+  // await scheduleCrawlerUsers(ref)
 
   // log('Starting users network crawler')
   await scheduleCrawlerNetwork(ref)

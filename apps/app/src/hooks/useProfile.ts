@@ -4,68 +4,138 @@ import {
 } from '@skynethub/userprofile-library/dist/types'
 import useSWR from 'swr'
 import { createLogger } from '../shared/logger'
-import { useSkynet } from '../contexts/skynet'
-import { ControlRef } from '../contexts/skynet/useControlRef'
-
-// 5 minutes
-const CACHE_TIMEOUT = 1000 * 5 * 60
-
-const cache: {
-  [userId: string]: {
-    profile: IUserProfile
-    updatedAt: number
-  }
-} = {}
+import { socialDAC, useSkynet } from '../contexts/skynet'
+import { ControlRef } from '../contexts/skynet/ref'
+import uniq from 'lodash/uniq'
+import { IUser } from '@riftdweb/types'
+import { isUserUpToDate } from '../contexts/users'
+import { apiLimiter } from '../contexts/skynet/api'
 
 const getKey = (userId: string): string => `users/${userId}`
 
-export async function fetchProfile(
+type FetchUserParams = {
+  syncUpdate?: boolean
+  skipUpsert?: boolean
+}
+
+export async function fetchUser(
   ref: ControlRef,
-  userId: string
-): Promise<IUserProfile> {
+  userId: string,
+  params: FetchUserParams = {}
+): Promise<IUser> {
+  const { syncUpdate = false, skipUpsert = false } = params
   const log = createLogger(`profiles/${userId.slice(0, 5)}/fetch`, {
     disable: true,
   })
 
-  const cacheEntry = cache[userId]
-  const now = new Date().getTime()
-  if (cacheEntry && now - cacheEntry.updatedAt < CACHE_TIMEOUT) {
-    log('hit cache')
-    return cacheEntry.profile
-  }
-  log('no cache')
+  const existingUser = ref.current.getUser(userId)
 
+  if (isUserUpToDate(existingUser)) {
+    return existingUser
+  }
+
+  if (existingUser) {
+    // Exists but needs refresh, return existing data immediately and async refresh
+    const func = async () => {
+      log('Async fetching')
+      const profile = await fetchProfile(ref, existingUser)
+      const followingIds = await fetchFollowing(ref, existingUser)
+
+      const updatedUser = {
+        ...existingUser,
+        username: profile.username,
+        profile,
+        followingIds,
+        updatedAt: new Date().getTime(),
+      }
+
+      if (!skipUpsert) {
+        ref.current.upsertUser(updatedUser)
+      }
+      return updatedUser
+    }
+
+    if (syncUpdate) {
+      const updatedUser = await func()
+      return updatedUser
+    } else {
+      func()
+      return existingUser
+    }
+  }
+
+  // User data has never been fetched
+  let user: IUser = {
+    userId,
+    profile: {
+      version: 1,
+      username: '',
+    },
+    followingIds: [],
+    followerIds: [],
+    updatedAt: new Date().getTime(),
+  }
+
+  const profile = await fetchProfile(ref, user)
+  const followingIds = await fetchFollowing(ref, user)
+
+  user = {
+    ...user,
+    username: profile.username,
+    profile,
+    followingIds,
+    updatedAt: new Date().getTime(),
+  }
+
+  if (!skipUpsert) {
+    ref.current.upsertUser(user)
+  }
+
+  return user
+}
+
+async function fetchProfile(
+  ref: ControlRef,
+  user: IUser
+): Promise<IUserProfile> {
   const response = await ref.current.Api.getJSON<IProfileIndex>({
-    publicKey: userId,
+    publicKey: user.userId,
     domain: 'profile-dac.hns',
     path: 'profileIndex.json',
     discoverable: true,
   })
 
-  if (!response.data?.profile) {
-    return {
-      version: 1,
-      username: '',
-    }
-  } else {
-    cache[userId] = {
-      profile: response.data.profile,
-      updatedAt: new Date().getTime(),
-    }
-    // TODO: mutate users context to keep it in sync
-    return response.data.profile
+  let profile = response.data?.profile || {
+    version: 1,
+    username: '',
   }
+
+  return profile
 }
 
-export function useProfile(userId: string): IUserProfile | undefined {
+async function fetchFollowing(ref: ControlRef, user: IUser): Promise<string[]> {
+  const task = async () => {
+    try {
+      return socialDAC.getFollowingForUser(user.userId)
+    } catch (e) {
+      return []
+    }
+  }
+  const _followingIds = await apiLimiter.add(task, { cost: 5 })
+  const followingIds = uniq(_followingIds)
+
+  return followingIds
+}
+
+export function useUser(userId: string): IUser | undefined {
   const { controlRef: ref } = useSkynet()
-  const { data: profile } = useSWR(
+  const { data: user } = useSWR(
     userId ? getKey(userId) : null,
-    () => fetchProfile(ref, userId),
+    () => fetchUser(ref, userId),
     {
       revalidateOnFocus: false,
       dedupingInterval: 20_000,
     }
   )
-  return profile
+  return user
 }

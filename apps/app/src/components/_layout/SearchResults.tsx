@@ -4,7 +4,7 @@ import { ScrollArea } from '../_shared/ScrollArea'
 import { SkylinkResults } from './SkylinkResults'
 import { UserResults } from './UserResults'
 
-export function SearchResults({ searchValue }) {
+export function SearchResults({ searchValue, onSelect }) {
   const isSkylink = searchValue && !!parseSkylink(searchValue)
 
   const showSkylinkResults = !searchValue || isSkylink
@@ -14,7 +14,7 @@ export function SearchResults({ searchValue }) {
     <Panel
       css={{
         position: 'absolute',
-        zIndex: 2,
+        zIndex: 6,
         width: '100%',
         maxHeight: '80vh',
         display: 'flex',
@@ -27,7 +27,7 @@ export function SearchResults({ searchValue }) {
       <Box css={{ width: '100%' }}>
         <ScrollArea>
           <Box>
-            <Flex css={{ flexDirection: 'column', gap: '$1', padding: '$3' }}>
+            <Flex css={{ flexDirection: 'column', gap: '$1', padding: '$2 0' }}>
               {showSkylinkResults && (
                 <SkylinkResults searchValue={searchValue} />
               )}
@@ -35,12 +35,13 @@ export function SearchResults({ searchValue }) {
                 <Box
                   css={{
                     marginBottom: '$1',
-                    paddingBottom: '$2',
                     borderBottom: '1px solid $gray400',
                   }}
                 />
               )}
-              {showUserResults && <UserResults searchValue={searchValue} />}
+              {showUserResults && (
+                <UserResults searchValue={searchValue} onSelect={onSelect} />
+              )}
             </Flex>
           </Box>
         </ScrollArea>

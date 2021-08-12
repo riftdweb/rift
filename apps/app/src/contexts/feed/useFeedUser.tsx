@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 import { EntryFeed } from './types'
-import { fetchUserEntries } from '../../workers/shared'
+import { fetchUserEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParamUserId } from './useParamUserId'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../skynet/ref'
 
 type Props = { ref: ControlRef }
 
@@ -17,7 +17,10 @@ export function useFeedUser({ ref }: Props) {
 
   const response = useSWR<EntryFeed>(
     viewingUserId ? getKey(['feed', viewingUserId]) : null,
-    () => fetchUserEntries(ref, viewingUserId),
+    () =>
+      fetchUserEntries(ref, viewingUserId, {
+        prioritize: true,
+      }),
     {
       revalidateOnFocus: false,
     }

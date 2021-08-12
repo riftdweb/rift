@@ -1,14 +1,16 @@
 import { getDataKeyFeeds } from '../shared/dataKeys'
 import { feedDAC } from '../contexts/skynet'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/ref'
 import {
   Feed,
   Entry,
   EntryFeed,
   ActivityFeed,
   Activity,
-  UserItem,
+  UsersMap,
+  WorkerParams,
 } from '@riftdweb/types'
+import { apiLimiter } from '../contexts/skynet/api'
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,
@@ -22,10 +24,15 @@ export const emptyActivityFeed: ActivityFeed = {
   null: true,
 }
 
+const defaultParams = {
+  prioritize: false,
+}
+
 export async function cacheUserEntries(
   ref: ControlRef,
   userId: string,
-  entries: Entry[]
+  entries: Entry[],
+  params: WorkerParams = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -34,6 +41,7 @@ export async function cacheUserEntries(
       updatedAt: new Date().getTime(),
       entries: entries,
     } as EntryFeed,
+    prioritize: params.prioritize,
   })
 }
 
@@ -53,10 +61,14 @@ export function upsertAllEntries(
   }, allEntries)
 }
 
-export async function fetchAllEntries(ref: ControlRef): Promise<EntryFeed> {
+export async function fetchAllEntries(
+  ref: ControlRef,
+  params: WorkerParams = defaultParams
+): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries'),
+    prioritize: params.prioritize,
   })
   return feed
     ? {
@@ -70,32 +82,46 @@ export async function fetchAllEntries(ref: ControlRef): Promise<EntryFeed> {
 
 export async function fetchUserEntries(
   ref: ControlRef,
-  userId: string
+  userId: string,
+  params: WorkerParams = defaultParams
 ): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds(`entries/${userId}`),
+    prioritize: params.prioritize,
   })
   return feed || emptyFeed
 }
 
-export async function fetchTopEntries(ref: ControlRef): Promise<EntryFeed> {
+export async function fetchTopEntries(
+  ref: ControlRef,
+  params: WorkerParams = defaultParams
+): Promise<EntryFeed> {
   const Api = ref.current.Api
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries/top'),
+    prioritize: params.prioritize,
   })
   return feed || emptyFeed
 }
 
-export async function fetchActivity(ref: ControlRef): Promise<ActivityFeed> {
+export async function fetchActivity(
+  ref: ControlRef,
+  params: WorkerParams = defaultParams
+): Promise<ActivityFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<ActivityFeed>({
     path: getDataKeyFeeds('activity'),
+    prioritize: params.prioritize,
   })
   return feed || emptyActivityFeed
 }
 
-export async function cacheAllEntries(ref: ControlRef, entries: Entry[]) {
+export async function cacheAllEntries(
+  ref: ControlRef,
+  entries: Entry[],
+  params: WorkerParams = defaultParams
+) {
   const { Api } = ref.current
   return await Api.setJSON({
     path: getDataKeyFeeds('entries'),
@@ -103,23 +129,33 @@ export async function cacheAllEntries(ref: ControlRef, entries: Entry[]) {
       updatedAt: new Date().getTime(),
       entries: entries,
     } as EntryFeed,
+    prioritize: params.prioritize,
   })
 }
 
-export async function compileUserEntries(userId: string): Promise<Entry[]> {
+export async function compileUserEntries(
+  userId: string,
+  params: WorkerParams = defaultParams
+): Promise<Entry[]> {
   let allUserEntries: Entry[] = []
   try {
-    for await (let batchOfUserEntries of feedDAC.loadPostsForUser(userId)) {
-      allUserEntries = allUserEntries.concat(
-        batchOfUserEntries.map((post) => ({
-          // TODO: Move to fetching manually, because these ids are not unique
-          // Added timestamp to the end since posts from different skapps can have same ID
-          id: `${userId}/posts/${post.id}/${post.ts}`,
-          userId: userId,
-          post,
-        }))
-      )
+    const task = async () => {
+      for await (let batchOfUserEntries of feedDAC.loadPostsForUser(userId)) {
+        allUserEntries = allUserEntries.concat(
+          batchOfUserEntries.map((post) => ({
+            // TODO: Move to fetching manually, because these ids are not unique
+            // Added timestamp to the end since posts from different skapps can have same ID
+            id: `${userId}/posts/${post.id}/${post.ts}`,
+            userId: userId,
+            post,
+          }))
+        )
+      }
     }
+    await apiLimiter.add(task, {
+      cost: 5,
+      prioritize: params.prioritize,
+    })
   } catch (e) {
     console.log(e)
     return allUserEntries
@@ -129,7 +165,8 @@ export async function compileUserEntries(userId: string): Promise<Entry[]> {
 
 export async function cacheTopEntries(
   ref: ControlRef,
-  entries: Entry[]
+  entries: Entry[],
+  params: WorkerParams = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -138,12 +175,14 @@ export async function cacheTopEntries(
       updatedAt: new Date().getTime(),
       entries: entries.slice(0, 100),
     } as EntryFeed,
+    prioritize: params.prioritize,
   })
 }
 
 export async function cacheActivity(
   ref: ControlRef,
-  activities: Activity[]
+  activities: Activity[],
+  params: WorkerParams = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -152,6 +191,37 @@ export async function cacheActivity(
       updatedAt: new Date().getTime(),
       entries: activities,
     } as ActivityFeed,
+    prioritize: params.prioritize,
+  })
+}
+
+export async function fetchUsersMap(
+  ref: ControlRef,
+  params: WorkerParams = defaultParams
+): Promise<UsersMap> {
+  const response = await ref.current.Api.getJSON<UsersMap>({
+    path: 'v1/usersMap',
+    prioritize: params.prioritize,
+  })
+
+  return response.data && response.data.entries
+    ? response.data
+    : {
+        entries: {},
+        updatedAt: 0,
+      }
+}
+
+export async function cacheUsersMap(
+  ref: ControlRef,
+  usersMap: UsersMap,
+  params: WorkerParams = defaultParams
+): Promise<void> {
+  const { Api } = ref.current
+  await Api.setJSON({
+    path: 'v1/usersMap',
+    json: usersMap,
+    prioritize: params.prioritize,
   })
 }
 
@@ -160,33 +230,4 @@ export function needsRefresh<T>(feed: Feed<T>, minutes: number = 0.5) {
     return false
   }
   return true
-}
-
-export async function fetchUsersIndex(
-  ref: ControlRef
-): Promise<Feed<UserItem>> {
-  const response = await ref.current.Api.getJSON<Feed<UserItem>>({
-    path: 'v0/usersIndex',
-  })
-
-  return (
-    response.data || {
-      updatedAt: 0,
-      entries: [],
-    }
-  )
-}
-
-export async function cacheUsersIndex(
-  ref: ControlRef,
-  userItems: UserItem[]
-): Promise<void> {
-  const { Api } = ref.current
-  await Api.setJSON({
-    path: 'v0/usersIndex',
-    json: {
-      updatedAt: new Date().getTime(),
-      entries: userItems,
-    },
-  })
 }

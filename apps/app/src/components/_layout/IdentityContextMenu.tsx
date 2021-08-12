@@ -39,7 +39,7 @@ export function IdentityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, myProfile, logout, login } = useSkynet()
+  const { myUserId, myUser, logout, login } = useSkynet()
   const [isOpen, setIsOpen] = useState<boolean>()
 
   if (!myUserId) {
@@ -102,7 +102,7 @@ export function IdentityContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open MySky menu">
-        {!myProfile ? (
+        {!myUser ? (
           <DropdownMenuTrigger
             as={Button}
             variant={variant}
@@ -116,13 +116,13 @@ export function IdentityContextMenu({
           </DropdownMenuTrigger>
         ) : (
           <DropdownMenuTrigger>
-            <Avatar userId={myUserId} profile={myProfile} />
+            <Avatar userId={myUserId} profile={myUser.profile} />
           </DropdownMenuTrigger>
         )}
       </Tooltip>
       <DropdownMenuContent align="end">
-        {myProfile ? (
-          <DropdownMenuLabel>{myProfile.username}</DropdownMenuLabel>
+        {myUser ? (
+          <DropdownMenuLabel>{myUser.username}</DropdownMenuLabel>
         ) : (
           <DropdownMenuLabel>User {myUserId.slice(0, 6)}...</DropdownMenuLabel>
         )}

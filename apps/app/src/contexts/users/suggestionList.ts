@@ -1,4 +1,4 @@
-export const suggestionUserIds = [
+export const suggestionList = [
   // Hacker News
   '21f1ba2a2b56d3f21ea72b6aeea180ee5b8c7bae755fff6158787acc0a0848ac',
   // Reddit CryptoCurrency

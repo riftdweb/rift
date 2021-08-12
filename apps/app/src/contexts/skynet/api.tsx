@@ -6,7 +6,6 @@ import {
 } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
 import { RateLimiter } from '../../shared/rateLimiter'
-import { TaskQueue } from '../../shared/taskQueue'
 
 type BuildApi = {
   portal: string
@@ -19,10 +18,10 @@ type BuildApi = {
 export type Api = ReturnType<typeof buildApi>
 
 const log = createLogger('api', {
-  disable: true,
+  // disable: true,
 })
 
-const registryQueue = RateLimiter('api/registry', {
+export const apiLimiter = RateLimiter('api/registry', {
   capacity: 30,
   ratePerMinute: 30,
   processingInterval: 50,
@@ -45,12 +44,14 @@ export const buildApi = ({
     path,
     domain: customDomain,
     discoverable = false,
+    prioritize = false,
   }: {
     path: string
     seed?: string
     publicKey?: string
     domain?: string
     discoverable?: boolean
+    prioritize?: boolean
   }) {
     type GetJSONReturn = Promise<{
       data: T | null
@@ -66,7 +67,7 @@ export const buildApi = ({
         \tdiscoverable: N/A`)
       const task = () =>
         (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
     if (customPublicKey) {
       log(`client.file.getJSON - mysky
@@ -80,7 +81,7 @@ export const buildApi = ({
             customPublicKey,
             fullDataPath
           ) as unknown) as GetJSONReturn
-        return registryQueue.append(task)
+        return apiLimiter.add(task, { prioritize })
       }
 
       const task = () =>
@@ -88,7 +89,7 @@ export const buildApi = ({
           customPublicKey,
           fullDataPath
         ) as unknown) as GetJSONReturn
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
     if (userId) {
       log(`mySky.getJSON - mysky
@@ -98,11 +99,11 @@ export const buildApi = ({
       if (discoverable) {
         const task = () =>
           (mySky.getJSON(fullDataPath) as unknown) as GetJSONReturn
-        return registryQueue.append(task)
+        return apiLimiter.add(task, { prioritize })
       }
       const task = () =>
         (mySky.getJSONEncrypted(fullDataPath) as unknown) as GetJSONReturn
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
     const { publicKey } = genKeyPairFromSeed(localRootSeed)
     log(`client.db.getJSON - local app seed
@@ -112,7 +113,7 @@ export const buildApi = ({
 
     const task = () =>
       (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
-    return registryQueue.append(task)
+    return apiLimiter.add(task, { prioritize })
   }
 
   function setJSON({
@@ -121,12 +122,14 @@ export const buildApi = ({
     domain: customDomain,
     json,
     discoverable = false,
+    prioritize = false,
   }: {
     seed?: string
     domain?: string
     path: string
     json: {}
     discoverable?: boolean
+    prioritize?: boolean
   }) {
     const fullDataPath = (customDomain || appDomain) + '/' + path
     if (seed) {
@@ -137,7 +140,7 @@ export const buildApi = ({
         \tdiscoverable: N/A`)
 
       const task = () => client.db.setJSON(privateKey, fullDataPath, json)
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
     if (!userId) {
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
@@ -146,7 +149,7 @@ export const buildApi = ({
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
       const task = () => client.db.setJSON(privateKey, fullDataPath, json)
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
     log(`mySky.setJSON - mysky
       \tdata path: ${fullDataPath}
@@ -154,11 +157,11 @@ export const buildApi = ({
 
     if (discoverable) {
       const task = () => mySky.setJSON(fullDataPath, json)
-      return registryQueue.append(task)
+      return apiLimiter.add(task, { prioritize })
     }
 
     const task = () => mySky.setJSONEncrypted(fullDataPath, json)
-    return registryQueue.append(task)
+    return apiLimiter.add(task, { prioritize })
   }
 
   async function setDataLink({

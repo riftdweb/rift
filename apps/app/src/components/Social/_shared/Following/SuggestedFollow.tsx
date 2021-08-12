@@ -1,5 +1,5 @@
 import { Button } from '@riftdweb/design-system'
-import { useProfile } from '../../../../hooks/useProfile'
+import { useUser } from '../../../../hooks/useProfile'
 import { useUsers } from '../../../../contexts/users'
 import { User } from '../../../_shared/User'
 
@@ -9,10 +9,10 @@ type Props = {
 
 export function SuggestedFollow({ userId }: Props) {
   const { handleFollow } = useUsers()
-  const profile = useProfile(userId)
+  const user = useUser(userId)
   return (
-    <User userId={userId} profile={profile}>
-      <Button onClick={() => handleFollow(userId, profile)}>Follow</Button>
+    <User userId={userId}>
+      <Button onClick={() => handleFollow(userId, user.profile)}>Follow</Button>
     </User>
   )
 }

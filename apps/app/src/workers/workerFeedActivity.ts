@@ -3,13 +3,13 @@ import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../shared/logger'
 import { wait } from '../shared/wait'
 import { v4 as uuid } from 'uuid'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/ref'
 import {
   cacheActivity,
   fetchActivity,
   fetchAllEntries,
   needsRefresh,
-} from './shared'
+} from './workerApi'
 import { clearToken, handleToken } from './tokens'
 import {
   Activity,

@@ -1,27 +1,19 @@
 import * as CAF from 'caf'
 import { createLogger } from '../shared/logger'
-import { ControlRef } from '../contexts/skynet/useControlRef'
-import {
-  cacheUsersIndex,
-  fetchAllEntries,
-  fetchUsersIndex,
-  needsRefresh,
-} from './shared'
-import { workerFeedUserUpdate } from './workerFeedUser'
+import { ControlRef } from '../contexts/skynet/ref'
 import uniq from 'lodash/uniq'
-import { EntryFeed, Feed, UserItem, WorkerParams } from '@riftdweb/types'
-import { clearAllTokens, clearToken, handleToken } from './tokens'
+import { EntryFeed, IUser, UsersMap, WorkerParams } from '@riftdweb/types'
+import { clearToken, handleToken } from './tokens'
 import { wait } from '../shared/wait'
-import { socialDAC } from '../contexts/skynet'
-import { fetchProfile } from '../hooks/useProfile'
-import { knownUsers as hardcodedUsers } from '../contexts/users/all'
+import { fetchUser } from '../hooks/useProfile'
 import { TaskQueue } from '../shared/taskQueue'
+import { denyList } from '../contexts/users/denyList'
 
 const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
 const REFRESH_INTERVAL_CRAWLER = 0
 
-type UsersIndex = Feed<UserItem>
+const BATCH_SIZE = 1
 
 const taskQueue = TaskQueue('usersIndex', {
   poolSize: 1,
@@ -32,86 +24,39 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
   signal: any,
   ref: ControlRef,
   params: WorkerParams
-): Generator<Promise<EntryFeed | string[] | void | UsersIndex>, any, any> {
+): Generator<Promise<EntryFeed | string[] | void | UsersMap>, any, any> {
   let tasks = []
   try {
     log('Running')
 
-    log('Fetching following lists')
-    const usersIndex: UsersIndex = yield fetchUsersIndex(ref)
+    while (ref.current.pendingUserIds.length) {
+      log(`Processing: ${ref.current.pendingUserIds.length}`)
+      const batch = ref.current.pendingUserIds.splice(0, BATCH_SIZE)
+      log('Batch', batch)
 
-    log('Initializing allUsers')
-    ref.current.allUsers = usersIndex.entries.reduce(
-      (acc, entry) => ({
-        ...acc,
-        [entry.userId]: entry,
-      }),
-      {}
-    )
-
-    let pendingUserIds = hardcodedUsers
-      // .slice(0, 20)
-      .filter((user) => !ref.current.allUsers[user.id])
-      .map((user) => user.id)
-
-    while (pendingUserIds.length) {
-      log(`Processing: ${pendingUserIds.length}`)
-      const batch = pendingUserIds.splice(0, 10)
       tasks = batch.map((userId) => {
-        const task = async () => {
-          const existingUserItem = ref.current.allUsers[userId]
-
-          if (!existingUserItem) {
-            const _followingIds = await socialDAC.getFollowingForUser(userId)
-            const followingIds = uniq(_followingIds)
-            const profile = await fetchProfile(ref, userId)
-
-            return {
-              userId,
-              username: profile.username,
-              profile,
-              followingIds,
-              followerIds: [],
-            }
-          } else {
-            return existingUserItem
-          }
-        }
+        const task = async () =>
+          fetchUser(ref, userId, {
+            syncUpdate: true,
+            skipUpsert: true,
+          })
         return taskQueue.append(task)
       })
-      const newUserItems: UserItem[] = yield Promise.all(tasks)
+      const updatedUsers: IUser[] = yield Promise.all(tasks)
 
-      log('Added', newUserItems)
-      newUserItems.forEach((newItem) => {
-        if (!ref.current.allUsers[newItem.userId]) {
-          ref.current.allUsers[newItem.userId] = newItem
-        }
-        newItem.followingIds.forEach((userId) => {
-          if (!ref.current.allUsers[userId]) {
-            log(`Adding ${userId} for processing`)
-            pendingUserIds.push(userId)
-          }
-        })
+      ref.current.upsertUsers(updatedUsers)
+
+      const userIdsToAdd = []
+      // Crawl the discovered followingIds
+      updatedUsers.forEach((newItem) => {
+        userIdsToAdd.push(...newItem.followingIds)
       })
+
+      ref.current.addNewUserIds(userIdsToAdd)
+      recomputeFollowers(ref)
     }
 
     log('Calculating followerIds')
-    for (let [_userId, userItem] of Object.entries(ref.current.allUsers)) {
-      for (let followingId of userItem.followingIds) {
-        const user = ref.current.allUsers[followingId]
-
-        if (user) {
-          user.followerIds = uniq([...user.followerIds, userItem.userId])
-        }
-      }
-    }
-
-    // TODO: add batch update worker
-
-    yield cacheUsersIndex(
-      ref,
-      Object.entries(ref.current.allUsers).map(([id, entry]) => entry)
-    )
 
     log('Done')
 
@@ -124,6 +69,25 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
     }
   }
 })
+
+function recomputeFollowers(ref) {
+  log('Recomputing followers')
+  const updatedUsers: Record<string, IUser> = {}
+  ref.current.usersIndex.forEach((user) => {
+    for (let followingId of user.followingIds) {
+      let followingUser =
+        updatedUsers[followingId] || ref.current.getUser(followingId)
+      if (followingUser) {
+        followingUser = {
+          ...followingUser,
+          followerIds: uniq([...followingUser.followerIds, user.userId]),
+        }
+        updatedUsers[followingId] = followingUser
+      }
+    }
+  })
+  ref.current.upsertUsers(Object.entries(updatedUsers).map(([_, user]) => user))
+}
 
 export async function workerCrawlerNetwork(
   ref: ControlRef,
@@ -152,9 +116,18 @@ async function maybeRunCrawlerNetwork(ref: ControlRef): Promise<any> {
     setTimeout(() => {
       maybeRunCrawlerNetwork(ref)
     }, FALSE_START_WAIT_INTERVAL)
+  } else if (!ref.current.usersMap.data) {
+    logScheduler(
+      `Users map not ready, trying again in ${
+        FALSE_START_WAIT_INTERVAL / 1000
+      } seconds`
+    )
+    setTimeout(() => {
+      maybeRunCrawlerNetwork(ref)
+    }, FALSE_START_WAIT_INTERVAL)
   }
   // If crawler is already running skip
-  else if (ref.current.tokens.crawlerUsers) {
+  else if (ref.current.tokens.crawlerNetwork) {
     logScheduler(`Crawler already running, skipping`)
   } else {
     logScheduler(`Crawler starting`)

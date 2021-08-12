@@ -20,10 +20,10 @@ import SpinnerIcon from '../_icons/SpinnerIcon'
 import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
+import { useUser } from '../../hooks/useProfile'
 
 type Props = {
   userId: string
-  profile: IUserProfile
   variant?: ButtonVariants['variant']
   right?: string
   size?: string
@@ -31,12 +31,13 @@ type Props = {
 
 export function UserContextMenu({
   userId,
-  profile,
   variant = 'ghost',
   right = '0',
   size = '1',
 }: Props) {
   const { myUserId, appDomain } = useSkynet()
+  const user = useUser(userId)
+  const profile = user?.profile
   const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
   const {
     handleFollow,

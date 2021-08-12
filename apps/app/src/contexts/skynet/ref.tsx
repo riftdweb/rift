@@ -1,23 +1,39 @@
-import { UserItem } from '@riftdweb/types'
+import { Dispatch, SetStateAction } from 'react'
+import { IUser, UsersMap } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
 import { ActivityFeed, EntryFeed } from '../feed/types'
-import { Api } from './buildApi'
+import { Api } from './api'
 
 type TokenKey =
   | 'feedLatestUpdate'
   | 'feedTopUpdate'
   | 'feedActivityUpdate'
   | 'crawlerUsers'
-  | 'afterFeedUserUpdate'
+  | 'networkUsers'
   | string
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
   myUserId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
+
+  // Users context
   followingUserIds: {} as SWRResponse<string[], any>,
-  allUsers: {} as Record<string, UserItem>,
+  usersMap: {} as SWRResponse<UsersMap, any>,
+  usersIndex: [] as IUser[],
+  getUser: (userId: string): IUser => {
+    throw Error('usersMap not yet loaded')
+    return {
+      userId,
+      updatedAt: 0,
+    }
+  },
+  upsertUser: (user: IUser): void => {},
+  upsertUsers: (user: IUser[]): void => {},
+  pendingUserIds: [] as string[],
+  setPendingUserIds: (() => {}) as Dispatch<SetStateAction<string[]>>,
+  addNewUserIds: (userIds: string[]): void => {},
   followingUserIdsHasFetched: false as boolean,
   pendingUserPosts: 0 as number,
   domains: {} as {
@@ -35,8 +51,7 @@ const controlRefDefaults = {
     feedTopUpdate: null,
     feedActivityUpdate: null,
     crawlerUsers: null,
-    feedUserUpdate: null,
-    afterFeedUserUpdate: null,
+    crawlerNetwork: null,
   } as Record<TokenKey, any>,
   feeds: {} as {
     user: {

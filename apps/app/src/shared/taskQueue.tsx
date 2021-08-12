@@ -9,11 +9,12 @@ type Params = {
 const defaultParams = {
   poolSize: 1,
   processingInterval: 2_000,
-  ratePerMinute: 60,
 }
 
+// TODO: Update to same priorty mechanic as ratelimiter
+
 export function TaskQueue(namespace: string, params: Params = {}) {
-  const { poolSize, maxQueueSize, processingInterval, ratePerMinute } = {
+  const { poolSize, maxQueueSize, processingInterval } = {
     ...defaultParams,
     ...params,
   }
@@ -21,12 +22,7 @@ export function TaskQueue(namespace: string, params: Params = {}) {
   const log = createLogger(`${namespace}/TaskQueue`)
 
   const queue = []
-  // let tasksInflight = false
   let tasksInflight = 0
-
-  let capacity = poolSize
-  let tokens = ratePerMinute
-  let lastFilled = Math.floor(Date.now() / 1000)
 
   let interval = null
 
@@ -43,14 +39,6 @@ export function TaskQueue(namespace: string, params: Params = {}) {
     log('Task complete')
     task.resolve(result)
     tasksInflight -= 1
-  }
-
-  const refillTokens = async () => {
-    const now = Math.floor(Date.now() / 1000)
-    const rate = (now - this.lastFilled) / this.fillPerSecond
-
-    tokens = Math.min(this.capacity, tokens + Math.floor(rate * this.capacity))
-    lastFilled = now
   }
 
   const processQueue = async () => {

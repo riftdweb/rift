@@ -3,13 +3,13 @@ import { v4 as uuid } from 'uuid'
 import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/ref'
 import {
   cacheUserEntries,
   compileUserEntries,
   fetchUserEntries,
   needsRefresh,
-} from './shared'
+} from './workerApi'
 import { clearToken, handleToken } from './tokens'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { feedLatestAdd } from './workerFeedLatest'
@@ -37,7 +37,7 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
 
     // If caller already fetched the userFeed no need to fetch
     log('Fetching cached entries')
-    const userFeed = yield fetchUserEntries(ref, userId)
+    const userFeed = yield fetchUserEntries(ref, userId, params)
 
     if (!params.force && !needsRefresh(userFeed, REFRESH_INTERVAL_USER)) {
       log('Up to date')
@@ -45,11 +45,11 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
     }
 
     log('Compiling entries')
-    let compiledUserEntries: Entry[] = yield compileUserEntries(userId)
+    let compiledUserEntries: Entry[] = yield compileUserEntries(userId, params)
 
     log('Caching entries')
     ref.current.feeds.user.setLoadingState(userId, 'Caching feed')
-    yield cacheUserEntries(ref, userId, compiledUserEntries)
+    yield cacheUserEntries(ref, userId, compiledUserEntries, params)
 
     log('Maybe mutate')
     ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')

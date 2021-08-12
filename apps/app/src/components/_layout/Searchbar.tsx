@@ -85,7 +85,10 @@ export function Searchbar() {
           <DismissableLayer onDismiss={() => setIsFocused(false)}>
             {(props) => (
               <Box {...props}>
-                <SearchResults searchValue={searchValue} />
+                <SearchResults
+                  searchValue={searchValue}
+                  onSelect={() => setIsFocused(false)}
+                />
               </Box>
             )}
           </DismissableLayer>

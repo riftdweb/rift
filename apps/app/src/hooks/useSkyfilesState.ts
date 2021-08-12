@@ -5,7 +5,7 @@ import { getDataKeyFiles } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { useSkynet } from '../contexts/skynet'
-import { Api } from '../contexts/skynet/buildApi'
+import { Api } from '../contexts/skynet/api'
 
 const dataKeyFiles = getDataKeyFiles()
 

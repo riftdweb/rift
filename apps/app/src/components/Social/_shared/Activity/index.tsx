@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { useFeed } from '../../../../contexts/feed'
-import { useProfile } from '../../../../hooks/useProfile'
+import { useUser } from '../../../../hooks/useProfile'
 import { Link } from '../../../_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'
 import { Avatar } from '../../../_shared/Avatar'
@@ -10,7 +10,8 @@ import { EntriesState } from '../../../_shared/EntriesState'
 import { ScrollArea } from '../../../_shared/ScrollArea'
 
 function ActivityItem({ userId, message, at }) {
-  const profile = useProfile(userId)
+  const user = useUser(userId)
+  const profile = user?.profile
   return (
     <Flex
       css={{

@@ -21,7 +21,7 @@ import { User } from '../_shared/User'
 import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {
-  const { myUserId, myProfile, logout, appDomain } = useSkynet()
+  const { myUserId, myUser, logout, appDomain } = useSkynet()
   const history = useHistory()
   const { domains, addDomain } = useDomains()
   const { skyfiles } = useSkyfiles()
@@ -58,7 +58,7 @@ export function MySkyLoggedIn() {
         </Heading>
         <Flex css={{ alignItems: 'center', gap: '$2' }}>
           <Text css={{ color: '$gray900' }}>Currently logged in as</Text>
-          <User userId={myUserId} profile={myProfile} />
+          <User userId={myUserId} />
         </Flex>
         {DATA_PRIVATE_FEATURES && (
           <Fragment>

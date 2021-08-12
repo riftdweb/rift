@@ -1,14 +1,14 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../shared/logger'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { ControlRef } from '../contexts/skynet/ref'
 import { scoreEntries } from './scoring'
 import {
   cacheTopEntries,
   fetchAllEntries,
   fetchTopEntries,
   needsRefresh,
-} from './shared'
+} from './workerApi'
 import { clearToken, handleToken } from './tokens'
 import { v4 as uuid } from 'uuid'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'

@@ -176,10 +176,16 @@ export type WorkerParams = {
   workflowId?: string
 }
 
-export type UserItem = {
+export type IUser = {
   userId: string
   username?: string
   profile?: IUserProfile
-  followingIds: string[]
-  followerIds: string[]
+  followingIds?: string[]
+  followerIds?: string[]
+  updatedAt: number
+}
+
+export type UsersMap = {
+  updatedAt: number
+  entries: Record<string, IUser>
 }

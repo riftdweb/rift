@@ -40,6 +40,7 @@ export function KeysWorkspace() {
           <DragSizing
             border="right"
             handlerOffset={0}
+            handlerZIndex={1}
             // TODO: saving the width in local storage, hit issues, need to finish
             // onChange={({ width }) => setKeysTreeWidth(typeof width === 'number' ? `${width}px` : width)}
             style={{

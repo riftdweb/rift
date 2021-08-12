@@ -1,30 +1,15 @@
-import {
-  Badge,
-  Box,
-  Flex,
-  Panel,
-  Text,
-  Subtitle,
-} from '@riftdweb/design-system'
-import { intersection } from 'lodash'
+import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useMemo } from 'react'
-import { useSkynet } from '../../contexts/skynet'
 import { useUsers } from '../../contexts/users'
-import { People } from '../_shared/People'
-import { User } from '../_shared/User'
 import { UserProfile } from '../_shared/UserProfile'
 
-export function UserResults({ searchValue }) {
-  const { myUserId, controlRef: ref } = useSkynet()
-  const { followingUserIds } = useUsers()
-  const allItems = Object.entries(ref.current.allUsers).map(
-    ([id, entry]) => entry
-  )
+export function UserResults({ searchValue, onSelect }) {
+  const { usersIndex, pendingUserIds } = useUsers()
 
   const filteredItems = useMemo(() => {
     const lowerCaseSearchValue = searchValue.toLowerCase()
 
-    return allItems.filter((userItem) => {
+    return usersIndex.filter((userItem) => {
       if (userItem.username?.toLowerCase().includes(lowerCaseSearchValue)) {
         return true
       }
@@ -52,12 +37,13 @@ export function UserResults({ searchValue }) {
       }
       return false
     })
-  }, [searchValue])
-  const pagedItems = filteredItems.slice(0, 20)
+  }, [usersIndex, searchValue])
+
+  const pagedItems = filteredItems.slice(0, 30)
 
   return (
     <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-      <Flex css={{ gap: '$1' }}>
+      <Flex css={{ gap: '$2', padding: '$1 $3 $1 $3' }}>
         <Text
           css={{
             color: '$gray900',
@@ -68,15 +54,49 @@ export function UserResults({ searchValue }) {
           Social
         </Text>
         <Box css={{ flex: 1 }} />
-        <Text
-          css={{
-            color: '$gray800',
-          }}
-        >
-          {filteredItems.length === 1
-            ? '1 result'
-            : `${filteredItems.length} results`}
-        </Text>
+        {!searchValue && !!pendingUserIds.length && (
+          <Tooltip
+            content={`Indexing ${pendingUserIds.length} more discovered users`}
+          >
+            <Text
+              css={{
+                color: '$gray600',
+              }}
+            >
+              {`Indexing ${pendingUserIds.length}`}
+            </Text>
+          </Tooltip>
+        )}
+        {!searchValue && (
+          <Tooltip
+            align="end"
+            content={`Discovered and indexed ${usersIndex.length} users`}
+          >
+            <Text
+              css={{
+                color: '$gray800',
+              }}
+            >
+              {`Discovered ${usersIndex.length}`}
+            </Text>
+          </Tooltip>
+        )}
+        {searchValue && (
+          <Tooltip
+            align="end"
+            content={`${filteredItems.length} matching users`}
+          >
+            <Text
+              css={{
+                color: '$gray800',
+              }}
+            >
+              {filteredItems.length === 1
+                ? '1 result'
+                : `${filteredItems.length} results`}
+            </Text>
+          </Tooltip>
+        )}
       </Flex>
       {filteredItems.length ? (
         <Flex
@@ -88,25 +108,30 @@ export function UserResults({ searchValue }) {
           {pagedItems.map((userItem) => {
             return (
               <Box
+                key={userItem.userId}
                 css={{
-                  padding: '$2 0',
-                  borderBottom: '1px solid $gray300',
+                  padding: '$2 $4 $2 $3',
+                  borderBottom: '1px solid $gray200',
+                  transition: 'all 0.1s linear',
                   '&:last-of-type': {
                     borderBottom: 'none',
+                  },
+                  '&:hover': {
+                    backgroundColor: '$gray100',
                   },
                 }}
               >
                 <UserProfile
-                  userId={userItem.userId}
+                  user={userItem}
                   version="compact"
-                  userItem={userItem}
+                  onClick={onSelect}
                 />
               </Box>
             )
           })}
         </Flex>
       ) : (
-        <Text css={{ color: '$gray900' }}>
+        <Text css={{ color: '$gray900', padding: '$2 $4 $2 $3' }}>
           No results. Try searching by the user's username, first name, last
           name, about info, or location.
         </Text>

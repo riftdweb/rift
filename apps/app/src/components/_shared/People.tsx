@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { useSkynet } from '../../contexts/skynet'
+import { useUsers } from '../../contexts/users'
 import { Avatar } from './Avatar'
 
 type Props = {
@@ -17,10 +18,10 @@ type Props = {
 }
 
 export function People({ userIds }: Props) {
-  const { controlRef } = useSkynet()
+  const { usersMap } = useUsers()
 
   const userItems = userIds.map((userId) => {
-    const userItem = controlRef.current.allUsers[userId]
+    const userItem = usersMap.data?.entries[userId]
     return userItem
   })
 
@@ -34,6 +35,7 @@ export function People({ userIds }: Props) {
     >
       {userItems.map(({ userId, profile }, i) => (
         <Box
+          key={userId}
           css={{
             zIndex: userItems.length - 1 - i,
             transition: 'transform 0.1s',

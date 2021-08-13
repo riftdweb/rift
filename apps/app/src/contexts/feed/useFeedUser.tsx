@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { EntryFeed } from './types'
+import { EntryFeed } from '@riftdweb/types'
 import { fetchUserEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -19,7 +19,7 @@ export function useFeedUser({ ref }: Props) {
     viewingUserId ? getKey(['feed', viewingUserId]) : null,
     () =>
       fetchUserEntries(ref, viewingUserId, {
-        prioritize: true,
+        priority: 2,
       }),
     {
       revalidateOnFocus: false,

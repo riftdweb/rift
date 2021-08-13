@@ -7,15 +7,17 @@ import { createLogger } from '../shared/logger'
 import { socialDAC, useSkynet } from '../contexts/skynet'
 import { ControlRef } from '../contexts/skynet/ref'
 import uniq from 'lodash/uniq'
-import { IUser } from '@riftdweb/types'
+import { IUser, WorkerParams } from '@riftdweb/types'
 import { isUserUpToDate } from '../contexts/users'
 import { apiLimiter } from '../contexts/skynet/api'
+import { waitFor } from '../shared/wait'
 
 const getKey = (userId: string): string => `users/${userId}`
 
 type FetchUserParams = {
   syncUpdate?: boolean
   skipUpsert?: boolean
+  priority?: number
 }
 
 export async function fetchUser(
@@ -23,23 +25,33 @@ export async function fetchUser(
   userId: string,
   params: FetchUserParams = {}
 ): Promise<IUser> {
-  const { syncUpdate = false, skipUpsert = false } = params
+  const { syncUpdate = false, skipUpsert = false, priority = 0 } = params
   const log = createLogger(`profiles/${userId.slice(0, 5)}/fetch`, {
-    disable: true,
+    // disable: true,
+  })
+
+  // Ensure main collection has loaded
+  await waitFor(() => [ref.current, ref.current.usersMap.data], {
+    log,
   })
 
   const existingUser = ref.current.getUser(userId)
 
   if (isUserUpToDate(existingUser)) {
+    log('Up to date')
     return existingUser
   }
 
   if (existingUser) {
     // Exists but needs refresh, return existing data immediately and async refresh
     const func = async () => {
-      log('Async fetching')
-      const profile = await fetchProfile(ref, existingUser)
-      const followingIds = await fetchFollowing(ref, existingUser)
+      log('Refreshing', existingUser)
+      const profile = await fetchProfile(ref, existingUser, {
+        priority,
+      })
+      const followingIds = await fetchFollowing(ref, existingUser, {
+        priority,
+      })
 
       const updatedUser = {
         ...existingUser,
@@ -50,6 +62,7 @@ export async function fetchUser(
       }
 
       if (!skipUpsert) {
+        log('Upserting')
         ref.current.upsertUser(updatedUser)
       }
       return updatedUser
@@ -67,6 +80,7 @@ export async function fetchUser(
   // User data has never been fetched
   let user: IUser = {
     userId,
+    relationship: 'none',
     profile: {
       version: 1,
       username: '',
@@ -96,13 +110,16 @@ export async function fetchUser(
 
 async function fetchProfile(
   ref: ControlRef,
-  user: IUser
+  user: IUser,
+  params: WorkerParams = {}
 ): Promise<IUserProfile> {
+  const { priority = 0 } = params
   const response = await ref.current.Api.getJSON<IProfileIndex>({
     publicKey: user.userId,
     domain: 'profile-dac.hns',
     path: 'profileIndex.json',
     discoverable: true,
+    priority,
   })
 
   let profile = response.data?.profile || {
@@ -113,7 +130,12 @@ async function fetchProfile(
   return profile
 }
 
-async function fetchFollowing(ref: ControlRef, user: IUser): Promise<string[]> {
+async function fetchFollowing(
+  ref: ControlRef,
+  user: IUser,
+  params: WorkerParams = {}
+): Promise<string[]> {
+  const { priority = 0 } = params
   const task = async () => {
     try {
       return socialDAC.getFollowingForUser(user.userId)
@@ -121,7 +143,7 @@ async function fetchFollowing(ref: ControlRef, user: IUser): Promise<string[]> {
       return []
     }
   }
-  const _followingIds = await apiLimiter.add(task, { cost: 5 })
+  const _followingIds = await apiLimiter.add(task, { cost: 5, priority })
   const followingIds = uniq(_followingIds)
 
   return followingIds

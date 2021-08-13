@@ -25,7 +25,7 @@ export const emptyActivityFeed: ActivityFeed = {
 }
 
 const defaultParams = {
-  prioritize: false,
+  priority: 0,
 }
 
 export async function cacheUserEntries(
@@ -41,7 +41,7 @@ export async function cacheUserEntries(
       updatedAt: new Date().getTime(),
       entries: entries,
     } as EntryFeed,
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 }
 
@@ -68,7 +68,7 @@ export async function fetchAllEntries(
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries'),
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
   return feed
     ? {
@@ -88,7 +88,7 @@ export async function fetchUserEntries(
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds(`entries/${userId}`),
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
   return feed || emptyFeed
 }
@@ -100,7 +100,7 @@ export async function fetchTopEntries(
   const Api = ref.current.Api
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries/top'),
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
   return feed || emptyFeed
 }
@@ -112,7 +112,7 @@ export async function fetchActivity(
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<ActivityFeed>({
     path: getDataKeyFeeds('activity'),
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
   return feed || emptyActivityFeed
 }
@@ -129,7 +129,7 @@ export async function cacheAllEntries(
       updatedAt: new Date().getTime(),
       entries: entries,
     } as EntryFeed,
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 }
 
@@ -154,7 +154,7 @@ export async function compileUserEntries(
     }
     await apiLimiter.add(task, {
       cost: 5,
-      prioritize: params.prioritize,
+      priority: params.priority,
     })
   } catch (e) {
     console.log(e)
@@ -175,7 +175,7 @@ export async function cacheTopEntries(
       updatedAt: new Date().getTime(),
       entries: entries.slice(0, 100),
     } as EntryFeed,
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 }
 
@@ -191,7 +191,7 @@ export async function cacheActivity(
       updatedAt: new Date().getTime(),
       entries: activities,
     } as ActivityFeed,
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 }
 
@@ -201,7 +201,7 @@ export async function fetchUsersMap(
 ): Promise<UsersMap> {
   const response = await ref.current.Api.getJSON<UsersMap>({
     path: 'v1/usersMap',
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 
   return response.data && response.data.entries
@@ -221,7 +221,7 @@ export async function cacheUsersMap(
   await Api.setJSON({
     path: 'v1/usersMap',
     json: usersMap,
-    prioritize: params.prioritize,
+    priority: params.priority,
   })
 }
 

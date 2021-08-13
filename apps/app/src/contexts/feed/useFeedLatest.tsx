@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { EntryFeed } from './types'
+import { EntryFeed } from '@riftdweb/types'
 import { fetchAllEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,7 +15,7 @@ export function useFeedLatest({ ref }: Props) {
     getKey(['feed', 'latest']),
     () =>
       fetchAllEntries(ref, {
-        prioritize: true,
+        priority: 2,
       }),
     {
       revalidateOnFocus: false,

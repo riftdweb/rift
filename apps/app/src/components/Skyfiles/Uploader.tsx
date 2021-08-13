@@ -296,7 +296,7 @@ export function Uploader({
       }
 
       const task = () => startUpload()
-      taskQueue.append(task)
+      taskQueue.add(task)
     })
   }
 

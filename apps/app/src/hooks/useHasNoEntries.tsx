@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Feed } from '../contexts/feed/types'
+import { Feed } from '@riftdweb/types'
 
 export function useHasNoEntries<T>(data: Feed<T>): boolean {
   const [hasValidated, setHasValidated] = useState<boolean>(false)

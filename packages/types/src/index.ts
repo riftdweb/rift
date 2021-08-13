@@ -171,7 +171,7 @@ export type ActivityFeed = Feed<Activity>
 
 export type WorkerParams = {
   force?: boolean
-  prioritize?: boolean
+  priority?: number
   delay?: number
   workflowId?: string
 }
@@ -182,6 +182,7 @@ export type IUser = {
   profile?: IUserProfile
   followingIds?: string[]
   followerIds?: string[]
+  relationship: 'friend' | 'follower' | 'following' | 'none'
   updatedAt: number
 }
 

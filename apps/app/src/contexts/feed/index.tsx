@@ -12,7 +12,7 @@ import { v4 as uuid } from 'uuid'
 import { feedDAC, useSkynet } from '../skynet'
 import { workerRoot } from '../../workers/workerRoot'
 import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
-import { ActivityFeed, Entry, EntryFeed } from './types'
+import { ActivityFeed, Entry, EntryFeed } from '@riftdweb/types'
 import { workerFeedTopUpdate } from '../../workers/workerFeedTop'
 import { workerFeedActivityUpdate } from '../../workers/workerFeedActivity'
 import { createLogger } from '../../shared/logger'
@@ -153,7 +153,7 @@ export function FeedProvider({ children }: Props) {
         try {
           await workerFeedUserUpdate(ref, userId, {
             force: true,
-            prioritize: true,
+            priority: 2,
           })
         } catch (e) {}
       }
@@ -280,7 +280,7 @@ export function FeedProvider({ children }: Props) {
           localLog('Start user feed update')
           await workerFeedUserUpdate(ref, myUserId, {
             force: true,
-            prioritize: true,
+            priority: 2,
           })
         } finally {
           ref.current.pendingUserPosts -= 1

@@ -3,7 +3,7 @@ import { Flex, Text } from '@riftdweb/design-system'
 import { useHasNoEntries } from '../../hooks/useHasNoEntries'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { SWRResponse } from 'swr'
-import { Feed } from '../../contexts/feed/types'
+import { Feed } from '@riftdweb/types'
 import { NonIdealState } from './NonIdealState'
 
 function LoadingState({ message }) {

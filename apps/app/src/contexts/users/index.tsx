@@ -8,10 +8,11 @@ import {
 } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 import debounce from 'lodash/debounce'
+import uniq from 'lodash/uniq'
 import { socialDAC, useSkynet } from '../skynet'
 import { fetchUser } from '../../hooks/useProfile'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
-import { Feed } from '../feed/types'
+import { Feed } from '@riftdweb/types'
 import { TaskQueue } from '../../shared/taskQueue'
 import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
 import { IUser, UsersMap } from '@riftdweb/types'
@@ -22,6 +23,7 @@ import { createLogger } from '../../shared/logger'
 import { suggestionList } from './suggestionList'
 import { seedList } from './seedList'
 import { denyList } from './denyList'
+import { apiLimiter } from '../skynet/api'
 
 const log = createLogger('users')
 const taskQueue = TaskQueue('users')
@@ -43,7 +45,7 @@ type State = {
   usersIndex: IUser[]
   pendingUserIds: string[]
   followingUserIds: SWRResponse<string[], any>
-  suggestionUserIds: SWRResponse<string[], any>
+  friends: SWRResponse<Feed<IUser>, any>
   followings: SWRResponse<Feed<IUser>, any>
   suggestions: SWRResponse<Feed<IUser>, any>
   handleFollow: (userId: string, profile: IUserProfile) => void
@@ -197,29 +199,15 @@ export function UsersProvider({ children }: Props) {
       if (!myUserId) {
         return suggestionList.slice(0, 2)
       } else {
-        const userIds = await socialDAC.getFollowingForUser(myUserId)
-        return userIds || []
-      }
-    },
-    {
-      revalidateOnFocus: false,
-    }
-  )
-
-  const suggestionUserIds = useSWR(
-    followingUserIds.data ? getKey(['users', 'suggestionUserIds']) : null,
-    async () => {
-      if (!myUserId) {
-        return []
-      } else {
-        return suggestionList.filter((suggestionUserId) => {
-          if (suggestionUserId === myUserId) {
-            return false
+        const task = async () => {
+          try {
+            const userIds = await socialDAC.getFollowingForUser(myUserId)
+            return userIds || []
+          } catch (e) {
+            throw Error('Could not fetch followers')
           }
-          return !(followingUserIds.data || []).find(
-            (userId) => userId === suggestionUserId
-          )
-        })
+        }
+        return apiLimiter.add(task, { priority: 2 })
       }
     },
     {
@@ -231,7 +219,9 @@ export function UsersProvider({ children }: Props) {
     (userIds): Promise<IUser[]> => {
       const func = async (): Promise<IUser[]> => {
         const promises: Promise<IUser>[] = userIds.map((userId) =>
-          fetchUser(ref, userId)
+          fetchUser(ref, userId, {
+            priority: 2,
+          })
         )
         return Promise.all(promises)
       }
@@ -240,8 +230,10 @@ export function UsersProvider({ children }: Props) {
     [ref, usersMap, upsertUser]
   )
 
-  const followings = useSWR<Feed<IUser>>(
-    followingUserIds.data ? getKey(['users', 'followings']) : null,
+  const allFollowings = useSWR<Feed<IUser>>(
+    followingUserIds.data
+      ? getKey(['users', 'allFollowings', followingUserIds.data])
+      : null,
     async () => {
       const userIds = followingUserIds.data
 
@@ -264,16 +256,82 @@ export function UsersProvider({ children }: Props) {
     }
   )
 
-  const suggestions = useSWR<Feed<IUser>>(
-    suggestionUserIds.data ? getKey(['users', 'suggestions']) : null,
+  const followings = useSWR<Feed<IUser>>(
+    allFollowings.data ? getKey(['users', 'followers']) : null,
     async () => {
-      const userIds = suggestionUserIds.data
+      const users = allFollowings.data
 
-      const users = await gatherUsers(userIds)
+      if (!users.entries) {
+        return {
+          entries: [],
+          updatedAt: new Date().getTime(),
+        }
+      }
 
       return {
-        entries: users,
+        entries: users.entries.filter(
+          ({ relationship }) => relationship !== 'friend'
+        ),
         updatedAt: new Date().getTime(),
+      }
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  )
+
+  const friends = useSWR<Feed<IUser>>(
+    allFollowings.data
+      ? getKey(['users', 'friends', allFollowings.data])
+      : null,
+    async () => {
+      const users = allFollowings.data
+
+      if (!users.entries) {
+        return {
+          entries: [],
+          updatedAt: new Date().getTime(),
+        }
+      }
+
+      return {
+        entries: users.entries.filter(
+          ({ relationship }) => relationship === 'friend'
+        ),
+        updatedAt: new Date().getTime(),
+      }
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  )
+
+  const suggestions = useSWR<Feed<IUser>>(
+    followingUserIds.data
+      ? getKey(['users', 'suggestions', followingUserIds.data])
+      : null,
+    async () => {
+      if (!myUserId) {
+        return {
+          entries: [],
+          updatedAt: new Date().getTime(),
+        }
+      } else {
+        const userIds = seedList.slice(0, 5).filter((suggestionUserId) => {
+          if (suggestionUserId === myUserId) {
+            return false
+          }
+          return !(followingUserIds.data || []).find(
+            (userId) => userId === suggestionUserId
+          )
+        })
+
+        const users = await gatherUsers(userIds)
+
+        return {
+          entries: users,
+          updatedAt: new Date().getTime(),
+        }
       }
     },
     {
@@ -284,56 +342,76 @@ export function UsersProvider({ children }: Props) {
   const handleFollow = useCallback(
     (userId: string, profile: IUserProfile) => {
       const func = async () => {
-        followings.mutate(
-          (feed) => ({
-            entries: feed.entries.concat({
-              userId,
-              profile,
-              updatedAt: new Date().getTime(),
-            }),
+        const user = getUser(userId)
+
+        // Update data sources
+        if (user) {
+          upsertUser({
+            userId,
+            followerIds: uniq([...user.followerIds, myUserId]),
+            relationship:
+              user.relationship === 'follower' ? 'friend' : 'following',
             updatedAt: new Date().getTime(),
-          }),
-          false
-        )
-        suggestions.mutate(
-          (feed) => ({
-            entries: feed.entries.filter((user) => user.userId !== userId),
-            updatedAt: new Date().getTime(),
-          }),
-          false
-        )
+          })
+        }
+        followingUserIds.mutate((ids) => uniq([...ids, userId]), false)
+
         try {
-          const task = async () => await socialDAC.follow(userId)
-          await taskQueue.append(task)
+          const follow = async () => {
+            try {
+              await socialDAC.follow(userId)
+            } catch (e) {}
+          }
+
+          await taskQueue.add(async () => {
+            await apiLimiter.add(follow, {
+              priority: 2,
+            })
+          })
 
           if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
           }
 
           // Trigger update user
-          workerFeedUserUpdate(ref, userId, { force: true, prioritize: true })
+          workerFeedUserUpdate(ref, userId, { force: true, priority: 2 })
         } catch (e) {}
       }
       func()
     },
-    [ref, followings, suggestions, followingUserIds]
+    [ref, myUserId, allFollowings, suggestions, followingUserIds]
   )
 
   const handleUnfollow = useCallback(
     (userId) => {
       const func = async () => {
-        followings.mutate(
-          (feed) => ({
-            entries: feed.entries.filter(
-              (following) => following.userId !== userId
-            ),
+        const user = getUser(userId)
+
+        // Update data sources
+        if (user) {
+          upsertUser({
+            userId,
+            followerIds: user.followerIds.filter((id) => id !== myUserId),
+            relationship: user.relationship === 'friend' ? 'following' : 'none',
             updatedAt: new Date().getTime(),
-          }),
+          })
+        }
+        followingUserIds.mutate(
+          (ids) => ids.filter((id) => id !== userId),
           false
         )
         try {
-          const task = async () => await socialDAC.unfollow(userId)
-          await taskQueue.append(task)
+          const unfollow = async () => {
+            try {
+              await socialDAC.unfollow(userId)
+            } catch (e) {}
+          }
+
+          await taskQueue.add(async () => {
+            await apiLimiter.add(unfollow, {
+              priority: 2,
+            })
+          })
 
           if (taskQueue.queue.length === 0) {
             debouncedMutate(followingUserIds.mutate)
@@ -342,15 +420,17 @@ export function UsersProvider({ children }: Props) {
       }
       func()
     },
-    [followings, followingUserIds]
+    [myUserId, allFollowings, followingUserIds]
   )
 
   const checkIsFollowingUser = useCallback(
     (userId: string) => {
       // Use followings instead of followingUserIds in case there is an inflight optimistic update
-      return !!followings.data?.entries.find((user) => user.userId === userId)
+      return !!allFollowings.data?.entries.find(
+        (user) => user.userId === userId
+      )
     },
-    [followings]
+    [allFollowings]
   )
   const checkIsFollowerUser = useCallback(
     (userId: string) => {
@@ -400,7 +480,7 @@ export function UsersProvider({ children }: Props) {
   }, [
     ref,
     followingUserIds,
-    followings,
+    allFollowings,
     suggestions,
     usersMap,
     usersIndex,
@@ -419,8 +499,8 @@ export function UsersProvider({ children }: Props) {
     checkIsFollowingUser,
     checkIsMyself,
     followingUserIds,
-    suggestionUserIds,
     followings,
+    friends,
     suggestions,
     handleFollow,
     handleUnfollow,

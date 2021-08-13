@@ -72,7 +72,7 @@ export async function workerFeedLatestUpdate(
     workflowId: params.workflowId,
   })
   const task = () => feedLatestUpdate(ref, entriesBatch, params)
-  await taskQueue.append(task)
+  await taskQueue.add(task)
 
   // Only mutate the latest feed if there are no user posts being saved,
   // this is to prevent optimistic updates from flickering.

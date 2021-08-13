@@ -129,9 +129,7 @@ export async function workerFeedUserUpdate(
   params: WorkerParams = {}
 ): Promise<any> {
   const task = () => feedUserUpdate(ref, userId, params)
-  if (params.prioritize) {
-    await taskQueue.prepend(task)
-  } else {
-    await taskQueue.append(task)
-  }
+  await taskQueue.add(task, {
+    priority: params.priority,
+  })
 }

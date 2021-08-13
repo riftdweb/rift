@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { IUser, UsersMap } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
-import { ActivityFeed, EntryFeed } from '../feed/types'
+import { ActivityFeed, EntryFeed } from '@riftdweb/types'
 import { Api } from './api'
 
 type TokenKey =
@@ -22,12 +22,8 @@ const controlRefDefaults = {
   followingUserIds: {} as SWRResponse<string[], any>,
   usersMap: {} as SWRResponse<UsersMap, any>,
   usersIndex: [] as IUser[],
-  getUser: (userId: string): IUser => {
+  getUser: (_userId: string): IUser => {
     throw Error('usersMap not yet loaded')
-    return {
-      userId,
-      updatedAt: 0,
-    }
   },
   upsertUser: (user: IUser): void => {},
   upsertUsers: (user: IUser[]): void => {},

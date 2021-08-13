@@ -8,13 +8,13 @@ type Params = {
 
 type TaskParams = {
   cost?: number
-  prioritize?: boolean
+  priority?: number
 }
 
 type Task<T> = {
   task: () => Promise<T>
   cost: number
-  prioritize: boolean
+  priority: number
   resolve: (value: T | PromiseLike<T>) => void
   reject: () => void
 }
@@ -51,8 +51,22 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     if (queue.length === 0) {
       return -1
     }
-    const i = queue.findIndex((task) => task.prioritize)
-    return ~i ? i : 0
+    const { index } = queue.reduce(
+      (acc, task, i) => {
+        if (task.priority > acc.priority) {
+          return {
+            index: i,
+            priority: task.priority,
+          }
+        }
+        return acc
+      },
+      {
+        index: 0,
+        priority: 0,
+      }
+    )
+    return index
   }
 
   const peekNextTask = (): Task<any> | undefined => {
@@ -63,7 +77,7 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     return queue[index]
   }
 
-  const getNextTask = (): Task<any> | undefined => {
+  const popNextTask = (): Task<any> | undefined => {
     const index = getNextTaskIndex()
     if (!~index) {
       return undefined
@@ -82,7 +96,7 @@ export function RateLimiter(namespace: string, params: Params = {}) {
   const processNextTask = async () => {
     let isTerminating = false
 
-    const task = getNextTask()
+    const task = popNextTask()
 
     tasksInflight += 1
     tokens -= task.cost
@@ -161,12 +175,11 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     interval = setInterval(processQueue, processingInterval)
   }
 
-  // Append task to the end of the queue
   async function add<T>(
     task: () => Promise<T>,
     params: TaskParams = {}
   ): Promise<T> {
-    const { prioritize = false, cost = 1 } = params
+    const { priority = 0, cost = 1 } = params
 
     assertRunning()
     return new Promise((resolve, reject) => {
@@ -175,43 +188,10 @@ export function RateLimiter(namespace: string, params: Params = {}) {
         resolve,
         reject,
         cost,
-        prioritize,
+        priority,
       })
     })
   }
-
-  // // Prepend task to the beginning of the queue
-  // async function prepend<T>(
-  //   task: () => Promise<T>,
-  //   params: TaskParams = {}
-  // ): Promise<T> {
-  //   const { cost = 1 } = params
-  //   assertRunning()
-  //   return new Promise((resolve, reject) => {
-  //     queue.unshift({
-  //       task,
-  //       resolve,
-  //       reject,
-  //       cost,
-  //     })
-  //     while (maxQueueSize && queue.length > maxQueueSize) {
-  //       log('Dropping task from the back')
-  //       queue.pop()
-  //     }
-  //   })
-  // }
-
-  // async function add<T>(
-  //   task: () => Promise<T>,
-  //   params: TaskParams = {}
-  // ): Promise<T> {
-  //   const { prioritize = false } = params
-  //   if (prioritize) {
-  //     return prepend(task, params)
-  //   } else {
-  //     return append(task, params)
-  //   }
-  // }
 
   return {
     queue,

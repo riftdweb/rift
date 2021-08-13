@@ -12,7 +12,7 @@ import { ScrollArea } from '../../../_shared/ScrollArea'
 
 export function Following() {
   const { myUserId, login } = useSkynet()
-  const { followings, suggestions, suggestionUserIds } = useUsers()
+  const { friends, followings, suggestions } = useUsers()
 
   if (!myUserId) {
     return (
@@ -60,6 +60,30 @@ export function Following() {
               gap: '$2',
             }}
           >
+            {!!friends.data?.entries.length && (
+              <Fragment>
+                <StickyHeading title="Friends" />
+                <Flex
+                  css={{
+                    flexDirection: 'column',
+                    width: '100%',
+                    gap: '$2',
+                    paddingBottom: '$2',
+                    flexShrink: 1,
+                  }}
+                >
+                  <EntriesState
+                    response={friends}
+                    validatingMessage="Loading"
+                    emptyMessage="No friends."
+                  >
+                    {friends.data?.entries.map(({ userId, profile }) => (
+                      <Follow key={userId} userId={userId} />
+                    ))}
+                  </EntriesState>
+                </Flex>
+              </Fragment>
+            )}
             <StickyHeading
               title="Following"
               contextMenu={<FollowingContextMenu />}
@@ -83,7 +107,7 @@ export function Following() {
                 ))}
               </EntriesState>
             </Flex>
-            {!!suggestionUserIds.data?.length && (
+            {!!suggestions.data?.entries.length && (
               <Fragment>
                 <StickyHeading title="Suggestions" />
                 <Flex

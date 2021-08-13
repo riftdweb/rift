@@ -7,7 +7,6 @@ import { clearToken, handleToken } from './tokens'
 import { wait } from '../shared/wait'
 import { fetchUser } from '../hooks/useProfile'
 import { TaskQueue } from '../shared/taskQueue'
-import { denyList } from '../contexts/users/denyList'
 
 const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
@@ -40,7 +39,7 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
             syncUpdate: true,
             skipUpsert: true,
           })
-        return taskQueue.append(task)
+        return taskQueue.add(task)
       })
       const updatedUsers: IUser[] = yield Promise.all(tasks)
 
@@ -70,10 +69,24 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
   }
 })
 
+// const checkIsFollowingUser = useCallback(
+//   (userId: string) => {
+//     // Use followings instead of followingUserIds in case there is an inflight optimistic update
+//     return !!followings.data?.entries.find((user) => user.userId === userId)
+//   },
+//   [followings]
+// )
+// const checkIsFollowerUser = useCallback(
+//   (userId: string) => {
+//     return usersMap.data?.entries[userId].followingIds?.includes(myUserId)
+//   },
+//   [myUserId, usersMap]
+// )
 function recomputeFollowers(ref) {
   log('Recomputing followers')
   const updatedUsers: Record<string, IUser> = {}
   ref.current.usersIndex.forEach((user) => {
+    // Update users followers
     for (let followingId of user.followingIds) {
       let followingUser =
         updatedUsers[followingId] || ref.current.getUser(followingId)
@@ -85,8 +98,38 @@ function recomputeFollowers(ref) {
         updatedUsers[followingId] = followingUser
       }
     }
+
+    // Update relationship
+    let updatedUser =
+      updatedUsers[user.userId] || ref.current.getUser(user.userId)
+
+    const relationship = getRelationship(ref, updatedUser)
+
+    updatedUsers[user.userId] = {
+      ...updatedUser,
+      relationship,
+    }
   })
   ref.current.upsertUsers(Object.entries(updatedUsers).map(([_, user]) => user))
+}
+
+export function getRelationship(
+  ref: ControlRef,
+  user: IUser
+): IUser['relationship'] {
+  const followsMe = user.followingIds.includes(ref.current.myUserId)
+  const iFollow = user.followerIds.includes(ref.current.myUserId)
+
+  let relationship: IUser['relationship'] = 'none'
+
+  if (followsMe && iFollow) {
+    relationship = 'friend'
+  } else if (followsMe) {
+    relationship = 'follower'
+  } else if (iFollow) {
+    relationship = 'following'
+  }
+  return relationship
 }
 
 export async function workerCrawlerNetwork(

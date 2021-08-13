@@ -9,7 +9,7 @@ import { getDataKeyDns } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { triggerToast } from '../shared/toast'
-import { Feed } from './feed/types'
+import { Feed } from '@riftdweb/types'
 import { useSkynet } from './skynet'
 
 const dataKeyDns = getDataKeyDns()
@@ -74,8 +74,9 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
+            priority: 2,
           })
-        await taskQueue.append(task)
+        await taskQueue.add(task)
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {
@@ -205,8 +206,9 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
+            priority: 2,
           })
-        await taskQueue.append(task)
+        await taskQueue.add(task)
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {

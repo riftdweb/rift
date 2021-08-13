@@ -1,6 +1,6 @@
 import { CheckIcon } from '@radix-ui/react-icons'
 import { Box, Flex } from '@riftdweb/design-system'
-import { Entry } from '../../../../contexts/feed/types'
+import { Entry } from '@riftdweb/types'
 
 type Props = { entry: Entry }
 

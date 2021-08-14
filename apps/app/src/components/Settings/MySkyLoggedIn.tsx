@@ -21,7 +21,7 @@ import { User } from '../_shared/User'
 import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {
-  const { myUserId, myUser, logout, appDomain } = useSkynet()
+  const { myUserId, logout, appDomain } = useSkynet()
   const history = useHistory()
   const { domains, addDomain } = useDomains()
   const { skyfiles } = useSkyfiles()

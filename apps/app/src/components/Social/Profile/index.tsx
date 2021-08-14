@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { Box, Button, ControlGroup, Flex, Text } from '@riftdweb/design-system'
+import { Box, Button, Flex } from '@riftdweb/design-system'
 import { Feed } from './Feed'
 import { Layout } from '../Layout'
 import { Link } from '../../_shared/Link'

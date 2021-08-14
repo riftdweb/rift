@@ -41,7 +41,9 @@ const cafWorkerFeedActivityUpdate = CAF(function* (
 
     if (!force) {
       log('Fetching cached activity')
-      let feed: ActivityFeed = yield fetchActivity(ref)
+      let feed: ActivityFeed = yield fetchActivity(ref, {
+        priority: params.priority,
+      })
 
       if (!needsRefresh(feed, 5)) {
         log('Up to date')
@@ -51,14 +53,18 @@ const cafWorkerFeedActivityUpdate = CAF(function* (
     }
 
     log('Fetching cached entries')
-    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref)
+    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref, {
+      priority: params.priority,
+    })
     let entries = allEntriesFeed.entries
 
     log('Generating activity')
     const activities = generateActivity(ref, entries)
 
     log('Caching activity')
-    yield cacheActivity(ref, activities)
+    yield cacheActivity(ref, activities, {
+      priority: params.priority,
+    })
 
     log('Trigger mutate')
     yield ref.current.feeds.activity.response.mutate()

@@ -46,6 +46,7 @@ export function DnsProvider({ children }: Props) {
     async (): Promise<DnsEntryFeed> => {
       const result = await Api.getJSON<DnsEntryFeed>({
         path: dataKeyDns,
+        priority: 2,
       })
       return (
         result.data || {

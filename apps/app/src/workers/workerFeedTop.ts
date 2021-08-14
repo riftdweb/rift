@@ -29,7 +29,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
 
     if (!force) {
       log('Fetching cached top entries')
-      let feed = yield fetchTopEntries(ref)
+      let feed = yield fetchTopEntries(ref, {
+        priority: params.priority,
+      })
 
       if (!needsRefresh(feed, 5)) {
         log('Up to date')
@@ -40,7 +42,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
     ref.current.feeds.top.setLoadingState('Compiling')
 
     log('Fetching cached entries')
-    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref)
+    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref, {
+      priority: params.priority,
+    })
     let entries = allEntriesFeed.entries
 
     log('Scoring entries')
@@ -56,7 +60,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
     )
 
     log('Caching top entries')
-    yield cacheTopEntries(ref, sortedEntries)
+    yield cacheTopEntries(ref, sortedEntries, {
+      priority: params.priority,
+    })
 
     log('Trigger mutate')
     yield ref.current.feeds.top.response.mutate()

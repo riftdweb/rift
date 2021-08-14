@@ -75,7 +75,8 @@ export function TaskQueue(namespace: string, params: Params = {}) {
       return -1
     }
     const { index } = queue.reduce(
-      ({ priority }, task, i) => {
+      (acc, task, i) => {
+        const { priority } = acc
         // <= so that later in queue is selected when equal
         if (task.priority <= priority) {
           return {
@@ -83,6 +84,7 @@ export function TaskQueue(namespace: string, params: Params = {}) {
             priority: task.priority,
           }
         }
+        return acc
       },
       {
         index: queue.length - 1,

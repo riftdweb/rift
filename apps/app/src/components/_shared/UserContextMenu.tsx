@@ -12,8 +12,8 @@ import {
 } from '@riftdweb/design-system'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useSkynet } from '../../contexts/skynet'
+import { isFollowing } from '../../contexts/users'
 import { Fragment, useMemo } from 'react'
 import { useFeed } from '../../contexts/feed'
 import SpinnerIcon from '../_icons/SpinnerIcon'
@@ -39,19 +39,9 @@ export function UserContextMenu({
   const user = useUser(userId)
   const profile = user?.profile
   const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
-  const {
-    handleFollow,
-    handleUnfollow,
-    checkIsFollowingUser,
-    checkIsMyself,
-  } = useUsers()
+  const { handleFollow, handleUnfollow } = useUsers()
 
-  const isMyself = useMemo(() => checkIsMyself(userId), [checkIsMyself, userId])
-  const isFollowingUser = useMemo(() => checkIsFollowingUser(userId), [
-    checkIsFollowingUser,
-    userId,
-  ])
-
+  const isMyself = userId === myUserId
   const isViewingUser = userId === viewingUserId
 
   const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
@@ -92,7 +82,7 @@ export function UserContextMenu({
                 User {userId.slice(0, 6)}...
               </DropdownMenuLabel>
             )}
-            {!isMyself && isFollowingUser && (
+            {!isMyself && isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -101,7 +91,7 @@ export function UserContextMenu({
                 </DropdownMenuItem>
               </Fragment>
             )}
-            {!isMyself && !isFollowingUser && (
+            {!isMyself && !isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>

@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../../contexts/feed'
 import { Entry } from '@riftdweb/types'
 import { useLink } from '../../../../hooks/useLink'
-import { useUser } from '../../../../hooks/useProfile'
 import { Link } from '../../../_shared/Link'
 import { PostTime } from '../PostTime'
 import { User } from '../../../_shared/User'
@@ -91,7 +90,6 @@ export function FeedItem({ entry, index }: Props) {
   }, [entry, hostname, incrementKeywords, incrementDomain])
 
   const userId = entry.userId
-  const creatorUser = useUser(userId)
 
   return (
     <Card

@@ -1,5 +1,4 @@
 import { Flex, Text } from '@riftdweb/design-system'
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { Link } from './Link'
 import { Avatar } from './Avatar'
 import { useUser } from '../../hooks/useProfile'

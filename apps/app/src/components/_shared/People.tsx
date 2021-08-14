@@ -1,15 +1,4 @@
-import {
-  Flex,
-  Box,
-  AvatarGroup,
-  AvatarNestedItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Text,
-  Tooltip,
-} from '@riftdweb/design-system'
-import { useSkynet } from '../../contexts/skynet'
+import { Flex, Box } from '@riftdweb/design-system'
 import { useUsers } from '../../contexts/users'
 import { Avatar } from './Avatar'
 

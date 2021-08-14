@@ -40,6 +40,7 @@ export function LocalSeed() {
     Api.getJSON<Domain[]>({
       seed: localRootSeed,
       path: dataKeyDomains,
+      priority: 2,
     })
   )
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
@@ -47,6 +48,7 @@ export function LocalSeed() {
     Api.getJSON<Skyfile[]>({
       seed: localRootSeed,
       path: dataKeyFiles,
+      priority: 2,
     })
   )
   // Fetch because if the app is logged into MySky the contexts do not contain local seed data
@@ -54,6 +56,7 @@ export function LocalSeed() {
     Api.getJSON<App[]>({
       seed: localRootSeed,
       path: dataKeyApps,
+      priority: 2,
     })
   )
 

@@ -21,7 +21,7 @@ import { useFeedActivity } from './useFeedActivity'
 import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
-import { workerCrawlerUsers } from '../../workers/workerCrawlerUsers'
+import { workerFeedIndexer } from '../../workers/workerFeedIndexer'
 
 const log = createLogger('feed')
 
@@ -127,7 +127,7 @@ export function FeedProvider({ children }: Props) {
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
-      await workerFeedTopUpdate(ref, { force: true })
+      await workerFeedTopUpdate(ref, { force: true, priority: 2 })
     }
     return func()
   }, [ref])
@@ -135,14 +135,14 @@ export function FeedProvider({ children }: Props) {
   const refreshLatestFeed = useCallback(() => {
     const func = async () => {
       // Could start workerFeedLatestUpdate, but this probably makes more sense
-      await workerCrawlerUsers(ref, { force: true })
+      await workerFeedIndexer(ref, { force: true, priority: 2 })
     }
     return func()
   }, [ref])
 
   const refreshActivity = useCallback(() => {
     const func = async () => {
-      await workerFeedActivityUpdate(ref, { force: true })
+      await workerFeedActivityUpdate(ref, { force: true, priority: 2 })
     }
     return func()
   }, [ref])

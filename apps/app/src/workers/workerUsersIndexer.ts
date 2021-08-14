@@ -4,22 +4,21 @@ import { ControlRef } from '../contexts/skynet/ref'
 import uniq from 'lodash/uniq'
 import { EntryFeed, IUser, UsersMap, WorkerParams } from '@riftdweb/types'
 import { clearToken, handleToken } from './tokens'
-import { wait } from '../shared/wait'
+import { wait, waitFor } from '../shared/wait'
 import { fetchUser } from '../hooks/useProfile'
 import { TaskQueue } from '../shared/taskQueue'
 
-const SCHEDULE_INTERVAL_CRAWLER = 1000 * 60 * 5
+const SCHEDULE_INTERVAL_INDEXER = 1000 * 60 * 5
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
-const REFRESH_INTERVAL_CRAWLER = 0
 
 const BATCH_SIZE = 1
 
-const taskQueue = TaskQueue('usersIndex', {
+const taskQueue = TaskQueue('userIndexer', {
   poolSize: 1,
 })
 
-const log = createLogger('crawler/network')
-const cafCrawlerNetwork = CAF(function* crawlerNetwork(
+const log = createLogger('userIndexer')
+const cafUserIndexer = CAF(function* userIndexer(
   signal: any,
   ref: ControlRef,
   params: WorkerParams
@@ -46,7 +45,7 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
       ref.current.upsertUsers(updatedUsers)
 
       const userIdsToAdd = []
-      // Crawl the discovered followingIds
+      // Index the discovered followingIds
       updatedUsers.forEach((newItem) => {
         userIdsToAdd.push(...newItem.followingIds)
       })
@@ -69,20 +68,7 @@ const cafCrawlerNetwork = CAF(function* crawlerNetwork(
   }
 })
 
-// const checkIsFollowingUser = useCallback(
-//   (userId: string) => {
-//     // Use followings instead of followingUserIds in case there is an inflight optimistic update
-//     return !!followings.data?.entries.find((user) => user.userId === userId)
-//   },
-//   [followings]
-// )
-// const checkIsFollowerUser = useCallback(
-//   (userId: string) => {
-//     return usersMap.data?.entries[userId].followingIds?.includes(myUserId)
-//   },
-//   [myUserId, usersMap]
-// )
-function recomputeFollowers(ref) {
+export function recomputeFollowers(ref) {
   log('Recomputing followers')
   const updatedUsers: Record<string, IUser> = {}
   ref.current.usersIndex.forEach((user) => {
@@ -132,66 +118,57 @@ export function getRelationship(
   return relationship
 }
 
-export async function workerCrawlerNetwork(
+export async function workerUserIndexer(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<any> {
-  const token = await handleToken(ref, 'crawlerNetwork')
+  const token = await handleToken(ref, 'userIndexer')
   try {
-    await cafCrawlerNetwork(token.signal, ref, params)
+    await cafUserIndexer(token.signal, ref, params)
   } catch (e) {
     log(e)
   } finally {
-    clearToken(ref, 'crawlerNetwork')
+    clearToken(ref, 'userIndexer')
   }
 }
 
-const logScheduler = createLogger('crawler/network/schedule')
+const logScheduler = createLogger('userIndexer/schedule')
 
-async function maybeRunCrawlerNetwork(ref: ControlRef): Promise<any> {
-  // If crawler is already running skip
-  if (!ref.current.followingUserIdsHasFetched) {
-    logScheduler(
-      `Follower list not ready, trying again in ${
-        FALSE_START_WAIT_INTERVAL / 1000
-      } seconds`
-    )
-    setTimeout(() => {
-      maybeRunCrawlerNetwork(ref)
-    }, FALSE_START_WAIT_INTERVAL)
-  } else if (!ref.current.usersMap.data) {
-    logScheduler(
-      `Users map not ready, trying again in ${
-        FALSE_START_WAIT_INTERVAL / 1000
-      } seconds`
-    )
-    setTimeout(() => {
-      maybeRunCrawlerNetwork(ref)
-    }, FALSE_START_WAIT_INTERVAL)
-  }
-  // If crawler is already running skip
-  else if (ref.current.tokens.crawlerNetwork) {
-    logScheduler(`Crawler already running, skipping`)
+async function maybeRunUserIndexer(ref: ControlRef): Promise<any> {
+  await waitFor(() => [ref.current.followingUserIdsHasFetched], {
+    log: logScheduler,
+    resourceName: 'follower list',
+    intervalTime: FALSE_START_WAIT_INTERVAL,
+  })
+  await waitFor(() => [ref.current.followingUserIdsHasFetched], {
+    log: logScheduler,
+    resourceName: 'users map',
+    intervalTime: FALSE_START_WAIT_INTERVAL,
+  })
+
+  // If rawler indexer is already running skip
+  if (ref.current.tokens.userIndexer) {
+    logScheduler(`Indexer already running, skipping`)
   } else {
-    logScheduler(`Crawler starting`)
-    workerCrawlerNetwork(ref)
+    logScheduler(`Indexer starting`)
+    workerUserIndexer(ref)
   }
 }
 
 let interval = null
 
-export async function scheduleCrawlerNetwork(ref: ControlRef): Promise<any> {
+export async function scheduleUserIndexer(ref: ControlRef): Promise<any> {
   log('Starting scheduler')
 
   // Give the page render requests a few seconds to complete
   await wait(3000)
 
-  maybeRunCrawlerNetwork(ref)
+  maybeRunUserIndexer(ref)
 
   clearInterval(interval)
   interval = setInterval(() => {
-    maybeRunCrawlerNetwork(ref)
-  }, SCHEDULE_INTERVAL_CRAWLER)
+    maybeRunUserIndexer(ref)
+  }, SCHEDULE_INTERVAL_INDEXER)
 }
 
 export const i = 0

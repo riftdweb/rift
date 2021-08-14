@@ -10,6 +10,9 @@ export function UserResults({ searchValue, onSelect }) {
     const lowerCaseSearchValue = searchValue.toLowerCase()
 
     return usersIndex.filter((userItem) => {
+      if (userItem.userId.includes(searchValue)) {
+        return true
+      }
       if (userItem.username?.toLowerCase().includes(lowerCaseSearchValue)) {
         return true
       }

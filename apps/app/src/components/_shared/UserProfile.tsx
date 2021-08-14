@@ -6,8 +6,13 @@ import { ChatBubbleIcon, GlobeIcon } from '@radix-ui/react-icons'
 import { useUser } from '../../hooks/useProfile'
 import { useFeed } from '../../contexts/feed'
 import { UserContextMenu } from './UserContextMenu'
-import { useUsers } from '../../contexts/users'
-import { Fragment, useMemo } from 'react'
+import {
+  isFollower,
+  isFollowing,
+  isFriend,
+  useUsers,
+} from '../../contexts/users'
+import { Fragment } from 'react'
 import { IUser } from '@riftdweb/types'
 import { People } from './People'
 import { useSkynet } from '../../contexts/skynet'
@@ -43,31 +48,12 @@ export function UserProfile({
   const user = useUser(userId)
   const profile = user?.profile
   const { user: userFeed } = useFeed()
-  const {
-    handleFollow,
-    checkIsFollowingUser,
-    checkIsMyself,
-    followingUserIds,
-  } = useUsers()
+  const { handleFollow, followingUserIds } = useUsers()
   const isViewingUser = userId === viewingUserId
+  const isMyself = userId === myUserId
   const entriesCount = isViewingUser
     ? userFeed.response.data?.entries.length || 0
     : null
-
-  const isFollowingUser = useMemo(() => checkIsFollowingUser(userId), [
-    checkIsFollowingUser,
-    userId,
-  ])
-  const isFollowerUser = useMemo(() => user?.followingIds.includes(myUserId), [
-    user,
-    myUserId,
-  ])
-  const isConnected = useMemo(() => isFollowingUser && isFollowerUser, [
-    isFollowerUser,
-    isFollowingUser,
-  ])
-
-  const isMyself = useMemo(() => checkIsMyself(userId), [checkIsMyself, userId])
 
   const verticalGap = versionToGap[version]
   const size = versionToSize[version]
@@ -125,15 +111,15 @@ export function UserProfile({
         <Box css={{ flex: 1 }} />
         <UserContextMenu userId={userId} />
         {!isMyself &&
-          (isConnected ? (
+          (isFriend(user) ? (
             <Flex css={{ gap: '$1', alignItems: 'center' }}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>Friends</Text>
             </Flex>
-          ) : isFollowingUser ? (
+          ) : isFollowing(user) ? (
             <Flex css={{ gap: '$1', alignItems: 'center' }}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>Following</Text>
             </Flex>
-          ) : isFollowerUser ? (
+          ) : isFollower(user) ? (
             <Button size="1" onClick={() => handleFollow(userId, profile)}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>
                 Follow back

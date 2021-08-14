@@ -156,7 +156,6 @@ export function useUser(userId: string): IUser | undefined {
     () => fetchUser(ref, userId),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 20_000,
     }
   )
   return user

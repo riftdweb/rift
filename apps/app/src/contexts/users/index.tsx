@@ -24,6 +24,7 @@ import { suggestionList } from './suggestionList'
 import { seedList } from './seedList'
 import { denyList } from './denyList'
 import { apiLimiter } from '../skynet/api'
+import { recomputeFollowers } from '../../workers/workerUsersIndexer'
 
 const log = createLogger('users')
 const taskQueue = TaskQueue('users')
@@ -40,6 +41,18 @@ const throttledCacheUsersMap = throttle(
   20_000
 )
 
+export function isFollowing(user?: IUser) {
+  return !!user && ['friend', 'following'].includes(user.relationship)
+}
+
+export function isFollower(user?: IUser) {
+  return !!user && ['friend', 'follower'].includes(user.relationship)
+}
+
+export function isFriend(user?: IUser) {
+  return !!user && user.relationship === 'friend'
+}
+
 type State = {
   usersMap: SWRResponse<UsersMap, any>
   usersIndex: IUser[]
@@ -50,8 +63,6 @@ type State = {
   suggestions: SWRResponse<Feed<IUser>, any>
   handleFollow: (userId: string, profile: IUserProfile) => void
   handleUnfollow: (userId: string) => void
-  checkIsFollowingUser: (userId: string) => boolean
-  checkIsMyself: (userId: string) => boolean
 }
 
 const UsersContext = createContext({} as State)
@@ -191,6 +202,7 @@ export function UsersProvider({ children }: Props) {
       addNewUserIds(seedList)
       setHasSeededUserIds(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usersMap])
 
   const followingUserIds = useSWR(
@@ -227,7 +239,7 @@ export function UsersProvider({ children }: Props) {
       }
       return func()
     },
-    [ref, usersMap, upsertUser]
+    [ref]
   )
 
   const allFollowings = useSWR<Feed<IUser>>(
@@ -269,9 +281,7 @@ export function UsersProvider({ children }: Props) {
       }
 
       return {
-        entries: users.entries.filter(
-          ({ relationship }) => relationship !== 'friend'
-        ),
+        entries: users.entries.filter((user) => !isFriend(user)),
         updatedAt: new Date().getTime(),
       }
     },
@@ -295,9 +305,7 @@ export function UsersProvider({ children }: Props) {
       }
 
       return {
-        entries: users.entries.filter(
-          ({ relationship }) => relationship === 'friend'
-        ),
+        entries: users.entries.filter((user) => isFriend(user)),
         updatedAt: new Date().getTime(),
       }
     },
@@ -317,14 +325,35 @@ export function UsersProvider({ children }: Props) {
           updatedAt: new Date().getTime(),
         }
       } else {
-        const userIds = seedList.slice(0, 5).filter((suggestionUserId) => {
-          if (suggestionUserId === myUserId) {
-            return false
+        const randomUserIds = [
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+          seedList[Math.floor(Math.random() * seedList.length)],
+        ]
+        const userIds = uniq([...randomUserIds, ...suggestionList]).filter(
+          (suggestionUserId) => {
+            if (suggestionUserId === myUserId) {
+              return false
+            }
+            return !(followingUserIds.data || []).find(
+              (userId) => userId === suggestionUserId
+            )
           }
-          return !(followingUserIds.data || []).find(
-            (userId) => userId === suggestionUserId
-          )
-        })
+        )
 
         const users = await gatherUsers(userIds)
 
@@ -347,14 +376,13 @@ export function UsersProvider({ children }: Props) {
         // Update data sources
         if (user) {
           upsertUser({
-            userId,
+            ...user,
             followerIds: uniq([...user.followerIds, myUserId]),
-            relationship:
-              user.relationship === 'follower' ? 'friend' : 'following',
             updatedAt: new Date().getTime(),
           })
         }
         followingUserIds.mutate((ids) => uniq([...ids, userId]), false)
+        recomputeFollowers(ref)
 
         try {
           const follow = async () => {
@@ -379,7 +407,7 @@ export function UsersProvider({ children }: Props) {
       }
       func()
     },
-    [ref, myUserId, allFollowings, suggestions, followingUserIds]
+    [ref, myUserId, followingUserIds, getUser, upsertUser]
   )
 
   const handleUnfollow = useCallback(
@@ -390,9 +418,9 @@ export function UsersProvider({ children }: Props) {
         // Update data sources
         if (user) {
           upsertUser({
+            ...user,
             userId,
             followerIds: user.followerIds.filter((id) => id !== myUserId),
-            relationship: user.relationship === 'friend' ? 'following' : 'none',
             updatedAt: new Date().getTime(),
           })
         }
@@ -400,6 +428,7 @@ export function UsersProvider({ children }: Props) {
           (ids) => ids.filter((id) => id !== userId),
           false
         )
+        recomputeFollowers(ref)
         try {
           const unfollow = async () => {
             try {
@@ -420,27 +449,8 @@ export function UsersProvider({ children }: Props) {
       }
       func()
     },
-    [myUserId, allFollowings, followingUserIds]
+    [ref, myUserId, getUser, upsertUser, followingUserIds]
   )
-
-  const checkIsFollowingUser = useCallback(
-    (userId: string) => {
-      // Use followings instead of followingUserIds in case there is an inflight optimistic update
-      return !!allFollowings.data?.entries.find(
-        (user) => user.userId === userId
-      )
-    },
-    [allFollowings]
-  )
-  const checkIsFollowerUser = useCallback(
-    (userId: string) => {
-      return usersMap.data?.entries[userId].followingIds?.includes(myUserId)
-    },
-    [myUserId, usersMap]
-  )
-  const checkIsMyself = useCallback((userId: string) => myUserId === userId, [
-    myUserId,
-  ])
 
   const usersIndex = useMemo(() => {
     if (!usersMap.data) {
@@ -450,10 +460,10 @@ export function UsersProvider({ children }: Props) {
       .map(([id, entry]) => entry)
       .filter((entry) => !!entry)
       .sort((a, b) => {
-        const isFollowingUserA = checkIsFollowingUser(a.userId)
-        const isFollowerUserA = checkIsFollowerUser(a.userId)
-        const isFollowingUserB = checkIsFollowingUser(b.userId)
-        // const isFollowerUserB = checkIsFollowerUser(b.userId)
+        const isFollowingUserA = isFollowing(a)
+        const isFollowerUserA = isFollower(a)
+        const isFollowingUserB = isFollowing(b)
+        // const isFollowerUserB = isFollower(b)
         return isFollowingUserA
           ? -1
           : isFollowingUserB
@@ -462,7 +472,7 @@ export function UsersProvider({ children }: Props) {
           ? -1
           : 1
       })
-  }, [usersMap, checkIsFollowingUser])
+  }, [usersMap])
 
   useEffect(() => {
     ref.current.usersMap = usersMap
@@ -496,8 +506,6 @@ export function UsersProvider({ children }: Props) {
     usersIndex,
     pendingUserIds,
     addNewUserIds,
-    checkIsFollowingUser,
-    checkIsMyself,
     followingUserIds,
     followings,
     friends,

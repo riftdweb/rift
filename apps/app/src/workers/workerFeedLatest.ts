@@ -5,7 +5,7 @@ import { wait } from '../shared/wait'
 import { ControlRef } from '../contexts/skynet/ref'
 import { cacheAllEntries, fetchAllEntries } from './workerApi'
 import { clearToken, handleToken } from './tokens'
-import { Entry, WorkerParams } from '@riftdweb/types'
+import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { workerFeedActivityUpdate } from './workerFeedActivity'
 import { workerFeedTopUpdate } from './workerFeedTop'
 
@@ -25,14 +25,19 @@ const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
       yield wait(delay)
     }
     ref.current.feeds.latest.setLoadingState('Compiling feed')
-    let allEntriesFeed = yield fetchAllEntries(ref)
+    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref, {
+      priority: params.priority,
+    })
     let allEntries = allEntriesFeed.entries
 
     allEntries = replaceEntriesBatchByUserId(allEntries, newEntries)
+    allEntries = cleanFeed(ref, allEntries)
 
     log('Caching all entries')
     ref.current.feeds.latest.setLoadingState('Caching feed')
-    yield cacheAllEntries(ref, allEntries)
+    yield cacheAllEntries(ref, allEntries, {
+      priority: params.priority,
+    })
   } finally {
     log('Finally')
     if (signal.aborted) {
@@ -42,6 +47,12 @@ const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
     ref.current.feeds.latest.setLoadingState()
   }
 })
+
+function cleanFeed(ref: ControlRef, allEntries: Entry[]) {
+  return allEntries.filter((entry) =>
+    ref.current.followingUserIds.data.includes(entry.userId)
+  )
+}
 
 export async function feedLatestUpdate(
   ref: ControlRef,

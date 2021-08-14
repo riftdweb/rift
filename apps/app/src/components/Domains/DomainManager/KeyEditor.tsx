@@ -49,6 +49,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
       publicKey: viewingUserId,
       path: dataKey.key,
       discoverable: true,
+      priority: 2,
     })
   })
 
@@ -103,10 +104,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(() => value === editingValue, [
-    value,
-    editingValue,
-  ])
+  const isDataLatest = useMemo(
+    () => value === editingValue,
+    [value, editingValue]
+  )
 
   const isValid = useMemo(() => {
     try {
@@ -147,6 +148,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
             path: dataKey.key,
             json: newData,
             discoverable: true,
+            priority: 2,
           })
         } catch (e) {
           const customMessage =

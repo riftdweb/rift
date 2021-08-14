@@ -23,6 +23,7 @@ const debouncedSyncState = debounce(async (Api: Api, state) => {
       await Api.setJSON({
         path: dataKeyFiles,
         json: state,
+        priority: 2,
       })
       log('Syncing success')
     } catch (e) {
@@ -41,6 +42,7 @@ export const useSkyfilesState = () => {
       try {
         const { data } = await Api.getJSON<Skyfile[]>({
           path: dataKeyFiles,
+          priority: 2,
         })
         // console.log(data)
         setLocalState(data || ([] as Skyfile[]))

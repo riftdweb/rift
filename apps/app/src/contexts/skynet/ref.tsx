@@ -9,7 +9,7 @@ type TokenKey =
   | 'feedLatestUpdate'
   | 'feedTopUpdate'
   | 'feedActivityUpdate'
-  | 'crawlerUsers'
+  | 'feedIndexer'
   | 'networkUsers'
   | string
 
@@ -46,8 +46,8 @@ const controlRefDefaults = {
     feedLatestUpdate: null,
     feedTopUpdate: null,
     feedActivityUpdate: null,
-    crawlerUsers: null,
-    crawlerNetwork: null,
+    feedIndexer: null,
+    userIndexer: null,
   } as Record<TokenKey, any>,
   feeds: {} as {
     user: {

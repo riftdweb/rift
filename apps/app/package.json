@@ -17,7 +17,7 @@
     "@radix-ui/react-scroll-area": "^0.0.15",
     "@riftdweb/design-system": "^1.0.0",
     "@riftdweb/types": "^1.0.0",
-    "@skynethub/userprofile-library": "^0.1.8-beta",
+    "@skynethub/userprofile-library": "^0.1.10-beta",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",

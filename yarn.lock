@@ -3219,15 +3219,6 @@
     skynet-js "^4.0.6-beta"
     skynet-mysky-utils "^0.1.0"
 
-"@skynethub/userprofile-library@^0.1.8-beta":
-  version "0.1.8-beta"
-  resolved "https://registry.yarnpkg.com/@skynethub/userprofile-library/-/userprofile-library-0.1.8-beta.tgz#9a8c5e387192a8090a446ec7b1e3c0f3ae44ed21"
-  integrity sha512-8OixMEf3clSAse2Ym44cYDZLp0gTW/e37yhEiCMdaGn9yjAnNSaDWE3VgzZeQlA/Oj97mYhVlQpkiEXsjrp1Iw==
-  dependencies:
-    post-me "^0.4.5"
-    skynet-js "^4.0.5-beta"
-    skynet-mysky-utils "^0.1.0"
-
 "@stitches/core@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@stitches/core/-/core-0.1.9.tgz#6cc42ae6052f6900f9add164232449ff8d62c4ba"
@@ -14932,26 +14923,6 @@ skynet-js@^4.0.3-beta:
     randombytes "^2.1.0"
     sjcl "^1.0.8"
     skynet-mysky-utils "^0.2.0"
-    tweetnacl "^1.0.3"
-    url-join "^4.0.1"
-    url-parse "1.4.7"
-
-skynet-js@^4.0.5-beta:
-  version "4.0.5-beta"
-  resolved "https://registry.yarnpkg.com/skynet-js/-/skynet-js-4.0.5-beta.tgz#954c18efbfdb7f6ce10fed2675403ad0bb912e17"
-  integrity sha512-m6rNvrCEjAUroIybwRAffOXI/VCHO38JLA10jEBl9WxZuNqIb6hPDpQK7BLw1hcF79Va3hzeGXsVs1ChC3Z/eA==
-  dependencies:
-    axios "^0.21.0"
-    base32-encode "^1.1.1"
-    base64-js "^1.3.1"
-    blakejs "^1.1.0"
-    buffer "^6.0.1"
-    mime "^2.5.2"
-    path-browserify "^1.0.1"
-    post-me "^0.4.5"
-    randombytes "^2.1.0"
-    sjcl "^1.0.8"
-    skynet-mysky-utils "^0.2.2"
     tweetnacl "^1.0.3"
     url-join "^4.0.1"
     url-parse "1.4.7"

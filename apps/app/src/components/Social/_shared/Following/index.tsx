@@ -16,7 +16,7 @@ export function Following() {
 
   if (!myUserId) {
     return (
-      <StickySection>
+      <StickySection width="100%">
         <StickyHeading title="Following" />
         <Flex
           css={{
@@ -44,8 +44,15 @@ export function Following() {
   }
 
   return (
-    <StickySection css={{ pt: '$3' }}>
-      <Follow key={myUserId} userId={myUserId} />
+    <StickySection width="100%" css={{ pt: '$3' }}>
+      <Box
+        css={{
+          paddingRight: '$3',
+          width: '100%',
+        }}
+      >
+        <Follow key={myUserId} userId={myUserId} />
+      </Box>
       <Box
         css={{
           flex: 1,
@@ -62,13 +69,19 @@ export function Following() {
           >
             {!!friends.data?.entries.length && (
               <Fragment>
-                <StickyHeading title="Friends" />
+                <StickyHeading
+                  title="Friends"
+                  css={{
+                    marginRight: '$3',
+                  }}
+                />
                 <Flex
                   css={{
                     flexDirection: 'column',
                     width: '100%',
                     gap: '$2',
-                    paddingBottom: '$2',
+                    // paddingBottom: '$2',
+                    padding: '0 $3 $2 0',
                     flexShrink: 1,
                   }}
                 >
@@ -87,13 +100,17 @@ export function Following() {
             <StickyHeading
               title="Following"
               contextMenu={<FollowingContextMenu />}
+              css={{
+                marginRight: '$3',
+              }}
             />
             <Flex
               css={{
                 flexDirection: 'column',
                 width: '100%',
                 gap: '$2',
-                paddingBottom: '$2',
+                // paddingBottom: '$2',
+                padding: '0 $3 $2 0',
                 flexShrink: 1,
               }}
             >
@@ -109,13 +126,19 @@ export function Following() {
             </Flex>
             {!!suggestions.data?.entries.length && (
               <Fragment>
-                <StickyHeading title="Suggestions" />
+                <StickyHeading
+                  title="Suggestions"
+                  css={{
+                    marginRight: '$3',
+                  }}
+                />
                 <Flex
                   css={{
                     flexDirection: 'column',
                     width: '100%',
                     gap: '$2',
-                    paddingBottom: '$2',
+                    // paddingBottom: '$2',
+                    padding: '0 $3 $2 0',
                     flexShrink: 1,
                   }}
                 >

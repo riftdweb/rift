@@ -84,7 +84,7 @@ export function LocalSeed() {
   }, [addDomain, localRootSeed, history])
 
   return (
-    <Box css={{ margin: '$3 0' }}>
+    <Box css={{ marginTop: '$9' }}>
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Heading
           css={{

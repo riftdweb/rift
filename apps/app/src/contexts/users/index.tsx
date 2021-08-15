@@ -232,7 +232,7 @@ export function UsersProvider({ children }: Props) {
       const func = async (): Promise<IUser[]> => {
         const promises: Promise<IUser>[] = userIds.map((userId) =>
           fetchUser(ref, userId, {
-            priority: 2,
+            priority: 1,
           })
         )
         return Promise.all(promises)
@@ -326,18 +326,6 @@ export function UsersProvider({ children }: Props) {
         }
       } else {
         const randomUserIds = [
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
           seedList[Math.floor(Math.random() * seedList.length)],
           seedList[Math.floor(Math.random() * seedList.length)],
           seedList[Math.floor(Math.random() * seedList.length)],

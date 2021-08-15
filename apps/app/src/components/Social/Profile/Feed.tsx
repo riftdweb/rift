@@ -1,4 +1,4 @@
-import { Flex } from '@riftdweb/design-system'
+import { Box, Flex } from '@riftdweb/design-system'
 import { useParams } from 'react-router-dom'
 import { FeedItem } from '../_shared/FeedItem'
 import { EntriesState } from '../../_shared/EntriesState'

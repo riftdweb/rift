@@ -17,7 +17,10 @@ export function LayoutApp({ children }: Props) {
       }}
     >
       <Navbar />
-      <Container size="3" css={{ minHeight: '60vh', marginTop: '20px' }}>
+      <Container
+        size="4"
+        css={{ minHeight: '60vh', marginTop: '20px', padding: 0 }}
+      >
         <TabNav />
         {children}
       </Container>

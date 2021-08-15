@@ -1,4 +1,4 @@
-import { Box, Heading } from '@riftdweb/design-system'
+import { Box, Container, Heading } from '@riftdweb/design-system'
 import { usePortal } from '../../hooks/usePortal'
 import { links } from '../../shared/links'
 import { skapps } from '../../shared/skapps'
@@ -10,7 +10,7 @@ import { Nav } from './_shared/Nav'
 export function Ecosystem() {
   const { portal } = usePortal()
   return (
-    <Box css={{ py: '$3', position: 'relative' }}>
+    <Container size="3" css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
         <Nav />
         <Grid>
@@ -30,6 +30,6 @@ export function Ecosystem() {
           ))}
         </Grid>
       </Box>
-    </Box>
+    </Container>
   )
 }

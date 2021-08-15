@@ -54,6 +54,9 @@ export function DnsProvider({ children }: Props) {
           entries: [],
         }
       )
+    },
+    {
+      revalidateOnFocus: false,
     }
   )
 

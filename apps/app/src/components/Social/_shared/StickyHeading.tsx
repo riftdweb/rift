@@ -3,9 +3,10 @@ import { Box, Flex, Text } from '@riftdweb/design-system'
 type Props = {
   title: string
   contextMenu?: React.ReactNode
+  css?: {}
 }
 
-export function StickyHeading({ title, contextMenu }: Props) {
+export function StickyHeading({ title, contextMenu, css = {} }: Props) {
   return (
     <Box
       css={{
@@ -16,6 +17,7 @@ export function StickyHeading({ title, contextMenu }: Props) {
         zIndex: 1,
         borderBottom: '1px solid $gray200',
         paddingBottom: '$1',
+        ...css,
       }}
     >
       <Flex

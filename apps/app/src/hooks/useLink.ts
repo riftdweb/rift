@@ -6,14 +6,8 @@ export const useLink = (link: string) => {
 
   let hostname = link ? new URL(link).hostname : undefined
 
-  let isHns = false
-  if (link) {
-    const hostnameParts = hostname.split('.')
-    isHns = hostnameParts[1] === 'hns'
-  }
-
   // Format: sia://skychess.hns/#/watch/...
-  if (link && link.includes('sia://') && isHns) {
+  if (link && link.includes('sia://') && link.includes('.hns')) {
     link = link.replace('sia://', '')
     const parts = link.split('.hns')
     const hnsName = parts[0]
@@ -22,7 +16,7 @@ export const useLink = (link: string) => {
   }
 
   // Format: https://skychess.hns.siasky.net/#/watch/...
-  if (link && isHns) {
+  if (link && hostname.split('.')[1] === 'hns') {
     const _link = link.replace('https://', '')
     const parts = _link.split('.hns')
     const hnsName = parts[0]

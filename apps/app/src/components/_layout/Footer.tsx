@@ -20,14 +20,22 @@ export default function Footer() {
         borderTop: '1px solid $gray200',
       }}
     >
-      <Container size="3">
-        <Flex>
+      <Container size="4">
+        <Flex
+          css={{
+            gap: '$4',
+            flexDirection: 'column',
+            '@bp2': {
+              gap: '$1',
+              flexDirection: 'row',
+            },
+          }}
+        >
           <Flex
             css={{
               flexDirection: 'column',
               gap: '$3',
               maxWidth: '800px',
-              // textAlign: 'center',
             }}
           >
             <Heading css={{ fontWeight: 'bold' }}>
@@ -65,10 +73,12 @@ export default function Footer() {
               flexDirection: 'column',
               gap: '$3',
               maxWidth: '800px',
-              textAlign: 'right',
+              '@bp2': {
+                textAlign: 'right',
+              },
             }}
           >
-            <Box css={{ color: '$hiContrast', marginLeft: 'auto' }}>
+            <Box css={{ color: '$hiContrast', '@bp2': { marginLeft: 'auto' } }}>
               <SkynetHandshakeIcon />
             </Box>
             {portals.map((portal) => {

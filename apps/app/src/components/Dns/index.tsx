@@ -1,4 +1,4 @@
-import { Box, Flex } from '@riftdweb/design-system'
+import { Box, Container, Flex } from '@riftdweb/design-system'
 import { useDns } from '../../contexts/dns'
 import { EntriesState } from '../_shared/EntriesState'
 import { DnsRow } from './DnsRow'
@@ -8,7 +8,7 @@ export function Dns() {
   const { dns } = useDns()
 
   return (
-    <Box css={{ py: '$3', position: 'relative' }}>
+    <Container size="3" css={{ py: '$3', position: 'relative' }}>
       <Box css={{ my: '$3' }}>
         <Nav />
         <Box
@@ -82,6 +82,6 @@ export function Dns() {
           </EntriesState>
         </Box>
       </Box>
-    </Box>
+    </Container>
   )
 }

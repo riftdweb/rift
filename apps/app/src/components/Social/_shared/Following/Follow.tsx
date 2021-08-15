@@ -7,7 +7,7 @@ type Props = {
 
 export function Follow({ userId }: Props) {
   return (
-    <User userId={userId}>
+    <User userId={userId} width="inherit">
       <UserContextMenu userId={userId} />
     </User>
   )

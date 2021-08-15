@@ -11,7 +11,7 @@ export function SuggestedFollow({ userId }: Props) {
   const { handleFollow } = useUsers()
   const user = useUser(userId)
   return (
-    <User userId={userId}>
+    <User userId={userId} width="100%">
       <Button onClick={() => handleFollow(userId, user.profile)}>Follow</Button>
     </User>
   )

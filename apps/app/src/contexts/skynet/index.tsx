@@ -67,9 +67,7 @@ export function SkynetProvider({ children }: Props) {
   const [loggedIn, setLoggedIn] = useState(null)
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
-  const parts = hostname.split('.')
-  const subdomain = parts.slice(0, parts.length - 2).join('.')
-  const appDomain = subdomain || 'localhost'
+  const appDomain = hostname === 'localhost' ? 'localhost' : 'riftapp.hns'
 
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])

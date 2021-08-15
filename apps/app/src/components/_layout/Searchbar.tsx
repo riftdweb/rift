@@ -1,99 +1,80 @@
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
 import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearch } from '../../contexts/search'
 import { SearchResults } from './SearchResults'
 
 export function Searchbar() {
-  const [isFocused, setIsFocused] = useState<boolean>(false)
-  const [searchValue, setSearchValue] = useState<string>('')
-  const ref = useRef()
-
-  const onChange = useCallback(
-    (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setSearchValue(e.target.value)
-    },
-    [setSearchValue]
-  )
-
-  useEffect(() => {
-    if (searchValue) {
-      if (!isFocused) {
-        setIsFocused(true)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
-
-  const width = isFocused || searchValue ? '500px' : '210px'
-
-  const isOpen = isFocused && searchValue
+  const {
+    ref,
+    searchValue,
+    setSearchValue,
+    isFocused,
+    setIsFocused,
+    onChange,
+    width,
+  } = useSearch()
 
   return (
     <Box
       css={{
-        flex: 1,
-        width: '100%',
+        zIndex: 2,
+        position: 'relative',
+        transform: 'translate3d(0, 0, 0)',
+        width: isFocused ? '100%' : '210px',
+        '@bp2': {
+          width: isFocused ? '500px' : '210px',
+        },
+        transition: 'max-width 0.05s ease-in-out',
       }}
     >
-      <Box
-        css={{
-          position: 'relative',
-          margin: '0 $3 0 $3',
-          maxWidth: width,
-          transition: 'max-width 0.2s ease-in-out',
-        }}
-      >
-        <ControlGroup>
+      <ControlGroup>
+        <Button
+          disabled
+          css={{
+            borderTopLeftRadius: '$2',
+            borderBottomLeftRadius: isFocused ? '0' : '$2',
+            borderTopRightRadius: '0',
+            borderBottomRightRadius: '0',
+          }}
+        >
+          <MagnifyingGlassIcon />
+        </Button>
+        <Input
+          ref={ref}
+          value={searchValue}
+          onChange={onChange}
+          onFocus={() => setIsFocused(true)}
+          css={{ padding: '0 $2' }}
+          placeholder="Search users or skylinks"
+          size="2"
+        />
+        {searchValue && (
           <Button
-            disabled
+            onClick={() => setSearchValue('')}
             css={{
-              borderTopLeftRadius: '$2',
-              borderBottomLeftRadius: isOpen ? '0' : '$2',
-              borderTopRightRadius: '0',
-              borderBottomRightRadius: '0',
+              borderTopLeftRadius: '0',
+              borderBottomLeftRadius: '0',
+              borderTopRightRadius: '$2',
+              borderBottomRightRadius: isFocused ? '0' : '$2',
             }}
           >
-            <MagnifyingGlassIcon />
+            <Cross1Icon />
           </Button>
-          <Input
-            ref={ref}
-            value={searchValue}
-            onChange={onChange}
-            onFocus={() => setIsFocused(true)}
-            css={{ padding: '0 $2' }}
-            placeholder="Search users or skylinks"
-            size="2"
-          />
-          {searchValue && (
-            <Button
-              onClick={() => setSearchValue('')}
-              css={{
-                borderTopLeftRadius: '0',
-                borderBottomLeftRadius: '0',
-                borderTopRightRadius: '$2',
-                borderBottomRightRadius: isOpen ? '0' : '$2',
-              }}
-            >
-              <Cross1Icon />
-            </Button>
-          )}
-        </ControlGroup>
-        {isFocused && (
-          <DismissableLayer onDismiss={() => setIsFocused(false)}>
-            {(props) => (
-              <Box {...props}>
-                <SearchResults
-                  searchValue={searchValue}
-                  onSelect={() => setIsFocused(false)}
-                />
-              </Box>
-            )}
-          </DismissableLayer>
         )}
-      </Box>
+      </ControlGroup>
+      {isFocused && (
+        <DismissableLayer onDismiss={() => setIsFocused(false)}>
+          {(props) => (
+            <Box {...props}>
+              <SearchResults
+                searchValue={searchValue}
+                onSelect={() => setIsFocused(false)}
+              />
+            </Box>
+          )}
+        </DismissableLayer>
+      )}
     </Box>
   )
 }

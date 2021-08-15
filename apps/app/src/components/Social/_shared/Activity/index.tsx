@@ -55,7 +55,7 @@ function ActivityItem({ userId, message, at }) {
 export function Activity() {
   const { activity } = useFeed()
   return (
-    <StickySection gap="0" width="250px">
+    <StickySection gap="0" width="100%">
       <StickyHeading title="Activity" contextMenu={<ActivityContextMenu />} />
       <EntriesState
         response={activity.response}

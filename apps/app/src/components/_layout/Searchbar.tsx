@@ -12,7 +12,6 @@ export function Searchbar() {
     isFocused,
     setIsFocused,
     onChange,
-    width,
   } = useSearch()
 
   return (

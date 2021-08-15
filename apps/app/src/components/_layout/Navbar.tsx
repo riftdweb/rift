@@ -48,7 +48,7 @@ export default function Navbar() {
   return (
     <Box css={{ borderBottom: '1px solid $gray200' }}>
       <Container size="4">
-        <Flex css={{ py: '$3', alignItems: 'center' }}>
+        <Flex css={{ py: '$3', alignItems: 'center', gap: '$1' }}>
           <Box
             css={{
               display: 'none',

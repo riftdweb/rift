@@ -8,10 +8,20 @@ export function Nav() {
     <Heading css={{ my: '$5' }}>
       <Flex css={{ gap: '$1', alignItems: 'center', height: '30px' }}>
         <Link to="/dns">DNS</Link>
-        <Box css={{ flex: 1 }} />
         <Box
           css={{
+            display: 'block',
+            '@bp2': {
+              display: 'none',
+            },
+            flex: 1,
+          }}
+        />
+        <Box
+          css={{
+            flex: 1,
             display: 'none',
+            textAlign: 'right',
             '@bp2': {
               display: 'block',
             },

@@ -3,7 +3,7 @@ import { Home } from './Home'
 
 export function Skyfiles() {
   return (
-    <Container size="3" css={{ py: '$3' }}>
+    <Container size="3" css={{ py: '$5' }}>
       <Home />
     </Container>
   )

@@ -1,4 +1,4 @@
-import { Box, Flex } from '@riftdweb/design-system'
+import { Flex } from '@riftdweb/design-system'
 import { useFeed } from '../../../contexts/feed'
 import { EntriesState } from '../../_shared/EntriesState'
 import { FeedItem } from '../_shared/FeedItem'

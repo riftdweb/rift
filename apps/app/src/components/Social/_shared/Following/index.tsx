@@ -90,7 +90,7 @@ export function Following() {
                     validatingMessage="Loading"
                     emptyMessage="No friends."
                   >
-                    {friends.data?.entries.map(({ userId, profile }) => (
+                    {friends.data?.entries.map(({ userId }) => (
                       <Follow key={userId} userId={userId} />
                     ))}
                   </EntriesState>
@@ -119,7 +119,7 @@ export function Following() {
                 validatingMessage="Loading"
                 emptyMessage="Not following anyone yet."
               >
-                {followings.data?.entries.map(({ userId, profile }) => (
+                {followings.data?.entries.map(({ userId }) => (
                   <Follow key={userId} userId={userId} />
                 ))}
               </EntriesState>

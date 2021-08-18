@@ -4,37 +4,41 @@ import { useUsers } from '../../contexts/users'
 import { UserProfile } from '../_shared/UserProfile'
 
 export function UserResults({ searchValue, onSelect }) {
-  const { usersIndex, pendingUserIds } = useUsers()
+  const { usersIndex, pendingUserIds, userCounts } = useUsers()
 
   const filteredItems = useMemo(() => {
     const lowerCaseSearchValue = searchValue.toLowerCase()
 
-    return usersIndex.filter((userItem) => {
-      if (userItem.userId.includes(searchValue)) {
+    return usersIndex.filter((user) => {
+      if (user.userId.includes(searchValue)) {
         return true
       }
-      if (userItem.username?.toLowerCase().includes(lowerCaseSearchValue)) {
+      if (user.username?.toLowerCase().includes(lowerCaseSearchValue)) {
         return true
       }
       if (
-        userItem.profile?.firstName
+        user.profile.data?.firstName
           ?.toLowerCase()
           .includes(lowerCaseSearchValue)
       ) {
         return true
       }
       if (
-        userItem.profile?.lastName?.toLowerCase().includes(lowerCaseSearchValue)
+        user.profile.data?.lastName
+          ?.toLowerCase()
+          .includes(lowerCaseSearchValue)
       ) {
         return true
       }
       if (
-        userItem.profile?.aboutMe?.toLowerCase().includes(lowerCaseSearchValue)
+        user.profile.data?.aboutMe?.toLowerCase().includes(lowerCaseSearchValue)
       ) {
         return true
       }
       if (
-        userItem.profile?.location?.toLowerCase().includes(lowerCaseSearchValue)
+        user.profile.data?.location
+          ?.toLowerCase()
+          .includes(lowerCaseSearchValue)
       ) {
         return true
       }
@@ -57,30 +61,30 @@ export function UserResults({ searchValue, onSelect }) {
           Social
         </Text>
         <Box css={{ flex: 1 }} />
-        {!searchValue && !!pendingUserIds.length && (
+        {!searchValue && !!userCounts.pendingIndexing && (
           <Tooltip
-            content={`Indexing ${pendingUserIds.length} more discovered users`}
+            content={`Indexing ${userCounts.neverBeenIndexed} users for the first time, re-indexing ${userCounts.pendingReindexing} users`}
           >
             <Text
               css={{
                 color: '$gray600',
               }}
             >
-              {`Indexing ${pendingUserIds.length}`}
+              {`Indexing ${userCounts.pendingIndexing}`}
             </Text>
           </Tooltip>
         )}
         {!searchValue && (
           <Tooltip
             align="end"
-            content={`Discovered and indexed ${usersIndex.length} users`}
+            content={`Discovered ${userCounts.discovered} total users, ${userCounts.hasBeenIndexed} have been indexed`}
           >
             <Text
               css={{
                 color: '$gray800',
               }}
             >
-              {`Discovered ${usersIndex.length}`}
+              {`Discovered ${userCounts.discovered}`}
             </Text>
           </Tooltip>
         )}

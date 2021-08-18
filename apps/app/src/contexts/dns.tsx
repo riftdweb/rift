@@ -80,7 +80,9 @@ export function DnsProvider({ children }: Props) {
             json: dnsFeed,
             priority: 2,
           })
-        await taskQueue.add(task)
+        await taskQueue.add(task, {
+          name: `dns: set entry ${dnsEntry.name}`,
+        })
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {
@@ -212,7 +214,9 @@ export function DnsProvider({ children }: Props) {
             json: dnsFeed,
             priority: 2,
           })
-        await taskQueue.add(task)
+        await taskQueue.add(task, {
+          name: `dns: remove entry ${id}`,
+        })
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {

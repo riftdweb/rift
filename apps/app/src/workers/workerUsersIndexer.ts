@@ -2,19 +2,25 @@ import * as CAF from 'caf'
 import { createLogger } from '../shared/logger'
 import { ControlRef } from '../contexts/skynet/ref'
 import uniq from 'lodash/uniq'
-import { EntryFeed, IUser, UsersMap, WorkerParams } from '@riftdweb/types'
+import {
+  EntryFeed,
+  IUser,
+  RelationshipType,
+  UsersMap,
+  WorkerParams,
+} from '@riftdweb/types'
 import { clearToken, handleToken } from './tokens'
 import { wait, waitFor } from '../shared/wait'
-import { fetchUser } from '../hooks/useProfile'
+import { fetchUserForIndexing } from './workerUpdateUser'
 import { TaskQueue } from '../shared/taskQueue'
 
 const SCHEDULE_INTERVAL_INDEXER = 1000 * 60 * 5
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
 
-const BATCH_SIZE = 1
+const BATCH_SIZE = 5
 
 const taskQueue = TaskQueue('userIndexer', {
-  poolSize: 1,
+  poolSize: 5,
 })
 
 const log = createLogger('userIndexer')
@@ -33,32 +39,23 @@ const cafUserIndexer = CAF(function* userIndexer(
       log('Batch', batch)
 
       tasks = batch.map((userId) => {
-        const task = async () =>
-          fetchUser(ref, userId, {
-            syncUpdate: true,
-            skipUpsert: true,
-          })
-        return taskQueue.add(task)
+        const task = async () => fetchUserForIndexing(ref, userId)
+        return taskQueue.add(task, {
+          name: `user/fetch: ${userId} - indexer batch`,
+        })
       })
       const updatedUsers: IUser[] = yield Promise.all(tasks)
 
-      ref.current.upsertUsers(updatedUsers)
-
       const userIdsToAdd = []
-      // Index the discovered followingIds
+      // Index the discovered following
       updatedUsers.forEach((newItem) => {
-        userIdsToAdd.push(...newItem.followingIds)
+        userIdsToAdd.push(...newItem.following.data)
       })
 
       ref.current.addNewUserIds(userIdsToAdd)
       recomputeFollowers(ref)
     }
-
-    log('Calculating followerIds')
-
     log('Done')
-
-    log('Returning')
     return
   } finally {
     log('Finally')
@@ -68,18 +65,23 @@ const cafUserIndexer = CAF(function* userIndexer(
   }
 })
 
-export function recomputeFollowers(ref) {
+export function recomputeFollowers(ref: ControlRef) {
   log('Recomputing followers')
   const updatedUsers: Record<string, IUser> = {}
+  const updatedAt = new Date().getTime()
+
   ref.current.usersIndex.forEach((user) => {
     // Update users followers
-    for (let followingId of user.followingIds) {
+    for (let followingId of user.following.data) {
       let followingUser =
         updatedUsers[followingId] || ref.current.getUser(followingId)
       if (followingUser) {
         followingUser = {
           ...followingUser,
-          followerIds: uniq([...followingUser.followerIds, user.userId]),
+          followers: {
+            updatedAt,
+            data: uniq([...followingUser.followers.data, user.userId]),
+          },
         }
         updatedUsers[followingId] = followingUser
       }
@@ -89,11 +91,12 @@ export function recomputeFollowers(ref) {
     let updatedUser =
       updatedUsers[user.userId] || ref.current.getUser(user.userId)
 
-    const relationship = getRelationship(ref, updatedUser)
-
     updatedUsers[user.userId] = {
       ...updatedUser,
-      relationship,
+      relationship: {
+        updatedAt,
+        data: getRelationship(ref, updatedUser),
+      },
     }
   })
   ref.current.upsertUsers(Object.entries(updatedUsers).map(([_, user]) => user))
@@ -102,11 +105,11 @@ export function recomputeFollowers(ref) {
 export function getRelationship(
   ref: ControlRef,
   user: IUser
-): IUser['relationship'] {
-  const followsMe = user.followingIds.includes(ref.current.myUserId)
-  const iFollow = user.followerIds.includes(ref.current.myUserId)
+): RelationshipType {
+  const followsMe = user.following.data.includes(ref.current.myUserId)
+  const iFollow = user.followers.data.includes(ref.current.myUserId)
 
-  let relationship: IUser['relationship'] = 'none'
+  let relationship: RelationshipType = 'none'
 
   if (followsMe && iFollow) {
     relationship = 'friend'

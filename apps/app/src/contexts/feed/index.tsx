@@ -22,6 +22,7 @@ import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
 import { workerFeedIndexer } from '../../workers/workerFeedIndexer'
+import { fetchUserForInteraction } from '../../workers/workerUpdateUser'
 
 const log = createLogger('feed')
 
@@ -62,7 +63,6 @@ type State = {
   refreshLatestFeed: () => void
   refreshCurrentFeed: () => void
   refreshActivity: () => void
-  refreshUser: (userId) => void
 
   createPost: ({ text: string }) => void
   incrementKeywords: (keywords: string[]) => void
@@ -147,27 +147,12 @@ export function FeedProvider({ children }: Props) {
     return func()
   }, [ref])
 
-  const refreshUser = useCallback(
-    (userId: string) => {
-      const func = async () => {
-        try {
-          await workerFeedUserUpdate(ref, userId, {
-            force: true,
-            priority: 2,
-          })
-        } catch (e) {}
-      }
-      return func()
-    },
-    [ref]
-  )
-
   // If cached user feed returns null flag true, the user feed has never been compiled.
   // Check this whenever the response data changes.
   useEffect(() => {
     if (!user.loadingStateCurrentUser && user.response.data?.null) {
       log(`Building a feed for ${viewingUserId}`)
-      refreshUser(viewingUserId)
+      fetchUserForInteraction(ref, viewingUserId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.response.data])
@@ -312,7 +297,6 @@ export function FeedProvider({ children }: Props) {
     refreshTopFeed,
     refreshLatestFeed,
     refreshActivity,
-    refreshUser,
     userId: viewingUserId,
     createPost,
     keywords,

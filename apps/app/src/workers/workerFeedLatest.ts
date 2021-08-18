@@ -48,13 +48,7 @@ const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   }
 })
 
-function cleanFeed(ref: ControlRef, allEntries: Entry[]) {
-  return allEntries.filter((entry) =>
-    ref.current.followingUserIds.data.includes(entry.userId)
-  )
-}
-
-export async function feedLatestUpdate(
+async function feedLatestUpdate(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
@@ -74,7 +68,7 @@ export async function feedLatestUpdate(
 
 const taskQueue = TaskQueue('feed/latest')
 
-export async function workerFeedLatestUpdate(
+async function workerFeedLatestUpdate(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
@@ -83,7 +77,9 @@ export async function workerFeedLatestUpdate(
     workflowId: params.workflowId,
   })
   const task = () => feedLatestUpdate(ref, entriesBatch, params)
-  await taskQueue.add(task)
+  await taskQueue.add(task, {
+    name: 'feed-latest: update batch',
+  })
 
   // Only mutate the latest feed if there are no user posts being saved,
   // this is to prevent optimistic updates from flickering.
@@ -93,6 +89,12 @@ export async function workerFeedLatestUpdate(
   } else {
     log('Skip fetching feed')
   }
+}
+
+function cleanFeed(ref: ControlRef, allEntries: Entry[]) {
+  return allEntries.filter((entry) =>
+    ref.current.followingUserIds.data.includes(entry.userId)
+  )
 }
 
 function replaceEntriesBatchByUserId(

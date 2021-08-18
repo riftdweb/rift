@@ -22,7 +22,7 @@ export function Searchbar() {
         transform: 'translate3d(0, 0, 0)',
         width: isFocused ? '100%' : '210px',
         '@bp2': {
-          width: isFocused ? '500px' : '210px',
+          width: isFocused ? '600px' : '210px',
         },
         transition: 'max-width 0.05s ease-in-out',
       }}

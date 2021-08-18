@@ -4,17 +4,11 @@ import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { ControlRef } from '../contexts/skynet/ref'
-import {
-  cacheUserEntries,
-  compileUserEntries,
-  fetchUserEntries,
-  needsRefresh,
-} from './workerApi'
+import { isUpToDate } from '../contexts/users'
+import { cacheUserEntries, compileUserEntries } from './workerApi'
 import { clearToken, handleToken } from './tokens'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { feedLatestAdd } from './workerFeedLatest'
-
-const REFRESH_INTERVAL_USER = 4
 
 const taskQueue = TaskQueue('feed/user', {
   poolSize: 5,
@@ -35,12 +29,14 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
     log('Running')
     ref.current.feeds.user.setLoadingState(userId, 'Compiling feed')
 
-    // If caller already fetched the userFeed no need to fetch
-    log('Fetching cached entries')
-    const userFeed = yield fetchUserEntries(ref, userId, params)
-
-    if (!params.force && !needsRefresh(userFeed, REFRESH_INTERVAL_USER)) {
-      log('Up to date')
+    let user = ref.current.getUser(userId)
+    if (
+      !params.force &&
+      isUpToDate(user, 'feed', {
+        verbose: true,
+        log,
+      })
+    ) {
       return
     }
 
@@ -50,6 +46,18 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
     log('Caching entries')
     ref.current.feeds.user.setLoadingState(userId, 'Caching feed')
     yield cacheUserEntries(ref, userId, compiledUserEntries, params)
+
+    log('Updating updatedAt and count')
+    user = ref.current.getUser(userId)
+    ref.current.upsertUser({
+      ...user,
+      feed: {
+        updatedAt: new Date().getTime(),
+        data: {
+          count: compiledUserEntries.length,
+        },
+      },
+    })
 
     log('Maybe mutate')
     ref.current.feeds.user.setLoadingState(userId, 'Fetching feed')
@@ -130,6 +138,7 @@ export async function workerFeedUserUpdate(
 ): Promise<any> {
   const task = () => feedUserUpdate(ref, userId, params)
   await taskQueue.add(task, {
+    name: `user/feed: update ${userId}`,
     priority: params.priority,
   })
 }

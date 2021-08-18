@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { useFeed } from '../../../../contexts/feed'
-import { useUser } from '../../../../hooks/useProfile'
+import { useUser } from '../../../../hooks/useUser'
 import { Link } from '../../../_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'
 import { Avatar } from '../../../_shared/Avatar'
@@ -20,7 +20,7 @@ function ActivityItem({ userId, message, at }) {
       }}
     >
       <Box css={{ marginTop: '$1' }}>
-        <Avatar userId={userId} profile={profile} />
+        <Avatar userId={userId} profile={profile?.data} />
       </Box>
       <Flex
         css={{
@@ -33,7 +33,7 @@ function ActivityItem({ userId, message, at }) {
             to={`/users/${userId}`}
             css={{ color: '$violet900', display: 'inline' }}
           >
-            {profile?.username || 'User'}
+            {profile?.data?.username || 'User'}
           </Link>
           <Text
             size="1"

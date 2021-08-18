@@ -1,4 +1,6 @@
 import { createLogger } from './logger'
+import { v4 as uuid } from 'uuid'
+import { taskQueueRegistry } from './taskQueue'
 
 type Params = {
   capacity?: number
@@ -7,11 +9,14 @@ type Params = {
 }
 
 type TaskParams = {
+  name: string
   cost?: number
   priority?: number
 }
 
 type Task<T> = {
+  id: string
+  name: string
   task: () => Promise<T>
   cost: number
   priority: number
@@ -25,17 +30,27 @@ const defaultParams = {
   ratePerMinute: 60,
 }
 
-export function RateLimiter(namespace: string, params: Params = {}) {
+type IRateLimiter<T> = {
+  name: string
+  add: <T>(task: () => Promise<T>, params: TaskParams) => Promise<T>
+  queue: Task<T>[]
+  pendingQueue: Task<T>[]
+}
+
+export function RateLimiter<T>(
+  name: string,
+  params: Params = {}
+): IRateLimiter<T> {
   const { capacity, processingInterval, ratePerMinute } = {
     ...defaultParams,
     ...params,
   }
 
-  const log = createLogger(`${namespace}/Limiter`)
+  const log = createLogger(`${name}/Limiter`)
 
   // queue
   const queue: Task<any>[] = []
-  let tasksInflight = 0
+  const pendingQueue: Task<any>[] = []
 
   // rate limiting
   let tokens = ratePerMinute
@@ -97,8 +112,9 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     let isTerminating = false
 
     const task = popNextTask()
+    const id = task.id
 
-    tasksInflight += 1
+    pendingQueue.push(task)
     tokens -= task.cost
 
     if (queue.length === 0 && interval) {
@@ -116,7 +132,8 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     }
 
     task.resolve(result)
-    tasksInflight -= 1
+    const index = pendingQueue.findIndex((task) => task.id === id)
+    pendingQueue.splice(index, 1)
   }
 
   const refillTokens = () => {
@@ -151,7 +168,7 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     if (queue.length && canProcessNextTask()) {
       log(
         'Pending',
-        tasksInflight,
+        pendingQueue.length,
         'Queue',
         queue.length,
         'Tokens',
@@ -177,13 +194,16 @@ export function RateLimiter(namespace: string, params: Params = {}) {
 
   async function add<T>(
     task: () => Promise<T>,
-    params: TaskParams = {}
+    params: TaskParams
   ): Promise<T> {
-    const { priority = 0, cost = 1 } = params
+    const { name, priority = 0, cost = 1 } = params
+    const id = uuid()
 
     assertRunning()
     return new Promise((resolve, reject) => {
       queue.push({
+        id,
+        name,
         task,
         resolve,
         reject,
@@ -193,8 +213,14 @@ export function RateLimiter(namespace: string, params: Params = {}) {
     })
   }
 
-  return {
+  const values = {
+    name,
     queue,
+    pendingQueue,
     add,
   }
+
+  taskQueueRegistry[name] = values
+
+  return values
 }

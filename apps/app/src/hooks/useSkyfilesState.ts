@@ -30,7 +30,9 @@ const debouncedSyncState = debounce(async (Api: Api, state) => {
       log('Syncing failed', e)
     }
   }
-  await taskQueue.add(task)
+  await taskQueue.add(task, {
+    name: 'skyfiles: Sync state',
+  })
 }, 5000)
 
 export const useSkyfilesState = () => {

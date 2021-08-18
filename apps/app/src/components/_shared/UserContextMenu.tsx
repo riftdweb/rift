@@ -20,7 +20,8 @@ import SpinnerIcon from '../_icons/SpinnerIcon'
 import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
-import { useUser } from '../../hooks/useProfile'
+import { useUser } from '../../hooks/useUser'
+import { fetchUserForInteractionAndForce } from '../../workers/workerUpdateUser'
 
 type Props = {
   userId: string
@@ -35,10 +36,10 @@ export function UserContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, appDomain } = useSkynet()
+  const { controlRef: ref, myUserId, appDomain } = useSkynet()
   const user = useUser(userId)
   const profile = user?.profile
-  const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
+  const { user: feedUser, userId: viewingUserId } = useFeed()
   const { handleFollow, handleUnfollow } = useUsers()
 
   const isMyself = userId === myUserId
@@ -76,7 +77,7 @@ export function UserContextMenu({
         {userId && (
           <Fragment>
             {profile ? (
-              <DropdownMenuLabel>{profile.username}</DropdownMenuLabel>
+              <DropdownMenuLabel>{profile.data.username}</DropdownMenuLabel>
             ) : (
               <DropdownMenuLabel>
                 User {userId.slice(0, 6)}...
@@ -95,9 +96,7 @@ export function UserContextMenu({
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onSelect={() => handleFollow(userId, profile)}
-                >
+                <DropdownMenuItem onSelect={() => handleFollow(userId)}>
                   Follow
                 </DropdownMenuItem>
               </Fragment>
@@ -106,7 +105,7 @@ export function UserContextMenu({
         )}
         <DropdownMenuItem
           disabled={!!combinedLoadingState}
-          onSelect={() => refreshUser(userId)}
+          onSelect={() => fetchUserForInteractionAndForce(ref, userId)}
         >
           Refresh
         </DropdownMenuItem>

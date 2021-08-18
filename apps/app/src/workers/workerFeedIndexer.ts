@@ -24,8 +24,6 @@ const cafFeedIndexer = CAF(function* feedIndexer(
     log('Running')
     const myUserId = ref.current.myUserId
 
-    log('Checking feed status')
-    ref.current.feeds.latest.setLoadingState('Checking feed status')
     let allEntriesFeed = yield fetchAllEntries(ref, {
       priority: params.priority,
     })

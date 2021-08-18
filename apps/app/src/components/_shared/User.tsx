@@ -1,7 +1,7 @@
 import { Flex, Text } from '@riftdweb/design-system'
 import { Link } from './Link'
 import { Avatar } from './Avatar'
-import { useUser } from '../../hooks/useProfile'
+import { useUser } from '../../hooks/useUser'
 
 type Props = {
   userId: string
@@ -37,7 +37,7 @@ export function User({
       <Avatar
         userId={userId}
         size={size}
-        profile={profile}
+        profile={profile?.data}
         link
         color={avatarColor}
       />
@@ -58,14 +58,14 @@ export function User({
         to={`/users/${userId}`}
       >
         <Flex css={{ gap: '$1' }}>
-          {profile?.username ? (
-            <Text>{profile?.username}</Text>
+          {profile?.data?.username ? (
+            <Text>{profile?.data?.username}</Text>
           ) : (
             <Text>{`${userId.slice(0, 5)}...`}</Text>
           )}
-          {showName && profile?.firstName && (
+          {showName && profile?.data?.firstName && (
             <Text css={{ color: '$gray800 !important' }}>
-              {`${profile?.firstName} ${profile.lastName}`}
+              {`${profile.data.firstName} ${profile.data.lastName}`}
             </Text>
           )}
         </Flex>

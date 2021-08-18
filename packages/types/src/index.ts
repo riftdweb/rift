@@ -176,13 +176,40 @@ export type WorkerParams = {
   workflowId?: string
 }
 
+export type RelationshipType = 'friend' | 'follower' | 'following' | 'none'
+
 export type IUser = {
   userId: string
   username?: string
-  profile?: IUserProfile
-  followingIds?: string[]
-  followerIds?: string[]
-  relationship: 'friend' | 'follower' | 'following' | 'none'
+  profile: {
+    updatedAt: number
+    data: IUserProfile
+  }
+  following: {
+    updatedAt: number
+    data: string[]
+  }
+  followers: {
+    updatedAt: number
+    data: string[]
+  }
+  relationship: {
+    updatedAt: number
+    data: RelationshipType
+  }
+  feed: {
+    updatedAt: number
+    data: {
+      count: number
+    }
+    // Data is stored separately
+  }
+  meta: {
+    updatedAt: number
+    data: {
+      skapps: Record<string, boolean>
+    }
+  }
   updatedAt: number
 }
 

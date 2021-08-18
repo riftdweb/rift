@@ -5,9 +5,17 @@ import { Layout } from '../Layout'
 import { Link } from '../../_shared/Link'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { UserProfile } from '../../_shared/UserProfile'
+import { useEffect } from 'react'
+import { fetchUserForInteraction } from '../../../workers/workerUpdateUser'
+import { useSkynet } from '../../../contexts/skynet'
 
 export function SocialProfile() {
+  const { controlRef: ref } = useSkynet()
   const { userId } = useParams()
+
+  useEffect(() => {
+    fetchUserForInteraction(ref, userId)
+  }, [userId])
 
   return (
     <Layout overflow="hidden">

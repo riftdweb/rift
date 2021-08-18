@@ -4,6 +4,9 @@ const makeDataKeyFn = (version: string, defaultValue: string) => (
   return `${version}/${str || defaultValue}.json`
 }
 
+export const dataVersionUsers = 'v1'
+export const getDataKeyUsers = makeDataKeyFn(dataVersionUsers, 'users')
+
 export const dataVersionFeeds = 'v1'
 export const getDataKeyFeeds = makeDataKeyFn(dataVersionFeeds, 'feeds')
 

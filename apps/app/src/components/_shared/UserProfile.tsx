@@ -3,8 +3,7 @@ import { Box, Button, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import intersection from 'lodash/intersection'
 import { User } from './User'
 import { ChatBubbleIcon, GlobeIcon } from '@radix-ui/react-icons'
-import { useUser } from '../../hooks/useProfile'
-import { useFeed } from '../../contexts/feed'
+import { useUser } from '../../hooks/useUser'
 import { UserContextMenu } from './UserContextMenu'
 import {
   isFollower,
@@ -44,43 +43,37 @@ export function UserProfile({
 }: Props) {
   const { myUserId } = useSkynet()
   const userId = userIdParam || userParam.userId
-  const { userId: viewingUserId } = useParams()
   const user = useUser(userId)
   const profile = user?.profile
-  const { user: userFeed } = useFeed()
   const { handleFollow, followingUserIds } = useUsers()
-  const isViewingUser = userId === viewingUserId
   const isMyself = userId === myUserId
-  const entriesCount = isViewingUser
-    ? userFeed.response.data?.entries.length || 0
-    : null
 
   const verticalGap = versionToGap[version]
   const size = versionToSize[version]
 
   const infoElements = []
 
-  if (profile?.location) {
+  if (profile?.data?.location) {
     infoElements.push(
       <Flex key="location" css={{ gap: '$1', alignItems: 'center' }}>
         <Text css={{ fontSize: '$2', color: '$gray900' }}>
           <GlobeIcon />
         </Text>
         <Text css={{ fontSize: '$2', color: '$gray900' }}>
-          {profile.location}
+          {profile.data?.location}
         </Text>
       </Flex>
     )
   }
 
-  if (isViewingUser && entriesCount) {
+  if (user?.feed.data && ~user.feed.data.count) {
     infoElements.push(
       <Flex key="posts" css={{ gap: '$1', alignItems: 'center' }}>
         <Text css={{ fontSize: '$2', color: '$gray900' }}>
           <ChatBubbleIcon />
         </Text>
         <Text css={{ fontSize: '$2', color: '$gray900' }}>
-          {`${entriesCount} posts`}
+          {`${user.feed.data.count} posts`}
         </Text>
       </Flex>
     )
@@ -88,7 +81,7 @@ export function UserProfile({
 
   const knownFollowedByUserIds = intersection(
     followingUserIds.data || [],
-    user ? user.followerIds : []
+    user ? user.followers.data : []
   )
   // const knownFollowedByUserIds = userItem ? userItem.followerIds : []
 
@@ -120,23 +113,23 @@ export function UserProfile({
               <Text css={{ fontSize: '$2', color: '$gray900' }}>Following</Text>
             </Flex>
           ) : isFollower(user) ? (
-            <Button size="1" onClick={() => handleFollow(userId, profile)}>
+            <Button size="1" onClick={() => handleFollow(userId)}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>
                 Follow back
               </Text>
             </Button>
           ) : (
-            <Button size="1" onClick={() => handleFollow(userId, profile)}>
+            <Button size="1" onClick={() => handleFollow(userId)}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>Follow</Text>
             </Button>
           ))}
       </Flex>
-      {profile?.aboutMe && (
+      {profile?.data?.aboutMe && (
         <Flex
           css={{ gap: '$3', alignItems: 'center', paddingLeft: contentOffset }}
         >
           <Text size={size} css={{ lineHeight: '20px' }}>
-            {profile.aboutMe}
+            {profile?.data?.aboutMe}
           </Text>
         </Flex>
       )}
@@ -158,25 +151,47 @@ export function UserProfile({
         <Flex css={{ marginTop: '$2', paddingLeft: contentOffset }}>
           <Flex
             css={{
-              gap: '$3',
+              gap: '$2',
               width: '100%',
-              height: '$3',
+              // height: '$3',
+              alignItems: 'center',
+              flexWrap: 'wrap',
             }}
           >
             <Tooltip content="Following" align="start">
-              <Text css={{ fontSize: '$2', color: '$gray800' }}>
-                {`${user.followingIds.length} following`}
+              <Text
+                css={{
+                  fontSize: '$2',
+                  color: '$gray800',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {`${user.following.data?.length} following`}
               </Text>
             </Tooltip>
-            <Tooltip content="Discovered followers">
-              <Text css={{ fontSize: '$2', color: '$gray800' }}>
-                {`${user.followerIds.length} followers`}
-              </Text>
-            </Tooltip>
+            {!!user.followers.data.length && (
+              <Tooltip content="Discovered followers">
+                <Text
+                  css={{
+                    fontSize: '$2',
+                    color: '$gray800',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {`${user.followers.data.length} followers`}
+                </Text>
+              </Tooltip>
+            )}
             <Box css={{ flex: 1 }} />
             {!!knownFollowedByUserIds.length && (
               <Flex css={{ alignItems: 'center', gap: '$1' }}>
-                <Text size="1" css={{ color: '$gray800' }}>
+                <Text
+                  size="1"
+                  css={{
+                    color: '$gray800',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   Followed by {knownFollowedByUserIds.length}{' '}
                   {knownFollowedByUserIds.length === 1 ? 'user' : 'users'} you
                   follow

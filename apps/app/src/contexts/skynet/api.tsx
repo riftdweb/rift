@@ -67,7 +67,10 @@ export const buildApi = ({
         \tdiscoverable: N/A`)
       const task = () =>
         (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `get: ${publicKey.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
     if (customPublicKey) {
       log(`client.file.getJSON - mysky
@@ -81,7 +84,10 @@ export const buildApi = ({
             customPublicKey,
             fullDataPath
           ) as unknown) as GetJSONReturn
-        return apiLimiter.add(task, { priority })
+        return apiLimiter.add(task, {
+          name: `get: ${customPublicKey.slice(0, 5)} ${fullDataPath}`,
+          priority,
+        })
       }
 
       const task = () =>
@@ -89,7 +95,10 @@ export const buildApi = ({
           customPublicKey,
           fullDataPath
         ) as unknown) as GetJSONReturn
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `get: ${customPublicKey.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
     if (userId) {
       log(`mySky.getJSON - mysky
@@ -99,11 +108,17 @@ export const buildApi = ({
       if (discoverable) {
         const task = () =>
           (mySky.getJSON(fullDataPath) as unknown) as GetJSONReturn
-        return apiLimiter.add(task, { priority })
+        return apiLimiter.add(task, {
+          name: `get: ${userId.slice(0, 5)} ${fullDataPath}`,
+          priority,
+        })
       }
       const task = () =>
         (mySky.getJSONEncrypted(fullDataPath) as unknown) as GetJSONReturn
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `get: ${userId.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
     const { publicKey } = genKeyPairFromSeed(localRootSeed)
     log(`client.db.getJSON - local app seed
@@ -113,7 +128,10 @@ export const buildApi = ({
 
     const task = () =>
       (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
-    return apiLimiter.add(task, { priority })
+    return apiLimiter.add(task, {
+      name: `get: ${publicKey.slice(0, 5)} ${fullDataPath}`,
+      priority,
+    })
   }
 
   function setJSON({
@@ -140,7 +158,10 @@ export const buildApi = ({
         \tdiscoverable: N/A`)
 
       const task = () => client.db.setJSON(privateKey, fullDataPath, json)
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `set: ${privateKey.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
     if (!userId) {
       const { privateKey } = genKeyPairFromSeed(localRootSeed)
@@ -149,7 +170,10 @@ export const buildApi = ({
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
       const task = () => client.db.setJSON(privateKey, fullDataPath, json)
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `set: ${privateKey.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
     log(`mySky.setJSON - mysky
       \tdata path: ${fullDataPath}
@@ -157,11 +181,17 @@ export const buildApi = ({
 
     if (discoverable) {
       const task = () => mySky.setJSON(fullDataPath, json)
-      return apiLimiter.add(task, { priority })
+      return apiLimiter.add(task, {
+        name: `set: ${userId.slice(0, 5)} ${fullDataPath}`,
+        priority,
+      })
     }
 
     const task = () => mySky.setJSONEncrypted(fullDataPath, json)
-    return apiLimiter.add(task, { priority })
+    return apiLimiter.add(task, {
+      name: `set: ${userId.slice(0, 5)} ${fullDataPath}`,
+      priority,
+    })
   }
 
   async function setDataLink({

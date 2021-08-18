@@ -17,7 +17,8 @@ const defaultParams = {
 
 function isDone(func: () => any[]) {
   const parts = func()
-  return !parts.find((part) => !part)
+  const index = parts.findIndex((part) => !part)
+  return !~index
 }
 
 export const waitFor = (func: () => any[], params: Params = {}) =>

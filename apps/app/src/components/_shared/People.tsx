@@ -35,7 +35,7 @@ export function People({ userIds }: Props) {
             },
           }}
         >
-          <Avatar userId={userId} profile={profile} size="1" link />
+          <Avatar userId={userId} profile={profile.data} size="1" link />
         </Box>
       ))}
     </Flex>

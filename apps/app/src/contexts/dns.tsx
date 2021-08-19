@@ -81,7 +81,10 @@ export function DnsProvider({ children }: Props) {
             priority: 2,
           })
         await taskQueue.add(task, {
-          name: `dns: set entry ${dnsEntry.name}`,
+          meta: {
+            name: dnsEntry.name,
+            operation: 'set',
+          },
         })
 
         // Sync latest, will likely be the same
@@ -215,7 +218,10 @@ export function DnsProvider({ children }: Props) {
             priority: 2,
           })
         await taskQueue.add(task, {
-          name: `dns: remove entry ${id}`,
+          meta: {
+            name: id,
+            operation: 'remove',
+          },
         })
 
         // Sync latest, will likely be the same

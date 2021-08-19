@@ -81,20 +81,22 @@ export default function Footer() {
             <Box css={{ color: '$hiContrast', '@bp2': { marginLeft: 'auto' } }}>
               <SkynetHandshakeIcon />
             </Box>
-            {portals.map((portal) => {
-              const hostname = `riftapp.hns.${portal.domain}`
-              const url = `https://${hostname}`
-              return (
-                <Link
-                  key={url}
-                  href={url}
-                  target="_blank"
-                  css={{ color: '$gray800' }}
-                >
-                  {hostname}
-                </Link>
-              )
-            })}
+            {portals
+              .filter((portal) => !portal.disabled)
+              .map((portal) => {
+                const hostname = `riftapp.hns.${portal.domain}`
+                const url = `https://${hostname}`
+                return (
+                  <Link
+                    key={url}
+                    href={url}
+                    target="_blank"
+                    css={{ color: '$gray800' }}
+                  >
+                    {hostname}
+                  </Link>
+                )
+              })}
           </Flex>
         </Flex>
       </Container>

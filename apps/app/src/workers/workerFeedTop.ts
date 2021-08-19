@@ -89,9 +89,7 @@ export async function workerFeedTopUpdate(
   const log = createLogger('feed/top/update', {
     workflowId,
   })
-  log('handling things before new run')
   const token = await handleToken(ref, 'feedTopUpdate')
-  log('starting new run')
   try {
     await cafWorkerFeedTopUpdate(token.signal, ref, {
       ...params,

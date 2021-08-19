@@ -9,11 +9,11 @@ import { Api } from '../contexts/skynet/api'
 
 const dataKeyFiles = getDataKeyFiles()
 
-const taskQueue = TaskQueue('files', {
+const taskQueue = TaskQueue('skyfiles', {
   maxQueueSize: 1,
 })
 
-const log = createLogger('files')
+const log = createLogger('skyfiles')
 
 const debouncedSyncState = debounce(async (Api: Api, state) => {
   log('Sync State task created')
@@ -31,7 +31,10 @@ const debouncedSyncState = debounce(async (Api: Api, state) => {
     }
   }
   await taskQueue.add(task, {
-    name: 'skyfiles: Sync state',
+    meta: {
+      name: 'state',
+      operation: 'sync',
+    },
   })
 }, 5000)
 

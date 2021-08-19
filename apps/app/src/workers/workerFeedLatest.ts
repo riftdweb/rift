@@ -78,7 +78,10 @@ async function workerFeedLatestUpdate(
   })
   const task = () => feedLatestUpdate(ref, entriesBatch, params)
   await taskQueue.add(task, {
-    name: 'feed-latest: update batch',
+    meta: {
+      name: 'batch',
+      operation: 'update',
+    },
   })
 
   // Only mutate the latest feed if there are no user posts being saved,
@@ -131,6 +134,8 @@ let entriesBuffer = []
 
 const SCHEDULE_INTERVAL = 10_000
 
+// All internal workers are priorty 1 because they should take precedence over
+// routine indexing and do not happen often.
 export async function scheduleFeedLatestUpdate(ref: ControlRef) {
   const log = createLogger('feed/latest/scheduler')
 
@@ -138,12 +143,18 @@ export async function scheduleFeedLatestUpdate(ref: ControlRef) {
   entriesBuffer = []
   if (entriesBatch.length) {
     log(`Running feed latest update: ${entriesBatch.length}`)
-    await workerFeedLatestUpdate(ref, entriesBatch, {})
+    await workerFeedLatestUpdate(ref, entriesBatch, {
+      priority: 1,
+    })
 
     if (taskQueue.queue.length === 0) {
       Promise.all([
-        workerFeedTopUpdate(ref, { force: true, delay: 1_000 }),
-        workerFeedActivityUpdate(ref, { force: true, delay: 1_000 }),
+        workerFeedTopUpdate(ref, { force: true, delay: 1_000, priority: 1 }),
+        workerFeedActivityUpdate(ref, {
+          force: true,
+          delay: 1_000,
+          priority: 1,
+        }),
       ])
     }
   } else {

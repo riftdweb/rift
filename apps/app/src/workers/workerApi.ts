@@ -153,9 +153,13 @@ export async function compileUserEntries(
       }
     }
     await apiLimiter.add(task, {
-      name: `compile-feed: ${userId.slice(0, 5)}`,
       cost: 5,
       priority: params.priority,
+      meta: {
+        id: userId,
+        name: 'feed',
+        operation: 'compile',
+      },
     })
   } catch (e) {
     console.log(e)

@@ -12,9 +12,8 @@ import uniq from 'lodash/uniq'
 import throttle from 'lodash/throttle'
 import { socialDAC, useSkynet } from '../skynet'
 import {
-  fetchUserForInteraction,
-  fetchUserForInteractionSync,
-  fetchUserForRendering,
+  syncUserForInteractionSynchronous,
+  syncUserForRendering,
 } from '../../workers/workerUpdateUser'
 import { Feed } from '@riftdweb/types'
 import { TaskQueue } from '../../shared/taskQueue'
@@ -42,9 +41,9 @@ const debouncedMutate = debounce((mutate) => {
 
 const throttledCacheUsersMap = throttle(
   async (ref: ControlRef, userMap: UsersMap) => {
-    log('caching usersMap')
+    log('caching usersMap start')
     await cacheUsersMap(ref, userMap)
-    log('caching userMap done')
+    log('caching usersMap done')
   },
   20_000
 )
@@ -140,7 +139,7 @@ export function isUserUpToDate(
   params: IsUserUpToDateParams = {}
 ) {
   const {
-    include = ['profile', 'feed'],
+    include = ['profile', 'folowing'] as UserResourceKeys[],
     verbose = false,
     log = console.log,
   } = params
@@ -204,6 +203,7 @@ export function UsersProvider({ children }: Props) {
     )
   }, [usersMap])
 
+  // TODO: make this into a method, once userMaps is up to date it will never recalc
   const pendingUserIds = useMemo(() => {
     if (!usersMap.data) {
       return []
@@ -252,7 +252,7 @@ export function UsersProvider({ children }: Props) {
         try {
           const workflowId = uuid()
           const promises: Promise<IUser>[] = userIds.map((userId) =>
-            fetchUserForRendering(ref, userId, workflowId)
+            syncUserForRendering(ref, userId, workflowId)
           )
           return Promise.all(promises)
         } catch (e) {
@@ -381,7 +381,7 @@ export function UsersProvider({ children }: Props) {
       } else {
         const task = async () => {
           try {
-            const user = await fetchUserForInteractionSync(ref, myUserId)
+            const user = await syncUserForInteractionSynchronous(ref, myUserId)
             return user.following.data
           } catch (e) {
             console.log(e)
@@ -389,8 +389,12 @@ export function UsersProvider({ children }: Props) {
           }
         }
         return apiLimiter.add(task, {
-          name: `get following ids: ${myUserId.slice(0, 5)}`,
           priority: 2,
+          meta: {
+            id: myUserId,
+            name: 'following',
+            operation: 'get',
+          },
         })
       }
     },
@@ -537,18 +541,26 @@ export function UsersProvider({ children }: Props) {
           const follow = async () => {
             try {
               await socialDAC.follow(userId)
-            } catch (e) {}
+            } catch (e) {
+              console.log('Failed to follow', e)
+            }
           }
 
           await taskQueue.add(
             async () => {
               await apiLimiter.add(follow, {
-                name: `follow: ${userId.slice(0, 5)}`,
                 priority: 2,
+                meta: {
+                  name: userId,
+                  operation: 'follow',
+                },
               })
             },
             {
-              name: `users: follow ${userId}`,
+              meta: {
+                name: userId,
+                operation: 'follow',
+              },
             }
           )
 
@@ -557,7 +569,7 @@ export function UsersProvider({ children }: Props) {
           }
 
           // Trigger update user
-          workerFeedUserUpdate(ref, userId, { force: true, priority: 2 })
+          workerFeedUserUpdate(ref, userId, { priority: 2 })
         } catch (e) {}
       }
       func()
@@ -587,18 +599,26 @@ export function UsersProvider({ children }: Props) {
           const unfollow = async () => {
             try {
               await socialDAC.unfollow(userId)
-            } catch (e) {}
+            } catch (e) {
+              console.log('Failed to unfollow', e)
+            }
           }
 
           await taskQueue.add(
             async () => {
               await apiLimiter.add(unfollow, {
-                name: `unfollow: ${userId.slice(0, 5)}`,
                 priority: 2,
+                meta: {
+                  name: userId,
+                  operation: 'unfollow',
+                },
               })
             },
             {
-              name: `users: unfollow ${userId}`,
+              meta: {
+                name: userId,
+                operation: 'unfollow',
+              },
             }
           )
 
@@ -642,14 +662,16 @@ export function UsersProvider({ children }: Props) {
   // Dev helpers
   useEffect(() => {
     // @ts-ignore
-    window.clearUsersMap = cacheUsersMap(
-      ref,
-      {
-        entries: {},
-        updatedAt: 0,
-      },
-      { priority: 4 }
-    )
+    window.clearUsersMap = () =>
+      cacheUsersMap(
+        ref,
+        {
+          entries: {},
+          updatedAt: 0,
+        },
+        { priority: 4 }
+      )
+
     // @ts-ignore
     window.getUser = getUser
 
@@ -700,9 +722,21 @@ function sortByRelationship(a?: IUser, b?: IUser): 1 | -1 {
   if (!b) {
     return -1
   }
+  const isFriendUserA = isFriend(a)
+  const isFriendUserB = isFriend(b)
   const isFollowingUserA = isFollowing(a)
   const isFollowerUserA = isFollower(a)
   const isFollowingUserB = isFollowing(b)
   // const isFollowerUserB = isFollower(b)
-  return isFollowingUserA ? -1 : isFollowingUserB ? 1 : isFollowerUserA ? -1 : 1
+  return isFriendUserA
+    ? -1
+    : isFriendUserB
+    ? 1
+    : isFollowingUserA
+    ? -1
+    : isFollowingUserB
+    ? 1
+    : isFollowerUserA
+    ? -1
+    : 1
 }

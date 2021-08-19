@@ -8,16 +8,23 @@ type Params = {
 }
 
 type TaskParams = {
-  name: string
+  meta: {
+    id?: string
+    name: string
+    operation: string
+  }
   cost?: number
   priority?: number
   key?: string
-  meta?: {}
 }
 
-type Task<T> = {
+export type Task<T> = {
   id: string
-  name: string
+  meta: {
+    id?: string
+    name: string
+    operation: string
+  }
   task: () => Promise<T>
   cost: number
   priority: number
@@ -265,7 +272,7 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
     task: () => Promise<T>,
     params: TaskParams
   ): Promise<T> {
-    const { priority = 0, cost = 1, key } = params
+    const { meta, priority = 0, cost = 1, key } = params
     assertRunning()
 
     if (key) {
@@ -278,7 +285,7 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
 
     const queueTask: Task<any> = {
       id: uuid(),
-      name: params.name,
+      meta,
       task,
       cost,
       priority,

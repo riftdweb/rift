@@ -4,7 +4,7 @@ import { JSONResponse } from 'skynet-js'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { ControlRef } from '../contexts/skynet/ref'
-import { isUpToDate } from '../contexts/users'
+import { isFollowing, isUpToDate } from '../contexts/users'
 import { cacheUserEntries, compileUserEntries } from './workerApi'
 import { clearToken, handleToken } from './tokens'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
@@ -30,15 +30,6 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
     ref.current.feeds.user.setLoadingState(userId, 'Compiling feed')
 
     let user = ref.current.getUser(userId)
-    if (
-      !params.force &&
-      isUpToDate(user, 'feed', {
-        verbose: true,
-        log,
-      })
-    ) {
-      return
-    }
 
     log('Compiling entries')
     let compiledUserEntries: Entry[] = yield compileUserEntries(userId, params)
@@ -84,12 +75,9 @@ const cafFeedUserUpdate = CAF(function* feedUserUpdate(
 
     const myUserId = ref.current.myUserId
     const isSelf = myUserId === userId
-    const isFollowingUser = !!ref.current.followingUserIds.data?.find(
-      (followingUserId) => followingUserId === userId
-    )
 
     // If following user, update the latest feed
-    if (isSelf || isFollowingUser) {
+    if (isSelf || isFollowing(user)) {
       // TODO: Running this function is not captured in the user feed updatedAt timestamp.
       // If the user worker gets canceled, this may lead to user entries that do not
       // make it into the main feeds until the next update cycle.
@@ -138,7 +126,10 @@ export async function workerFeedUserUpdate(
 ): Promise<any> {
   const task = () => feedUserUpdate(ref, userId, params)
   await taskQueue.add(task, {
-    name: `user/feed: update ${userId}`,
     priority: params.priority,
+    meta: {
+      name: userId,
+      operation: 'update',
+    },
   })
 }

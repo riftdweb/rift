@@ -6,7 +6,7 @@ import { Link } from '../../_shared/Link'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { UserProfile } from '../../_shared/UserProfile'
 import { useEffect } from 'react'
-import { fetchUserForInteraction } from '../../../workers/workerUpdateUser'
+import { syncUserForInteraction } from '../../../workers/workerUpdateUser'
 import { useSkynet } from '../../../contexts/skynet'
 
 export function SocialProfile() {
@@ -14,7 +14,7 @@ export function SocialProfile() {
   const { userId } = useParams()
 
   useEffect(() => {
-    fetchUserForInteraction(ref, userId)
+    syncUserForInteraction(ref, userId)
   }, [userId])
 
   return (

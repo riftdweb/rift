@@ -9,14 +9,22 @@ type Params = {
 }
 
 type TaskParams = {
-  name: string
+  meta: {
+    id?: string
+    name: string
+    operation: string
+  }
   cost?: number
   priority?: number
 }
 
 type Task<T> = {
   id: string
-  name: string
+  meta: {
+    id?: string
+    name: string
+    operation: string
+  }
   task: () => Promise<T>
   cost: number
   priority: number
@@ -25,7 +33,7 @@ type Task<T> = {
 }
 
 const defaultParams = {
-  capacity: 1,
+  capacity: 30,
   processingInterval: 2_000,
   ratePerMinute: 60,
 }
@@ -123,7 +131,13 @@ export function RateLimiter<T>(
       isTerminating = true
     }
 
-    const result = await task.task()
+    try {
+      const result = await task.task()
+      task.resolve(result)
+    } catch (e) {
+      console.log('rateLimiter caught error', e)
+      task.reject()
+    }
     completedTaskLog.push([new Date().getTime(), task.cost])
     // log('Task complete')
 
@@ -131,7 +145,6 @@ export function RateLimiter<T>(
       // log('Task queue terminated')
     }
 
-    task.resolve(result)
     const index = pendingQueue.findIndex((task) => task.id === id)
     pendingQueue.splice(index, 1)
   }
@@ -171,6 +184,8 @@ export function RateLimiter<T>(
         pendingQueue.length,
         'Queue',
         queue.length,
+        'Capacity',
+        capacity,
         'Tokens',
         tokens,
         'r/m',
@@ -196,14 +211,14 @@ export function RateLimiter<T>(
     task: () => Promise<T>,
     params: TaskParams
   ): Promise<T> {
-    const { name, priority = 0, cost = 1 } = params
+    const { meta, priority = 0, cost = 1 } = params
     const id = uuid()
 
     assertRunning()
     return new Promise((resolve, reject) => {
       queue.push({
         id,
-        name,
+        meta,
         task,
         resolve,
         reject,

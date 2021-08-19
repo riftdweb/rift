@@ -94,7 +94,9 @@ async function updateUserData(
       }
     }
 
-    // TODO: add comment explaining why this is necessary
+    // Set the updatedAt time before triggering the async worker
+    // so that the user is upserted as full up to date and does
+    // not get added to the pending queue in the mean time.
     if (shouldUpdateFeed) {
       updatedUser = {
         ...updatedUser,
@@ -105,7 +107,7 @@ async function updateUserData(
       }
     }
 
-    // Upsert before feed update, so user exists
+    // Upsert before feed update, so user exists and is considered up to date.
     ref.current.upsertUser(updatedUser)
 
     // Async
@@ -161,12 +163,12 @@ async function maybeFetchUserFromCache(
   return undefined
 }
 
-async function fetchAndUpdateUser(
+async function syncUser(
   ref: ControlRef,
   userId: string,
   params: FetchUserParams = {}
 ): Promise<IUser> {
-  const { isBatched = false, force = false } = params
+  const { isBatched = false } = params
 
   const existingUser = ref.current.getUser(userId)
   const user = existingUser || buildUser(userId)
@@ -180,13 +182,13 @@ async function fetchAndUpdateUser(
   }
 }
 
-export function fetchUserForIndexing(
+export function syncUserForIndexing(
   ref: ControlRef,
   userId: string,
   workflowId?: string
 ) {
   const key = `${userId}/indexing`
-  return queueFetchAndUpdateUser(ref, userId, {
+  return queueSyncUser(ref, userId, {
     priority: 0,
     fullFetch: true,
     isBatched: true,
@@ -196,13 +198,13 @@ export function fetchUserForIndexing(
   })
 }
 
-export function fetchUserForRendering(
+export function syncUserForRendering(
   ref: ControlRef,
   userId: string,
   workflowId?: string
 ) {
   const key = `${userId}/rendering`
-  return queueFetchAndUpdateUser(ref, userId, {
+  return queueSyncUser(ref, userId, {
     priority: 1,
     fullFetch: false,
     isBatched: false,
@@ -212,9 +214,9 @@ export function fetchUserForRendering(
   })
 }
 
-export function fetchUserForInteraction(ref: ControlRef, userId: string) {
+export function syncUserForInteraction(ref: ControlRef, userId: string) {
   const key = `${userId}/interaction`
-  return queueFetchAndUpdateUser(ref, userId, {
+  return queueSyncUser(ref, userId, {
     priority: 2,
     fullFetch: true,
     isBatched: false,
@@ -223,9 +225,12 @@ export function fetchUserForInteraction(ref: ControlRef, userId: string) {
   })
 }
 
-export function fetchUserForInteractionSync(ref: ControlRef, userId: string) {
+export function syncUserForInteractionSynchronous(
+  ref: ControlRef,
+  userId: string
+) {
   const key = `${userId}/interaction`
-  return queueFetchAndUpdateUser(ref, userId, {
+  return queueSyncUser(ref, userId, {
     priority: 2,
     fullFetch: true,
     isBatched: true,
@@ -234,12 +239,12 @@ export function fetchUserForInteractionSync(ref: ControlRef, userId: string) {
   })
 }
 
-export function fetchUserForInteractionAndForce(
+export function syncUserForInteractionAndForce(
   ref: ControlRef,
   userId: string
 ) {
   const key = `${userId}/interaction/force`
-  return queueFetchAndUpdateUser(ref, userId, {
+  return queueSyncUser(ref, userId, {
     priority: 2,
     fullFetch: true,
     isBatched: false,
@@ -248,11 +253,11 @@ export function fetchUserForInteractionAndForce(
   })
 }
 
-const taskQueue = TaskQueue('fetchAndUpdateUser', {
+const taskQueue = TaskQueue('syncUser', {
   poolSize: 5,
 })
 
-export async function queueFetchAndUpdateUser(
+export async function queueSyncUser(
   ref: ControlRef,
   userId: string,
   params: FetchUserParams & {
@@ -265,12 +270,15 @@ export async function queueFetchAndUpdateUser(
     return user
   }
 
-  const task = () => fetchAndUpdateUser(ref, userId, params)
+  const task = () => syncUser(ref, userId, params)
 
   return taskQueue.add(task, {
-    name: `user/fetch: ${userId}`,
     priority: params.priority,
     key: params.key,
+    meta: {
+      name: userId,
+      operation: 'fetch',
+    },
   })
 }
 
@@ -310,9 +318,13 @@ async function fetchFollowing(
     }
   }
   const _followingIds = await apiLimiter.add(task, {
-    name: `fetch following: ${user.userId}`,
     cost: 5,
     priority,
+    meta: {
+      id: user.userId,
+      name: 'following',
+      operation: 'get',
+    },
   })
   const followingIds = uniq(_followingIds)
 

@@ -22,7 +22,7 @@ import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
 import { workerFeedIndexer } from '../../workers/workerFeedIndexer'
-import { fetchUserForInteraction } from '../../workers/workerUpdateUser'
+import { syncUserForInteraction } from '../../workers/workerUpdateUser'
 
 const log = createLogger('feed')
 
@@ -152,7 +152,7 @@ export function FeedProvider({ children }: Props) {
   useEffect(() => {
     if (!user.loadingStateCurrentUser && user.response.data?.null) {
       log(`Building a feed for ${viewingUserId}`)
-      fetchUserForInteraction(ref, viewingUserId)
+      syncUserForInteraction(ref, viewingUserId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.response.data])
@@ -264,7 +264,6 @@ export function FeedProvider({ children }: Props) {
 
           localLog('Start user feed update')
           await workerFeedUserUpdate(ref, myUserId, {
-            force: true,
             priority: 2,
           })
         } finally {

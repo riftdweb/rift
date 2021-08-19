@@ -21,7 +21,7 @@ import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
 import { useUser } from '../../hooks/useUser'
-import { fetchUserForInteractionAndForce } from '../../workers/workerUpdateUser'
+import { syncUserForInteractionAndForce } from '../../workers/workerUpdateUser'
 
 type Props = {
   userId: string
@@ -105,7 +105,7 @@ export function UserContextMenu({
         )}
         <DropdownMenuItem
           disabled={!!combinedLoadingState}
-          onSelect={() => fetchUserForInteractionAndForce(ref, userId)}
+          onSelect={() => syncUserForInteractionAndForce(ref, userId)}
         >
           Refresh
         </DropdownMenuItem>

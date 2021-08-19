@@ -11,7 +11,7 @@ import {
 } from '@riftdweb/types'
 import { clearToken, handleToken } from './tokens'
 import { wait, waitFor } from '../shared/wait'
-import { fetchUserForIndexing } from './workerUpdateUser'
+import { syncUserForIndexing } from './workerUpdateUser'
 import { TaskQueue } from '../shared/taskQueue'
 
 const SCHEDULE_INTERVAL_INDEXER = 1000 * 60 * 5
@@ -33,15 +33,25 @@ const cafUserIndexer = CAF(function* userIndexer(
   try {
     log('Running')
 
-    while (ref.current.pendingUserIds.length) {
+    while (true) {
+      if (!ref.current.pendingUserIds.length) {
+        log('No pending users, sleeping')
+        yield wait(5_000)
+        continue
+      }
+
       log(`Processing: ${ref.current.pendingUserIds.length}`)
       const batch = ref.current.pendingUserIds.splice(0, BATCH_SIZE)
       log('Batch', batch)
 
       tasks = batch.map((userId) => {
-        const task = async () => fetchUserForIndexing(ref, userId)
+        const user = ref.current.getUser(userId)
+        const task = async () => syncUserForIndexing(ref, userId)
         return taskQueue.add(task, {
-          name: `user/fetch: ${userId} - indexer batch`,
+          meta: {
+            name: userId,
+            operation: 'queue',
+          },
         })
       })
       const updatedUsers: IUser[] = yield Promise.all(tasks)
@@ -55,9 +65,8 @@ const cafUserIndexer = CAF(function* userIndexer(
       ref.current.addNewUserIds(userIdsToAdd)
       recomputeFollowers(ref)
     }
-    log('Done')
-    return
   } finally {
+    log('Exiting')
     log('Finally')
     if (signal.aborted) {
       log('Aborted')
@@ -168,10 +177,10 @@ export async function scheduleUserIndexer(ref: ControlRef): Promise<any> {
 
   maybeRunUserIndexer(ref)
 
-  clearInterval(interval)
-  interval = setInterval(() => {
-    maybeRunUserIndexer(ref)
-  }, SCHEDULE_INTERVAL_INDEXER)
+  // clearInterval(interval)
+  // interval = setInterval(() => {
+  //   maybeRunUserIndexer(ref)
+  // }, SCHEDULE_INTERVAL_INDEXER)
 }
 
 export const i = 0

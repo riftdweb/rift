@@ -17,7 +17,7 @@ export function useFeedActivity({ ref }: Props) {
     getKey(['feed', 'activity']),
     () =>
       fetchActivity(ref, {
-        priority: 2,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,

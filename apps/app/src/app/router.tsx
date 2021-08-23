@@ -67,7 +67,7 @@ export function App() {
               <Route path="/tools">
                 <Tools />
               </Route>
-              <Route path="/dev">
+              <Route path="/dev/:toolName">
                 <Dev />
               </Route>
               <Route path="/settings">

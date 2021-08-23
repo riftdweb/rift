@@ -217,3 +217,8 @@ export type UsersMap = {
   updatedAt: number
   entries: Record<string, IUser>
 }
+
+export type JSONResponse<T> = {
+  data: T | null
+  dataLink: string | null
+}

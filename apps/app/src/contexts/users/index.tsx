@@ -11,13 +11,10 @@ import debounce from 'lodash/debounce'
 import uniq from 'lodash/uniq'
 import throttle from 'lodash/throttle'
 import { socialDAC, useSkynet } from '../skynet'
-import {
-  syncUserForInteractionSynchronous,
-  syncUserForRendering,
-} from '../../workers/workerUpdateUser'
+import { syncUser } from '../../workers/user'
 import { Feed } from '@riftdweb/types'
 import { TaskQueue } from '../../shared/taskQueue'
-import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
+import { syncUserFeed } from '../../workers/user/resources/feed'
 import { IUser, UsersMap } from '@riftdweb/types'
 import { cacheUsersMap, fetchUsersMap } from '../../workers/workerApi'
 import { ControlRef } from '../skynet/ref'
@@ -27,11 +24,14 @@ import { seedList } from './seedList'
 import { denyList } from './denyList'
 import { apiLimiter } from '../skynet/api'
 import { recomputeFollowers } from '../../workers/workerUsersIndexer'
+import { buildUser } from '../../workers/user/buildUser'
+import { checkIsUserUpToDate } from '../../workers/user/checks'
 import { getDataKeyUsers } from '../../shared/dataKeys'
-import { v4 as uuid } from 'uuid'
-import { formatDistance } from 'date-fns'
+import { clearAllTokens } from '../../workers/tokens'
+import { EntriesResponse } from '../../components/_shared/EntriesState'
+import { useKey } from '../../hooks/useKey'
 
-const log = createLogger('users')
+const log = createLogger('context/users')
 const taskQueue = TaskQueue('users')
 const dataKeyUsers = getDataKeyUsers()
 
@@ -39,13 +39,29 @@ const debouncedMutate = debounce((mutate) => {
   return mutate()
 }, 5000)
 
+const usersMapTaskQueue = TaskQueue('usersMap', {
+  maxQueueSize: 1,
+  dropStrategy: 'earliest',
+})
+
 const throttledCacheUsersMap = throttle(
   async (ref: ControlRef, userMap: UsersMap) => {
-    log('caching usersMap start')
-    await cacheUsersMap(ref, userMap)
-    log('caching usersMap done')
+    const task = async () => {
+      try {
+        log('Caching usersMap start')
+        await cacheUsersMap(ref, userMap)
+        log('Caching usersMap done')
+      } catch (e) {
+        log('Error caching usersMap', e)
+      }
+    }
+    return usersMapTaskQueue.add(task, {
+      meta: {
+        operation: 'set',
+      },
+    })
   },
-  20_000
+  2_000
 )
 
 export function isFollowing(user?: IUser) {
@@ -62,8 +78,10 @@ export function isFriend(user?: IUser) {
 
 type State = {
   usersMap: SWRResponse<UsersMap, any>
-  usersIndex: IUser[]
+  discoveredUsersIndex: IUser[]
+  indexedUsersIndex: IUser[]
   pendingUserIds: string[]
+  isInitUsersComplete: boolean
   userCounts: {
     discovered: number
     hasBeenIndexed: number
@@ -71,10 +89,10 @@ type State = {
     pendingIndexing: number
     pendingReindexing: number
   }
-  followingUserIds: SWRResponse<string[], any>
-  friends: SWRResponse<Feed<IUser>, any>
-  followings: SWRResponse<Feed<IUser>, any>
-  suggestions: SWRResponse<Feed<IUser>, any>
+  allFollowing: SWRResponse<Feed<string>, any>
+  friends: EntriesResponse<string>
+  following: EntriesResponse<string>
+  suggestions: EntriesResponse<string>
   handleFollow: (userId: string) => void
   handleUnfollow: (userId: string) => void
 }
@@ -86,102 +104,49 @@ type Props = {
   children: React.ReactNode
 }
 
-type UserResourceKeys = 'profile' | 'following' | 'feed'
-
-const resourceTimeoutMap: Record<UserResourceKeys, number> = {
-  profile: 1000 * 60 * 60,
-  following: 1000 * 60 * 30,
-  feed: 1000 * 60 * 20,
+type InitState = {
+  id: string
+  step: number
 }
 
-type IsUpToDateParams = {
-  verbose?: boolean
-  log?: (message: string) => void
-}
+type InitStateKey =
+  | 'start'
+  | 'hasFetchedUsersMap'
+  | 'hasSeededUserIds'
+  | 'complete'
 
-export function isUpToDate(
-  user: IUser | undefined,
-  resource: UserResourceKeys,
-  params: IsUpToDateParams = {}
-) {
-  if (!user) {
-    return false
-  }
-  const updatedAt = user[resource].updatedAt
-  const timeout = resourceTimeoutMap[resource]
-
-  const { verbose = false, log = console.log } = params
-
-  const now = new Date().getTime()
-  const timeSinceLastUpdate = now - updatedAt
-  const isResourceUpToDate = timeSinceLastUpdate < timeout
-  if (verbose) {
-    const ago = formatDistance(new Date(updatedAt), new Date(), {
-      addSuffix: true,
-    })
-    log(
-      `${resource ? `${resource} ` : ''}${
-        isResourceUpToDate ? 'current' : 'expired'
-      } - updated ${ago}`
-    )
-  }
-  return isResourceUpToDate
-}
-
-type IsUserUpToDateParams = {
-  include?: UserResourceKeys[]
-  verbose?: boolean
-  log?: (message: string) => void
-}
-
-export function isUserUpToDate(
-  user: IUser | undefined,
-  params: IsUserUpToDateParams = {}
-) {
-  const {
-    include = ['profile', 'folowing'] as UserResourceKeys[],
-    verbose = false,
-    log = console.log,
-  } = params
-
-  if (!user) {
-    return false
-  }
-  if (
-    include.includes('profile') &&
-    !isUpToDate(user, 'profile', {
-      verbose,
-      log,
-    })
-  ) {
-    return false
-  }
-  if (
-    include.includes('following') &&
-    !isUpToDate(user, 'following', {
-      verbose,
-      log,
-    })
-  ) {
-    return false
-  }
-  if (
-    include.includes('feed') &&
-    !isUpToDate(user, 'feed', {
-      verbose,
-      log,
-    })
-  ) {
-    return false
-  }
-  return true
+const initStates: Record<InitStateKey, InitState> = {
+  start: {
+    id: 'start',
+    step: 0,
+  },
+  hasFetchedUsersMap: {
+    id: 'hasFetchedUsersMap',
+    step: 1,
+  },
+  hasSeededUserIds: {
+    id: 'hasSeededUserIds',
+    step: 2,
+  },
+  complete: {
+    id: 'complete', // hasFetchedFollowing
+    step: 3,
+  },
 }
 
 export function UsersProvider({ children }: Props) {
-  const { myUserId, getKey, controlRef: ref, appDomain } = useSkynet()
+  const { myUserId, isReady, getKey, controlRef: ref, appDomain } = useSkynet()
 
-  const [hasSeededUserIds, setHasSeededUserIds] = useState<boolean>(false)
+  const [initState, _setInitState] = useState<InitState>(initStates.start)
+  const setInitState = useCallback(
+    (nextState: InitState) => {
+      log(`Transitioning states: ${initState.id} to ${nextState.id}`)
+      _setInitState(nextState)
+    },
+    [initState, _setInitState]
+  )
 
+  // Init step 1
   const usersMap = useSWR(
     getKey([appDomain, dataKeyUsers]),
     () => fetchUsersMap(ref),
@@ -190,53 +155,62 @@ export function UsersProvider({ children }: Props) {
     }
   )
 
-  const usersIndex = useMemo(() => {
-    if (!usersMap.data) {
+  // Reset when ready status becomes false because signed in user is changing
+  useEffect(() => {
+    if (!isReady) {
+      setInitState(initStates.start)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady])
+
+  useEffect(() => {
+    if (initState.id === initStates.start.id && !!usersMap.data) {
+      setInitState(initStates.hasFetchedUsersMap)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initState, usersMap])
+
+  const discoveredUsersIndex = useMemo(() => {
+    if (initState.id !== initStates.complete.id) {
       return []
     }
-    return (
-      Object.entries(usersMap.data.entries)
-        .map(([id, entry]) => entry)
-        // TODO: can just initialize as buildUser
-        .filter((entry) => !!entry)
-        .sort(sortByRelationship)
+    return Object.entries(usersMap.data?.entries || {}).map(
+      ([id, user]) => user
     )
-  }, [usersMap])
+  }, [initState, usersMap])
 
-  // TODO: make this into a method, once userMaps is up to date it will never recalc
+  const indexedUsersIndex = useMemo(() => {
+    return discoveredUsersIndex
+      .filter((user) => !!user && !!user.updatedAt)
+      .sort(sortByRelationship)
+  }, [discoveredUsersIndex])
+
+  const getUsersPendingUpdate = useCallback(() => {
+    return (
+      discoveredUsersIndex
+        // Filter out any thing that is fully up to date
+        .filter((user) => {
+          const check = checkIsUserUpToDate(ref, user, {
+            level: 'index',
+          })
+          return !check.isUpToDate
+        })
+        // Filter out any thing that is fully up to date
+        .sort((a, b) => sortByRelationship(a, b))
+        .map(({ userId }) => userId)
+    )
+  }, [ref, discoveredUsersIndex])
+
   const pendingUserIds = useMemo(() => {
-    if (!usersMap.data) {
-      return []
-    }
-    return (
-      Object.entries(usersMap.data.entries)
-        // Filter out any thing that is fully up to date
-        .filter(
-          ([userId, user]) =>
-            !isUserUpToDate(user, {
-              include: ['profile', 'following', 'feed'],
-            })
-        )
-        // Filter out any thing that is fully up to date
-        .sort(([_aId, a], [_bId, b]) => sortByRelationship(a, b))
-        .map(([userId]) => userId)
-    )
-  }, [usersMap])
-
-  const discoveredUsersCount = useMemo(() => {
-    return Object.entries(usersMap.data?.entries || {}).length
-  }, [usersMap])
-
-  const indexedUsersCount = useMemo(() => {
-    return usersIndex.length
-  }, [usersIndex])
-
-  const pendingIndexingUsersCount = useMemo(() => {
-    return pendingUserIds.length
-  }, [pendingUserIds])
+    return getUsersPendingUpdate()
+  }, [getUsersPendingUpdate])
 
   const userCounts = useMemo(() => {
+    const discoveredUsersCount = discoveredUsersIndex.length
+    const indexedUsersCount = indexedUsersIndex.length
+    const pendingIndexingUsersCount = pendingUserIds.length
     const neverBeenIndexed = discoveredUsersCount - indexedUsersCount
+
     return {
       discovered: discoveredUsersCount,
       hasBeenIndexed: indexedUsersCount,
@@ -244,43 +218,28 @@ export function UsersProvider({ children }: Props) {
       pendingReindexing: pendingIndexingUsersCount - neverBeenIndexed,
       pendingIndexing: pendingIndexingUsersCount,
     }
-  }, [discoveredUsersCount, indexedUsersCount, pendingIndexingUsersCount])
-
-  const gatherUsers = useCallback(
-    (userIds): Promise<IUser[]> => {
-      const func = async (): Promise<IUser[]> => {
-        try {
-          const workflowId = uuid()
-          const promises: Promise<IUser>[] = userIds.map((userId) =>
-            syncUserForRendering(ref, userId, workflowId)
-          )
-          return Promise.all(promises)
-        } catch (e) {
-          return []
-        }
-      }
-      return func()
-    },
-    [ref]
-  )
+  }, [discoveredUsersIndex, indexedUsersIndex, pendingUserIds])
 
   const getUser = useCallback(
     (userId: string): IUser => {
-      if (!usersMap.data) {
+      if (initState.step < initStates.hasFetchedUsersMap.step) {
         throw Error('getUser was called before usersMap initialization')
       }
       return usersMap.data.entries[userId]
     },
-    [usersMap]
+    [initState, usersMap]
   )
 
   const upsertUser = useCallback(
-    (user: IUser) => {
+    (user: { userId: string } & Partial<IUser>): Promise<void> => {
       const func = async () => {
         const nextUsersMap = await usersMap.mutate((data) => {
+          const baseUser = buildUser(user.userId)
           const nextUser = {
+            ...baseUser,
             ...(data.entries[user.userId] || {}),
             ...user,
+            updatedAt: new Date().getTime(),
           }
 
           return {
@@ -294,18 +253,21 @@ export function UsersProvider({ children }: Props) {
 
         // Refresh useUser hooks, timeout to avoid cancelling a running mutation
         setTimeout(() => {
-          mutate(getDataKeyUsers(user.userId))
+          mutate(getKey([getDataKeyUsers(user.userId)]))
         }, 1000)
 
-        await throttledCacheUsersMap(ref, nextUsersMap)
+        throttledCacheUsersMap(ref, nextUsersMap)
       }
-      func()
+      return func()
     },
-    [ref, usersMap]
+    [ref, usersMap, getKey]
   )
 
   const upsertUsers = useCallback(
-    (users: IUser[]) => {
+    (users: IUser[]): Promise<void> => {
+      if (!users.length) {
+        return
+      }
       const func = async () => {
         const nextUsersMap = await usersMap.mutate(
           (data) => ({
@@ -327,69 +289,78 @@ export function UsersProvider({ children }: Props) {
           false
         )
 
-        await throttledCacheUsersMap(ref, nextUsersMap)
+        throttledCacheUsersMap(ref, nextUsersMap)
       }
-      func()
+      return func()
     },
     [ref, usersMap]
   )
 
   const addNewUserIds = useCallback(
-    (userIds: string[]) => {
-      if (!usersMap.data) {
+    (userIds: string[]): Promise<void> => {
+      if (initState.step < initStates.hasFetchedUsersMap.step) {
         throw Error('Cannot add keys before usersMap has fetched')
       }
       const func = async () => {
         const newUserIds = userIds
           .filter((userId) => !denyList.includes(userId))
           .filter((userId) => !getUser(userId))
-        // log('Adding', newUserIds)
-        const nextUsersMap = {
-          entries: newUserIds.reduce(
-            (acc, id) => ({
-              ...acc,
-              [id]: undefined,
-            }),
-            usersMap.data.entries
-          ),
-          updatedAt: new Date().getTime(),
-        }
+        log('Adding', newUserIds)
 
-        usersMap.mutate(nextUsersMap, false)
-
-        await throttledCacheUsersMap(ref, nextUsersMap)
+        const newUsers = newUserIds.map(buildUser)
+        await upsertUsers(newUsers)
       }
-      func()
+      return func()
     },
-    [ref, usersMap, getUser]
+    [initState, getUser, upsertUsers]
   )
 
-  // Initialize usersMap
+  // Init step 2
+  // Seed any new user ids
   useEffect(() => {
-    if (!hasSeededUserIds && usersMap.data) {
+    if (initState.id === initStates.hasFetchedUsersMap.id) {
       addNewUserIds(seedList)
-      setHasSeededUserIds(true)
+      setInitState(initStates.hasSeededUserIds)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usersMap])
+  }, [initState])
 
-  const followingIds = useSWR(
-    getKey([getDataKeyUsers('followingIds')]),
+  // Init step 3
+  const allFollowing = useSWR<Feed<string>>(
+    initState.step >= initStates.hasSeededUserIds.step
+      ? getKey([getDataKeyUsers('followingIds')])
+      : null,
     async () => {
       if (!myUserId) {
-        return suggestionList.slice(0, 2)
+        // Set init state to complete
+        setInitState(initStates.complete)
+        return {
+          entries: [],
+          updatedAt: 0,
+        }
       } else {
         const task = async () => {
           try {
-            const user = await syncUserForInteractionSynchronous(ref, myUserId)
-            return user.following.data
+            // Sync myUser
+            const user = await syncUser(ref, myUserId, 'get')
+            // Add following user ids in case they do not exist yet (first time user)
+            await addNewUserIds(user.following.data)
+            // Recompute followers right away so that relationships work right away
+            // before all users are fully synced
+            await recomputeFollowers(ref)
+            // Set init state to complete
+            setInitState(initStates.complete)
+            return {
+              entries: user.following.data,
+              updatedAt: user.following.updatedAt,
+            }
           } catch (e) {
-            console.log(e)
+            log('Error', e)
             throw Error('Could not get followers')
           }
         }
         return apiLimiter.add(task, {
-          priority: 2,
+          priority: 4,
           meta: {
             id: myUserId,
             name: 'following',
@@ -403,258 +374,268 @@ export function UsersProvider({ children }: Props) {
     }
   )
 
-  const allFollowing = useSWR<Feed<IUser>>(
-    followingIds.data
-      ? getKey([getDataKeyUsers('allFollowing'), followingIds.data])
-      : null,
-    async () => {
-      const userIds = followingIds.data
-
-      if (!userIds.length) {
-        return {
-          entries: [],
-          updatedAt: new Date().getTime(),
-        }
-      }
-
-      const users = await gatherUsers(userIds)
-
+  const [suggestionsKey, changeSuggestionsKey] = useKey()
+  const suggestions = useMemo(() => {
+    if (initState.id !== initStates.complete.id) {
       return {
-        entries: users,
-        updatedAt: new Date().getTime(),
+        isValidating: true,
       }
-    },
-    {
-      revalidateOnFocus: false,
     }
-  )
 
-  const suggestions = useSWR<Feed<IUser>>(
-    followingIds.data
-      ? getKey([getDataKeyUsers('suggestions'), followingIds.data])
-      : null,
-    async () => {
-      if (!myUserId) {
-        return {
-          entries: [],
-          updatedAt: new Date().getTime(),
-        }
-      } else {
-        const randomUserIds = [
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-          seedList[Math.floor(Math.random() * seedList.length)],
-        ]
-        const userIds = uniq([...randomUserIds, ...suggestionList]).filter(
-          (suggestionUserId) => {
-            if (suggestionUserId === myUserId) {
-              return false
-            }
-            return !(followingIds.data || []).find(
-              (userId) => userId === suggestionUserId
-            )
-          }
-        )
-
-        const users = await gatherUsers(userIds)
-
-        return {
-          entries: users,
-          updatedAt: new Date().getTime(),
-        }
-      }
-    },
-    {
-      revalidateOnFocus: false,
-    }
-  )
-
-  const following = useSWR<Feed<IUser>>(
-    allFollowing.data
-      ? getKey([getDataKeyUsers('following'), allFollowing.data])
-      : null,
-    async () => {
-      const users = allFollowing.data
-
-      if (!users.entries) {
-        return {
-          entries: [],
-          updatedAt: new Date().getTime(),
-        }
-      }
-
+    if (!myUserId) {
       return {
-        entries: users.entries.filter((user) => !isFriend(user)),
-        updatedAt: new Date().getTime(),
-      }
-    },
-    {
-      revalidateOnFocus: false,
-    }
-  )
-
-  const friends = useSWR<Feed<IUser>>(
-    allFollowing.data
-      ? getKey([getDataKeyUsers('friends'), allFollowing.data])
-      : null,
-    async () => {
-      const users = allFollowing.data
-
-      if (!users.entries) {
-        return {
+        data: {
           entries: [],
-          updatedAt: new Date().getTime(),
-        }
+          updatedAt: 0,
+        },
       }
-
-      return {
-        entries: users.entries.filter((user) => isFriend(user)),
-        updatedAt: new Date().getTime(),
-      }
-    },
-    {
-      revalidateOnFocus: false,
     }
-  )
+
+    const randomUserIds = [
+      seedList[Math.floor(Math.random() * seedList.length)],
+      seedList[Math.floor(Math.random() * seedList.length)],
+      seedList[Math.floor(Math.random() * seedList.length)],
+      seedList[Math.floor(Math.random() * seedList.length)],
+      seedList[Math.floor(Math.random() * seedList.length)],
+    ]
+    const userIds = uniq([...randomUserIds, ...suggestionList]).filter(
+      (suggestionUserId) => {
+        if (suggestionUserId === myUserId) {
+          return false
+        }
+        const user = ref.current.getUser(suggestionUserId)
+        return !isFollowing(user)
+      }
+    )
+
+    return {
+      data: {
+        entries: userIds,
+        updatedAt: new Date().getTime(),
+      },
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, initState, myUserId, suggestionsKey])
+
+  const friends = useMemo(() => {
+    if (initState.id !== initStates.complete.id) {
+      return {
+        isValidating: true,
+      }
+    }
+    return {
+      data: {
+        entries: discoveredUsersIndex
+          .filter((user) => isFriend(user))
+          .map(({ userId }) => userId),
+        updatedAt: new Date().getTime(),
+      },
+    }
+  }, [initState, discoveredUsersIndex])
+
+  const following = useMemo(() => {
+    if (initState.id !== initStates.complete.id) {
+      return {
+        isValidating: true,
+      }
+    }
+    return {
+      data: {
+        entries: discoveredUsersIndex
+          .filter((user) => isFollowing(user) && !isFriend(user))
+          .map(({ userId }) => userId),
+        updatedAt: new Date().getTime(),
+      },
+    }
+  }, [initState, discoveredUsersIndex])
 
   const handleFollow = useCallback(
     (userId: string) => {
+      if (!myUserId) {
+        return
+      }
       const func = async () => {
-        const user = getUser(userId)
+        log('Following user', userId)
+        const user = getUser(userId) || buildUser(userId)
 
-        // Update data sources
-        if (user) {
-          upsertUser({
-            ...user,
-            followers: {
-              ...user.followers,
-              data: uniq([...user.followers.data, myUserId]),
-            },
-          })
-        }
-        followingIds.mutate((ids) => uniq([...ids, userId]), false)
-        recomputeFollowers(ref)
+        // Optimistically we are now their follower
+        await upsertUser({
+          userId,
+          followers: {
+            ...user.followers,
+            data: uniq([...user.followers.data, myUserId]),
+          },
+        })
+
+        // Optimistically we are now following them
+        const myUser = getUser(myUserId)
+        await upsertUser({
+          userId: myUserId,
+          following: {
+            data: uniq([...myUser.following.data, userId]),
+            // Update time so that upcoming syncUser calls do not rollback optimistic data
+            updatedAt: new Date().getTime(),
+          },
+        })
+
+        await recomputeFollowers(ref)
+
+        changeSuggestionsKey()
+
+        await allFollowing.mutate(
+          (data) => ({
+            entries: uniq([...data.entries, userId]),
+            updatedAt: new Date().getTime(),
+          }),
+          false
+        )
 
         try {
           const follow = async () => {
             try {
               await socialDAC.follow(userId)
             } catch (e) {
-              console.log('Failed to follow', e)
+              log('Failed to follow', e)
             }
           }
 
           await taskQueue.add(
             async () => {
               await apiLimiter.add(follow, {
-                priority: 2,
+                priority: 4,
                 meta: {
-                  name: userId,
+                  id: userId,
                   operation: 'follow',
                 },
               })
             },
             {
               meta: {
-                name: userId,
+                id: userId,
                 operation: 'follow',
               },
             }
           )
 
           if (taskQueue.queue.length === 0) {
-            debouncedMutate(followingIds.mutate)
+            debouncedMutate(allFollowing.mutate)
           }
 
           // Trigger update user
-          workerFeedUserUpdate(ref, userId, { priority: 2 })
-        } catch (e) {}
+          syncUserFeed(ref, userId, 4, 0)
+        } catch (e) {
+          log(`Error following user ${userId.slice(0, 5)}`, e)
+        }
       }
       func()
     },
-    [ref, myUserId, followingIds, getUser, upsertUser]
+    [ref, myUserId, allFollowing, getUser, upsertUser, changeSuggestionsKey]
   )
 
   const handleUnfollow = useCallback(
     (userId: string) => {
+      if (!myUserId) {
+        return
+      }
       const func = async () => {
-        const user = getUser(userId)
+        log('Unfollowing user', userId)
+        const user = getUser(userId) || buildUser(userId)
 
-        // Update data sources
-        if (user) {
-          upsertUser({
-            ...user,
-            userId,
-            followers: {
-              ...user.followers,
-              data: user.followers.data.filter((id) => id !== myUserId),
-            },
-          })
-        }
-        followingIds.mutate((ids) => ids.filter((id) => id !== userId), false)
-        recomputeFollowers(ref)
+        // Optimistically we are now not their follower
+        await upsertUser({
+          userId,
+          followers: {
+            ...user.followers,
+            data: user.followers.data.filter((id) => id !== myUserId),
+          },
+        })
+
+        // Optimistically we are now not following them
+        const myUser = getUser(myUserId)
+        await upsertUser({
+          userId: myUserId,
+          following: {
+            data: myUser.following.data.filter((id) => id !== userId),
+            // Update time so that upcoming syncUser calls do not rollback optimistic data
+            updatedAt: new Date().getTime(),
+          },
+        })
+
+        await recomputeFollowers(ref)
+
+        await allFollowing.mutate(
+          (data) => ({
+            entries: data.entries.filter((id) => id !== userId),
+            updatedAt: new Date().getTime(),
+          }),
+          false
+        )
+
         try {
           const unfollow = async () => {
             try {
               await socialDAC.unfollow(userId)
             } catch (e) {
-              console.log('Failed to unfollow', e)
+              log('Failed to unfollow', e)
             }
           }
 
           await taskQueue.add(
             async () => {
               await apiLimiter.add(unfollow, {
-                priority: 2,
+                priority: 4,
                 meta: {
-                  name: userId,
+                  id: userId,
                   operation: 'unfollow',
                 },
               })
             },
             {
               meta: {
-                name: userId,
+                id: userId,
                 operation: 'unfollow',
               },
             }
           )
 
           if (taskQueue.queue.length === 0) {
-            debouncedMutate(followingIds.mutate)
+            debouncedMutate(allFollowing.mutate)
           }
-        } catch (e) {}
+        } catch (e) {
+          log(`Error unfollowing user ${userId.slice(0, 5)}`, e)
+        }
       }
       func()
     },
-    [ref, myUserId, getUser, upsertUser, followingIds]
+    [ref, myUserId, getUser, upsertUser, allFollowing]
   )
+
+  const isInitUsersComplete = initState.id === initStates.complete.id
 
   useEffect(() => {
     ref.current.usersMap = usersMap
-    ref.current.usersIndex = usersIndex
+    ref.current.indexedUsersIndex = indexedUsersIndex
+    ref.current.discoveredUsersIndex = discoveredUsersIndex
     ref.current.getUser = getUser
+    ref.current.getUsersPendingUpdate = getUsersPendingUpdate
     ref.current.upsertUser = upsertUser
     ref.current.upsertUsers = upsertUsers
     ref.current.pendingUserIds = pendingUserIds
     ref.current.addNewUserIds = addNewUserIds
-    // If not null
-    if (followingIds.data) {
-      ref.current.followingUserIdsHasFetched = true
-    }
-    ref.current.followingUserIds = followingIds
+    ref.current.allFollowing = allFollowing
+    ref.current.isInitUsersComplete = isInitUsersComplete
   }, [
     ref,
-    followingIds,
     allFollowing,
     suggestions,
     usersMap,
-    usersIndex,
+    discoveredUsersIndex,
+    indexedUsersIndex,
+    isInitUsersComplete,
     getUser,
     upsertUser,
     upsertUsers,
+    getUsersPendingUpdate,
     pendingUserIds,
     addNewUserIds,
   ])
@@ -662,50 +643,61 @@ export function UsersProvider({ children }: Props) {
   // Dev helpers
   useEffect(() => {
     // @ts-ignore
-    window.clearUsersMap = () =>
-      cacheUsersMap(
-        ref,
-        {
-          entries: {},
-          updatedAt: 0,
-        },
-        { priority: 4 }
-      )
+    window.Rift = {
+      // @ts-ignore
+      ...(window.Rift || {}),
+    }
 
     // @ts-ignore
-    window.getUser = getUser
+    Rift = window.Rift
 
     // @ts-ignore
-    window.getUserStatus = (userId: string) => {
+    Rift.clearAllTokens = () => clearAllTokens(ref)
+
+    // @ts-ignore
+    Rift.clearUsersMap = () => {
+      const emptyData = {
+        entries: {},
+        updatedAt: 0,
+      }
+      cacheUsersMap(ref, emptyData, { priority: 4 })
+      usersMap.mutate(emptyData, false)
+    }
+
+    // @ts-ignore
+    Rift.getUser = getUser
+
+    // @ts-ignore
+    Rift.getUserStatus = (userId: string) => {
       const user = ref.current.getUser(userId)
-      isUserUpToDate(user, {
+      return checkIsUserUpToDate(ref, user, {
         verbose: true,
-        include: ['profile', 'following', 'feed'],
+        level: 'index',
       })
     }
 
     // @ts-ignore
-    window.riftUserCount = () => {
-      const count = ref.current.usersIndex.reduce(
+    Rift.userCount = () => {
+      const count = ref.current.indexedUsersIndex.reduce(
         (acc, user) => (user.meta?.data.skapps['riftapp.hns'] ? acc + 1 : acc),
         0
       )
       console.log(
-        `${count}/${ref.current.usersIndex.length}/${
-          Object.keys(ref.current.usersMap.data?.entries || {}).length
-        }`
+        `${count}/${userCounts.hasBeenIndexed}/${userCounts.discovered}`
       )
     }
-  }, [ref])
+  }, [ref, getUser, userCounts, usersMap])
 
   const value = {
     usersMap,
-    usersIndex,
+    indexedUsersIndex,
+    discoveredUsersIndex,
+    isInitUsersComplete,
     userCounts,
     pendingUserIds,
     addNewUserIds,
-    followingUserIds: followingIds,
-    followings: following,
+    allFollowing,
+    following,
     friends,
     suggestions,
     handleFollow,

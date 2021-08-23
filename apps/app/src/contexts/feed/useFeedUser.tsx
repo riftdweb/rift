@@ -19,7 +19,7 @@ export function useFeedUser({ ref }: Props) {
     viewingUserId ? getKey(['feed', viewingUserId]) : null,
     () =>
       fetchUserEntries(ref, viewingUserId, {
-        priority: 2,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,

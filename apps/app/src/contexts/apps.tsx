@@ -47,7 +47,7 @@ export function AppsProvider({ children }: Props) {
     () =>
       Api.getJSON<App[]>({
         path: dataKeyApps,
-        priority: 2,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,
@@ -80,7 +80,7 @@ export function AppsProvider({ children }: Props) {
         await Api.setJSON({
           path: dataKeyApps,
           json: apps,
-          priority: 2,
+          priority: 4,
         })
         // Sync latest, will likely be the same
         await debouncedMutate(mutate)

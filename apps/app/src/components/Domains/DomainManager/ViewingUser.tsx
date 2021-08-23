@@ -35,7 +35,7 @@ export function ViewingUser() {
       domain: 'profile-dac.hns',
       path: 'profileIndex.json',
       discoverable: true,
-      priority: 2,
+      priority: 4,
     })
   )
 

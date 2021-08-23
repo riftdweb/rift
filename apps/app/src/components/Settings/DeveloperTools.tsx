@@ -17,20 +17,26 @@ export function DeveloperTools() {
         </Heading>
         <Flex css={{ flexDirection: 'column', gap: '$4' }}>
           <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
-            The Task Manager provides visibility into the scheduling,
-            processing, and prioritization status of background tasks. Because
-            Rift is fully-decentralized, the application is constantly
-            interacting with data from peer and running indexing processes to
-            keep data as current as possible.
+            The Task and Indexing Manager tools provide visibility into the
+            scheduling, processing, and prioritization of background tasks.
+            Because Rift is fully decentralized, the application is constantly
+            interacting with peers and running indexing processes to keep data
+            as current as possible.
           </Paragraph>
-          <Box>
-            <Link to="/dev" as="button" variant="gray">
+          <Flex css={{ gap: '$1' }}>
+            <Link to="/dev/task-manager" as="button" variant="gray">
               <Box css={{ mr: '$1' }}>
                 <LayoutIcon />
               </Box>
               Task Manager
             </Link>
-          </Box>
+            <Link to="/dev/indexing-manager" as="button" variant="gray">
+              <Box css={{ mr: '$1' }}>
+                <LayoutIcon />
+              </Box>
+              Indexing Manager
+            </Link>
+          </Flex>
         </Flex>
       </Flex>
     </Box>

@@ -15,7 +15,7 @@ export function useFeedTop({ ref }: Props) {
     getKey(['feed', 'top']),
     () =>
       fetchTopEntries(ref, {
-        priority: 2,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,

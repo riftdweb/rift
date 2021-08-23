@@ -15,7 +15,7 @@ export function useFeedLatest({ ref }: Props) {
     getKey(['feed', 'latest']),
     () =>
       fetchAllEntries(ref, {
-        priority: 2,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,

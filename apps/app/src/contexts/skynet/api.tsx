@@ -1,3 +1,4 @@
+import { JSONResponse } from '@riftdweb/types'
 import {
   CustomUploadOptions,
   genKeyPairFromSeed,
@@ -52,12 +53,7 @@ export const buildApi = ({
     domain?: string
     discoverable?: boolean
     priority?: number
-  }) {
-    type GetJSONReturn = Promise<{
-      data: T | null
-      dataLink: string | null
-    }>
-
+  }): Promise<JSONResponse<T>> {
     const fullDataPath = (customDomain || appDomain) + '/' + path
     if (seed) {
       const { publicKey } = genKeyPairFromSeed(seed)
@@ -66,7 +62,9 @@ export const buildApi = ({
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
       const task = () =>
-        (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
+        (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<
+          JSONResponse<T>
+        >
       return apiLimiter.add(task, {
         priority,
         meta: {
@@ -87,7 +85,7 @@ export const buildApi = ({
           (client.file.getJSON(
             customPublicKey,
             fullDataPath
-          ) as unknown) as GetJSONReturn
+          ) as unknown) as Promise<JSONResponse<T>>
         return apiLimiter.add(task, {
           priority,
           meta: {
@@ -102,7 +100,7 @@ export const buildApi = ({
         (client.file.getJSONEncrypted(
           customPublicKey,
           fullDataPath
-        ) as unknown) as GetJSONReturn
+        ) as unknown) as Promise<JSONResponse<T>>
       return apiLimiter.add(task, {
         priority,
         meta: {
@@ -119,7 +117,7 @@ export const buildApi = ({
 
       if (discoverable) {
         const task = () =>
-          (mySky.getJSON(fullDataPath) as unknown) as GetJSONReturn
+          (mySky.getJSON(fullDataPath) as unknown) as Promise<JSONResponse<T>>
         return apiLimiter.add(task, {
           priority,
           meta: {
@@ -130,7 +128,9 @@ export const buildApi = ({
         })
       }
       const task = () =>
-        (mySky.getJSONEncrypted(fullDataPath) as unknown) as GetJSONReturn
+        (mySky.getJSONEncrypted(fullDataPath) as unknown) as Promise<
+          JSONResponse<T>
+        >
       return apiLimiter.add(task, {
         priority,
         meta: {
@@ -147,7 +147,9 @@ export const buildApi = ({
       \tdiscoverable: N/A`)
 
     const task = () =>
-      (client.db.getJSON(publicKey, fullDataPath) as unknown) as GetJSONReturn
+      (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<
+        JSONResponse<T>
+      >
     return apiLimiter.add(task, {
       priority,
       meta: {

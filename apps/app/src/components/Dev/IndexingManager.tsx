@@ -1,28 +1,18 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Panel,
-  Subheading,
-  Text,
-} from '@riftdweb/design-system'
-import { Feed, IUser } from '@riftdweb/types'
+import { Box, Flex, Panel, Subheading, Text } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
-import { SWRResponse } from 'swr'
 import { useSkynet } from '../../contexts/skynet'
 import { useUsers } from '../../contexts/users'
-import { checkIsUserUpToDate } from '../../contexts/users/utils'
+import { checkIsUserUpToDate } from '../../workers/user/checks'
+import { EntriesResponse } from '../_shared/EntriesState'
 
-type Props = {}
-
-export function DevUserIndexing({}: Props) {
+export function DevIndexingManager() {
   const { controlRef: ref } = useSkynet()
   const [key, setKey] = useState<number>(Math.random())
   const {
     usersMap,
     pendingUserIds,
     friends,
-    followings,
+    following,
     suggestions,
   } = useUsers()
 
@@ -44,14 +34,14 @@ export function DevUserIndexing({}: Props) {
     position: i,
   }))
 
-  const groups: { name: string; users: SWRResponse<Feed<IUser>, any> }[] = [
+  const groups: { name: string; users: EntriesResponse<string> }[] = [
     {
       name: 'Friends',
       users: friends,
     },
     {
       name: 'Following',
-      users: followings,
+      users: following,
     },
     {
       name: 'Suggestions',
@@ -86,6 +76,7 @@ export function DevUserIndexing({}: Props) {
         >
           <Panel
             css={{
+              backgroundColor: '$gray200',
               padding: '$2',
             }}
           >
@@ -114,14 +105,18 @@ export function DevUserIndexing({}: Props) {
                           padding: '$1',
                         }}
                       >
-                        <Text>{userId}</Text>
+                        <Text>{userId.slice(0, 5)}</Text>
                         <Text>New</Text>
                       </Box>
                     )
                   }
-                  const { isUpToDate, checks } = checkIsUserUpToDate(user, {
-                    include: ['profile', 'following', 'feed'],
-                  })
+                  const { isUpToDate, checks } = checkIsUserUpToDate(
+                    ref,
+                    user,
+                    {
+                      level: 'index',
+                    }
+                  )
                   return (
                     <Box
                       css={{
@@ -163,6 +158,7 @@ export function DevUserIndexing({}: Props) {
               <Panel
                 css={{
                   padding: '$2',
+                  backgroundColor: '$gray200',
                 }}
               >
                 <Flex css={{ flexDirection: 'column', gap: '$3' }}>
@@ -179,37 +175,61 @@ export function DevUserIndexing({}: Props) {
                     </Subheading>
                   </Flex>
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-                    {users.data?.entries.map(({ userId }) => {
-                      const user = ref.current.getUser(userId)
-                      const { isUpToDate, checks } = checkIsUserUpToDate(user, {
-                        include: ['profile', 'following', 'feed'],
-                      })
-                      const queuePosition = pendingUserIds.findIndex(
-                        (pendingId) => pendingId === user.userId
+                    {users.data?.entries
+                      .map((userId) => ({
+                        userId,
+                        position: pendingUserIds.findIndex(
+                          (pendingId) => pendingId === userId
+                        ),
+                      }))
+                      .sort((a, b) =>
+                        a.position === -1
+                          ? 1
+                          : b.position === -1
+                          ? -1
+                          : a.position > b.position
+                          ? 1
+                          : -1
                       )
-                      return (
-                        <Box
-                          css={{
-                            backgroundColor: isUpToDate ? 'none' : '$red900',
-                            borderRadius: '$1',
-                            padding: '$1',
-                          }}
-                        >
-                          <Text>{user.username || user.userId}</Text>
-                          <Text>{isUpToDate ? 'Up to date' : 'Expired'}</Text>
-                          <Text>
-                            {!!~queuePosition
-                              ? `Queued at: ${queuePosition}`
-                              : 'Not in queue'}
-                          </Text>
-                          {checks.map((check) => (
-                            <Box>
-                              <Text>{check.message}</Text>
-                            </Box>
-                          ))}
-                        </Box>
-                      )
-                    })}
+                      .map(({ userId, position }) => {
+                        const user = ref.current.getUser(userId)
+                        if (!user) {
+                          return null
+                        }
+
+                        const { isUpToDate, checks } = checkIsUserUpToDate(
+                          ref,
+                          user,
+                          {
+                            level: 'index',
+                          }
+                        )
+                        return (
+                          <Box
+                            key={userId}
+                            css={{
+                              backgroundColor: isUpToDate
+                                ? '$gray400'
+                                : '$red900',
+                              borderRadius: '$1',
+                              padding: '$1',
+                            }}
+                          >
+                            <Text>{user.username || user.userId}</Text>
+                            <Text>{isUpToDate ? 'Up to date' : 'Expired'}</Text>
+                            <Text>
+                              {!!~position
+                                ? `Queued at: ${position}`
+                                : 'Not in queue'}
+                            </Text>
+                            {checks.map((check) => (
+                              <Box key={check.message}>
+                                <Text>{check.message}</Text>
+                              </Box>
+                            ))}
+                          </Box>
+                        )
+                      })}
                   </Flex>
                 </Flex>
               </Panel>

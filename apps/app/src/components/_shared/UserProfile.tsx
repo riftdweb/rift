@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom'
 import { Box, Button, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import intersection from 'lodash/intersection'
 import { User } from './User'
@@ -45,7 +44,7 @@ export function UserProfile({
   const userId = userIdParam || userParam.userId
   const user = useUser(userId)
   const profile = user?.profile
-  const { handleFollow, followingUserIds } = useUsers()
+  const { handleFollow, allFollowing } = useUsers()
   const isMyself = userId === myUserId
 
   const verticalGap = versionToGap[version]
@@ -80,7 +79,7 @@ export function UserProfile({
   }
 
   const knownFollowedByUserIds = intersection(
-    followingUserIds.data || [],
+    allFollowing.data?.entries || [],
     user ? user.followers.data : []
   )
   // const knownFollowedByUserIds = userItem ? userItem.followerIds : []
@@ -103,7 +102,8 @@ export function UserProfile({
         />
         <Box css={{ flex: 1 }} />
         <UserContextMenu userId={userId} />
-        {!isMyself &&
+        {myUserId &&
+          !isMyself &&
           (isFriend(user) ? (
             <Flex css={{ gap: '$1', alignItems: 'center' }}>
               <Text css={{ fontSize: '$2', color: '$gray900' }}>Friends</Text>

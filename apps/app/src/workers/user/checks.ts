@@ -1,13 +1,7 @@
 import { IUser } from '@riftdweb/types'
 import { formatDistance } from 'date-fns'
-
-type UserResourceKeys = 'profile' | 'following' | 'feed'
-
-const resourceTimeoutMap: Record<UserResourceKeys, number> = {
-  profile: 1000 * 60 * 60,
-  following: 1000 * 60 * 30,
-  feed: 1000 * 60 * 20,
-}
+import { ControlRef } from '../../contexts/skynet/ref'
+import { getConfig, Level, UserResourceKeys } from './config'
 
 type IsUpToDateParams = {
   verbose?: boolean
@@ -16,7 +10,8 @@ type IsUpToDateParams = {
 
 export function checkIsUpToDate(
   user: IUser | undefined,
-  resource: UserResourceKeys,
+  resourceKey: UserResourceKeys,
+  timeout: number,
   params: IsUpToDateParams = {}
 ) {
   if (!user) {
@@ -25,8 +20,24 @@ export function checkIsUpToDate(
       message: 'User undefined',
     }
   }
-  const updatedAt = user[resource].updatedAt
-  const timeout = resourceTimeoutMap[resource]
+
+  const resource = user[resourceKey]
+
+  if (!resource) {
+    return {
+      isUpToDate: false,
+      message: 'User resource undefined',
+    }
+  }
+
+  if (timeout === -1) {
+    return {
+      isUpToDate: true,
+      message: `User resource '${resourceKey}' update disabled`,
+    }
+  }
+
+  const updatedAt = resource.updatedAt
 
   const { verbose = false, log = console.log } = params
 
@@ -38,7 +49,7 @@ export function checkIsUpToDate(
     addSuffix: true,
   })
 
-  const message = `${resource ? `${resource} ` : ''}${
+  const message = `${resourceKey ? `${resourceKey} ` : ''}${
     isUpToDate ? 'current' : 'expired'
   } - updated ${ago}`
 
@@ -53,20 +64,17 @@ export function checkIsUpToDate(
 }
 
 type IsUserUpToDateParams = {
-  include?: UserResourceKeys[]
   verbose?: boolean
   log?: (message: string) => void
+  level?: Level
 }
 
 export function checkIsUserUpToDate(
+  ref: ControlRef,
   user: IUser | undefined,
   params: IsUserUpToDateParams = {}
 ) {
-  const {
-    include = ['profile', 'following'],
-    verbose = false,
-    log = console.log,
-  } = params
+  const { verbose = false, log = console.log, level = 'index' } = params
 
   if (!user) {
     return {
@@ -75,8 +83,12 @@ export function checkIsUserUpToDate(
     }
   }
 
-  const checks = include.map((resource) =>
-    checkIsUpToDate(user, resource, {
+  const { timeouts } = getConfig(ref, user, level)
+
+  const resourceKeys = Object.keys(timeouts) as UserResourceKeys[]
+
+  const checks = resourceKeys.map((resourceKey) =>
+    checkIsUpToDate(user, resourceKey, timeouts[resourceKey], {
       verbose,
       log,
     })

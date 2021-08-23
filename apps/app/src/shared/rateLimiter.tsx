@@ -1,35 +1,17 @@
 import { createLogger } from './logger'
 import { v4 as uuid } from 'uuid'
-import { taskQueueRegistry } from './taskQueue'
+import {
+  getTaskKey,
+  ITaskQueue,
+  Task,
+  TaskParams,
+  taskQueueRegistry,
+} from './taskQueue'
 
 type Params = {
   capacity?: number
   processingInterval?: number
   ratePerMinute?: number
-}
-
-type TaskParams = {
-  meta: {
-    id?: string
-    name: string
-    operation: string
-  }
-  cost?: number
-  priority?: number
-}
-
-type Task<T> = {
-  id: string
-  meta: {
-    id?: string
-    name: string
-    operation: string
-  }
-  task: () => Promise<T>
-  cost: number
-  priority: number
-  resolve: (value: T | PromiseLike<T>) => void
-  reject: () => void
 }
 
 const defaultParams = {
@@ -38,17 +20,10 @@ const defaultParams = {
   ratePerMinute: 60,
 }
 
-type IRateLimiter<T> = {
-  name: string
-  add: <T>(task: () => Promise<T>, params: TaskParams) => Promise<T>
-  queue: Task<T>[]
-  pendingQueue: Task<T>[]
-}
-
 export function RateLimiter<T>(
   name: string,
   params: Params = {}
-): IRateLimiter<T> {
+): ITaskQueue<T> {
   const { capacity, processingInterval, ratePerMinute } = {
     ...defaultParams,
     ...params,
@@ -135,9 +110,10 @@ export function RateLimiter<T>(
       const result = await task.task()
       task.resolve(result)
     } catch (e) {
-      console.log('rateLimiter caught error', e)
+      console.log(`'${name}' rateLimiter caught error`, e)
       task.reject()
     }
+
     completedTaskLog.push([new Date().getTime(), task.cost])
     // log('Task complete')
 
@@ -214,6 +190,8 @@ export function RateLimiter<T>(
     const { meta, priority = 0, cost = 1 } = params
     const id = uuid()
 
+    const key = getTaskKey(meta)
+
     assertRunning()
     return new Promise((resolve, reject) => {
       queue.push({
@@ -224,6 +202,8 @@ export function RateLimiter<T>(
         reject,
         cost,
         priority,
+        key,
+        shareCount: 1,
       })
     })
   }

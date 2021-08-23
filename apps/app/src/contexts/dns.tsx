@@ -46,7 +46,7 @@ export function DnsProvider({ children }: Props) {
     async (): Promise<DnsEntryFeed> => {
       const result = await Api.getJSON<DnsEntryFeed>({
         path: dataKeyDns,
-        priority: 2,
+        priority: 4,
       })
       return (
         result.data || {
@@ -78,7 +78,7 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
-            priority: 2,
+            priority: 4,
           })
         await taskQueue.add(task, {
           meta: {
@@ -215,7 +215,7 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
-            priority: 2,
+            priority: 4,
           })
         await taskQueue.add(task, {
           meta: {

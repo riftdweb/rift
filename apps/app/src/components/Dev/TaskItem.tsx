@@ -11,14 +11,15 @@ type Props = {
 
 export function TaskItem({ task, color, dupeCount }: Props) {
   const { controlRef: ref } = useSkynet()
-  const { usersMap } = useUsers()
+  const { isInitUsersComplete } = useUsers()
 
-  if (!usersMap.data) {
+  if (!isInitUsersComplete) {
     return null
   }
 
   const user = ref.current.getUser(task.meta.id)
-  const targetUser = ref.current.getUser(task.meta.name)
+
+  const { shareCount } = task
 
   return (
     <Box
@@ -30,8 +31,18 @@ export function TaskItem({ task, color, dupeCount }: Props) {
         borderRadius: '$1',
       }}
     >
-      <Flex css={{ flexDirection: 'column' }}>
-        <Flex css={{ justifyContent: 'space-between' }}>
+      <Flex css={{ flexDirection: 'column', gap: '$1' }}>
+        <Flex css={{ justifyContent: 'space-between', gap: '$1' }}>
+          <Text css={{ color: '$gray900', flex: 1 }}>
+            {task.id.slice(0, 5)}
+          </Text>
+          {dupeCount > 1 && <Text css={{ color: '$red900' }}>{dupeCount}</Text>}
+          {shareCount > 1 && (
+            <Text css={{ color: '$green900' }}>{shareCount}</Text>
+          )}
+          <Text css={{ color: '$hiContrast' }}>{task.priority}</Text>
+        </Flex>
+        <Flex css={{ justifyContent: 'space-between', gap: '$1' }}>
           <Text
             css={{
               flex: 1,
@@ -43,22 +54,20 @@ export function TaskItem({ task, color, dupeCount }: Props) {
           >
             {task.meta.id?.slice(0, 5)} {user && user.username}
           </Text>
-          {dupeCount && <Text css={{ color: '$red900' }}>{dupeCount}</Text>}
-          <Text css={{ color: '$hiContrast' }}>{task.priority}</Text>
         </Flex>
-        <Text
-          css={{
-            flex: 1,
-            color: '$hiContrast',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {targetUser
-            ? `${task.meta.name.slice(0, 5)} ${targetUser?.username}`
-            : task.meta.name}
-        </Text>
+        {task.meta.name && (
+          <Text
+            css={{
+              flex: 1,
+              color: '$hiContrast',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {task.meta.name}
+          </Text>
+        )}
         <Text css={{ color: '$hiContrast' }}>{task.meta.operation}</Text>
       </Flex>
     </Box>

@@ -1,4 +1,4 @@
-import { getDataKeyFeeds } from '../shared/dataKeys'
+import { getDataKeyFeeds, getDataKeyUsers } from '../shared/dataKeys'
 import { feedDAC } from '../contexts/skynet'
 import { ControlRef } from '../contexts/skynet/ref'
 import {
@@ -8,7 +8,6 @@ import {
   ActivityFeed,
   Activity,
   UsersMap,
-  WorkerParams,
 } from '@riftdweb/types'
 import { apiLimiter } from '../contexts/skynet/api'
 
@@ -24,6 +23,10 @@ export const emptyActivityFeed: ActivityFeed = {
   null: true,
 }
 
+type Params = {
+  priority?: number
+}
+
 const defaultParams = {
   priority: 0,
 }
@@ -32,7 +35,7 @@ export async function cacheUserEntries(
   ref: ControlRef,
   userId: string,
   entries: Entry[],
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -63,7 +66,7 @@ export function upsertAllEntries(
 
 export async function fetchAllEntries(
   ref: ControlRef,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
@@ -83,7 +86,7 @@ export async function fetchAllEntries(
 export async function fetchUserEntries(
   ref: ControlRef,
   userId: string,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<EntryFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
@@ -95,7 +98,7 @@ export async function fetchUserEntries(
 
 export async function fetchTopEntries(
   ref: ControlRef,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<EntryFeed> {
   const Api = ref.current.Api
   let { data: feed } = await Api.getJSON<EntryFeed>({
@@ -107,7 +110,7 @@ export async function fetchTopEntries(
 
 export async function fetchActivity(
   ref: ControlRef,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<ActivityFeed> {
   const { Api } = ref.current
   let { data: feed } = await Api.getJSON<ActivityFeed>({
@@ -120,7 +123,7 @@ export async function fetchActivity(
 export async function cacheAllEntries(
   ref: ControlRef,
   entries: Entry[],
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ) {
   const { Api } = ref.current
   return await Api.setJSON({
@@ -135,7 +138,7 @@ export async function cacheAllEntries(
 
 export async function compileUserEntries(
   userId: string,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<Entry[]> {
   let allUserEntries: Entry[] = []
   try {
@@ -162,7 +165,7 @@ export async function compileUserEntries(
       },
     })
   } catch (e) {
-    console.log(e)
+    console.log('Error in compileUserEntries', e)
     return allUserEntries
   }
   return allUserEntries
@@ -171,7 +174,7 @@ export async function compileUserEntries(
 export async function cacheTopEntries(
   ref: ControlRef,
   entries: Entry[],
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -187,7 +190,7 @@ export async function cacheTopEntries(
 export async function cacheActivity(
   ref: ControlRef,
   activities: Activity[],
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
@@ -202,10 +205,10 @@ export async function cacheActivity(
 
 export async function fetchUsersMap(
   ref: ControlRef,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<UsersMap> {
   const response = await ref.current.Api.getJSON<UsersMap>({
-    path: 'v1/usersMap',
+    path: getDataKeyUsers('usersMap'),
     priority: params.priority,
   })
 
@@ -220,11 +223,11 @@ export async function fetchUsersMap(
 export async function cacheUsersMap(
   ref: ControlRef,
   usersMap: UsersMap,
-  params: WorkerParams = defaultParams
+  params: Params = defaultParams
 ): Promise<void> {
   const { Api } = ref.current
   await Api.setJSON({
-    path: 'v1/usersMap',
+    path: getDataKeyUsers('usersMap'),
     json: usersMap,
     priority: params.priority,
   })

@@ -1,7 +1,7 @@
-const makeDataKeyFn = (version: string, defaultValue: string) => (
+const makeDataKeyFn = (version: string, namespace: string) => (
   str?: string
 ) => {
-  return `${version}/${str || defaultValue}.json`
+  return `${version}/${namespace}/${str || 'index'}.json`
 }
 
 export const dataVersionUsers = 'v1'

@@ -14,6 +14,7 @@ import {
 } from '@riftdweb/design-system'
 import { useState } from 'react'
 import { useSkynet } from '../../contexts/skynet'
+import { useUser } from '../../hooks/useUser'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Avatar } from '../_shared/Avatar'
 
@@ -39,7 +40,8 @@ export function IdentityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, myUser, logout, login } = useSkynet()
+  const { myUserId, logout, login } = useSkynet()
+  const myUser = useUser(myUserId)
   const [isOpen, setIsOpen] = useState<boolean>()
 
   if (!myUserId) {

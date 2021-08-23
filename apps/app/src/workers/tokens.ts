@@ -2,6 +2,8 @@ import * as CAF from 'caf'
 import { createLogger } from '../shared/logger'
 import { ControlRef, ControlRefDefaults } from '../contexts/skynet/ref'
 
+const log = createLogger('clearToken')
+
 export async function handleToken(
   ref: ControlRef,
   tokenKey: keyof ControlRefDefaults['tokens']
@@ -19,8 +21,6 @@ export async function clearToken(
   ref: ControlRef,
   tokenKey: keyof ControlRefDefaults['tokens']
 ): Promise<void> {
-  const log = createLogger('clearToken')
-
   const existingToken = ref.current.tokens[tokenKey]
 
   try {
@@ -37,8 +37,9 @@ export async function clearToken(
 }
 
 export async function clearAllTokens(ref) {
-  const promises = Object.keys(ref.current.tokens).map((key) =>
-    clearToken(ref, key)
-  )
+  const promises = Object.keys(ref.current.tokens).map((key) => {
+    log(`Clearing ${key}`)
+    return clearToken(ref, key)
+  })
   await Promise.all(promises)
 }

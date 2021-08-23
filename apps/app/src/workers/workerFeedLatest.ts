@@ -68,7 +68,7 @@ async function feedLatestUpdate(
 
 const taskQueue = TaskQueue('feed/latest')
 
-async function workerFeedLatestUpdate(
+async function queueFeedLatestUpdate(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
@@ -96,7 +96,9 @@ async function workerFeedLatestUpdate(
 
 function cleanFeed(ref: ControlRef, allEntries: Entry[]) {
   return allEntries.filter((entry) =>
-    ref.current.followingUserIds.data.includes(entry.userId)
+    [ref.current.myUserId, ...ref.current.allFollowing.data.entries].includes(
+      entry.userId
+    )
   )
 }
 
@@ -134,7 +136,7 @@ let entriesBuffer = []
 
 const SCHEDULE_INTERVAL = 10_000
 
-// All internal workers are priorty 1 because they should take precedence over
+// All internal workers are priorty 3 because they should take precedence over
 // routine indexing and do not happen often.
 export async function scheduleFeedLatestUpdate(ref: ControlRef) {
   const log = createLogger('feed/latest/scheduler')
@@ -143,17 +145,17 @@ export async function scheduleFeedLatestUpdate(ref: ControlRef) {
   entriesBuffer = []
   if (entriesBatch.length) {
     log(`Running feed latest update: ${entriesBatch.length}`)
-    await workerFeedLatestUpdate(ref, entriesBatch, {
-      priority: 1,
+    await queueFeedLatestUpdate(ref, entriesBatch, {
+      priority: 3,
     })
 
     if (taskQueue.queue.length === 0) {
       Promise.all([
-        workerFeedTopUpdate(ref, { force: true, delay: 1_000, priority: 1 }),
+        workerFeedTopUpdate(ref, { force: true, delay: 1_000, priority: 3 }),
         workerFeedActivityUpdate(ref, {
           force: true,
           delay: 1_000,
-          priority: 1,
+          priority: 3,
         }),
       ])
     }

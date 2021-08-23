@@ -1,12 +1,6 @@
-import {
-  Flex,
-  Box,
-  Heading,
-  Text,
-  Container,
-  Image,
-} from '@riftdweb/design-system'
+import { Flex, Box, Text, Container, Image } from '@riftdweb/design-system'
 import { portals } from '../../shared/portals'
+import LogoIcon from '../_icons/LogoIcon'
 import SkynetHandshakeIcon from '../_icons/SkynetHandshakeIcon'
 import { Link } from '../_shared/Link'
 
@@ -38,9 +32,18 @@ export default function Footer() {
               maxWidth: '800px',
             }}
           >
-            <Heading css={{ fontWeight: 'bold' }}>
-              <Image src="/wordmark.png" css={{ height: '25px' }} alt="Rift" />
-            </Heading>
+            <Flex
+              css={{
+                gap: '$2',
+              }}
+            >
+              <LogoIcon />
+              <Image
+                src="/wordmark-mono.png"
+                css={{ height: '25px', filter: '$colors-logoFilter' }}
+                alt="Rift"
+              />
+            </Flex>
             <Text css={{ color: '$gray800' }}>
               Your decentralized workspace.
             </Text>

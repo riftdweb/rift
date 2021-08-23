@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
   Flex,
   Heading,
-  Image,
   Select,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -25,6 +24,7 @@ import { Link } from '../_shared/Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
 import { Searchbar } from './Searchbar'
 import { useSearch } from '../../contexts/search'
+import LogoIcon from '../_icons/LogoIcon'
 
 export default function Navbar() {
   const { toggleTheme } = useTheme()
@@ -60,24 +60,25 @@ export default function Navbar() {
               },
             }}
           >
-            <Tooltip align="start" content="Your decentralized workspace">
+            <Tooltip
+              align="start"
+              content="Rift - Your decentralized workspace"
+            >
               <Heading
                 css={{
                   mr: '$2',
                   fontWeight: 'bold',
-                  top: '-3px',
+                  top: '-2px',
                   '@bp2': {
-                    top: '-5px',
+                    top: '-2px',
                   },
                   position: 'relative',
                 }}
               >
                 <Link to="/" css={{ textDecoration: 'none' }}>
-                  <Image
-                    src="/wordmark.png"
-                    css={{ height: '25px' }}
-                    alt="Rift"
-                  />
+                  <Flex css={{ gap: '8px', alignItems: 'center' }}>
+                    <LogoIcon />
+                  </Flex>
                 </Link>
               </Heading>
             </Tooltip>

@@ -11,7 +11,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { feedDAC, useSkynet } from '../skynet'
 import { workerRoot } from '../../workers/workerRoot'
-import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
+import { syncUserFeed } from '../../workers/user/resources/feed'
 import { ActivityFeed, Entry, EntryFeed } from '@riftdweb/types'
 import { workerFeedTopUpdate } from '../../workers/workerFeedTop'
 import { workerFeedActivityUpdate } from '../../workers/workerFeedActivity'
@@ -21,8 +21,6 @@ import { useFeedActivity } from './useFeedActivity'
 import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
-import { workerFeedIndexer } from '../../workers/workerFeedIndexer'
-import { syncUserForInteraction } from '../../workers/workerUpdateUser'
 
 const log = createLogger('feed')
 
@@ -127,35 +125,24 @@ export function FeedProvider({ children }: Props) {
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
-      await workerFeedTopUpdate(ref, { force: true, priority: 2 })
+      await workerFeedTopUpdate(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])
 
   const refreshLatestFeed = useCallback(() => {
     const func = async () => {
-      // Could start workerFeedLatestUpdate, but this probably makes more sense
-      await workerFeedIndexer(ref, { force: true, priority: 2 })
+      // TODO: Is there anything to replace this call?
     }
     return func()
-  }, [ref])
+  }, [])
 
   const refreshActivity = useCallback(() => {
     const func = async () => {
-      await workerFeedActivityUpdate(ref, { force: true, priority: 2 })
+      await workerFeedActivityUpdate(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])
-
-  // If cached user feed returns null flag true, the user feed has never been compiled.
-  // Check this whenever the response data changes.
-  useEffect(() => {
-    if (!user.loadingStateCurrentUser && user.response.data?.null) {
-      log(`Building a feed for ${viewingUserId}`)
-      syncUserForInteraction(ref, viewingUserId)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.response.data])
 
   const incrementKeywords = useCallback(
     (keywords) => {
@@ -263,9 +250,7 @@ export function FeedProvider({ children }: Props) {
           await feedDAC.createPost({ text })
 
           localLog('Start user feed update')
-          await workerFeedUserUpdate(ref, myUserId, {
-            priority: 2,
-          })
+          await syncUserFeed(ref, myUserId, 4, 0)
         } finally {
           ref.current.pendingUserPosts -= 1
         }

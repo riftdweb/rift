@@ -4,12 +4,12 @@ import { useUsers } from '../../contexts/users'
 import { UserProfile } from '../_shared/UserProfile'
 
 export function UserResults({ searchValue, onSelect }) {
-  const { usersIndex, pendingUserIds, userCounts } = useUsers()
+  const { indexedUsersIndex, userCounts } = useUsers()
 
   const filteredItems = useMemo(() => {
     const lowerCaseSearchValue = searchValue.toLowerCase()
 
-    return usersIndex.filter((user) => {
+    return indexedUsersIndex.filter((user) => {
       if (user.userId.includes(searchValue)) {
         return true
       }
@@ -44,7 +44,7 @@ export function UserResults({ searchValue, onSelect }) {
       }
       return false
     })
-  }, [usersIndex, searchValue])
+  }, [indexedUsersIndex, searchValue])
 
   const pagedItems = filteredItems.slice(0, 30)
 

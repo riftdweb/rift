@@ -12,7 +12,7 @@ import { ScrollArea } from '../../../_shared/ScrollArea'
 
 export function Following() {
   const { myUserId, login } = useSkynet()
-  const { friends, followings, suggestions } = useUsers()
+  const { friends, following, suggestions } = useUsers()
 
   if (!myUserId) {
     return (
@@ -70,7 +70,11 @@ export function Following() {
             {!!friends.data?.entries.length && (
               <Fragment>
                 <StickyHeading
-                  title="Friends"
+                  title={
+                    friends.data
+                      ? `Friends (${friends.data?.entries.length})`
+                      : 'Friends'
+                  }
                   css={{
                     marginRight: '$3',
                   }}
@@ -90,7 +94,7 @@ export function Following() {
                     validatingMessage="Loading"
                     emptyMessage="No friends."
                   >
-                    {friends.data?.entries.map(({ userId }) => (
+                    {friends.data?.entries.map((userId) => (
                       <Follow key={userId} userId={userId} />
                     ))}
                   </EntriesState>
@@ -98,7 +102,11 @@ export function Following() {
               </Fragment>
             )}
             <StickyHeading
-              title="Following"
+              title={
+                following.data
+                  ? `Following (${following.data?.entries.length})`
+                  : 'Following'
+              }
               contextMenu={<FollowingContextMenu />}
               css={{
                 marginRight: '$3',
@@ -115,11 +123,11 @@ export function Following() {
               }}
             >
               <EntriesState
-                response={followings}
+                response={following}
                 validatingMessage="Loading"
                 emptyMessage="Not following anyone yet."
               >
-                {followings.data?.entries.map(({ userId }) => (
+                {following.data?.entries.map((userId) => (
                   <Follow key={userId} userId={userId} />
                 ))}
               </EntriesState>
@@ -147,7 +155,7 @@ export function Following() {
                     validatingMessage="Loading"
                     emptyMessage="No suggestions."
                   >
-                    {suggestions.data?.entries.map(({ userId, profile }) => (
+                    {suggestions.data?.entries.map((userId) => (
                       <SuggestedFollow key={userId} userId={userId} />
                     ))}
                   </EntriesState>

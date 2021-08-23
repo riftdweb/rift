@@ -1,17 +1,13 @@
-import {
-  Flex,
-  Container,
-  Box,
-  Subheading,
-  Heading,
-} from '@riftdweb/design-system'
-import { useState } from 'react'
+import { Flex, Container } from '@riftdweb/design-system'
+import { useParams } from 'react-router-dom'
+import { Link } from '../_shared/Link'
 import { DevTaskManager } from './TaskManager'
-import { DevUserIndexing } from './UserIndexing'
+import { DevIndexingManager } from './IndexingManager'
 
-type Tab = 'taskManager' | 'userIndexing'
+type ToolName = 'task-manager' | 'indexing-manager'
+
 export function Dev() {
-  const [tab, setTab] = useState<Tab>('taskManager')
+  const { toolName } = useParams() as { toolName: ToolName }
 
   return (
     <Container size="4">
@@ -23,33 +19,35 @@ export function Dev() {
         }}
       >
         <Flex css={{ gap: '$3' }}>
-          <Heading
+          <Link
+            to={'/dev/task-manager'}
             css={{
-              color: tab === 'taskManager' ? '$hiContrast' : '$gray700',
+              color: toolName === 'task-manager' ? '$hiContrast' : '$gray700',
               cursor: 'pointer',
               '&:hover': {
-                color: '$hiContrast',
+                color: toolName === 'task-manager' ? '$hiContrast' : '$gray900',
               },
             }}
-            onClick={() => setTab('taskManager')}
           >
             Task Manager
-          </Heading>
-          <Heading
+          </Link>
+          <Link
+            to={'/dev/indexing-manager'}
             css={{
-              color: tab === 'userIndexing' ? '$hiContrast' : '$gray700',
+              color:
+                toolName === 'indexing-manager' ? '$hiContrast' : '$gray700',
               cursor: 'pointer',
               '&:hover': {
-                color: '$hiContrast',
+                color:
+                  toolName === 'indexing-manager' ? '$hiContrast' : '$gray900',
               },
             }}
-            onClick={() => setTab('userIndexing')}
           >
-            User Indexing
-          </Heading>
+            Indexing Manager
+          </Link>
         </Flex>
-        {tab === 'taskManager' && <DevTaskManager />}
-        {tab === 'userIndexing' && <DevUserIndexing />}
+        {toolName === 'task-manager' && <DevTaskManager />}
+        {toolName === 'indexing-manager' && <DevIndexingManager />}
       </Flex>
     </Container>
   )

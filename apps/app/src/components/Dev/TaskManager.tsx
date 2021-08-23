@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Flex, Heading, Subheading, Panel } from '@riftdweb/design-system'
+import { Flex, Subheading, Panel } from '@riftdweb/design-system'
 import { ITaskQueue, taskQueueRegistry } from '../../shared/taskQueue'
 import { Task } from '../../shared/taskQueue'
 import { TaskItem } from './TaskItem'
@@ -36,6 +36,13 @@ export function DevTaskManager() {
         }}
       >
         {taskQueues.map((taskQueue) => {
+          if (
+            taskQueue.pendingQueue.length === 0 &&
+            taskQueue.queue.length === 0
+          ) {
+            return null
+          }
+
           const dupeKeyCountMap = getDupeKeyCountMap([
             ...taskQueue.pendingQueue,
             ...taskQueue.queue,
@@ -80,15 +87,17 @@ export function DevTaskManager() {
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                     {taskQueue.pendingQueue.map((task) => (
                       <TaskItem
+                        key={task.id}
                         task={task}
                         color="$purple700"
-                        dupeCount={dupeKeyCountMap[task.id]}
+                        dupeCount={dupeKeyCountMap[task.key]}
                       />
                     ))}
                     {taskQueue.queue.map((task) => (
                       <TaskItem
+                        key={task.id}
                         task={task}
-                        dupeCount={dupeKeyCountMap[task.id]}
+                        dupeCount={dupeKeyCountMap[task.key]}
                       />
                     ))}
                   </Flex>
@@ -107,6 +116,7 @@ function getDupeKeyCountMap(queue: Task<any>[]) {
     if (!key) {
       return acc
     }
+
     const count = acc[key] || 0
 
     return {

@@ -21,7 +21,7 @@ import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
 import { useUser } from '../../hooks/useUser'
-import { syncUserForInteractionAndForce } from '../../workers/workerUpdateUser'
+import { syncUser } from '../../workers/user'
 
 type Props = {
   userId: string
@@ -83,7 +83,7 @@ export function UserContextMenu({
                 User {userId.slice(0, 6)}...
               </DropdownMenuLabel>
             )}
-            {!isMyself && isFollowing(user) && (
+            {myUserId && !isMyself && isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -92,7 +92,7 @@ export function UserContextMenu({
                 </DropdownMenuItem>
               </Fragment>
             )}
-            {!isMyself && !isFollowing(user) && (
+            {myUserId && !isMyself && !isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -105,7 +105,7 @@ export function UserContextMenu({
         )}
         <DropdownMenuItem
           disabled={!!combinedLoadingState}
-          onSelect={() => syncUserForInteractionAndForce(ref, userId)}
+          onSelect={() => syncUser(ref, userId, 'refresh')}
         >
           Refresh
         </DropdownMenuItem>

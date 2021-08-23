@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { IUser, UsersMap } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
-import { ActivityFeed, EntryFeed } from '@riftdweb/types'
+import { Feed, ActivityFeed, EntryFeed } from '@riftdweb/types'
 import { Api } from './api'
 
 type TokenKey =
@@ -19,18 +19,22 @@ const controlRefDefaults = {
   viewingUserId: undefined as string | undefined,
 
   // Users context
-  followingUserIds: {} as SWRResponse<string[], any>,
+  allFollowing: {} as SWRResponse<Feed<string>, any>,
   usersMap: {} as SWRResponse<UsersMap, any>,
-  usersIndex: [] as IUser[],
-  getUser: (_userId: string): IUser => {
+  isInitUsersComplete: false as boolean,
+  indexedUsersIndex: [] as IUser[],
+  discoveredUsersIndex: [] as IUser[],
+  getUser: (userId: string): IUser => {
     throw Error('usersMap not yet loaded')
   },
-  upsertUser: (user: IUser): void => {},
-  upsertUsers: (user: IUser[]): void => {},
+  upsertUser: async (
+    user: { userId: string } & Partial<IUser>
+  ): Promise<void> => {},
+  upsertUsers: async (user: IUser[]): Promise<void> => {},
   pendingUserIds: [] as string[],
+  getUsersPendingUpdate: (() => []) as () => string[],
   setPendingUserIds: (() => {}) as Dispatch<SetStateAction<string[]>>,
-  addNewUserIds: (userIds: string[]): void => {},
-  followingUserIdsHasFetched: false as boolean,
+  addNewUserIds: async (userIds: string[]): Promise<void> => {},
   pendingUserPosts: 0 as number,
   domains: {} as {
     [domain: string]: number

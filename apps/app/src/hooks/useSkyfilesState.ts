@@ -5,15 +5,15 @@ import { getDataKeyFiles } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { useSkynet } from '../contexts/skynet'
-import { Api } from '../contexts/skynet/buildApi'
+import { Api } from '../contexts/skynet/api'
 
 const dataKeyFiles = getDataKeyFiles()
 
-const taskQueue = TaskQueue('files', {
+const taskQueue = TaskQueue('skyfiles', {
   maxQueueSize: 1,
 })
 
-const log = createLogger('files')
+const log = createLogger('skyfiles')
 
 const debouncedSyncState = debounce(async (Api: Api, state) => {
   log('Sync State task created')
@@ -23,13 +23,18 @@ const debouncedSyncState = debounce(async (Api: Api, state) => {
       await Api.setJSON({
         path: dataKeyFiles,
         json: state,
+        priority: 4,
       })
       log('Syncing success')
     } catch (e) {
       log('Syncing failed', e)
     }
   }
-  await taskQueue.append(task)
+  await taskQueue.add(task, {
+    meta: {
+      operation: 'sync',
+    },
+  })
 }, 5000)
 
 export const useSkyfilesState = () => {
@@ -41,6 +46,7 @@ export const useSkyfilesState = () => {
       try {
         const { data } = await Api.getJSON<Skyfile[]>({
           path: dataKeyFiles,
+          priority: 4,
         })
         // console.log(data)
         setLocalState(data || ([] as Skyfile[]))

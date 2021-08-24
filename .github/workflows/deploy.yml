@@ -1,4 +1,4 @@
-name: Deploy Skynet Preview
+name: Deploy To Skynet
 on:
   pull_request:
   push:
@@ -40,7 +40,7 @@ jobs:
         run: yarn build
 
       - name: Deploy to Skynet
-        uses: kwypchlo/deploy-to-skynet-action@main
+        uses: SkynetLabs/deploy-to-skynet-action@v2
         with:
           upload-dir: apps/app/build
           github-token: ${{ secrets.GITHUB_TOKEN }}

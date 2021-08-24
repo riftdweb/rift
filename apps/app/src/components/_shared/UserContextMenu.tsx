@@ -12,18 +12,19 @@ import {
 } from '@riftdweb/design-system'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useSkynet } from '../../contexts/skynet'
+import { isFollowing } from '../../contexts/users'
 import { Fragment, useMemo } from 'react'
 import { useFeed } from '../../contexts/feed'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
+import { useUser } from '../../hooks/useUser'
+import { syncUser } from '../../workers/user'
 
 type Props = {
   userId: string
-  profile: IUserProfile
   variant?: ButtonVariants['variant']
   right?: string
   size?: string
@@ -31,26 +32,17 @@ type Props = {
 
 export function UserContextMenu({
   userId,
-  profile,
   variant = 'ghost',
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, appDomain } = useSkynet()
-  const { user: feedUser, userId: viewingUserId, refreshUser } = useFeed()
-  const {
-    handleFollow,
-    handleUnfollow,
-    checkIsFollowingUser,
-    checkIsMyself,
-  } = useUsers()
+  const { controlRef: ref, myUserId, appDomain } = useSkynet()
+  const user = useUser(userId)
+  const profile = user?.profile
+  const { user: feedUser, userId: viewingUserId } = useFeed()
+  const { handleFollow, handleUnfollow } = useUsers()
 
-  const isMyself = useMemo(() => checkIsMyself(userId), [checkIsMyself, userId])
-  const isFollowingUser = useMemo(() => checkIsFollowingUser(userId), [
-    checkIsFollowingUser,
-    userId,
-  ])
-
+  const isMyself = userId === myUserId
   const isViewingUser = userId === viewingUserId
 
   const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
@@ -85,13 +77,13 @@ export function UserContextMenu({
         {userId && (
           <Fragment>
             {profile ? (
-              <DropdownMenuLabel>{profile.username}</DropdownMenuLabel>
+              <DropdownMenuLabel>{profile.data.username}</DropdownMenuLabel>
             ) : (
               <DropdownMenuLabel>
                 User {userId.slice(0, 6)}...
               </DropdownMenuLabel>
             )}
-            {!isMyself && isFollowingUser && (
+            {myUserId && !isMyself && isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -100,13 +92,11 @@ export function UserContextMenu({
                 </DropdownMenuItem>
               </Fragment>
             )}
-            {!isMyself && !isFollowingUser && (
+            {myUserId && !isMyself && !isFollowing(user) && (
               <Fragment>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onSelect={() => handleFollow(userId, profile)}
-                >
+                <DropdownMenuItem onSelect={() => handleFollow(userId)}>
                   Follow
                 </DropdownMenuItem>
               </Fragment>
@@ -115,7 +105,7 @@ export function UserContextMenu({
         )}
         <DropdownMenuItem
           disabled={!!combinedLoadingState}
-          onSelect={() => refreshUser(userId)}
+          onSelect={() => syncUser(ref, userId, 'refresh')}
         >
           Refresh
         </DropdownMenuItem>

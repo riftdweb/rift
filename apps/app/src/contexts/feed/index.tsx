@@ -10,18 +10,17 @@ import { SWRResponse } from 'swr'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { feedDAC, useSkynet } from '../skynet'
-import { workerRoot } from '../../workers/workerRoot'
-import { workerFeedUserUpdate } from '../../workers/workerFeedUser'
-import { ActivityFeed, Entry, EntryFeed } from './types'
-import { workerFeedTopUpdate } from '../../workers/workerFeedTop'
-import { workerFeedActivityUpdate } from '../../workers/workerFeedActivity'
+import { startRoot } from '../../workers/root'
+import { syncUserFeed } from '../../workers/user/resources/feed'
+import { ActivityFeed, Entry, EntryFeed } from '@riftdweb/types'
+import { updateTopFeed } from '../../workers/top'
+import { updateActivityFeed } from '../../workers/activity'
 import { createLogger } from '../../shared/logger'
 import { useParamUserId } from './useParamUserId'
 import { useFeedActivity } from './useFeedActivity'
 import { useFeedLatest } from './useFeedLatest'
 import { useFeedTop } from './useFeedTop'
 import { useFeedUser } from './useFeedUser'
-import { workerCrawlerUsers } from '../../workers/workerCrawlerUsers'
 
 const log = createLogger('feed')
 
@@ -62,9 +61,9 @@ type State = {
   refreshLatestFeed: () => void
   refreshCurrentFeed: () => void
   refreshActivity: () => void
-  refreshUser: (userId) => void
 
   createPost: ({ text: string }) => void
+  pendingUserEntries: Entry[]
   incrementKeywords: (keywords: string[]) => void
   setKeywordValue: (keyword: string, value: number) => void
   incrementDomain: (domain: string) => void
@@ -92,8 +91,11 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { myUserId, isReseting, isInitializing, controlRef: ref } = useSkynet()
+  const { myUserId, isReady, controlRef: ref } = useSkynet()
   const viewingUserId = useParamUserId()
+  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
+  const [mode, setMode] = useState<Mode>('top')
+  const [pendingUserEntries, setPendingUserEntries] = useState<Entry[]>([])
 
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
@@ -105,9 +107,9 @@ export function FeedProvider({ children }: Props) {
   const [nonIdealState, setNonIdealState] = useState<string>()
 
   const activity = useFeedActivity({ ref })
-  const latest = useFeedLatest({ ref })
   const top = useFeedTop({ ref })
-  const user = useFeedUser({ ref })
+  const latest = useFeedLatest({ ref, pendingUserEntries })
+  const user = useFeedUser({ ref, pendingUserEntries, setPendingUserEntries })
 
   // Update controlRef
   useEffect(() => {
@@ -119,58 +121,31 @@ export function FeedProvider({ children }: Props) {
   }, [ref, viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
 
   useEffect(() => {
-    if (isInitializing || isReseting) {
-      return
+    if (isReady) {
+      startRoot(ref)
     }
-    workerRoot(ref)
-  }, [ref, isInitializing, isReseting])
+  }, [ref, isReady])
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
-      await workerFeedTopUpdate(ref, { force: true })
+      await updateTopFeed(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])
 
   const refreshLatestFeed = useCallback(() => {
     const func = async () => {
-      // Could start workerFeedLatestUpdate, but this probably makes more sense
-      await workerCrawlerUsers(ref, { force: true })
+      // TODO: Is there anything to replace this call?
     }
     return func()
-  }, [ref])
+  }, [])
 
   const refreshActivity = useCallback(() => {
     const func = async () => {
-      await workerFeedActivityUpdate(ref, { force: true })
+      await updateActivityFeed(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])
-
-  const refreshUser = useCallback(
-    (userId: string) => {
-      const func = async () => {
-        try {
-          await workerFeedUserUpdate(ref, userId, {
-            force: true,
-            prioritize: true,
-          })
-        } catch (e) {}
-      }
-      return func()
-    },
-    [ref]
-  )
-
-  // If cached user feed returns null flag true, the user feed has never been compiled.
-  // Check this whenever the response data changes.
-  useEffect(() => {
-    if (!user.loadingStateCurrentUser && user.response.data?.null) {
-      log(`Building a feed for ${viewingUserId}`)
-      refreshUser(viewingUserId)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.response.data])
 
   const incrementKeywords = useCallback(
     (keywords) => {
@@ -229,9 +204,6 @@ export function FeedProvider({ children }: Props) {
     [setDomains]
   )
 
-  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
-  const [mode, setMode] = useState<Mode>('top')
-
   const createPost = useCallback(
     ({ text }: { text: string }) => {
       const localLog = log.createLogger('createPost')
@@ -253,42 +225,34 @@ export function FeedProvider({ children }: Props) {
         try {
           localLog('Optimistic updates')
           // Incrementing this value prevents feeds from refetching
-          ref.current.pendingUserPosts += 1
-
-          // Optimistically update local latest feed
-          latest.response.mutate(
-            (data) => ({
-              updatedAt: data.updatedAt,
-              entries: [pendingPost, ...data.entries],
-            }),
-            false
-          )
-
-          // Optimistically update local user feed
-          user.response.mutate(
-            (data) => ({
-              updatedAt: data.updatedAt,
-              entries: [pendingPost, ...data.entries],
-            }),
-            false
-          )
+          setPendingUserEntries((entries) => entries.concat([pendingPost]))
 
           localLog('Feed DAC createPost')
           // Create post
           await feedDAC.createPost({ text })
 
           localLog('Start user feed update')
-          await workerFeedUserUpdate(ref, myUserId, {
-            force: true,
-            prioritize: true,
-          })
-        } finally {
-          ref.current.pendingUserPosts -= 1
+          await syncUserFeed(ref, myUserId, 4, 0)
+
+          setPendingUserEntries((entries) =>
+            entries.map((entry) => ({
+              ...entry,
+              isPending: false,
+            }))
+          )
+        } catch (e) {
+          localLog('Error', e)
+          // If an error occurs, remove the pending entries
+          setPendingUserEntries((entries) =>
+            entries.filter(
+              (entry) => ((entry.post.id as unknown) as string) !== cid
+            )
+          )
         }
       }
       func()
     },
-    [ref, latest, user, myUserId]
+    [ref, myUserId, setPendingUserEntries]
   )
 
   const current = useMemo(() => (mode === 'latest' ? latest : top), [
@@ -309,10 +273,10 @@ export function FeedProvider({ children }: Props) {
     activity,
     user,
     refreshCurrentFeed,
+    pendingUserEntries,
     refreshTopFeed,
     refreshLatestFeed,
     refreshActivity,
-    refreshUser,
     userId: viewingUserId,
     createPost,
     keywords,

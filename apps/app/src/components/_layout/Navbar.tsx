@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
   Flex,
   Heading,
-  Image,
   Select,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -24,11 +23,14 @@ import SkynetIcon from '../_icons/SkynetIcon'
 import { Link } from '../_shared/Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
 import { Searchbar } from './Searchbar'
+import { useSearch } from '../../contexts/search'
+import LogoIcon from '../_icons/LogoIcon'
 
 export default function Navbar() {
   const { toggleTheme } = useTheme()
   const { portal, portals, setDevPortal } = usePortal()
   const { appDomain } = useSkynet()
+  const { isOpen } = useSearch()
 
   const handleChangePortal = useCallback(
     (newPortal: string) => {
@@ -45,119 +47,135 @@ export default function Navbar() {
 
   return (
     <Box css={{ borderBottom: '1px solid $gray200' }}>
-      <Container size="3">
-        <Flex css={{ py: '$3', alignItems: 'center' }}>
-          <Tooltip align="start" content="Your decentralized workspace">
-            <Heading
-              css={{
-                mr: '$2',
-                fontWeight: 'bold',
-                top: '-5px',
-                position: 'relative',
-              }}
+      <Container size="4">
+        <Flex css={{ py: '$3', alignItems: 'center', gap: '$1' }}>
+          <Box
+            css={{
+              display: 'none',
+              '@bp1': {
+                display: isOpen ? 'none' : 'block',
+              },
+              '@bp2': {
+                display: 'block',
+              },
+            }}
+          >
+            <Tooltip
+              align="start"
+              content="Rift - Your decentralized workspace"
             >
-              <Link to="/" css={{ textDecoration: 'none' }}>
-                <Image
-                  src="/wordmark.png"
-                  css={{ height: '25px' }}
-                  alt="Rift"
-                />
-              </Link>
-            </Heading>
-          </Tooltip>
+              <Heading
+                css={{
+                  mr: '$2',
+                  fontWeight: 'bold',
+                  top: '-2px',
+                  '@bp2': {
+                    top: '-2px',
+                  },
+                  position: 'relative',
+                }}
+              >
+                <Link to="/" css={{ textDecoration: 'none' }}>
+                  <Flex css={{ gap: '8px', alignItems: 'center' }}>
+                    <LogoIcon />
+                  </Flex>
+                </Link>
+              </Heading>
+            </Tooltip>
+          </Box>
           <Box
             css={{
               flex: 1,
             }}
           >
-            <Box
-              css={{
-                display: 'none',
-                '@bp1': {
-                  display: 'block',
-                },
-              }}
-            >
-              <Searchbar />
-            </Box>
+            <Searchbar />
           </Box>
-          <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
-            <ControlGroup
-              css={{
-                display: 'none',
-                '@bp1': {
-                  display: 'flex',
-                },
-              }}
-            >
-              <Link to="/files" as="button" content="Upload files">
-                <PlusIcon />
-              </Link>
-              <DropdownMenu>
-                <DropdownMenuTrigger as={Button}>
-                  <TriangleDownIcon />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    as={RLink}
-                    to="/files"
-                    css={{ textDecoration: 'none', cursor: 'pointer' }}
-                  >
-                    Upload files
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    as={RLink}
-                    to={DATA_MYSKY_BASE_PATH}
-                    css={{ textDecoration: 'none', cursor: 'pointer' }}
-                  >
-                    Add data domain
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </ControlGroup>
-            <ControlGroup
-              css={{
-                display: 'none',
-                '@bp1': {
-                  display: 'flex',
-                },
-              }}
-            >
-              <Tooltip content="Visit Portal">
-                <Button as="a" href={`https://${portal}`} target="_blank">
-                  <SkynetIcon />
+          <Box
+            css={{
+              display: isOpen ? 'none' : 'block',
+              '@bp2': {
+                display: 'block',
+              },
+            }}
+          >
+            <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
+              <ControlGroup
+                css={{
+                  display: 'none',
+                  '@bp3': {
+                    display: 'flex',
+                  },
+                }}
+              >
+                <Link to="/files" as="button" content="Upload files">
+                  <PlusIcon />
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger as={Button}>
+                    <TriangleDownIcon />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      as={RLink}
+                      to="/files"
+                      css={{ textDecoration: 'none', cursor: 'pointer' }}
+                    >
+                      Upload files
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      as={RLink}
+                      to={DATA_MYSKY_BASE_PATH}
+                      css={{ textDecoration: 'none', cursor: 'pointer' }}
+                    >
+                      Add data domain
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </ControlGroup>
+              <ControlGroup
+                css={{
+                  display: 'none',
+                  '@bp3': {
+                    display: 'flex',
+                  },
+                }}
+              >
+                <Tooltip content="Visit Portal">
+                  <Button as="a" href={`https://${portal}`} target="_blank">
+                    <SkynetIcon />
+                  </Button>
+                </Tooltip>
+                <Tooltip content="Switch Skynet Portals">
+                  <div>
+                    <Select
+                      css={{
+                        padding: '0 $1',
+                        borderRadius: '0 $2 $2 0 !important',
+                      }}
+                      onChange={(e) => handleChangePortal(e.target.value)}
+                      value={portal}
+                    >
+                      {portals.map((portal) => (
+                        <option
+                          key={portal.domain}
+                          value={portal.domain}
+                          disabled={portal.disabled}
+                        >
+                          https://{portal.domain}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </Tooltip>
+              </ControlGroup>
+              <Tooltip content="Toggle theme">
+                <Button onClick={toggleTheme}>
+                  <SunIcon />
                 </Button>
               </Tooltip>
-              <Tooltip content="Switch Skynet Portals">
-                <div>
-                  <Select
-                    css={{
-                      padding: '0 $1',
-                      borderRadius: '0 $2 $2 0 !important',
-                    }}
-                    onChange={(e) => handleChangePortal(e.target.value)}
-                    value={portal}
-                  >
-                    {portals.map((portal) => (
-                      <option
-                        key={portal.domain}
-                        value={portal.domain}
-                        disabled={portal.disabled}
-                      >
-                        https://{portal.domain}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </Tooltip>
-            </ControlGroup>
-            <Tooltip content="Toggle theme">
-              <Button onClick={toggleTheme}>
-                <SunIcon />
-              </Button>
-            </Tooltip>
-            <IdentityContextMenu />
-          </Flex>
+              <IdentityContextMenu />
+            </Flex>
+          </Box>
         </Flex>
       </Container>
     </Box>

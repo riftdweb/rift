@@ -1,9 +1,9 @@
 import useSWR from 'swr'
-import { ActivityFeed } from './types'
-import { fetchActivity } from '../../workers/shared'
+import { ActivityFeed } from '@riftdweb/types'
+import { fetchActivity } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../skynet/ref'
 
 type Props = {
   ref: ControlRef
@@ -15,7 +15,10 @@ export function useFeedActivity({ ref }: Props) {
 
   const response = useSWR<ActivityFeed>(
     getKey(['feed', 'activity']),
-    () => fetchActivity(ref),
+    () =>
+      fetchActivity(ref, {
+        priority: 4,
+      }),
     {
       revalidateOnFocus: false,
     }

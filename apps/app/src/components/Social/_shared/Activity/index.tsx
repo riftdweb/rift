@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { useFeed } from '../../../../contexts/feed'
-import { useProfile } from '../../../../hooks/useProfile'
+import { useUser } from '../../../../hooks/useUser'
 import { Link } from '../../../_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'
 import { Avatar } from '../../../_shared/Avatar'
@@ -10,7 +10,8 @@ import { EntriesState } from '../../../_shared/EntriesState'
 import { ScrollArea } from '../../../_shared/ScrollArea'
 
 function ActivityItem({ userId, message, at }) {
-  const profile = useProfile(userId)
+  const user = useUser(userId)
+  const profile = user?.profile
   return (
     <Flex
       css={{
@@ -19,7 +20,7 @@ function ActivityItem({ userId, message, at }) {
       }}
     >
       <Box css={{ marginTop: '$1' }}>
-        <Avatar profile={profile} />
+        <Avatar userId={userId} profile={profile?.data} />
       </Box>
       <Flex
         css={{
@@ -32,7 +33,7 @@ function ActivityItem({ userId, message, at }) {
             to={`/users/${userId}`}
             css={{ color: '$violet900', display: 'inline' }}
           >
-            {profile?.username || 'User'}
+            {profile?.data?.username || 'User'}
           </Link>
           <Text
             size="1"
@@ -54,7 +55,7 @@ function ActivityItem({ userId, message, at }) {
 export function Activity() {
   const { activity } = useFeed()
   return (
-    <StickySection gap="0" width="250px">
+    <StickySection gap="0" width="100%">
       <StickyHeading title="Activity" contextMenu={<ActivityContextMenu />} />
       <EntriesState
         response={activity.response}

@@ -18,7 +18,10 @@ export function NonIdealState({ title, message }: Props) {
     >
       {title && <Subheading>{title}</Subheading>}
       {message && (
-        <Text size="2" css={{ color: '$gray900' }}>
+        <Text
+          size="2"
+          css={{ color: '$gray900', textAlign: 'center', lineHeight: '16px' }}
+        >
           {message}
         </Text>
       )}

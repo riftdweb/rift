@@ -17,8 +17,8 @@ import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
 import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../contexts/feed'
-import { scoreEntry } from '../../../workers/scoring'
-import { Entry } from '../../../contexts/feed/types'
+import { scoreEntry } from '../../../workers/top/scoring'
+import { Entry } from '@riftdweb/types'
 import { PostTime } from '../_shared/PostTime'
 
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }

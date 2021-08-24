@@ -1,9 +1,9 @@
 import useSWR from 'swr'
-import { EntryFeed } from './types'
-import { fetchTopEntries } from '../../workers/shared'
+import { EntryFeed } from '@riftdweb/types'
+import { fetchTopEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../skynet/ref'
 
 type Props = { ref: ControlRef }
 
@@ -13,7 +13,10 @@ export function useFeedTop({ ref }: Props) {
 
   const response = useSWR<EntryFeed>(
     getKey(['feed', 'top']),
-    () => fetchTopEntries(ref),
+    () =>
+      fetchTopEntries(ref, {
+        priority: 4,
+      }),
     {
       revalidateOnFocus: false,
     }

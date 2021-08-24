@@ -1,10 +1,10 @@
-import { Box } from '@riftdweb/design-system'
+import { Container } from '@riftdweb/design-system'
 import { Home } from './Home'
 
 export function Skyfiles() {
   return (
-    <Box css={{ py: '$3' }}>
+    <Container size="3" css={{ py: '$5' }}>
       <Home />
-    </Box>
+    </Container>
   )
 }

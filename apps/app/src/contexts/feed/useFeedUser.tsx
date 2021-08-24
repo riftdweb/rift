@@ -1,23 +1,43 @@
 import useSWR from 'swr'
-import { EntryFeed } from './types'
-import { fetchUserEntries } from '../../workers/shared'
+import { Entry, EntryFeed } from '@riftdweb/types'
+import { fetchUserEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useParamUserId } from './useParamUserId'
-import { ControlRef } from '../skynet/useControlRef'
+import { ControlRef } from '../skynet/ref'
+import { dedupePendingUserEntries } from './utils'
 
-type Props = { ref: ControlRef }
+type Props = {
+  ref: ControlRef
+  pendingUserEntries: Entry[]
+  setPendingUserEntries: Dispatch<SetStateAction<Entry[]>>
+}
 
-export function useFeedUser({ ref }: Props) {
-  const { getKey } = useSkynet()
+export function useFeedUser({
+  ref,
+  pendingUserEntries,
+  setPendingUserEntries,
+}: Props) {
+  const { myUserId, getKey } = useSkynet()
   const viewingUserId = useParamUserId()
+  const isMyFeed = myUserId === viewingUserId
   const [loadingStateMap, setLoadingStateMap] = useState<{
     [userId: string]: string | undefined
   }>({})
 
   const response = useSWR<EntryFeed>(
     viewingUserId ? getKey(['feed', viewingUserId]) : null,
-    () => fetchUserEntries(ref, viewingUserId),
+    () =>
+      fetchUserEntries(ref, viewingUserId, {
+        priority: 4,
+      }),
     {
       revalidateOnFocus: false,
     }
@@ -45,15 +65,39 @@ export function useFeedUser({ ref }: Props) {
     viewingUserId,
   ])
 
+  const responseWithPending = useMemo(
+    () =>
+      isMyFeed && response.data && pendingUserEntries.length
+        ? {
+            ...response,
+            data: {
+              entries: dedupePendingUserEntries(
+                response.data.entries,
+                pendingUserEntries
+              ),
+              updatedAt: response.data.updatedAt,
+              null: response.data.null,
+            },
+          }
+        : response,
+    [response, pendingUserEntries, isMyFeed]
+  )
+
   const values = useMemo(
     () => ({
-      response,
+      response: responseWithPending,
       loadingStateCurrentUser: loadingState,
       loadingStateMap,
       getLoadingState,
       setLoadingState,
     }),
-    [response, loadingState, loadingStateMap, getLoadingState, setLoadingState]
+    [
+      responseWithPending,
+      loadingState,
+      loadingStateMap,
+      getLoadingState,
+      setLoadingState,
+    ]
   )
 
   useEffect(() => {

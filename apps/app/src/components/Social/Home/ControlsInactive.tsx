@@ -35,18 +35,31 @@ export function ControlsInactive({ setEditing }: Props) {
   return (
     <Flex css={{ flexDirection: 'column' }}>
       <Input onClick={() => setEditing()} placeholder="Whats on your mind?" />
-      <Flex css={{ alignItems: 'center', gap: '$1', paddingTop: '$3' }}>
-        {current.loadingState ? (
-          <Text size="1" css={{ color: '$gray900' }}>
-            {current.loadingState}...
-          </Text>
-        ) : (
-          <RelativeTime
-            time={current.response.data?.updatedAt}
-            prefix="Feed generated"
-          />
-        )}
-        <Box css={{ flex: 1 }} />
+      <Flex
+        css={{
+          alignItems: 'center',
+          gap: '$1',
+          paddingTop: '$3',
+        }}
+      >
+        <Box
+          css={{
+            display: 'none',
+            '@bp1': { display: 'block' },
+          }}
+        >
+          {current.loadingState ? (
+            <Text size="1" css={{ color: '$gray900' }}>
+              {current.loadingState}...
+            </Text>
+          ) : (
+            <RelativeTime
+              time={current.response.data?.updatedAt}
+              prefix="Feed generated"
+            />
+          )}
+        </Box>
+        <Box css={{ flex: 1, display: 'none', '@bp1': { display: 'block' } }} />
         <ControlGroup>
           <Tooltip align="end" content="Top">
             <Button
@@ -72,6 +85,7 @@ export function ControlsInactive({ setEditing }: Props) {
           </Tooltip>
           <FeedContextMenu />
         </ControlGroup>
+        <Box css={{ flex: 1, display: 'block', '@bp1': { display: 'none' } }} />
         <ControlGroup>
           <Tooltip align="end" content="Toggle algorithmic transparency">
             <Button

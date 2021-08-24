@@ -1,104 +1,10 @@
-import * as CAF from 'caf'
-import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../shared/logger'
-import { wait } from '../shared/wait'
-import { v4 as uuid } from 'uuid'
-import { ControlRef } from '../contexts/skynet/useControlRef'
-import {
-  cacheActivity,
-  fetchActivity,
-  fetchAllEntries,
-  needsRefresh,
-} from './shared'
-import { clearToken, handleToken } from './tokens'
-import {
-  Activity,
-  ActivityFeed,
-  Entry,
-  EntryFeed,
-  WorkerParams,
-} from '@riftdweb/types'
+import { Activity, Entry } from '@riftdweb/types'
+import { ControlRef } from '../../contexts/skynet/ref'
 
-const cafWorkerFeedActivityUpdate = CAF(function* (
-  signal: any,
+export function generateActivity(
   ref: ControlRef,
-  params: WorkerParams
-): Generator<
-  Promise<ActivityFeed | EntryFeed | JSONResponse | void> | Activity[],
-  any,
-  any
-> {
-  const { force = false, delay = 0 } = params
-  const log = createLogger('feed/activity/update', {
-    workflowId: params.workflowId,
-  })
-  try {
-    log('Running')
-    if (delay) {
-      yield wait(delay)
-    }
-    ref.current.feeds.activity.setLoadingState('Compiling')
-
-    if (!force) {
-      log('Fetching cached activity')
-      let feed: ActivityFeed = yield fetchActivity(ref)
-
-      if (!needsRefresh(feed, 5)) {
-        log('Up to date')
-        ref.current.feeds.activity.setLoadingState()
-        return
-      }
-    }
-
-    log('Fetching cached entries')
-    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref)
-    let entries = allEntriesFeed.entries
-
-    log('Generating activity')
-    const activities = generateActivity(ref, entries)
-
-    log('Caching activity')
-    yield cacheActivity(ref, activities)
-
-    log('Trigger mutate')
-    yield ref.current.feeds.activity.response.mutate()
-    ref.current.feeds.activity.setLoadingState()
-
-    log('Returning')
-  } finally {
-    log('Finally')
-    if (signal.aborted) {
-      log('Aborted')
-    }
-    clearToken(ref, 'feedActivityUpdate')
-    ref.current.feeds.activity.setLoadingState()
-  }
-})
-
-// Computes a new activity feed
-// "Latest" - Subsequent calls to this worker will cancel previous runs.
-export async function workerFeedActivityUpdate(
-  ref: ControlRef,
-  params: WorkerParams = {}
-): Promise<void> {
-  const workflowId = uuid()
-  const log = createLogger('feed/activity/update', {
-    workflowId,
-  })
-  const token = await handleToken(ref, 'feedActivityUpdate')
-  try {
-    await cafWorkerFeedActivityUpdate(token.signal, ref, {
-      ...params,
-      workflowId,
-    })
-  } catch (e) {
-    if (e) {
-      log('Error', e)
-    }
-  }
-}
-
-function generateActivity(ref: ControlRef, entries: Entry[]): Activity[] {
+  entries: Entry[]
+): Activity[] {
   const myUserId = ref.current.myUserId
 
   const stats = entries.reduce(

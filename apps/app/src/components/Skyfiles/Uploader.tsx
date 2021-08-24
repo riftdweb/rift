@@ -296,7 +296,12 @@ export function Uploader({
       }
 
       const task = () => startUpload()
-      taskQueue.append(task)
+      taskQueue.add(task, {
+        meta: {
+          name: skyfile.metadata.filename,
+          operation: 'upload',
+        },
+      })
     })
   }
 

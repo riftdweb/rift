@@ -11,6 +11,10 @@ const StyledScrollArea = styled(RadixScrollArea.Root, {
 const StyledViewport = styled(RadixScrollArea.Viewport, {
   width: '100%',
   height: '100%',
+  '> div': {
+    // Overriding 'table' to fix width issues
+    display: 'block !important',
+  },
 })
 
 const StyledScrollbar = styled(RadixScrollArea.Scrollbar, {
@@ -43,14 +47,15 @@ const StyledCorner = styled(RadixScrollArea.Corner, {
 
 type Props = {
   children: React.ReactNode
+  orientation?: 'vertical' | 'horizontal'
 }
 
-export function ScrollArea({ children }: Props) {
+export function ScrollArea({ children, orientation = 'vertical' }: Props) {
   return (
     <StyledScrollArea>
       <StyledViewport>{children}</StyledViewport>
 
-      <StyledScrollbar orientation="vertical">
+      <StyledScrollbar orientation={orientation}>
         <StyledThumb />
       </StyledScrollbar>
 

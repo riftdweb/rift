@@ -1,25 +1,40 @@
+import { Dispatch, SetStateAction } from 'react'
+import { IUser, UsersMap } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
-import { ActivityFeed, EntryFeed } from '../feed/types'
-import { User } from '../users'
-import { Api } from './buildApi'
+import { Feed, ActivityFeed, EntryFeed } from '@riftdweb/types'
+import { Api } from './api'
 
 type TokenKey =
-  | 'feedLatestUpdate'
+  | 'feedAggregator'
   | 'feedTopUpdate'
   | 'feedActivityUpdate'
-  | 'crawlerUsers'
-  | 'afterFeedUserUpdate'
+  | 'userIndexer'
   | string
 
 const controlRefDefaults = {
   Api: undefined as Api | undefined,
   myUserId: undefined as string | undefined,
   viewingUserId: undefined as string | undefined,
-  followingUserIds: {} as SWRResponse<string[], any>,
-  allUsers: [] as User[],
-  followingUserIdsHasFetched: false as boolean,
-  pendingUserPosts: 0 as number,
+
+  // Users context
+  allFollowing: {} as SWRResponse<Feed<string>, any>,
+  usersMap: {} as SWRResponse<UsersMap, any>,
+  isInitUsersComplete: false as boolean,
+  indexedUsersIndex: [] as IUser[],
+  discoveredUsersIndex: [] as IUser[],
+  getUser: (userId: string): IUser => {
+    throw Error('usersMap not yet loaded')
+  },
+  upsertUser: async (
+    user: { userId: string } & Partial<IUser>
+  ): Promise<void> => {},
+  upsertUsers: async (user: IUser[]): Promise<void> => {},
+  pendingUserIds: [] as string[],
+  getUsersPendingUpdate: (() => []) as () => string[],
+  setPendingUserIds: (() => {}) as Dispatch<SetStateAction<string[]>>,
+  addNewUserIds: async (userIds: string[]): Promise<void> => {},
+  removeUserIds: async (userIds: string[]): Promise<void> => {},
   domains: {} as {
     [domain: string]: number
   },
@@ -31,12 +46,10 @@ const controlRefDefaults = {
   nonIdealState: undefined as string | undefined,
   setNonIdealState: (state?: string) => {},
   tokens: {
-    feedLatestUpdate: null,
+    feedAggregator: null,
     feedTopUpdate: null,
     feedActivityUpdate: null,
-    crawlerUsers: null,
-    feedUserUpdate: null,
-    afterFeedUserUpdate: null,
+    userIndexer: null,
   } as Record<TokenKey, any>,
   feeds: {} as {
     user: {
@@ -66,5 +79,7 @@ export type ControlRef = RefObject<ControlRefDefaults>
 
 export function useControlRef() {
   const ref = useRef(controlRefDefaults)
+  // @ts-ignore
+  window.ref = ref
   return ref
 }

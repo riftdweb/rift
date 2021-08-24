@@ -3,7 +3,7 @@ import { Flex, Text } from '@riftdweb/design-system'
 import { useHasNoEntries } from '../../hooks/useHasNoEntries'
 import SpinnerIcon from '../_icons/SpinnerIcon'
 import { SWRResponse } from 'swr'
-import { Feed } from '../../contexts/feed/types'
+import { Feed } from '@riftdweb/types'
 import { NonIdealState } from './NonIdealState'
 
 function LoadingState({ message }) {
@@ -25,10 +25,17 @@ function LoadingState({ message }) {
   )
 }
 
-type Response<T> = SWRResponse<Feed<T>, any>
+export type EntriesResponse<T> = {
+  data?: Feed<T>
+  // Compatible with SWRRResponse
+  error?: SWRResponse<Feed<T>, any>['error']
+  revalidate?: SWRResponse<Feed<T>, any>['revalidate']
+  mutate?: SWRResponse<Feed<T>, any>['mutate']
+  isValidating?: boolean
+}
 
 type Props<T> = {
-  response: Response<T>
+  response: EntriesResponse<T>
   loadingState?: string
   emptyTitle?: string
   emptyMessage?: string

@@ -1,12 +1,6 @@
-import {
-  Flex,
-  Box,
-  Heading,
-  Text,
-  Container,
-  Image,
-} from '@riftdweb/design-system'
+import { Flex, Box, Text, Container, Image } from '@riftdweb/design-system'
 import { portals } from '../../shared/portals'
+import LogoIcon from '../_icons/LogoIcon'
 import SkynetHandshakeIcon from '../_icons/SkynetHandshakeIcon'
 import { Link } from '../_shared/Link'
 
@@ -20,19 +14,36 @@ export default function Footer() {
         borderTop: '1px solid $gray200',
       }}
     >
-      <Container size="3">
-        <Flex>
+      <Container size="4">
+        <Flex
+          css={{
+            gap: '$4',
+            flexDirection: 'column',
+            '@bp2': {
+              gap: '$1',
+              flexDirection: 'row',
+            },
+          }}
+        >
           <Flex
             css={{
               flexDirection: 'column',
               gap: '$3',
               maxWidth: '800px',
-              // textAlign: 'center',
             }}
           >
-            <Heading css={{ fontWeight: 'bold' }}>
-              <Image src="/wordmark.png" css={{ height: '25px' }} alt="Rift" />
-            </Heading>
+            <Flex
+              css={{
+                gap: '$2',
+              }}
+            >
+              <LogoIcon />
+              <Image
+                src="/wordmark-mono.png"
+                css={{ height: '25px', filter: '$colors-logoFilter' }}
+                alt="Rift"
+              />
+            </Flex>
             <Text css={{ color: '$gray800' }}>
               Your decentralized workspace.
             </Text>
@@ -65,26 +76,30 @@ export default function Footer() {
               flexDirection: 'column',
               gap: '$3',
               maxWidth: '800px',
-              textAlign: 'right',
+              '@bp2': {
+                textAlign: 'right',
+              },
             }}
           >
-            <Box css={{ color: '$hiContrast', marginLeft: 'auto' }}>
+            <Box css={{ color: '$hiContrast', '@bp2': { marginLeft: 'auto' } }}>
               <SkynetHandshakeIcon />
             </Box>
-            {portals.map((portal) => {
-              const hostname = `riftapp.hns.${portal.domain}`
-              const url = `https://${hostname}`
-              return (
-                <Link
-                  key={url}
-                  href={url}
-                  target="_blank"
-                  css={{ color: '$gray800' }}
-                >
-                  {hostname}
-                </Link>
-              )
-            })}
+            {portals
+              .filter((portal) => !portal.disabled)
+              .map((portal) => {
+                const hostname = `riftapp.hns.${portal.domain}`
+                const url = `https://${hostname}`
+                return (
+                  <Link
+                    key={url}
+                    href={url}
+                    target="_blank"
+                    css={{ color: '$gray800' }}
+                  >
+                    {hostname}
+                  </Link>
+                )
+              })}
           </Flex>
         </Flex>
       </Container>

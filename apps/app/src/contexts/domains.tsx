@@ -56,6 +56,7 @@ export function DomainsProvider({ children }: Props) {
     () =>
       Api.getJSON<Domain[]>({
         path: dataKeyDomains,
+        priority: 4,
       }),
     {
       revalidateOnFocus: false,
@@ -88,6 +89,7 @@ export function DomainsProvider({ children }: Props) {
         await Api.setJSON({
           path: dataKeyDomains,
           json: domains,
+          priority: 4,
         })
         // Sync latest, will likely be the same
         await debouncedMutate(mutate)

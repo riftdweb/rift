@@ -15,13 +15,21 @@ export function KeysWorkspace() {
   const editorRemountKey = `${viewingUserId}/${domainKey}`
 
   return (
-    <Flex>
+    <Flex
+      css={{
+        position: 'relative',
+        height: '100vh',
+      }}
+    >
       <Flex
         css={{
           padding: '$1 $2 0 0',
-          height: '100vh',
           flexDirection: 'column',
           gap: '$1',
+          display: 'none',
+          '@bp3': {
+            display: 'block',
+          },
         }}
       >
         <ViewingUser />
@@ -40,6 +48,7 @@ export function KeysWorkspace() {
           <DragSizing
             border="right"
             handlerOffset={0}
+            handlerZIndex={1}
             // TODO: saving the width in local storage, hit issues, need to finish
             // onChange={({ width }) => setKeysTreeWidth(typeof width === 'number' ? `${width}px` : width)}
             style={{
@@ -58,7 +67,7 @@ export function KeysWorkspace() {
           </DragSizing>
         </Box>
       </Flex>
-      <Flex css={{ flex: 1 }}>
+      <Flex css={{ flex: 1, overflow: 'hidden' }}>
         {domainKey ? (
           <KeyEditor
             key={editorRemountKey}
@@ -89,6 +98,7 @@ export function KeysWorkspace() {
                   top: '40%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
+                  width: '100%',
                 }}
               >
                 <Heading css={{ textAlign: 'center', marginBottom: '$3' }}>
@@ -98,14 +108,43 @@ export function KeysWorkspace() {
                   css={{
                     color: '$gray900',
                     textAlign: 'center',
-                    marginBottom: '$3',
+                    margin: '0 auto $3 auto',
+                    lineHeight: '20px',
                     maxWidth: '400px',
+                    display: 'none',
+                    '@bp3': {
+                      display: 'block',
+                    },
                   }}
                 >
                   Add a data domain to get started, and then open a file with
                   the menu on the left.
                 </Text>
-                <Box css={{ textAlign: 'center' }}>
+                <Text
+                  css={{
+                    color: '$gray900',
+                    textAlign: 'center',
+                    margin: '0 auto $3 auto',
+                    lineHeight: '20px',
+                    maxWidth: '400px',
+                    display: 'block',
+                    '@bp3': {
+                      display: 'none',
+                    },
+                  }}
+                >
+                  Open Rift on a wider screen to view and select a file from the
+                  explorer menu.
+                </Text>
+                <Box
+                  css={{
+                    textAlign: 'center',
+                    display: 'none',
+                    '@bp3': {
+                      display: 'block',
+                    },
+                  }}
+                >
                   <AddDomain variant="gray">
                     <Box css={{ mr: '$1' }}>
                       <PlusIcon />

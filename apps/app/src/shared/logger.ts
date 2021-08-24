@@ -1,5 +1,7 @@
 import { format } from 'date-fns'
 
+const isLoggerEnabled = process.env.NODE_ENV === 'development'
+
 type LoggerParams = {
   disable?: boolean
   workflowId?: string
@@ -26,6 +28,9 @@ function getColor(workflowId) {
 export function createLogger(namespace: string, params: LoggerParams = {}) {
   const rootNamespace = namespace
   const fn = (...args) => {
+    if (!isLoggerEnabled) {
+      return
+    }
     const { disable, workflowId } = params
     if (disable) {
       return
@@ -43,3 +48,5 @@ export function createLogger(namespace: string, params: LoggerParams = {}) {
     createLogger(`${rootNamespace}/${namespace}`)
   return fn
 }
+
+export type Logger = ReturnType<typeof createLogger>

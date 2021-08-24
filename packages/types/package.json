@@ -8,6 +8,7 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "private": true,
   "dependencies": {
+    "@skynethub/userprofile-library": "^0.1.10-beta",
     "feed-dac-library": "^0.2.2"
   }
 }

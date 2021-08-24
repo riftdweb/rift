@@ -9,7 +9,7 @@ import { getDataKeyDns } from '../shared/dataKeys'
 import { createLogger } from '../shared/logger'
 import { TaskQueue } from '../shared/taskQueue'
 import { triggerToast } from '../shared/toast'
-import { Feed } from './feed/types'
+import { Feed } from '@riftdweb/types'
 import { useSkynet } from './skynet'
 
 const dataKeyDns = getDataKeyDns()
@@ -46,6 +46,7 @@ export function DnsProvider({ children }: Props) {
     async (): Promise<DnsEntryFeed> => {
       const result = await Api.getJSON<DnsEntryFeed>({
         path: dataKeyDns,
+        priority: 4,
       })
       return (
         result.data || {
@@ -53,6 +54,9 @@ export function DnsProvider({ children }: Props) {
           entries: [],
         }
       )
+    },
+    {
+      revalidateOnFocus: false,
     }
   )
 
@@ -74,8 +78,14 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
+            priority: 4,
           })
-        await taskQueue.append(task)
+        await taskQueue.add(task, {
+          meta: {
+            name: dnsEntry.name,
+            operation: 'set',
+          },
+        })
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {
@@ -205,8 +215,14 @@ export function DnsProvider({ children }: Props) {
           Api.setJSON({
             path: dataKeyDns,
             json: dnsFeed,
+            priority: 4,
           })
-        await taskQueue.append(task)
+        await taskQueue.add(task, {
+          meta: {
+            name: id,
+            operation: 'remove',
+          },
+        })
 
         // Sync latest, will likely be the same
         if (taskQueue.queue.length === 0) {

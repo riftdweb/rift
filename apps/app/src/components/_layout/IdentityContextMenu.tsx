@@ -1,4 +1,4 @@
-import { PersonIcon, RocketIcon } from '@radix-ui/react-icons'
+import { ExternalLinkIcon, PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -10,10 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   keyframes,
+  Link,
   Tooltip,
 } from '@riftdweb/design-system'
 import { useState } from 'react'
 import { useSkynet } from '../../contexts/skynet'
+import { usePortal } from '../../hooks/usePortal'
+import { useUser } from '../../hooks/useUser'
 import { copyToClipboard } from '../../shared/clipboard'
 import { Avatar } from '../_shared/Avatar'
 
@@ -39,7 +42,9 @@ export function IdentityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, myProfile, logout, login } = useSkynet()
+  const { portal } = usePortal()
+  const { myUserId, logout, login } = useSkynet()
+  const myUser = useUser(myUserId)
   const [isOpen, setIsOpen] = useState<boolean>()
 
   if (!myUserId) {
@@ -102,7 +107,7 @@ export function IdentityContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open MySky menu">
-        {!myProfile ? (
+        {!myUser ? (
           <DropdownMenuTrigger
             as={Button}
             variant={variant}
@@ -116,18 +121,41 @@ export function IdentityContextMenu({
           </DropdownMenuTrigger>
         ) : (
           <DropdownMenuTrigger>
-            <Avatar profile={myProfile} />
+            <Avatar userId={myUserId} profile={myUser.profile.data} />
           </DropdownMenuTrigger>
         )}
       </Tooltip>
       <DropdownMenuContent align="end">
-        {myProfile ? (
-          <DropdownMenuLabel>{myProfile.username}</DropdownMenuLabel>
+        {myUser ? (
+          <DropdownMenuLabel>{myUser.username}</DropdownMenuLabel>
         ) : (
           <DropdownMenuLabel>User {myUserId.slice(0, 6)}...</DropdownMenuLabel>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          as={Link}
+          target="_blank"
+          href={`https://skyprofile.hns.${portal}`}
+          css={{
+            backgroundColor: 'none !important',
+            textDecoration: 'none !important',
+            cursor: 'pointer',
+            '&:hover': {
+              backgroundColor: '$blue800',
+            },
+            '&:hover > div': {
+              color: 'white',
+            },
+          }}
+        >
+          Edit profile
+          <Box
+            css={{ color: '$gray900', '&:hover': { color: 'white' }, ml: '$1' }}
+          >
+            <ExternalLinkIcon />
+          </Box>
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={logout}>Log out</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>

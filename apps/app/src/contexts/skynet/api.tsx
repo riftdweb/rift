@@ -1,3 +1,4 @@
+import { JSONResponse } from '@riftdweb/types'
 import {
   CustomUploadOptions,
   genKeyPairFromSeed,
@@ -5,6 +6,7 @@ import {
   SkynetClient,
 } from 'skynet-js'
 import { createLogger } from '../../shared/logger'
+import { RateLimiter } from '../../shared/rateLimiter'
 
 type BuildApi = {
   portal: string
@@ -18,6 +20,12 @@ export type Api = ReturnType<typeof buildApi>
 
 const log = createLogger('api', {
   disable: true,
+})
+
+export const apiLimiter = RateLimiter('api/registry', {
+  capacity: 30,
+  ratePerMinute: 60,
+  processingInterval: 50,
 })
 
 export const buildApi = ({
@@ -37,13 +45,15 @@ export const buildApi = ({
     path,
     domain: customDomain,
     discoverable = false,
+    priority = 0,
   }: {
     path: string
     seed?: string
     publicKey?: string
     domain?: string
     discoverable?: boolean
-  }) {
+    priority?: number
+  }): Promise<JSONResponse<T>> {
     const fullDataPath = (customDomain || appDomain) + '/' + path
     if (seed) {
       const { publicKey } = genKeyPairFromSeed(seed)
@@ -51,13 +61,18 @@ export const buildApi = ({
         \tpublic key: ${publicKey.slice(0, 10)}...
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
-      return (client.db.getJSON(
-        publicKey,
-        fullDataPath
-      ) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<
+          JSONResponse<T>
+        >
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: publicKey,
+          name: fullDataPath,
+          operation: 'get',
+        },
+      })
     }
     if (customPublicKey) {
       log(`client.file.getJSON - mysky
@@ -66,22 +81,34 @@ export const buildApi = ({
         \tdiscoverable: ${discoverable}`)
 
       if (discoverable) {
-        return (client.file.getJSON(
-          customPublicKey,
-          fullDataPath
-        ) as unknown) as Promise<{
-          data: T | null
-          dataLink: string | null
-        }>
+        const task = () =>
+          (client.file.getJSON(
+            customPublicKey,
+            fullDataPath
+          ) as unknown) as Promise<JSONResponse<T>>
+        return apiLimiter.add(task, {
+          priority,
+          meta: {
+            id: customPublicKey,
+            name: fullDataPath,
+            operation: 'get',
+          },
+        })
       }
 
-      return (client.file.getJSONEncrypted(
-        customPublicKey,
-        fullDataPath
-      ) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (client.file.getJSONEncrypted(
+          customPublicKey,
+          fullDataPath
+        ) as unknown) as Promise<JSONResponse<T>>
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: customPublicKey,
+          name: fullDataPath,
+          operation: 'get',
+        },
+      })
     }
     if (userId) {
       log(`mySky.getJSON - mysky
@@ -89,25 +116,48 @@ export const buildApi = ({
         \tdiscoverable: ${discoverable}`)
 
       if (discoverable) {
-        return (mySky.getJSON(fullDataPath) as unknown) as Promise<{
-          data: T | null
-          dataLink: string | null
-        }>
+        const task = () =>
+          (mySky.getJSON(fullDataPath) as unknown) as Promise<JSONResponse<T>>
+        return apiLimiter.add(task, {
+          priority,
+          meta: {
+            id: userId,
+            name: fullDataPath,
+            operation: 'get',
+          },
+        })
       }
-      return (mySky.getJSONEncrypted(fullDataPath) as unknown) as Promise<{
-        data: T | null
-        dataLink: string | null
-      }>
+      const task = () =>
+        (mySky.getJSONEncrypted(fullDataPath) as unknown) as Promise<
+          JSONResponse<T>
+        >
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: userId,
+          name: fullDataPath,
+          operation: 'get',
+        },
+      })
     }
     const { publicKey } = genKeyPairFromSeed(localRootSeed)
     log(`client.db.getJSON - local app seed
       \tpublic key: ${publicKey.slice(0, 10)}...
       \tdata path: ${fullDataPath}
       \tdiscoverable: N/A`)
-    return (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<{
-      data: T | null
-      dataLink: string | null
-    }>
+
+    const task = () =>
+      (client.db.getJSON(publicKey, fullDataPath) as unknown) as Promise<
+        JSONResponse<T>
+      >
+    return apiLimiter.add(task, {
+      priority,
+      meta: {
+        id: publicKey,
+        name: fullDataPath,
+        operation: 'get',
+      },
+    })
   }
 
   function setJSON({
@@ -116,39 +166,74 @@ export const buildApi = ({
     domain: customDomain,
     json,
     discoverable = false,
+    priority = 0,
   }: {
     seed?: string
     domain?: string
     path: string
     json: {}
     discoverable?: boolean
+    priority?: number
   }) {
     const fullDataPath = (customDomain || appDomain) + '/' + path
     if (seed) {
-      const { privateKey } = genKeyPairFromSeed(seed)
+      const { publicKey, privateKey } = genKeyPairFromSeed(seed)
       log(`client.db.setJSON - explicit seed
         \tprivate key: ${privateKey.slice(0, 10)}...
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
-      return client.db.setJSON(privateKey, fullDataPath, json)
+
+      const task = () => client.db.setJSON(privateKey, fullDataPath, json)
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: publicKey,
+          name: fullDataPath,
+          operation: 'set',
+        },
+      })
     }
     if (!userId) {
-      const { privateKey } = genKeyPairFromSeed(localRootSeed)
+      const { publicKey, privateKey } = genKeyPairFromSeed(localRootSeed)
       log(`client.db.setJSON - local app seed
         \tprivate key: ${privateKey.slice(0, 10)}
         \tdata path: ${fullDataPath}
         \tdiscoverable: N/A`)
-      return client.db.setJSON(privateKey, fullDataPath, json)
+      const task = () => client.db.setJSON(privateKey, fullDataPath, json)
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: publicKey,
+          name: fullDataPath,
+          operation: 'set',
+        },
+      })
     }
     log(`mySky.setJSON - mysky
       \tdata path: ${fullDataPath}
       \tdiscoverable: ${discoverable}`)
 
     if (discoverable) {
-      return mySky.setJSON(fullDataPath, json)
+      const task = () => mySky.setJSON(fullDataPath, json)
+      return apiLimiter.add(task, {
+        priority,
+        meta: {
+          id: userId,
+          name: fullDataPath,
+          operation: 'set',
+        },
+      })
     }
 
-    return mySky.setJSONEncrypted(fullDataPath, json)
+    const task = () => mySky.setJSONEncrypted(fullDataPath, json)
+    return apiLimiter.add(task, {
+      priority,
+      meta: {
+        id: userId,
+        name: fullDataPath,
+        operation: 'set',
+      },
+    })
   }
 
   async function setDataLink({

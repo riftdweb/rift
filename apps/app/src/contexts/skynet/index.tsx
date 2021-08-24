@@ -10,27 +10,31 @@ import { MySky, SkynetClient } from 'skynet-js'
 import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { usePortal } from '../../hooks/usePortal'
-import { buildApi } from './buildApi'
+import { buildApi } from './api'
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
-import { useProfile } from '../../hooks/useProfile'
-import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
-import { ControlRef, useControlRef } from './useControlRef'
-import { clearEntriesBuffer } from '../../workers/workerFeedLatest'
+import { ControlRef, useControlRef } from './ref'
+import { clearEntriesBuffer } from '../../workers/feedAggregator'
+import { clearAllTaskQueues } from '../../shared/taskQueue'
+import { createLogger } from '../../shared/logger'
+import { clearAllTokens } from '../../workers/tokens'
+
+const log = createLogger('contexts/skynet', {
+  disable: true,
+})
 
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
 
 type State = {
+  isReady: boolean
   isInitializing: boolean
   isReseting: boolean
-  myProfile: IUserProfile
   Api: ReturnType<typeof buildApi>
   getKey: (resourceKeys: any[]) => any[] | null
   mySky: MySky
-  loggedIn: boolean
   myUserId: string
   appDomain: string
   login: () => void
@@ -62,14 +66,10 @@ export function SkynetProvider({ children }: Props) {
     [controlRef, _setMyUserId]
   )
   const [Api, setApi] = useState<ReturnType<typeof buildApi>>()
-  const myProfile = useProfile(myUserId)
   const [mySky, setMySky] = useState<MySky>()
-  const [loggedIn, setLoggedIn] = useState(null)
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
-  const parts = hostname.split('.')
-  const subdomain = parts.slice(0, parts.length - 2).join('.')
-  const appDomain = subdomain || 'localhost'
+  const appDomain = hostname === 'localhost' ? 'localhost' : 'riftapp.hns'
 
   // When portal changes rebuild client
   const client = useMemo(() => new SkynetClient(`https://${portal}`), [portal])
@@ -94,10 +94,11 @@ export function SkynetProvider({ children }: Props) {
   useEffect(() => {
     const func = async () => {
       try {
-        console.log('Skynet Provider: initializing')
+        log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
         console.log('App domain: ', appDomain)
+        log('App domain: ', appDomain)
         const _mySky = await client.loadMySky(appDomain, {
           // dev: true,
           // debug: true,
@@ -112,7 +113,6 @@ export function SkynetProvider({ children }: Props) {
 
         // check if user is already logged in with permissions
         const loggedIn = await _mySky.checkLogin()
-        setLoggedIn(loggedIn)
         let userId = null
         if (loggedIn) {
           userId = await _mySky.userID()
@@ -122,9 +122,9 @@ export function SkynetProvider({ children }: Props) {
         generateApi({ userId, mySky: _mySky })
 
         setIsInitializing(false)
-        console.log('Skynet Provider: done initializing')
+        log('Skynet Provider: done initializing')
       } catch (e) {
-        console.error(e)
+        log('Error', e)
       }
     }
 
@@ -138,14 +138,17 @@ export function SkynetProvider({ children }: Props) {
       if (isInitializing) {
         return
       }
-      setIsReseting(true)
 
-      const status = await mySky.requestLoginAccess()
+      const isLoggingIn = await mySky.requestLoginAccess()
 
-      // set react state
-      setLoggedIn(status)
+      if (isLoggingIn) {
+        setIsReseting(true)
 
-      if (status) {
+        // Initialization and cleanup functions from other services
+        clearAllTokens(controlRef)
+        clearEntriesBuffer()
+        clearAllTaskQueues()
+
         const userId = await mySky.userID()
         setMyUserId(userId)
         generateApi({
@@ -153,18 +156,15 @@ export function SkynetProvider({ children }: Props) {
           mySky,
         })
         triggerToast(`Successfully logged in as ${userId.slice(0, 6)}...`)
+
+        setIsReseting(false)
       }
-
-      // Initialization functions from other services
-      clearEntriesBuffer()
-
-      setIsReseting(false)
     }
     func()
   }, [
+    controlRef,
     isInitializing,
     mySky,
-    setLoggedIn,
     setMyUserId,
     generateApi,
     setIsReseting,
@@ -185,11 +185,16 @@ export function SkynetProvider({ children }: Props) {
       // })
       // setIsReseting(false)
 
+      // Initialization and cleanup functions from other services
+      clearAllTokens(controlRef)
+      clearEntriesBuffer()
+      clearAllTaskQueues()
+
       window.location.href = '/'
     }
     func()
     // }, [mySky, setLoggedIn, setUserId, generateApi, setIsReseting])
-  }, [mySky, setIsReseting])
+  }, [controlRef, mySky, setIsReseting])
 
   // Key that can be used for SWR revalidation when identity changes
   const identityKey = useMemo(() => {
@@ -209,10 +214,12 @@ export function SkynetProvider({ children }: Props) {
     }
   }, [identityKey, Api, isInitializing, isReseting])
 
+  const isReady = !!getKey([])
+
   const value = {
     isInitializing,
     isReseting,
-    loggedIn,
+    isReady,
     login,
     logout,
     mySky,
@@ -221,7 +228,6 @@ export function SkynetProvider({ children }: Props) {
     getKey,
     identityKey,
     appDomain,
-    myProfile,
     controlRef,
   }
 

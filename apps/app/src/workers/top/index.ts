@@ -1,24 +1,27 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../shared/logger'
-import { ControlRef } from '../contexts/skynet/useControlRef'
+import { createLogger } from '../../shared/logger'
+import { ControlRef } from '../../contexts/skynet/ref'
 import { scoreEntries } from './scoring'
 import {
   cacheTopEntries,
   fetchAllEntries,
   fetchTopEntries,
   needsRefresh,
-} from './shared'
-import { clearToken, handleToken } from './tokens'
+} from '../workerApi'
+import { clearToken, handleToken } from '../tokens'
 import { v4 as uuid } from 'uuid'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 
-const cafWorkerFeedTopUpdate = CAF(function* (
+const tokenName = 'feedTopUpdate'
+const logName = 'feed/top/update'
+
+const cafUpdateTopFeed = CAF(function* (
   signal: any,
   ref: ControlRef,
   params: WorkerParams
 ): Generator<Promise<EntryFeed | Entry[] | JSONResponse | void>, any, any> {
-  const log = createLogger('feed/top/update', {
+  const log = createLogger(logName, {
     workflowId: params.workflowId,
   })
 
@@ -29,7 +32,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
 
     if (!force) {
       log('Fetching cached top entries')
-      let feed = yield fetchTopEntries(ref)
+      let feed = yield fetchTopEntries(ref, {
+        priority: params.priority,
+      })
 
       if (!needsRefresh(feed, 5)) {
         log('Up to date')
@@ -40,7 +45,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
     ref.current.feeds.top.setLoadingState('Compiling')
 
     log('Fetching cached entries')
-    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref)
+    let allEntriesFeed: EntryFeed = yield fetchAllEntries(ref, {
+      priority: params.priority,
+    })
     let entries = allEntriesFeed.entries
 
     log('Scoring entries')
@@ -56,7 +63,9 @@ const cafWorkerFeedTopUpdate = CAF(function* (
     )
 
     log('Caching top entries')
-    yield cacheTopEntries(ref, sortedEntries)
+    yield cacheTopEntries(ref, sortedEntries, {
+      priority: params.priority,
+    })
 
     log('Trigger mutate')
     yield ref.current.feeds.top.response.mutate()
@@ -68,26 +77,24 @@ const cafWorkerFeedTopUpdate = CAF(function* (
     if (signal.aborted) {
       log('Aborted')
     }
-    clearToken(ref, 'feedTopUpdate')
+    clearToken(ref, tokenName)
     ref.current.feeds.top.setLoadingState()
   }
 })
 
 // Computes a new top feed
 // "Latest" - Subsequent calls to this worker will cancel previous runs.
-export async function workerFeedTopUpdate(
+export async function updateTopFeed(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<void> {
   const workflowId = uuid()
-  const log = createLogger('feed/top/update', {
+  const log = createLogger(logName, {
     workflowId,
   })
-  log('handling things before new run')
-  const token = await handleToken(ref, 'feedTopUpdate')
-  log('starting new run')
+  const token = await handleToken(ref, tokenName)
   try {
-    await cafWorkerFeedTopUpdate(token.signal, ref, {
+    await cafUpdateTopFeed(token.signal, ref, {
       ...params,
       workflowId,
     })

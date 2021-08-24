@@ -1,3 +1,4 @@
+import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { Post } from 'feed-dac-library/dist/cjs/skystandards'
 
 // The following is the Skynet Skyfile metadata structure
@@ -170,7 +171,54 @@ export type ActivityFeed = Feed<Activity>
 
 export type WorkerParams = {
   force?: boolean
-  prioritize?: boolean
+  priority?: number
   delay?: number
   workflowId?: string
+}
+
+export type RelationshipType = 'friend' | 'follower' | 'following' | 'none'
+
+export type IUser = {
+  userId: string
+  username?: string
+  profile: {
+    updatedAt: number
+    data: IUserProfile
+  }
+  following: {
+    updatedAt: number
+    data: string[]
+  }
+  followers: {
+    updatedAt: number
+    data: string[]
+  }
+  relationship: {
+    updatedAt: number
+    data: RelationshipType
+  }
+  feed: {
+    updatedAt: number
+    data: {
+      count: number
+    }
+    // Data is stored separately
+  }
+  meta: {
+    updatedAt: number
+    data: {
+      skapps: Record<string, boolean>
+    }
+  }
+  updatedAt: number
+}
+
+export type UsersMap = {
+  updatedAt: number
+  entries: Record<string, IUser>
+}
+
+export type JSONResponse<T> = {
+  data: T | null
+  dataLink: string | null
 }

@@ -2,17 +2,17 @@ import { App } from '@riftdweb/types'
 import { v4 as uuid } from 'uuid'
 
 export const skapps: App[] = [
-  {
-    id: uuid(),
-    hnsDomain: 'skyfeed.hns',
-    name: 'SkyFeed',
-    addedAt: new Date().getTime(),
-    description:
-      'Decentralized SkyDB-based alternative to Twitter, YouTube and Instagram with a native iOS, Android and web app.',
-    tags: ['Social media', 'Video'],
-    lockedOn: undefined,
-    revisions: [],
-  },
+  // {
+  //   id: uuid(),
+  //   hnsDomain: 'skyfeed.hns',
+  //   name: 'SkyFeed',
+  //   addedAt: new Date().getTime(),
+  //   description:
+  //     'Decentralized SkyDB-based alternative to Twitter, YouTube and Instagram with a native iOS, Android and web app.',
+  //   tags: ['Social media', 'Video'],
+  //   lockedOn: undefined,
+  //   revisions: [],
+  // },
   {
     id: uuid(),
     hnsDomain: 'skysend.hns',
@@ -57,15 +57,15 @@ export const skapps: App[] = [
     lockedOn: undefined,
     revisions: [],
   },
-  {
-    id: uuid(),
-    hnsDomain: 'marstorage.hns',
-    name: 'MarStorage',
-    addedAt: new Date().getTime(),
-    description:
-      'Own your data. The 100% decentralized “Dropbox” and “Google Drive” alternative.',
-    tags: ['File storage'],
-    lockedOn: undefined,
-    revisions: [],
-  },
+  // {
+  //   id: uuid(),
+  //   hnsDomain: 'marstorage.hns',
+  //   name: 'MarStorage',
+  //   addedAt: new Date().getTime(),
+  //   description:
+  //     'Own your data. The 100% decentralized “Dropbox” and “Google Drive” alternative.',
+  //   tags: ['File storage'],
+  //   lockedOn: undefined,
+  //   revisions: [],
+  // },
 ]

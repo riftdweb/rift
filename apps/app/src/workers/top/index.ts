@@ -1,24 +1,26 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../shared/logger'
-import { ControlRef } from '../contexts/skynet/ref'
+import { createLogger } from '../../shared/logger'
+import { ControlRef } from '../../contexts/skynet/ref'
 import { scoreEntries } from './scoring'
 import {
   cacheTopEntries,
   fetchAllEntries,
   fetchTopEntries,
   needsRefresh,
-} from './workerApi'
-import { clearToken, handleToken } from './tokens'
+} from '../workerApi'
+import { clearToken, handleToken } from '../tokens'
 import { v4 as uuid } from 'uuid'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 
-const cafWorkerFeedTopUpdate = CAF(function* (
+const logName = 'feed/top/update'
+
+const cafUpdateTopFeed = CAF(function* (
   signal: any,
   ref: ControlRef,
   params: WorkerParams
 ): Generator<Promise<EntryFeed | Entry[] | JSONResponse | void>, any, any> {
-  const log = createLogger('feed/top/update', {
+  const log = createLogger(logName, {
     workflowId: params.workflowId,
   })
 
@@ -81,17 +83,17 @@ const cafWorkerFeedTopUpdate = CAF(function* (
 
 // Computes a new top feed
 // "Latest" - Subsequent calls to this worker will cancel previous runs.
-export async function workerFeedTopUpdate(
+export async function updateTopFeed(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<void> {
   const workflowId = uuid()
-  const log = createLogger('feed/top/update', {
+  const log = createLogger(logName, {
     workflowId,
   })
   const token = await handleToken(ref, 'feedTopUpdate')
   try {
-    await cafWorkerFeedTopUpdate(token.signal, ref, {
+    await cafUpdateTopFeed(token.signal, ref, {
       ...params,
       workflowId,
     })

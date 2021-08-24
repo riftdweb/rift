@@ -1,4 +1,4 @@
-import { TriangleUpIcon } from '@radix-ui/react-icons'
+import { Link1Icon, TriangleUpIcon } from '@radix-ui/react-icons'
 import { Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../../contexts/feed'
@@ -176,11 +176,54 @@ export function FeedItem({ entry, index }: Props) {
             </Box>
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
-            {userId && <User size="1" userId={userId} />}
+            {userId && (
+              <User
+                size="1"
+                userId={userId}
+                width="inherit"
+                textCss={{
+                  display: 'none',
+                  '@bp1': {
+                    display: 'block',
+                  },
+                }}
+              />
+            )}
             <Box css={{ flex: 1 }} />
+            {link && (
+              <Box
+                css={{
+                  display: 'block',
+                  '@bp1': {
+                    display: 'none',
+                  },
+                  margin: '0 $1',
+                  color: '$gray900',
+                }}
+              >
+                <Link target="_blank" onClick={incrementCounters} href={link}>
+                  <Box
+                    css={{
+                      color: '$gray900',
+                    }}
+                  >
+                    <Link1Icon />
+                  </Box>
+                </Link>
+              </Box>
+            )}
             {link &&
               (hnsDomain ? (
-                <Flex css={{ position: 'relative', marginLeft: '$1' }}>
+                <Flex
+                  css={{
+                    position: 'relative',
+                    marginLeft: '$1',
+                    display: 'none',
+                    '@bp1': {
+                      display: 'block',
+                    },
+                  }}
+                >
                   <Link
                     target="_blank"
                     onClick={incrementCounters}
@@ -195,7 +238,16 @@ export function FeedItem({ entry, index }: Props) {
                   </Link>
                 </Flex>
               ) : (
-                <Flex css={{ position: 'relative', marginLeft: '$1' }}>
+                <Flex
+                  css={{
+                    position: 'relative',
+                    marginLeft: '$1',
+                    display: 'none',
+                    '@bp1': {
+                      display: 'block',
+                    },
+                  }}
+                >
                   {/* <Score domain={hostname} /> */}
                   <Link
                     target="_blank"

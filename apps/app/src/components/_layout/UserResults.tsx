@@ -1,52 +1,11 @@
 import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
-import { useMemo } from 'react'
+import { useSearch } from '../../contexts/search'
 import { useUsers } from '../../contexts/users'
 import { UserProfile } from '../_shared/UserProfile'
 
 export function UserResults({ searchValue, onSelect }) {
-  const { indexedUsersIndex, userCounts } = useUsers()
-
-  const filteredItems = useMemo(() => {
-    const lowerCaseSearchValue = searchValue.toLowerCase()
-
-    return indexedUsersIndex.filter((user) => {
-      if (user.userId.includes(searchValue)) {
-        return true
-      }
-      if (user.username?.toLowerCase().includes(lowerCaseSearchValue)) {
-        return true
-      }
-      if (
-        user.profile.data?.firstName
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.lastName
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.aboutMe?.toLowerCase().includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.location
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      return false
-    })
-  }, [indexedUsersIndex, searchValue])
-
-  const pagedItems = filteredItems.slice(0, 30)
+  const { userSearchResultsPage, userSearchResultsCount } = useSearch()
+  const { userCounts } = useUsers()
 
   return (
     <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -91,28 +50,27 @@ export function UserResults({ searchValue, onSelect }) {
         {searchValue && (
           <Tooltip
             align="end"
-            content={`${filteredItems.length} matching users`}
+            content={`${userSearchResultsCount} matching users`}
           >
             <Text
               css={{
                 color: '$gray800',
               }}
             >
-              {filteredItems.length === 1
+              {userSearchResultsCount === 1
                 ? '1 result'
-                : `${filteredItems.length} results`}
+                : `${userSearchResultsCount} results`}
             </Text>
           </Tooltip>
         )}
       </Flex>
-      {filteredItems.length ? (
+      {userSearchResultsCount ? (
         <Flex
           css={{
             flexDirection: 'column',
-            // gap: '$5',
           }}
         >
-          {pagedItems.map((userItem) => {
+          {userSearchResultsPage.map((userItem) => {
             return (
               <Box
                 key={userItem.userId}

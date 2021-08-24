@@ -1,7 +1,7 @@
 import { Flex, Text } from '@riftdweb/design-system'
 import { SkylinkInfo } from '../_shared/SkylinkInfo'
 
-export function SkylinkResults({ searchValue }) {
+export function SkylinkLookup({ searchValue }) {
   return (
     <Flex css={{ flexDirection: 'column', gap: '$2', padding: '$1 $3 $2 $3' }}>
       <Text

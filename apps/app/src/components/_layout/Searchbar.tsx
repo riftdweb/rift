@@ -10,6 +10,7 @@ export function Searchbar() {
     searchValue,
     setSearchValue,
     isFocused,
+    isOpen,
     setIsFocused,
     onChange,
   } = useSearch()
@@ -20,11 +21,11 @@ export function Searchbar() {
         zIndex: 2,
         position: 'relative',
         transform: 'translate3d(0, 0, 0)',
-        width: isFocused ? '100%' : '210px',
+        width: isOpen ? '100%' : '210px',
         '@bp2': {
-          width: isFocused ? '600px' : '210px',
+          width: isOpen ? '600px' : '210px',
         },
-        transition: 'max-width 0.05s ease-in-out',
+        transition: 'width 0.1s ease-in-out',
       }}
     >
       <ControlGroup>

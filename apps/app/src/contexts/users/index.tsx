@@ -23,7 +23,7 @@ import { suggestionList } from './suggestionList'
 import { seedList } from './seedList'
 import { denyList } from './denyList'
 import { apiLimiter } from '../skynet/api'
-import { recomputeFollowers } from '../../workers/workerUsersIndexer'
+import { recomputeFollowers } from '../../workers/usersIndexer/utils'
 import { buildUser } from '../../workers/user/buildUser'
 import { checkIsUserUpToDate } from '../../workers/user/checks'
 import { getDataKeyUsers } from '../../shared/dataKeys'
@@ -94,6 +94,7 @@ type State = {
   following: EntriesResponse<string>
   suggestions: EntriesResponse<string>
   handleFollow: (userId: string) => void
+  addNewUserIds: (userIds: string[]) => Promise<void>
   handleUnfollow: (userId: string) => void
 }
 

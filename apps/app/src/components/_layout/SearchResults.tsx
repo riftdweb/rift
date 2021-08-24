@@ -2,10 +2,16 @@ import { Box, Flex, Panel } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
 import { parseSkylink } from 'skynet-js'
 import { ScrollArea } from '../_shared/ScrollArea'
-import { SkylinkResults } from './SkylinkResults'
+import { SkylinkLookup } from './SkylinkLookup'
+import { UserLookup } from './UserLookup'
 import { UserResults } from './UserResults'
 
-export function SearchResults({ searchValue, onSelect }) {
+type Props = {
+  searchValue: string
+  onSelect: () => void
+}
+
+export function SearchResults({ searchValue, onSelect }: Props) {
   const isSkylink = searchValue && !!parseSkylink(searchValue)
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
@@ -15,8 +21,9 @@ export function SearchResults({ searchValue, onSelect }) {
     }, 0)
   }, [])
 
-  const showSkylinkResults = !searchValue || isSkylink
-  const showUserResults = !isSkylink
+  const showUserLookup = searchValue.length === 64
+  const showSkylinkLookup = !searchValue || isSkylink
+  const showUserResults = !showUserLookup && !isSkylink
 
   return (
     <Panel
@@ -45,10 +52,8 @@ export function SearchResults({ searchValue, onSelect }) {
                 transition: 'opacity 0.02s linear',
               }}
             >
-              {showSkylinkResults && (
-                <SkylinkResults searchValue={searchValue} />
-              )}
-              {showSkylinkResults && showUserResults && (
+              {showSkylinkLookup && <SkylinkLookup searchValue={searchValue} />}
+              {showSkylinkLookup && showUserResults && (
                 <Box
                   css={{
                     marginBottom: '$1',
@@ -56,6 +61,7 @@ export function SearchResults({ searchValue, onSelect }) {
                   }}
                 />
               )}
+              {showUserLookup && <UserLookup searchValue={searchValue} />}
               {showUserResults && (
                 <UserResults searchValue={searchValue} onSelect={onSelect} />
               )}

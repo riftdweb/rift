@@ -8,7 +8,7 @@ import { isFollowing } from '../../../contexts/users'
 import { cacheUserEntries, compileUserEntries } from '../../workerApi'
 import { clearToken, handleToken } from '../../tokens'
 import { Entry, EntryFeed } from '@riftdweb/types'
-import { feedLatestAdd } from '../../workerFeedLatest'
+import { addEntries } from '../../feedAggregator'
 import { checkIsUpToDate } from '../checks'
 import { getLogName, getTokenName } from '..'
 
@@ -20,7 +20,7 @@ const taskQueue = TaskQueue(`sync/${resourceName}`, {
   mode: 'dedupe',
 })
 
-const cafSyncUserFeed = CAF(function* _cafSyncUserFeed(
+const cafSyncUserFeed = CAF(function* (
   signal: any,
   ref: ControlRef,
   userId: string,
@@ -94,7 +94,7 @@ const cafSyncUserFeed = CAF(function* _cafSyncUserFeed(
       // TODO: If this task gets canceled, these user entries may not
       // make it into the main feeds until the next update cycle.
       // Solution: Backdate the timestamp in finally clause?
-      feedLatestAdd(compiledUserEntries)
+      addEntries(compiledUserEntries)
     }
 
     log('Returning')

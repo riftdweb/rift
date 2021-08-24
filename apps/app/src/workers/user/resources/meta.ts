@@ -15,7 +15,7 @@ const taskQueue = TaskQueue(`sync/${resourceName}`, {
 
 type SkappsMap = Record<string, boolean>
 
-const cafSyncMeta = CAF(function* _cafSyncMeta(
+const cafSyncMeta = CAF(function* (
   signal: any,
   ref: ControlRef,
   userId: string,

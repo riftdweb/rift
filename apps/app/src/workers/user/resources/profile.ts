@@ -17,7 +17,7 @@ const taskQueue = TaskQueue(`sync/${resourceName}`, {
   mode: 'dedupe',
 })
 
-const cafSyncProfile = CAF(function* _cafSyncProfile(
+const cafSyncProfile = CAF(function* (
   signal: any,
   ref: ControlRef,
   userId: string,

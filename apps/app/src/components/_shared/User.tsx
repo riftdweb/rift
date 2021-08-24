@@ -11,6 +11,7 @@ type Props = {
   showName?: boolean
   size?: '1' | '2' | '3'
   avatarColor?: string
+  css?: {}
   textCss?: {}
 }
 
@@ -22,6 +23,7 @@ export function User({
   showName = false,
   avatarColor,
   textCss,
+  css,
   children,
 }: Props) {
   const user = useUser(userId)
@@ -32,6 +34,7 @@ export function User({
         alignItems: 'center',
         gap: '$1',
         width,
+        ...css,
       }}
     >
       <Avatar
@@ -57,14 +60,26 @@ export function User({
         }}
         to={`/users/${userId}`}
       >
-        <Flex css={{ gap: '$1' }}>
+        <Flex
+          css={{
+            gap: '$1',
+          }}
+        >
           {profile?.data?.username ? (
             <Text>{profile?.data?.username}</Text>
           ) : (
             <Text>{`${userId.slice(0, 5)}...`}</Text>
           )}
           {showName && profile?.data?.firstName && (
-            <Text css={{ color: '$gray800 !important' }}>
+            <Text
+              css={{
+                color: '$gray800 !important',
+                display: 'none',
+                '@bp1': {
+                  display: 'inline',
+                },
+              }}
+            >
               {`${profile.data.firstName} ${profile.data.lastName}`}
             </Text>
           )}

@@ -10,11 +10,11 @@ import { SWRResponse } from 'swr'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { feedDAC, useSkynet } from '../skynet'
-import { workerRoot } from '../../workers/workerRoot'
+import { startRoot } from '../../workers/root'
 import { syncUserFeed } from '../../workers/user/resources/feed'
 import { ActivityFeed, Entry, EntryFeed } from '@riftdweb/types'
-import { workerFeedTopUpdate } from '../../workers/workerFeedTop'
-import { workerFeedActivityUpdate } from '../../workers/workerFeedActivity'
+import { updateTopFeed } from '../../workers/top'
+import { updateActivityFeed } from '../../workers/activity'
 import { createLogger } from '../../shared/logger'
 import { useParamUserId } from './useParamUserId'
 import { useFeedActivity } from './useFeedActivity'
@@ -120,12 +120,12 @@ export function FeedProvider({ children }: Props) {
     if (isInitializing || isReseting) {
       return
     }
-    workerRoot(ref)
+    startRoot(ref)
   }, [ref, isInitializing, isReseting])
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {
-      await workerFeedTopUpdate(ref, { force: true, priority: 4 })
+      await updateTopFeed(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])
@@ -139,7 +139,7 @@ export function FeedProvider({ children }: Props) {
 
   const refreshActivity = useCallback(() => {
     const func = async () => {
-      await workerFeedActivityUpdate(ref, { force: true, priority: 4 })
+      await updateActivityFeed(ref, { force: true, priority: 4 })
     }
     return func()
   }, [ref])

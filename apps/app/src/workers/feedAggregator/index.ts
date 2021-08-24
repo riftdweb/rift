@@ -1,15 +1,21 @@
 import * as CAF from 'caf'
-import { createLogger } from '../shared/logger'
-import { TaskQueue } from '../shared/taskQueue'
-import { wait } from '../shared/wait'
-import { ControlRef } from '../contexts/skynet/ref'
-import { cacheAllEntries, fetchAllEntries } from './workerApi'
-import { clearToken, handleToken } from './tokens'
+import { createLogger } from '../../shared/logger'
+import { TaskQueue } from '../../shared/taskQueue'
+import { wait } from '../../shared/wait'
+import { ControlRef } from '../../contexts/skynet/ref'
+import { cacheAllEntries, fetchAllEntries } from '../workerApi'
+import { clearToken, handleToken } from '../tokens'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
-import { workerFeedActivityUpdate } from './workerFeedActivity'
-import { workerFeedTopUpdate } from './workerFeedTop'
+import { updateActivityFeed } from '../activity'
+import { updateTopFeed } from '../top'
 
-const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
+// Holds multiple batches of user entries that get added to the latest entries
+// on a schedule.
+// When the user changes the buffer gets cleared, via a call to clearEntriesBuffer.
+let entriesBuffer = []
+const SCHEDULE_INTERVAL = 10_000
+
+const cafUpdateFeed = CAF(function* (
   signal: any,
   ref: ControlRef,
   newEntries: Entry[],
@@ -48,7 +54,7 @@ const cafFeedLatestUpdate = CAF(function* feedLatestUpdate(
   }
 })
 
-async function feedLatestUpdate(
+async function updateFeed(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
@@ -58,7 +64,7 @@ async function feedLatestUpdate(
   })
   try {
     const token = await handleToken(ref, 'feedLatestUpdate')
-    await cafFeedLatestUpdate(token.signal, ref, entriesBatch, params)
+    await cafUpdateFeed(token.signal, ref, entriesBatch, params)
   } catch (e) {
     if (e) {
       log('Error', e)
@@ -68,7 +74,7 @@ async function feedLatestUpdate(
 
 const taskQueue = TaskQueue('feed/latest')
 
-async function queueFeedLatestUpdate(
+async function queueUpdateFeed(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
@@ -76,7 +82,7 @@ async function queueFeedLatestUpdate(
   const log = createLogger('feed/latest/update', {
     workflowId: params.workflowId,
   })
-  const task = () => feedLatestUpdate(ref, entriesBatch, params)
+  const task = () => updateFeed(ref, entriesBatch, params)
   await taskQueue.add(task, {
     meta: {
       name: 'batch',
@@ -121,7 +127,9 @@ function replaceEntriesBatchByUserId(
   return allEntries.concat(newEntries)
 }
 
-export function feedLatestAdd(entries: Entry[]): void {
+// Public API
+
+export function addEntries(entries: Entry[]): void {
   entriesBuffer = replaceEntriesBatchByUserId(entriesBuffer, entries)
 }
 
@@ -129,30 +137,23 @@ export function clearEntriesBuffer() {
   entriesBuffer = []
 }
 
-// Holds multiple batches of user entries that get added to the latest entries
-// on a schedule.
-// When the user changes the buffer gets cleared, via a call to clearEntriesBuffer.
-let entriesBuffer = []
-
-const SCHEDULE_INTERVAL = 10_000
-
 // All internal workers are priorty 3 because they should take precedence over
 // routine indexing and do not happen often.
-export async function scheduleFeedLatestUpdate(ref: ControlRef) {
+export async function scheduleFeedAggregator(ref: ControlRef) {
   const log = createLogger('feed/latest/scheduler')
 
   const entriesBatch = entriesBuffer
   entriesBuffer = []
   if (entriesBatch.length) {
     log(`Running feed latest update: ${entriesBatch.length}`)
-    await queueFeedLatestUpdate(ref, entriesBatch, {
+    await queueUpdateFeed(ref, entriesBatch, {
       priority: 3,
     })
 
     if (taskQueue.queue.length === 0) {
       Promise.all([
-        workerFeedTopUpdate(ref, { force: true, delay: 1_000, priority: 3 }),
-        workerFeedActivityUpdate(ref, {
+        updateTopFeed(ref, { force: true, delay: 1_000, priority: 3 }),
+        updateActivityFeed(ref, {
           force: true,
           delay: 1_000,
           priority: 3,
@@ -164,6 +165,6 @@ export async function scheduleFeedLatestUpdate(ref: ControlRef) {
   }
 
   await wait(SCHEDULE_INTERVAL)
-  scheduleFeedLatestUpdate(ref)
+  scheduleFeedAggregator(ref)
   return
 }

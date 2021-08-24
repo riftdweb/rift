@@ -30,7 +30,7 @@ export default function Navbar() {
   const { toggleTheme } = useTheme()
   const { portal, portals, setDevPortal } = usePortal()
   const { appDomain } = useSkynet()
-  const { isFocused: isSearchFocused } = useSearch()
+  const { isOpen } = useSearch()
 
   const handleChangePortal = useCallback(
     (newPortal: string) => {
@@ -53,7 +53,7 @@ export default function Navbar() {
             css={{
               display: 'none',
               '@bp1': {
-                display: isSearchFocused ? 'none' : 'block',
+                display: isOpen ? 'none' : 'block',
               },
               '@bp2': {
                 display: 'block',
@@ -92,7 +92,7 @@ export default function Navbar() {
           </Box>
           <Box
             css={{
-              display: isSearchFocused ? 'none' : 'block',
+              display: isOpen ? 'none' : 'block',
               '@bp2': {
                 display: 'block',
               },

@@ -10,6 +10,7 @@ import { recomputeFollowers } from './utils'
 const FALSE_START_WAIT_INTERVAL = 1000 * 2
 const BATCH_SIZE = 5
 
+const tokenName = 'userIndexer'
 export const log = createLogger('userIndexer')
 
 const cafUsersIndexer = CAF(function* (
@@ -68,13 +69,13 @@ async function usersIndexer(
   ref: ControlRef,
   params: WorkerParams = {}
 ): Promise<any> {
-  const token = await handleToken(ref, 'userIndexer')
+  const token = await handleToken(ref, tokenName)
   try {
     await cafUsersIndexer(token.signal, ref, params)
   } catch (e) {
     log('Error', e)
   } finally {
-    clearToken(ref, 'userIndexer')
+    clearToken(ref, tokenName)
   }
 }
 
@@ -88,7 +89,7 @@ async function maybeRunUsersIndexer(ref: ControlRef): Promise<any> {
   })
 
   // If indexer is already running skip
-  if (ref.current.tokens.userIndexer) {
+  if (ref.current.tokens[tokenName]) {
     logScheduler(`Indexer already running, skipping`)
   } else {
     logScheduler(`Indexer starting`)

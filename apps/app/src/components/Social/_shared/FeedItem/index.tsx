@@ -64,13 +64,22 @@ export function FeedItem({ entry, index }: Props) {
     const parts = title.split(/\{\{|\}\}/g)
 
     return parts.map((part, i) => {
+      const key = `${part}/${i}`
       if (part.startsWith('__WORD')) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, stem, value] = part.split('///')
-        return <Keyword value={value} stem={stem} isHovering={isHovering} />
+        return (
+          <Keyword
+            key={key}
+            value={value}
+            stem={stem}
+            isHovering={isHovering}
+          />
+        )
       }
       return (
         <Text
+          key={key}
           css={{
             ...textStyles,
           }}
@@ -100,6 +109,11 @@ export function FeedItem({ entry, index }: Props) {
         flexDirection: 'column',
         gap: '$2',
         position: 'relative',
+        borderRadius: '9px',
+        border:
+          new Date().getTime() - entry.post.ts < 1000 * 60 * 1
+            ? '2px solid $green400'
+            : 'none',
       }}
     >
       <Flex css={{ gap: '$1' }}>

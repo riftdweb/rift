@@ -13,6 +13,7 @@ import { clearToken, handleToken } from '../tokens'
 import { v4 as uuid } from 'uuid'
 import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 
+const tokenName = 'feedTopUpdate'
 const logName = 'feed/top/update'
 
 const cafUpdateTopFeed = CAF(function* (
@@ -76,7 +77,7 @@ const cafUpdateTopFeed = CAF(function* (
     if (signal.aborted) {
       log('Aborted')
     }
-    clearToken(ref, 'feedTopUpdate')
+    clearToken(ref, tokenName)
     ref.current.feeds.top.setLoadingState()
   }
 })
@@ -91,7 +92,7 @@ export async function updateTopFeed(
   const log = createLogger(logName, {
     workflowId,
   })
-  const token = await handleToken(ref, 'feedTopUpdate')
+  const token = await handleToken(ref, tokenName)
   try {
     await cafUpdateTopFeed(token.signal, ref, {
       ...params,

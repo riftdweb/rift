@@ -1,13 +1,17 @@
 import useSWR from 'swr'
-import { EntryFeed } from '@riftdweb/types'
+import { Entry, EntryFeed } from '@riftdweb/types'
 import { fetchAllEntries } from '../../workers/workerApi'
 import { useSkynet } from '../skynet'
 import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/ref'
+import { dedupePendingUserEntries } from './utils'
 
-type Props = { ref: ControlRef }
+type Props = {
+  ref: ControlRef
+  pendingUserEntries: Entry[]
+}
 
-export function useFeedLatest({ ref }: Props) {
+export function useFeedLatest({ ref, pendingUserEntries }: Props) {
   const { getKey } = useSkynet()
   const [loadingState, setLoadingState] = useState<string>()
 
@@ -22,13 +26,31 @@ export function useFeedLatest({ ref }: Props) {
     }
   )
 
+  const responseWithPending = useMemo(
+    () =>
+      response.data && pendingUserEntries.length
+        ? {
+            ...response,
+            data: {
+              entries: dedupePendingUserEntries(
+                response.data.entries,
+                pendingUserEntries
+              ),
+              updatedAt: response.data.updatedAt,
+              null: response.data.null,
+            },
+          }
+        : response,
+    [response, pendingUserEntries]
+  )
+
   const values = useMemo(
     () => ({
-      response,
+      response: responseWithPending,
       loadingState,
       setLoadingState,
     }),
-    [response, loadingState, setLoadingState]
+    [responseWithPending, loadingState, setLoadingState]
   )
 
   useEffect(() => {

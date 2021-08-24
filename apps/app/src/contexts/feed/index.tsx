@@ -63,6 +63,7 @@ type State = {
   refreshActivity: () => void
 
   createPost: ({ text: string }) => void
+  pendingUserEntries: Entry[]
   incrementKeywords: (keywords: string[]) => void
   setKeywordValue: (keyword: string, value: number) => void
   incrementDomain: (domain: string) => void
@@ -92,6 +93,9 @@ type Props = {
 export function FeedProvider({ children }: Props) {
   const { myUserId, isReseting, isInitializing, controlRef: ref } = useSkynet()
   const viewingUserId = useParamUserId()
+  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
+  const [mode, setMode] = useState<Mode>('top')
+  const [pendingUserEntries, setPendingUserEntries] = useState<Entry[]>([])
 
   const [keywords, setKeywords] = useLocalStorageState<{
     [keyword: string]: number
@@ -103,9 +107,9 @@ export function FeedProvider({ children }: Props) {
   const [nonIdealState, setNonIdealState] = useState<string>()
 
   const activity = useFeedActivity({ ref })
-  const latest = useFeedLatest({ ref })
   const top = useFeedTop({ ref })
-  const user = useFeedUser({ ref })
+  const latest = useFeedLatest({ ref, pendingUserEntries })
+  const user = useFeedUser({ ref, pendingUserEntries, setPendingUserEntries })
 
   // Update controlRef
   useEffect(() => {
@@ -201,9 +205,6 @@ export function FeedProvider({ children }: Props) {
     [setDomains]
   )
 
-  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
-  const [mode, setMode] = useState<Mode>('top')
-
   const createPost = useCallback(
     ({ text }: { text: string }) => {
       const localLog = log.createLogger('createPost')
@@ -225,25 +226,7 @@ export function FeedProvider({ children }: Props) {
         try {
           localLog('Optimistic updates')
           // Incrementing this value prevents feeds from refetching
-          ref.current.pendingUserPosts += 1
-
-          // Optimistically update local latest feed
-          latest.response.mutate(
-            (data) => ({
-              updatedAt: data.updatedAt,
-              entries: [pendingPost, ...data.entries],
-            }),
-            false
-          )
-
-          // Optimistically update local user feed
-          user.response.mutate(
-            (data) => ({
-              updatedAt: data.updatedAt,
-              entries: [pendingPost, ...data.entries],
-            }),
-            false
-          )
+          setPendingUserEntries((entries) => entries.concat([pendingPost]))
 
           localLog('Feed DAC createPost')
           // Create post
@@ -251,13 +234,26 @@ export function FeedProvider({ children }: Props) {
 
           localLog('Start user feed update')
           await syncUserFeed(ref, myUserId, 4, 0)
-        } finally {
-          ref.current.pendingUserPosts -= 1
+
+          setPendingUserEntries((entries) =>
+            entries.map((entry) => ({
+              ...entry,
+              isPending: false,
+            }))
+          )
+        } catch (e) {
+          localLog('Error', e)
+          // If an error occurs, remove the pending entries
+          setPendingUserEntries((entries) =>
+            entries.filter(
+              (entry) => ((entry.post.id as unknown) as string) !== cid
+            )
+          )
         }
       }
       func()
     },
-    [ref, latest, user, myUserId]
+    [ref, myUserId, setPendingUserEntries]
   )
 
   const current = useMemo(() => (mode === 'latest' ? latest : top), [
@@ -278,6 +274,7 @@ export function FeedProvider({ children }: Props) {
     activity,
     user,
     refreshCurrentFeed,
+    pendingUserEntries,
     refreshTopFeed,
     refreshLatestFeed,
     refreshActivity,

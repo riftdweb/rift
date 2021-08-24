@@ -6,11 +6,10 @@ import { Feed, ActivityFeed, EntryFeed } from '@riftdweb/types'
 import { Api } from './api'
 
 type TokenKey =
-  | 'feedLatestUpdate'
+  | 'feedAggregator'
   | 'feedTopUpdate'
   | 'feedActivityUpdate'
-  | 'feedIndexer'
-  | 'networkUsers'
+  | 'userIndexer'
   | string
 
 const controlRefDefaults = {
@@ -35,7 +34,6 @@ const controlRefDefaults = {
   getUsersPendingUpdate: (() => []) as () => string[],
   setPendingUserIds: (() => {}) as Dispatch<SetStateAction<string[]>>,
   addNewUserIds: async (userIds: string[]): Promise<void> => {},
-  pendingUserPosts: 0 as number,
   domains: {} as {
     [domain: string]: number
   },
@@ -47,10 +45,9 @@ const controlRefDefaults = {
   nonIdealState: undefined as string | undefined,
   setNonIdealState: (state?: string) => {},
   tokens: {
-    feedLatestUpdate: null,
+    feedAggregator: null,
     feedTopUpdate: null,
     feedActivityUpdate: null,
-    feedIndexer: null,
     userIndexer: null,
   } as Record<TokenKey, any>,
   feeds: {} as {

@@ -43,16 +43,23 @@ const cafSyncUserFeed = CAF(function* (
     log('Compiling entries')
     let compiledUserEntries: Entry[] = yield compileUserEntries(userId, params)
 
-    log('Caching and mutating entries, updating metadata')
-    yield Promise.all([
-      cacheUserEntries(ref, userId, compiledUserEntries, params),
-      ref.current.feeds.user.response.mutate(
+    const optimisticallyUpdateUserFeed = () => {
+      if (userId !== ref.current.viewingUserId) {
+        return
+      }
+      return ref.current.feeds.user.response.mutate(
         {
           entries: compiledUserEntries,
           updatedAt: new Date().getTime(),
         },
         false
-      ),
+      )
+    }
+
+    log('Caching and mutating entries, updating metadata')
+    yield Promise.all([
+      cacheUserEntries(ref, userId, compiledUserEntries, params),
+      optimisticallyUpdateUserFeed(),
     ])
 
     yield ref.current.upsertUser({
@@ -65,14 +72,15 @@ const cafSyncUserFeed = CAF(function* (
       },
     })
 
-    const viewingUserId = ref.current.viewingUserId
-    if (userId === viewingUserId) {
+    if (userId === ref.current.viewingUserId) {
       log('Trigger mutate')
-      yield ref.current.feeds.user.response.mutate()
+      ref.current.feeds.user.response.mutate()
     }
 
     // Check to see if the latest feed needs to be updated
-    const existingEntries = ref.current.feeds.latest.response.data?.entries
+    const existingEntries = ref.current.feeds.latest.response.data?.entries.filter(
+      (entry) => !entry.isPending
+    )
     const newEntries = compiledUserEntries.filter(
       (entry) =>
         !existingEntries.find((existingEntry) => existingEntry.id === entry.id)

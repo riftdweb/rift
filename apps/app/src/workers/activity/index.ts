@@ -19,6 +19,7 @@ import {
 } from '@riftdweb/types'
 import { generateActivity } from './generate'
 
+const tokenName = 'feedActivityUpdate'
 const logName = 'feed/activity/update'
 
 const cafUpdateActivity = CAF(function* (
@@ -78,7 +79,7 @@ const cafUpdateActivity = CAF(function* (
     if (signal.aborted) {
       log('Aborted')
     }
-    clearToken(ref, 'feedActivityUpdate')
+    clearToken(ref, tokenName)
     ref.current.feeds.activity.setLoadingState()
   }
 })
@@ -93,7 +94,7 @@ export async function updateActivityFeed(
   const log = createLogger(logName, {
     workflowId,
   })
-  const token = await handleToken(ref, 'feedActivityUpdate')
+  const token = await handleToken(ref, tokenName)
   try {
     await cafUpdateActivity(token.signal, ref, {
       ...params,

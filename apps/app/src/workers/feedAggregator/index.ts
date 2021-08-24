@@ -9,11 +9,15 @@ import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { updateActivityFeed } from '../activity'
 import { updateTopFeed } from '../top'
 
+const tokenName = 'feedAggregator'
+const logName = 'feedAggregator/update'
+const SCHEDULE_INTERVAL = 10_000
+
+const taskQueue = TaskQueue('feedAggregator')
 // Holds multiple batches of user entries that get added to the latest entries
 // on a schedule.
 // When the user changes the buffer gets cleared, via a call to clearEntriesBuffer.
 let entriesBuffer = []
-const SCHEDULE_INTERVAL = 10_000
 
 const cafUpdateFeed = CAF(function* (
   signal: any,
@@ -21,7 +25,7 @@ const cafUpdateFeed = CAF(function* (
   newEntries: Entry[],
   params: WorkerParams
 ) {
-  const log = createLogger('feed/latest/update', {
+  const log = createLogger(logName, {
     workflowId: params.workflowId,
   })
   const { delay } = params
@@ -49,7 +53,7 @@ const cafUpdateFeed = CAF(function* (
     if (signal.aborted) {
       log('Aborted')
     }
-    clearToken(ref, 'feedLatestUpdate')
+    clearToken(ref, tokenName)
     ref.current.feeds.latest.setLoadingState()
   }
 })
@@ -59,11 +63,11 @@ async function updateFeed(
   entriesBatch: Entry[],
   params: WorkerParams = {}
 ): Promise<any> {
-  const log = createLogger('feed/latest/update', {
+  const log = createLogger(logName, {
     workflowId: params.workflowId,
   })
   try {
-    const token = await handleToken(ref, 'feedLatestUpdate')
+    const token = await handleToken(ref, tokenName)
     await cafUpdateFeed(token.signal, ref, entriesBatch, params)
   } catch (e) {
     if (e) {
@@ -72,16 +76,11 @@ async function updateFeed(
   }
 }
 
-const taskQueue = TaskQueue('feed/latest')
-
 async function queueUpdateFeed(
   ref: ControlRef,
   entriesBatch: Entry[],
   params: WorkerParams = {}
 ): Promise<any> {
-  const log = createLogger('feed/latest/update', {
-    workflowId: params.workflowId,
-  })
   const task = () => updateFeed(ref, entriesBatch, params)
   await taskQueue.add(task, {
     meta: {
@@ -89,15 +88,6 @@ async function queueUpdateFeed(
       operation: 'update',
     },
   })
-
-  // Only mutate the latest feed if there are no user posts being saved,
-  // this is to prevent optimistic updates from flickering.
-  if (!ref.current.pendingUserPosts) {
-    log('Fetching feed')
-    ref.current.feeds.latest.response.mutate()
-  } else {
-    log('Skip fetching feed')
-  }
 }
 
 function cleanFeed(ref: ControlRef, allEntries: Entry[]) {
@@ -140,12 +130,12 @@ export function clearEntriesBuffer() {
 // All internal workers are priorty 3 because they should take precedence over
 // routine indexing and do not happen often.
 export async function scheduleFeedAggregator(ref: ControlRef) {
-  const log = createLogger('feed/latest/scheduler')
+  const log = createLogger('feedAggregator/scheduler')
 
   const entriesBatch = entriesBuffer
   entriesBuffer = []
   if (entriesBatch.length) {
-    log(`Running feed latest update: ${entriesBatch.length}`)
+    log(`Running feed aggregator, batch count: ${entriesBatch.length}`)
     await queueUpdateFeed(ref, entriesBatch, {
       priority: 3,
     })

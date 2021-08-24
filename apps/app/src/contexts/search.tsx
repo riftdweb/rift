@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import debounce from 'lodash/debounce'
 import { useUsers } from './users'
 import { IUser } from '@riftdweb/types'
 
@@ -32,6 +31,7 @@ type Props = {
 
 export function SearchProvider({ children }: Props) {
   const [isFocused, setIsFocused] = useState<boolean>(false)
+  const [dSearchValue, setDSearchValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
   const ref = useRef()
 
@@ -53,17 +53,24 @@ export function SearchProvider({ children }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDSearchValue(searchValue)
+    }, 500)
+    return () => {
+      clearTimeout(timeout)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue])
+
   const isOpen = isFocused || !!searchValue
 
   const { indexedUsersIndex } = useUsers()
-  const [userSearchResults, setUserSearchResults] = useState<IUser[]>(
-    indexedUsersIndex
-  )
 
-  useEffect(() => {
-    filterItems(indexedUsersIndex, searchValue, setUserSearchResults)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
+  const userSearchResults = useMemo(
+    () => filterItems(indexedUsersIndex, dSearchValue),
+    [indexedUsersIndex, dSearchValue]
+  )
 
   const userSearchResultsPage = useMemo(() => userSearchResults.slice(0, 30), [
     userSearchResults,
@@ -86,51 +93,36 @@ export function SearchProvider({ children }: Props) {
   )
 }
 
-const filterItems = debounce(
-  (
-    items: IUser[],
-    searchValue: string,
-    callback: (results: IUser[]) => void
-  ): void => {
-    const lowerCaseSearchValue = searchValue.toLowerCase()
+function filterItems(items: IUser[], searchValue: string): IUser[] {
+  const lowerCaseSearchValue = searchValue.toLowerCase()
 
-    const results = items.filter((user) => {
-      if (user.userId.includes(searchValue)) {
-        return true
-      }
-      if (user.username?.toLowerCase().includes(lowerCaseSearchValue)) {
-        return true
-      }
-      if (
-        user.profile.data?.firstName
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.lastName
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.aboutMe?.toLowerCase().includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      if (
-        user.profile.data?.location
-          ?.toLowerCase()
-          .includes(lowerCaseSearchValue)
-      ) {
-        return true
-      }
-      return false
-    })
-
-    callback(results)
-  },
-  500
-)
+  return items.filter((user) => {
+    if (user.userId.includes(searchValue)) {
+      return true
+    }
+    if (user.username?.toLowerCase().includes(lowerCaseSearchValue)) {
+      return true
+    }
+    if (
+      user.profile.data?.firstName?.toLowerCase().includes(lowerCaseSearchValue)
+    ) {
+      return true
+    }
+    if (
+      user.profile.data?.lastName?.toLowerCase().includes(lowerCaseSearchValue)
+    ) {
+      return true
+    }
+    if (
+      user.profile.data?.aboutMe?.toLowerCase().includes(lowerCaseSearchValue)
+    ) {
+      return true
+    }
+    if (
+      user.profile.data?.location?.toLowerCase().includes(lowerCaseSearchValue)
+    ) {
+      return true
+    }
+    return false
+  })
+}

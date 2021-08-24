@@ -104,10 +104,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(
-    () => value === editingValue,
-    [value, editingValue]
-  )
+  const isDataLatest = useMemo(() => value === editingValue, [
+    value,
+    editingValue,
+  ])
 
   const isValid = useMemo(() => {
     try {

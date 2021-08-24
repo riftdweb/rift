@@ -34,6 +34,7 @@ const controlRefDefaults = {
   getUsersPendingUpdate: (() => []) as () => string[],
   setPendingUserIds: (() => {}) as Dispatch<SetStateAction<string[]>>,
   addNewUserIds: async (userIds: string[]): Promise<void> => {},
+  removeUserIds: async (userIds: string[]): Promise<void> => {},
   domains: {} as {
     [domain: string]: number
   },

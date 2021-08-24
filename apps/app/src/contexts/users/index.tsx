@@ -316,6 +316,30 @@ export function UsersProvider({ children }: Props) {
     [initState, getUser, upsertUsers]
   )
 
+  const removeUserIds = useCallback(
+    (userIds: string[]): Promise<void> => {
+      if (initState.step < initStates.hasFetchedUsersMap.step) {
+        throw Error('Cannot remove keys before usersMap has fetched')
+      }
+      const func = async () => {
+        const nextUsersMap = await usersMap.mutate((data) => {
+          const nextEntries = data.entries
+          userIds.forEach((userId) => {
+            delete nextEntries[userId]
+          })
+          return {
+            ...data,
+            entries: nextEntries,
+          }
+        }, false)
+
+        throttledCacheUsersMap(ref, nextUsersMap)
+      }
+      return func()
+    },
+    [ref, initState, usersMap]
+  )
+
   // Init step 2
   // Seed any new user ids
   useEffect(() => {
@@ -623,6 +647,7 @@ export function UsersProvider({ children }: Props) {
     ref.current.upsertUsers = upsertUsers
     ref.current.pendingUserIds = pendingUserIds
     ref.current.addNewUserIds = addNewUserIds
+    ref.current.removeUserIds = removeUserIds
     ref.current.allFollowing = allFollowing
     ref.current.isInitUsersComplete = isInitUsersComplete
   }, [
@@ -639,6 +664,7 @@ export function UsersProvider({ children }: Props) {
     getUsersPendingUpdate,
     pendingUserIds,
     addNewUserIds,
+    removeUserIds,
   ])
 
   // Dev helpers

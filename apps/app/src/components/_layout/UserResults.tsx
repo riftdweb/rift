@@ -1,11 +1,15 @@
 import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
+import { Fragment } from 'react'
 import { useSearch } from '../../contexts/search'
 import { useUsers } from '../../contexts/users'
+import SpinnerIcon from '../_icons/SpinnerIcon'
 import { UserProfile } from '../_shared/UserProfile'
 
 export function UserResults({ searchValue, onSelect }) {
   const { userSearchResultsPage, userSearchResultsCount } = useSearch()
   const { userCounts } = useUsers()
+
+  const hasIndexingStarted = userCounts.discovered !== 0
 
   return (
     <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -20,48 +24,52 @@ export function UserResults({ searchValue, onSelect }) {
           Social
         </Text>
         <Box css={{ flex: 1 }} />
-        {!searchValue && !!userCounts.pendingIndexing && (
-          <Tooltip
-            content={`Indexing ${userCounts.neverBeenIndexed} users for the first time, re-indexing ${userCounts.pendingReindexing} users`}
-          >
-            <Text
-              css={{
-                color: '$gray600',
-              }}
-            >
-              {`Indexing ${userCounts.pendingIndexing}`}
-            </Text>
-          </Tooltip>
-        )}
-        {!searchValue && (
-          <Tooltip
-            align="end"
-            content={`Discovered ${userCounts.discovered} total users, ${userCounts.hasBeenIndexed} have been indexed`}
-          >
-            <Text
-              css={{
-                color: '$gray800',
-              }}
-            >
-              {`Discovered ${userCounts.discovered}`}
-            </Text>
-          </Tooltip>
-        )}
-        {searchValue && (
-          <Tooltip
-            align="end"
-            content={`${userSearchResultsCount} matching users`}
-          >
-            <Text
-              css={{
-                color: '$gray800',
-              }}
-            >
-              {userSearchResultsCount === 1
-                ? '1 result'
-                : `${userSearchResultsCount} results`}
-            </Text>
-          </Tooltip>
+        {hasIndexingStarted && (
+          <Fragment>
+            {!searchValue && !!userCounts.pendingIndexing && (
+              <Tooltip
+                content={`Indexing ${userCounts.neverBeenIndexed} users for the first time, re-indexing ${userCounts.pendingReindexing} users`}
+              >
+                <Text
+                  css={{
+                    color: '$gray600',
+                  }}
+                >
+                  {`Indexing ${userCounts.pendingIndexing}`}
+                </Text>
+              </Tooltip>
+            )}
+            {!searchValue && (
+              <Tooltip
+                align="end"
+                content={`Discovered ${userCounts.discovered} total users, ${userCounts.hasBeenIndexed} have been indexed`}
+              >
+                <Text
+                  css={{
+                    color: '$gray800',
+                  }}
+                >
+                  {`Discovered ${userCounts.discovered}`}
+                </Text>
+              </Tooltip>
+            )}
+            {searchValue && (
+              <Tooltip
+                align="end"
+                content={`${userSearchResultsCount} matching users`}
+              >
+                <Text
+                  css={{
+                    color: '$gray800',
+                  }}
+                >
+                  {userSearchResultsCount === 1
+                    ? '1 result'
+                    : `${userSearchResultsCount} results`}
+                </Text>
+              </Tooltip>
+            )}
+          </Fragment>
         )}
       </Flex>
       {userSearchResultsCount ? (
@@ -94,6 +102,13 @@ export function UserResults({ searchValue, onSelect }) {
               </Box>
             )
           })}
+        </Flex>
+      ) : !hasIndexingStarted ? (
+        <Flex css={{ gap: '$1', color: '$gray900', padding: '$2 $4 $2 $3' }}>
+          <SpinnerIcon />
+          <Text css={{ color: '$gray900' }}>
+            One moment, initializing search index
+          </Text>
         </Flex>
       ) : (
         <Text css={{ color: '$gray900', padding: '$2 $4 $2 $3' }}>

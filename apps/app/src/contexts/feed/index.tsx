@@ -91,7 +91,7 @@ type Props = {
 }
 
 export function FeedProvider({ children }: Props) {
-  const { myUserId, isReseting, isInitializing, controlRef: ref } = useSkynet()
+  const { myUserId, isReady, controlRef: ref } = useSkynet()
   const viewingUserId = useParamUserId()
   const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<boolean>(false)
   const [mode, setMode] = useState<Mode>('top')
@@ -121,11 +121,10 @@ export function FeedProvider({ children }: Props) {
   }, [ref, viewingUserId, keywords, domains, nonIdealState, setNonIdealState])
 
   useEffect(() => {
-    if (isInitializing || isReseting) {
-      return
+    if (isReady) {
+      startRoot(ref)
     }
-    startRoot(ref)
-  }, [ref, isInitializing, isReseting])
+  }, [ref, isReady])
 
   const refreshTopFeed = useCallback(() => {
     const func = async () => {

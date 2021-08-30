@@ -2,7 +2,7 @@ import {
   ExclamationTriangleIcon,
   ExternalLinkIcon,
 } from '@radix-ui/react-icons'
-import { Box, Button, Flex, Text } from '@riftdweb/design-system'
+import { Box, Button, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { Fragment } from 'react'
 import { useSkylink } from '../../hooks/useSkylink'
 import SpinnerIcon from '../_icons/SpinnerIcon'
@@ -25,6 +25,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
     size,
     isValidating,
     weblink,
+    health,
   } = useSkylink(rawSkylink)
 
   if (rawSkylink && !skylink) {
@@ -41,10 +42,18 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
     )
   }
 
+  const isCheckingHealth = health.quick.isValidating || health.full.isValidating
+  const healthStatus =
+    health.isEnabled && health.full.data?.basesectorredundancy
+      ? getHealthStatus(health.full.data.basesectorredundancy)
+      : health.quick.data?.basesectorredundancy
+      ? getHealthStatus(health.quick.data.basesectorredundancy, true)
+      : null
+
   return (
     skylink &&
     (data ? (
-      <Flex css={{ flexDirection: 'column', gap: '$1' }}>
+      <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Flex css={{ alignItems: 'center' }}>
           <Link
             href={weblink}
@@ -52,6 +61,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
             css={{
               flex: 1,
               overflow: 'hidden',
+              lineHeight: '20px',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
@@ -65,7 +75,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
             <SkylinkContextMenu skylink={skylink} />
           </Flex>
         </Flex>
-        <Flex css={{ gap: '$1' }}>
+        <Flex css={{ gap: '$1', alignItems: 'center' }}>
           <Text
             size="1"
             css={{
@@ -97,6 +107,43 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
           <Text size="1" css={{ color: '$gray800' }}>
             {size}
           </Text>
+          <Text size="1" css={{ color: '$gray800' }}>
+            •
+          </Text>
+          {health.isEnabled && isCheckingHealth && (
+            <Box
+              css={{ color: healthStatus ? healthStatus.color : '$gray800' }}
+            >
+              <SpinnerIcon size="12" />
+            </Box>
+          )}
+          {healthStatus ? (
+            <Tooltip
+              content={`Base sector redundancy ${
+                healthStatus.isPending
+                  ? `at least ${healthStatus.redundancy}`
+                  : healthStatus.redundancy
+              }`}
+            >
+              <Text
+                size="1"
+                css={{
+                  color: healthStatus.color,
+                }}
+              >
+                {healthStatus.label}
+              </Text>
+            </Tooltip>
+          ) : (
+            <Text
+              size="1"
+              css={{
+                color: '$gray800',
+              }}
+            >
+              Checking health
+            </Text>
+          )}
         </Flex>
       </Flex>
     ) : isValidating ? (
@@ -112,4 +159,74 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
       </Flex>
     ))
   )
+}
+
+const excellent = 8
+const good = 6
+const poor = 4
+
+function getHealthStatus(
+  redundancy: number,
+  isPending: boolean = false
+): {
+  color: string
+  label: string
+  redundancy: number
+  isPending: boolean
+} {
+  if (isPending && redundancy >= excellent) {
+    return {
+      color: '$green900',
+      label: 'Excellent health',
+      redundancy,
+      isPending,
+    }
+  }
+  if (isPending && redundancy >= good) {
+    return {
+      color: '$green900',
+      label: 'At least good health',
+      redundancy,
+      isPending,
+    }
+  }
+  if (isPending) {
+    return {
+      color: '$gray800',
+      label: 'Checking health',
+      redundancy,
+      isPending,
+    }
+  }
+
+  if (redundancy >= excellent) {
+    return {
+      color: '$green900',
+      label: 'Excellent health',
+      redundancy,
+      isPending,
+    }
+  }
+  if (redundancy >= good) {
+    return {
+      color: '$green900',
+      label: 'Good health',
+      redundancy,
+      isPending,
+    }
+  }
+  if (redundancy >= poor) {
+    return {
+      color: '$red900',
+      label: `Poor health (${redundancy})`,
+      redundancy,
+      isPending,
+    }
+  }
+  return {
+    color: '$red900',
+    label: `Health at risk (${redundancy})`,
+    redundancy,
+    isPending,
+  }
 }

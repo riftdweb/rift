@@ -21,6 +21,32 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
     }
   )
 
+  const healthQuick = useSWR<{ basesectorredundancy: number }>(
+    !skipFetch && skylink ? [skylink, 'healthQuick'] : null,
+    async () => {
+      const response = await fetch(
+        `https://${portal}/skynet/health/skylink/${skylink}?timeout=5`
+      )
+      return await response.json()
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  )
+
+  const healthFull = useSWR<{ basesectorredundancy: number }>(
+    !skipFetch && skylink ? [skylink, 'healthFull'] : null,
+    async () => {
+      const response = await fetch(
+        `https://${portal}/skynet/health/skylink/${skylink}`
+      )
+      return await response.json()
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  )
+
   const skylinkBase32 = useMemo(() => {
     if (!skylink) {
       return ''
@@ -109,5 +135,10 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
     weblinkSubdomain,
     data,
     isValidating,
+    health: {
+      isEnabled: !skipFetch,
+      quick: healthQuick,
+      full: healthFull,
+    },
   }
 }

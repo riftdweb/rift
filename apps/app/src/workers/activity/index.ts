@@ -72,15 +72,13 @@ const cafUpdateActivity = CAF(function* (
     log('Trigger mutate')
     yield ref.current.feeds.activity.response.mutate()
     ref.current.feeds.activity.setLoadingState()
-
-    log('Returning')
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, tokenName)
     ref.current.feeds.activity.setLoadingState()
+    log('Finished')
   }
 })
 

@@ -18,6 +18,6 @@ export async function startRoot(ref: ControlRef): Promise<any> {
   log('Starting feed latest updater')
   await scheduleFeedAggregator(ref)
 
-  log('Returning')
+  log('Finished')
   return
 }

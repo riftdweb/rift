@@ -52,14 +52,13 @@ const cafSyncFollowing = CAF(function* (
       },
     })
 
-    log('Returning')
     return followingIds
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, getTokenName(userId, resourceName))
+    log('Finished')
   }
 })
 

@@ -104,15 +104,13 @@ const cafSyncUserFeed = CAF(function* (
       // Solution: Backdate the timestamp in finally clause?
       addEntries(compiledUserEntries)
     }
-
-    log('Returning')
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, getTokenName(userId, resourceName))
     ref.current.feeds.user.setLoadingState(userId, '')
+    log('Finished')
   }
 })
 

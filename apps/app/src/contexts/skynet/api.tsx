@@ -225,7 +225,10 @@ export const buildApi = ({
       })
     }
 
-    const task = () => mySky.setJSONEncrypted(fullDataPath, json)
+    const task = () => {
+      log('calling setJSONEncrpyed')
+      return mySky.setJSONEncrypted(fullDataPath, json)
+    }
     return apiLimiter.add(task, {
       priority,
       meta: {

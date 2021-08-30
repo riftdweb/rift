@@ -70,15 +70,13 @@ const cafUpdateTopFeed = CAF(function* (
     log('Trigger mutate')
     yield ref.current.feeds.top.response.mutate()
     ref.current.feeds.top.setLoadingState()
-
-    log('Returning')
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, tokenName)
     ref.current.feeds.top.setLoadingState()
+    log('Finished')
   }
 })
 

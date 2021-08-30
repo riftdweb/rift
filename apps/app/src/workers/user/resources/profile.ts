@@ -51,14 +51,13 @@ const cafSyncProfile = CAF(function* (
       },
     })
 
-    log('Returning')
     return profile
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, getTokenName(userId, resourceName))
+    log('Finished')
   }
 })
 

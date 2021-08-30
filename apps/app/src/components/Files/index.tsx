@@ -1,20 +1,14 @@
-import { useState } from 'react'
 import { useFs } from '../../contexts/files'
-import { FileExplorer } from './FileExplorer'
+import { createLogger } from '../../shared/logger'
+import { FileExplorer } from './Explorer'
 import { FileViewer } from './FileViewer'
 
-export function Files() {
-  const {
-    directoryIndex,
-    createDirectory,
-    setActiveDirectory,
-    activeDirectory,
-  } = useFs()
-  const [value, setValue] = useState<string>('')
-  console.log(directoryIndex.data)
-  console.log('foo', activeDirectory)
+const log = createLogger('files/Files')
 
-  if (activeDirectory.length > 1) {
+export function Files() {
+  const { activeFile } = useFs()
+
+  if (activeFile) {
     return <FileViewer />
   }
 

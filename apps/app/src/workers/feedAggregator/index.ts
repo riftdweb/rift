@@ -49,12 +49,12 @@ const cafUpdateFeed = CAF(function* (
       priority: params.priority,
     })
   } finally {
-    log('Finally')
     if (signal.aborted) {
       log('Aborted')
     }
     clearToken(ref, tokenName)
     ref.current.feeds.latest.setLoadingState()
+    log('Finished')
   }
 })
 

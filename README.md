@@ -1,3 +1,5 @@
-<h1 align="center">rift</h1>
+<img src="./assets/header.png" alt="logo" width="100%" />
 
-<p align="center">Tools for the decentralized web.</p>
+<h1 align="center" style="font-weight:bold;margin-top:10px;">rift</h1>
+
+<p align="center">Your decentralized workspace.</p>

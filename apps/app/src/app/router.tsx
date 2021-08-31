@@ -44,13 +44,13 @@ export function App() {
             }
           >
             <Switch>
-              <Route path="/skyfiles">
+              <Route path="/files">
                 <Skyfiles />
               </Route>
-              <Route path="/files/*">
+              <Route path="/alpha-files/*">
                 <Files />
               </Route>
-              <Route path="/files">
+              <Route path="/aplha-files">
                 <Files />
               </Route>
               <Route

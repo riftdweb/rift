@@ -1,5 +1,4 @@
 import { Box, Input } from '@riftdweb/design-system'
-import { useCallback } from 'react'
 import { useDrop } from '../../../contexts/files/useDrop'
 
 type Props = {

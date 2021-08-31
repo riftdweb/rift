@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@riftdweb/design-system'
+import { Box, Flex } from '@riftdweb/design-system'
 import { FileIcon } from '@radix-ui/react-icons'
 import { formatRelative } from 'date-fns'
 import bytes from 'bytes'
@@ -15,13 +15,13 @@ type Props = {
 
 export function FileItem({ file }: Props) {
   const { activePath } = useFs()
-  const { type, pending } = file
+  const { pending } = file
   const {
     name,
-    created,
+    // created,
     modified,
     // history, // map of 'file' objects
-    version,
+    // version,
     mimeType,
   } = file.data
   const {

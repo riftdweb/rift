@@ -1,29 +1,14 @@
-import {
-  Container,
-  Box,
-  Button,
-  Flex,
-  Input,
-  Text,
-} from '@riftdweb/design-system'
-import { Fragment, useState } from 'react'
-import { createLogger } from '@riftdweb/logger'
+import { Container, Box, Flex } from '@riftdweb/design-system'
 import { useFs } from '../../../contexts/files'
 import { EntriesState } from '../../_shared/EntriesState'
-import { Link } from '../../_shared/Link'
-import { CellText } from './CellText'
 import { DirectoryItem } from './RowDirectory'
 import { FileItem } from './RowFile'
-import { Row } from './Row'
 import { FileNav } from './FileNav'
 import { Header } from './Header'
 import { Drop } from './Drop'
 
-const log = createLogger('files/FileExplorer')
-
 export function FileExplorer() {
-  const { activePath, directoryIndex, createDirectory } = useFs()
-  const [value, setValue] = useState<string>('')
+  const { activePath, directoryIndex } = useFs()
 
   return (
     <Container size="3" css={{ py: '$5' }}>

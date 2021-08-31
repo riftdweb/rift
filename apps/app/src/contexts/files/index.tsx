@@ -5,7 +5,6 @@ import {
   DirectoryFile,
   DirectoryIndex,
 } from 'fs-dac-library/dist/cjs/skystandards'
-import { IFileSystemDACResponse } from 'fs-dac-library/dist/cjs/types'
 import { createContext, useCallback, useContext, useMemo } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 import { usePathOutsideRouter } from '../../hooks/usePathOutsideRouter'
@@ -62,7 +61,7 @@ type Props = {
 }
 
 export function FsProvider({ children }: Props) {
-  const { Api, getKey, appDomain } = useSkynet()
+  const { getKey } = useSkynet()
 
   const activePath = useParamFilePath()
 
@@ -157,15 +156,14 @@ export function FsProvider({ children }: Props) {
           }),
           false
         )
-        const response: IFileSystemDACResponse = await fileSystemDAC.createDirectory(
-          activeDirectory.join('/'),
-          name
-        )
+
+        await fileSystemDAC.createDirectory(activeDirectory.join('/'), name)
+
         directoryIndex.mutate()
       }
       func()
     },
-    [appDomain, directoryIndex]
+    [directoryIndex, activeDirectory]
   )
 
   // From uploader

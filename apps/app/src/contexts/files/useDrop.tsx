@@ -23,7 +23,7 @@ const taskQueue = TaskQueue('files', {
 const UPLOAD_STATE_CACHE = {}
 
 function useOnDrop({ directoryMode, directoryPath }) {
-  const { Api, getKey } = useSkynet()
+  const { Api } = useSkynet()
   const { portal } = usePortal()
 
   const {

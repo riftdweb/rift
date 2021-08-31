@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@riftdweb/design-system'
+import { Box, Flex } from '@riftdweb/design-system'
 import { formatRelative } from 'date-fns'
 import { useMemo } from 'react'
 import { NodeDirectory, useFs } from '../../../contexts/files'

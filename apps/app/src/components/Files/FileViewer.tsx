@@ -5,7 +5,9 @@ import { Link } from '../_shared/Link'
 import { getFileUrl } from './download'
 
 export function FileViewer() {
-  const { activePath, directoryIndex, activeFile } = useFs()
+  const { activePath, activeFile } = useFs()
+
+  // eslint-disable-next-line
   const [url, setUrl] = useState<string>('')
 
   useEffect(() => {
@@ -14,6 +16,7 @@ export function FileViewer() {
       setUrl(url)
     }
     func()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

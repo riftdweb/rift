@@ -7,8 +7,8 @@ import {
   Text,
 } from '@riftdweb/design-system'
 import { Fragment, useState } from 'react'
+import { createLogger } from '@riftdweb/logger'
 import { useFs } from '../../../contexts/files'
-import { createLogger } from '../../../shared/logger'
 import { EntriesState } from '../../_shared/EntriesState'
 import { Link } from '../../_shared/Link'
 import { CellText } from './CellText'

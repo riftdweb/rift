@@ -1,7 +1,7 @@
 import * as CAF from 'caf'
-import { createLogger } from '../../shared/logger'
+import { createLogger } from '@riftdweb/logger'
+import { EntryFeed, UsersMap, TaskParams } from '@riftdweb/types'
 import { ControlRef } from '../../contexts/skynet/ref'
-import { EntryFeed, UsersMap, WorkerParams } from '@riftdweb/types'
 import { clearToken, handleToken } from '../tokens'
 import { wait, waitFor } from '../../shared/wait'
 import { syncUser } from '../user'
@@ -16,7 +16,7 @@ export const log = createLogger('userIndexer')
 const cafUsersIndexer = CAF(function* (
   signal: any,
   ref: ControlRef,
-  params: WorkerParams
+  params: TaskParams
 ): Generator<Promise<EntryFeed | string[] | void | UsersMap>, any, any> {
   let tasks = []
   try {
@@ -67,7 +67,7 @@ const cafUsersIndexer = CAF(function* (
 
 async function usersIndexer(
   ref: ControlRef,
-  params: WorkerParams = {}
+  params: TaskParams = {}
 ): Promise<any> {
   const token = await handleToken(ref, tokenName)
   try {

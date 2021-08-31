@@ -2,7 +2,7 @@ import { Box, Flex, Panel, Subheading, Text } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
 import { useSkynet } from '../../contexts/skynet'
 import { useUsers } from '../../contexts/users'
-import { checkIsUserUpToDate } from '../../workers/user/checks'
+import { checkIsUserUpToDate } from '../../services/user/checks'
 import { EntriesResponse } from '../_shared/EntriesState'
 
 export function DevIndexingManager() {

@@ -1,12 +1,12 @@
 import { JSONResponse } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
+import { RateLimiter } from '@riftdweb/queue'
 import {
   CustomUploadOptions,
   genKeyPairFromSeed,
   MySky,
   SkynetClient,
 } from 'skynet-js'
-import { createLogger } from '../../shared/logger'
-import { RateLimiter } from '../../shared/rateLimiter'
 
 type BuildApi = {
   portal: string

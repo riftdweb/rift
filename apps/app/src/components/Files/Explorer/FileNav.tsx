@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Input, Text } from '@riftdweb/design-system'
 import { Fragment, useState } from 'react'
 import { useFs } from '../../../contexts/files'
-import { createLogger } from '../../../shared/logger'
 import { Link } from '../../_shared/Link'
 
 export function FileNav() {

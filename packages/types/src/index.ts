@@ -169,7 +169,7 @@ export type Feed<T> = {
 export type EntryFeed = Feed<Entry>
 export type ActivityFeed = Feed<Activity>
 
-export type WorkerParams = {
+export type TaskParams = {
   force?: boolean
   priority?: number
   delay?: number

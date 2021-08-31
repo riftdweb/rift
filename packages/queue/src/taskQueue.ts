@@ -1,69 +1,27 @@
-import { createLogger } from './logger'
+import { createLogger } from '@riftdweb/logger'
 import { v4 as uuid } from 'uuid'
-
-type Params = {
-  poolSize?: number
-  maxQueueSize?: number
-  dropStrategy?: 'earliest' | 'latest'
-  processingInterval?: number
-  mode?: 'normal' | 'dedupe'
-}
-
-export type TaskMeta = {
-  id?: string
-  name?: string
-  operation: string
-}
-
-export type TaskParams = {
-  meta: TaskMeta
-  cost?: number
-  priority?: number
-}
-
-export type Task<T> = {
-  id: string
-  meta: TaskMeta
-  task: () => Promise<T>
-  cost: number
-  priority: number
-  key: string
-  shareCount: number
-  // Optional because tasks get pushed before these attributes are available
-  resolve?: (value: T | PromiseLike<T>) => void
-  reject?: () => void
-  promise?: Promise<T>
-}
+import { taskQueueRegistry } from './taskQueueRegistry'
+import { Complete, ITaskQueue, Params, Task, TaskParams } from './types'
 
 const defaultParams: Params = {
   poolSize: 1,
   processingInterval: 2_000,
   mode: 'normal',
   dropStrategy: 'latest',
+  maxQueueSize: undefined,
 }
 
-export type ITaskQueue<T> = {
-  name: string
-  add: <T>(task: () => Promise<T>, params: TaskParams) => Promise<T>
-  queue: Task<T>[]
-  pendingQueue: Task<T>[]
-}
-
-const log = createLogger('taskQueueRegistry')
-export const taskQueueRegistry: Record<string, ITaskQueue<any>> = {}
-
-export function clearAllTaskQueues() {
-  Object.entries(taskQueueRegistry).forEach(([name, taskQueue]) => {
-    log(
-      `${name}: clearing ${taskQueue.queue.length} tasks, rejecting ${taskQueue.pendingQueue.length} pending tasks`
-    )
-    taskQueue.queue = []
-    taskQueue.pendingQueue.forEach((task) => task.reject())
-  })
-}
-
-export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
-  const { poolSize, maxQueueSize, dropStrategy, processingInterval, mode } = {
+export function TaskQueue<T>(
+  name: string,
+  params: Partial<Params> = {}
+): ITaskQueue<T> {
+  const {
+    poolSize,
+    maxQueueSize,
+    dropStrategy,
+    processingInterval,
+    mode,
+  }: Params = {
     ...defaultParams,
     ...params,
   }
@@ -82,7 +40,7 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
   // metrics
   let completedTaskLog: [number, number][] = []
 
-  let interval = null
+  let interval: ReturnType<typeof setInterval> | null = null
 
   const getPendingTaskIndexByKey = (key: string): number => {
     if (pendingQueue.length === 0) {
@@ -239,6 +197,11 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
     let isTerminating = false
 
     const task = popNextTask()
+
+    if (!task) {
+      return
+    }
+
     const id = task.id
 
     pendingQueue.push(task)
@@ -252,10 +215,10 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
 
     try {
       const result = await task.task()
-      task.resolve(result)
+      task.resolve!(result)
     } catch (e) {
       console.log(`'${name}' taskQueue caught error`, e)
-      task.reject()
+      task.reject!()
     }
 
     completedTaskLog.push([new Date().getTime(), task.cost])
@@ -326,11 +289,20 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
     interval = setInterval(processQueue, processingInterval)
   }
 
+  const defaultTaskParams = {
+    priority: 0,
+    cost: 1,
+  }
+
   async function add<T>(
     task: () => Promise<T>,
     params: TaskParams
   ): Promise<T> {
-    const { meta, priority = 0, cost = 1 } = params
+    const { meta, priority, cost }: Complete<TaskParams> = {
+      ...defaultTaskParams,
+      ...params,
+    }
+
     assertRunning()
 
     const key = getTaskKey(meta)
@@ -339,8 +311,8 @@ export function TaskQueue<T>(name: string, params: Params = {}): ITaskQueue<T> {
       const equivalentTask = peekNextTaskByKey(key)
       if (equivalentTask) {
         equivalentTask.shareCount += 1
-        if (params.priority > equivalentTask.priority) {
-          equivalentTask.priority = params.priority
+        if (priority > equivalentTask.priority) {
+          equivalentTask.priority = priority
           log(
             `Sharing equivalent task and raising priority. priority: ${equivalentTask.priority}, shareCount: ${equivalentTask.shareCount}`
           )

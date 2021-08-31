@@ -1,4 +1,5 @@
 import { Feed, Skyfile } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
 import { useHistory } from 'react-router-dom'
 import {
   DirectoryFile,
@@ -9,9 +10,7 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 import { usePathOutsideRouter } from '../../hooks/usePathOutsideRouter'
 import { fileSystemDAC, useSkynet } from '../skynet'
-import { createLogger } from '../../shared/logger'
 import { useBeforeunload } from 'react-beforeunload'
-import { usePortal } from '../../hooks/usePortal'
 
 const log = createLogger('files/context')
 

@@ -1,4 +1,7 @@
 import { DnsEntry } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
+import { Feed } from '@riftdweb/types'
+import { TaskQueue } from '@riftdweb/queue'
 import { createContext, useCallback, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { parseSkylink } from 'skynet-js'
@@ -6,10 +9,7 @@ import useSWR, { SWRResponse } from 'swr'
 import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDns } from '../shared/dataKeys'
-import { createLogger } from '../shared/logger'
-import { TaskQueue } from '../shared/taskQueue'
 import { triggerToast } from '../shared/toast'
-import { Feed } from '@riftdweb/types'
 import { useSkynet } from './skynet'
 
 const dataKeyDns = getDataKeyDns()

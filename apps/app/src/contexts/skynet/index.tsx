@@ -6,20 +6,20 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { FeedDAC } from 'feed-dac-library'
+import { UserProfileDAC } from '@skynethub/userprofile-library'
+import { SocialDAC } from 'social-dac-library'
+import { FileSystemDAC } from 'fs-dac-library'
+import { clearAllTaskQueues } from '@riftdweb/queue'
+import { createLogger } from '@riftdweb/logger'
 import { MySky, SkynetClient } from 'skynet-js'
 import { triggerToast } from '../../shared/toast'
 import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { usePortal } from '../../hooks/usePortal'
 import { buildApi } from './api'
-import { FeedDAC } from 'feed-dac-library'
-import { UserProfileDAC } from '@skynethub/userprofile-library'
-import { SocialDAC } from 'social-dac-library'
-import { FileSystemDAC } from 'fs-dac-library'
 import { ControlRef, useControlRef } from './ref'
-import { clearEntriesBuffer } from '../../workers/feedAggregator'
-import { clearAllTaskQueues } from '../../shared/taskQueue'
-import { createLogger } from '../../shared/logger'
-import { clearAllTokens } from '../../workers/tokens'
+import { clearEntriesBuffer } from '../../services/feedAggregator'
+import { clearAllTokens } from '../../services/tokens'
 
 const log = createLogger('contexts/skynet', {
   disable: true,

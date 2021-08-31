@@ -1,14 +1,14 @@
 import { JSONResponse } from '@riftdweb/types'
+import { Logger } from '@riftdweb/logger'
+import { TaskQueue } from '@riftdweb/queue'
 import * as CAF from 'caf'
 import {
   IProfileIndex,
   IUserProfile,
 } from '@skynethub/userprofile-library/dist/types'
 import { ControlRef } from '../../../contexts/skynet/ref'
-import { Logger } from '../../../shared/logger'
 import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
-import { TaskQueue } from '../../../shared/taskQueue'
 import { getTokenName } from '..'
 
 const resourceName = 'profile'

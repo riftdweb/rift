@@ -1,5 +1,5 @@
+import { createLogger } from '@riftdweb/logger'
 import { useFs } from '../../contexts/files'
-import { createLogger } from '../../shared/logger'
 import { FileExplorer } from './Explorer'
 import { FileViewer } from './FileViewer'
 

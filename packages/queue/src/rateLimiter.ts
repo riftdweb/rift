@@ -1,12 +1,8 @@
-import { createLogger } from './logger'
+import { createLogger } from '@riftdweb/logger'
 import { v4 as uuid } from 'uuid'
-import {
-  getTaskKey,
-  ITaskQueue,
-  Task,
-  TaskParams,
-  taskQueueRegistry,
-} from './taskQueue'
+import { getTaskKey } from './taskQueue'
+import { taskQueueRegistry } from './taskQueueRegistry'
+import { ITaskQueue, Task, TaskParams } from './types'
 
 type Params = {
   capacity?: number

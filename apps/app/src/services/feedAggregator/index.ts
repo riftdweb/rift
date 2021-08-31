@@ -1,11 +1,11 @@
 import * as CAF from 'caf'
-import { createLogger } from '../../shared/logger'
-import { TaskQueue } from '../../shared/taskQueue'
+import { createLogger } from '@riftdweb/logger'
+import { TaskQueue } from '@riftdweb/queue'
+import { Entry, EntryFeed, TaskParams } from '@riftdweb/types'
 import { wait } from '../../shared/wait'
 import { ControlRef } from '../../contexts/skynet/ref'
-import { cacheAllEntries, fetchAllEntries } from '../workerApi'
+import { cacheAllEntries, fetchAllEntries } from '../serviceApi'
 import { clearToken, handleToken } from '../tokens'
-import { Entry, EntryFeed, WorkerParams } from '@riftdweb/types'
 import { updateActivityFeed } from '../activity'
 import { updateTopFeed } from '../top'
 
@@ -23,7 +23,7 @@ const cafUpdateFeed = CAF(function* (
   signal: any,
   ref: ControlRef,
   newEntries: Entry[],
-  params: WorkerParams
+  params: TaskParams
 ) {
   const log = createLogger(logName, {
     workflowId: params.workflowId,
@@ -61,7 +61,7 @@ const cafUpdateFeed = CAF(function* (
 async function updateFeed(
   ref: ControlRef,
   entriesBatch: Entry[],
-  params: WorkerParams = {}
+  params: TaskParams = {}
 ): Promise<any> {
   const log = createLogger(logName, {
     workflowId: params.workflowId,
@@ -79,7 +79,7 @@ async function updateFeed(
 async function queueUpdateFeed(
   ref: ControlRef,
   entriesBatch: Entry[],
-  params: WorkerParams = {}
+  params: TaskParams = {}
 ): Promise<any> {
   const task = () => updateFeed(ref, entriesBatch, params)
   await taskQueue.add(task, {
@@ -127,7 +127,7 @@ export function clearEntriesBuffer() {
   entriesBuffer = []
 }
 
-// All internal workers are priorty 3 because they should take precedence over
+// All internal services are priorty 3 because they should take precedence over
 // routine indexing and do not happen often.
 export async function scheduleFeedAggregator(ref: ControlRef) {
   const log = createLogger('feedAggregator/scheduler')

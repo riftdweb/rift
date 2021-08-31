@@ -7,7 +7,7 @@ type LoggerParams = {
   workflowId?: string
 }
 
-function hashCode(str) {
+function hashCode(str: string) {
   var hash = 0
   for (var i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
@@ -15,19 +15,19 @@ function hashCode(str) {
   return hash
 }
 
-function intToRGB(i) {
+function intToRGB(i: number) {
   var c = (i & 0x00ffffff).toString(16).toUpperCase()
 
   return '00000'.substring(0, 6 - c.length) + c
 }
 
-function getColor(workflowId) {
+function getColor(workflowId: string) {
   return intToRGB(hashCode(workflowId))
 }
 
 export function createLogger(namespace: string, params: LoggerParams = {}) {
   const rootNamespace = namespace
-  const fn = (...args) => {
+  const fn = (...args: any[]) => {
     if (!isLoggerEnabled) {
       return
     }
@@ -42,6 +42,7 @@ export function createLogger(namespace: string, params: LoggerParams = {}) {
       `color: #${getColor(formattedWorkflowId)}; font-weight: bold;`,
       'color: blue; font-weight: bold;',
     ].filter((i) => !!i)
+    // @ts-ignore
     console.log(...metaParts, ...args)
   }
   fn.createLogger = (namespace: string) =>

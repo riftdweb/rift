@@ -6,7 +6,7 @@ import { Link } from '../../_shared/Link'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { UserProfile } from '../../_shared/UserProfile'
 import { useEffect } from 'react'
-import { syncUser } from '../../../workers/user'
+import { syncUser } from '../../../services/user'
 import { useSkynet } from '../../../contexts/skynet'
 
 export function SocialProfile() {

@@ -7,8 +7,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useUsers } from './users'
 import { IUser } from '@riftdweb/types'
+import { useUsers } from './users'
 
 type State = {
   ref: React.MutableRefObject<any>

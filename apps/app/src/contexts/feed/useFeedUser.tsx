@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { Entry, EntryFeed } from '@riftdweb/types'
-import { fetchUserEntries } from '../../workers/workerApi'
+import { fetchUserEntries } from '../../services/serviceApi'
 import { useSkynet } from '../skynet'
 import {
   Dispatch,

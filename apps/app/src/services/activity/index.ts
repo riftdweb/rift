@@ -1,22 +1,17 @@
 import * as CAF from 'caf'
 import { JSONResponse } from 'skynet-js'
-import { createLogger } from '../../shared/logger'
-import { wait } from '../../shared/wait'
+import { createLogger } from '@riftdweb/logger'
+import { Activity, ActivityFeed, EntryFeed, TaskParams } from '@riftdweb/types'
 import { v4 as uuid } from 'uuid'
+import { wait } from '../../shared/wait'
 import { ControlRef } from '../../contexts/skynet/ref'
 import {
   cacheActivity,
   fetchActivity,
   fetchAllEntries,
   needsRefresh,
-} from '../workerApi'
+} from '../serviceApi'
 import { clearToken, handleToken } from '../tokens'
-import {
-  Activity,
-  ActivityFeed,
-  EntryFeed,
-  WorkerParams,
-} from '@riftdweb/types'
 import { generateActivity } from './generate'
 
 const tokenName = 'feedActivityUpdate'
@@ -25,7 +20,7 @@ const logName = 'feed/activity/update'
 const cafUpdateActivity = CAF(function* (
   signal: any,
   ref: ControlRef,
-  params: WorkerParams
+  params: TaskParams
 ): Generator<
   Promise<ActivityFeed | EntryFeed | JSONResponse | void> | Activity[],
   any,
@@ -83,10 +78,10 @@ const cafUpdateActivity = CAF(function* (
 })
 
 // Computes a new activity feed
-// "Latest" - Subsequent calls to this worker will cancel previous runs.
+// "Latest" - Subsequent calls to this task will cancel previous runs.
 export async function updateActivityFeed(
   ref: ControlRef,
-  params: WorkerParams = {}
+  params: TaskParams = {}
 ): Promise<void> {
   const workflowId = uuid()
   const log = createLogger(logName, {

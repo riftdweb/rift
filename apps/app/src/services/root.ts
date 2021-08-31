@@ -1,4 +1,4 @@
-import { createLogger } from '../shared/logger'
+import { createLogger } from '@riftdweb/logger'
 import { ControlRef } from '../contexts/skynet/ref'
 import { clearAllTokens } from './tokens'
 import { scheduleFeedAggregator } from './feedAggregator'
@@ -9,7 +9,7 @@ const log = createLogger('root')
 export async function startRoot(ref: ControlRef): Promise<any> {
   log('Running')
 
-  log('Clearing any existing workers')
+  log('Clearing any existing services')
   clearAllTokens(ref)
 
   log('Starting users indexer')

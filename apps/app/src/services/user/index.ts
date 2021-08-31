@@ -1,6 +1,6 @@
-import { createLogger } from '../../shared/logger'
-import { ControlRef } from '../../contexts/skynet/ref'
+import { createLogger } from '@riftdweb/logger'
 import { IUser } from '@riftdweb/types'
+import { ControlRef } from '../../contexts/skynet/ref'
 import { syncUserFeed } from './resources/feed'
 import { getConfig, Level } from './config'
 import { buildUser } from './buildUser'

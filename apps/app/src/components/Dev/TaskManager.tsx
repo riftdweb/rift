@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Flex, Subheading, Panel } from '@riftdweb/design-system'
-import { ITaskQueue, taskQueueRegistry } from '../../shared/taskQueue'
-import { Task } from '../../shared/taskQueue'
+import { ITaskQueue, taskQueueRegistry } from '@riftdweb/queue'
+import { Task } from '@riftdweb/queue'
 import { TaskItem } from './TaskItem'
 
 export function DevTaskManager() {

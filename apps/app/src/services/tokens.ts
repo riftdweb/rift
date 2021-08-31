@@ -1,5 +1,5 @@
 import * as CAF from 'caf'
-import { createLogger } from '../shared/logger'
+import { createLogger } from '@riftdweb/logger'
 import { ControlRef, ControlRefDefaults } from '../contexts/skynet/ref'
 
 const log = createLogger('clearToken')
@@ -25,7 +25,7 @@ export async function clearToken(
 
   try {
     if (existingToken) {
-      // Abort any running worker
+      // Abort any running task
       existingToken.abort()
       existingToken.discard()
       ref.current.tokens[tokenKey] = null

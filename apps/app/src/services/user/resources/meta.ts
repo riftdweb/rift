@@ -1,10 +1,10 @@
 import { JSONResponse } from '@riftdweb/types'
+import { TaskQueue } from '@riftdweb/queue'
+import { Logger } from '@riftdweb/logger'
 import * as CAF from 'caf'
 import { ControlRef } from '../../../contexts/skynet/ref'
-import { Logger } from '../../../shared/logger'
 import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
-import { TaskQueue } from '../../../shared/taskQueue'
 import { getTokenName } from '..'
 
 const resourceName = 'meta'

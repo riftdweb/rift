@@ -1,6 +1,3 @@
-import { getDataKeyFeeds, getDataKeyUsers } from '../shared/dataKeys'
-import { feedDAC } from '../contexts/skynet'
-import { ControlRef } from '../contexts/skynet/ref'
 import {
   Feed,
   Entry,
@@ -9,6 +6,9 @@ import {
   Activity,
   UsersMap,
 } from '@riftdweb/types'
+import { getDataKeyFeeds, getDataKeyUsers } from '../shared/dataKeys'
+import { feedDAC } from '../contexts/skynet'
+import { ControlRef } from '../contexts/skynet/ref'
 import { apiLimiter } from '../contexts/skynet/api'
 
 export const emptyFeed: EntryFeed = {

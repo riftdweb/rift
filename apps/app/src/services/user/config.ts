@@ -2,7 +2,7 @@ import { IUser } from '@riftdweb/types'
 import { ControlRef } from '../../contexts/skynet/ref'
 import { isFollowing } from '../../contexts/users'
 
-export type Level = 'index' | 'render' | 'interact' | 'refresh' | 'get'
+export type Level = 'index' | 'render' | 'interact' | 'refresh' | 'read'
 export type UserResourceKeys = 'profile' | 'following' | 'feed' | 'meta'
 
 export type Config = {
@@ -18,14 +18,14 @@ export type Config = {
 // 3 - Priority indexing
 // 4 - Interact lane for users that the user is specifically interacting with or has intentionally refreshed
 
-export const friendLevelToConfig: Record<Level, Config> = {
+const familiarLevelToConfig: Record<Level, Config> = {
   index: {
     priority: 0,
     mode: 'sync',
     timeouts: {
       profile: daysToMs(2),
       following: daysToMs(2),
-      meta: daysToMs(2),
+      meta: daysToMs(7),
       feed: hoursToMs(1),
     },
   },
@@ -49,13 +49,13 @@ export const friendLevelToConfig: Record<Level, Config> = {
       feed: minutesToMs(2),
     },
   },
-  get: {
+  read: {
     priority: 4,
     mode: 'sync',
     timeouts: {
       profile: minutesToMs(2),
       following: minutesToMs(2),
-      meta: minutesToMs(2),
+      meta: -1,
       feed: -1,
     },
   },
@@ -71,14 +71,14 @@ export const friendLevelToConfig: Record<Level, Config> = {
   },
 }
 
-export const discoveredLevelToConfig: Record<Level, Config> = {
+const unfamiliarLevelToConfig: Record<Level, Config> = {
   index: {
     priority: 0,
     mode: 'sync',
     timeouts: {
-      profile: daysToMs(2),
-      following: daysToMs(2),
-      meta: daysToMs(2),
+      profile: daysToMs(14),
+      following: daysToMs(7),
+      meta: daysToMs(14),
       feed: -1,
     },
   },
@@ -102,7 +102,7 @@ export const discoveredLevelToConfig: Record<Level, Config> = {
       feed: minutesToMs(2),
     },
   },
-  get: {
+  read: {
     priority: 4,
     mode: 'sync',
     timeouts: {
@@ -127,8 +127,8 @@ export const discoveredLevelToConfig: Record<Level, Config> = {
 export function getConfig(ref: ControlRef, user: IUser, level: Level) {
   const isSelf = ref.current.myUserId === user.userId
   return isSelf || isFollowing(user)
-    ? friendLevelToConfig[level]
-    : discoveredLevelToConfig[level]
+    ? familiarLevelToConfig[level]
+    : unfamiliarLevelToConfig[level]
 }
 
 function minutesToMs(minutes: number) {

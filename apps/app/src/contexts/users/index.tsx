@@ -367,7 +367,7 @@ export function UsersProvider({ children }: Props) {
         const task = async () => {
           try {
             // Sync myUser
-            const user = await syncUser(ref, myUserId, 'get')
+            const user = await syncUser(ref, myUserId, 'read')
             // Add following user ids in case they do not exist yet (first time user)
             await addNewUserIds(user.following.data)
             // Recompute followers right away so that relationships work right away

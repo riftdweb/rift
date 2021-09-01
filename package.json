@@ -11,7 +11,8 @@
     "format": "prettier --write './**/src/**/*.{ts,tsx}'",
     "app:format": "prettier --write 'apps/app/src/**/*.{ts,tsx}'",
     "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
-    "fresh": "yarn clean && yarn"
+    "fresh": "yarn clean && yarn",
+    "analyze": "source-map-explorer apps/app/build/static/js/*.js"
   },
   "workspaces": [
     "packages/*",
@@ -24,7 +25,8 @@
     "@changesets/cli": "^2.16.0",
     "@manypkg/cli": "^0.17.0",
     "@preconstruct/cli": "^2.0.7",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "source-map-explorer": "^2.5.2"
   },
   "preconstruct": {
     "packages": [

@@ -101,6 +101,7 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
                 </Flex>
                 <Input
                   name="dataLink"
+                  spellCheck={false}
                   value={formik.values.dataLink}
                   onChange={formik.handleChange}
                   size="3"

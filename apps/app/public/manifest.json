@@ -1,6 +1,7 @@
 {
   "short_name": "Rift",
-  "name": "Rift - Your decentralized workspace.",
+  "name": "Rift - Your decentralized workspace",
+  "description": "Your decentralized workspace",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

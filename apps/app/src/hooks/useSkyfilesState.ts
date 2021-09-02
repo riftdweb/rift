@@ -1,9 +1,9 @@
 import { Skyfile } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
+import { TaskQueue } from '@riftdweb/queue'
 import debounce from 'lodash/debounce'
 import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
-import { createLogger } from '../shared/logger'
-import { TaskQueue } from '../shared/taskQueue'
 import { useSkynet } from '../contexts/skynet'
 import { Api } from '../contexts/skynet/api'
 

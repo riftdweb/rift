@@ -1,0 +1,14 @@
+{
+  "name": "@riftdweb/queue",
+  "version": "1.0.0",
+  "main": "dist/riftdweb-queue.cjs.js",
+  "module": "dist/riftdweb-queue.esm.js",
+  "typings": "dist/riftdweb-queue.cjs.d.ts",
+  "author": "Alex Freska",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "dependencies": {
+    "@riftdweb/logger": "^1.0.0",
+    "uuid": "^8.3.2"
+  }
+}

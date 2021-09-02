@@ -10,6 +10,7 @@ import {
   Text,
 } from '@riftdweb/design-system'
 import { Skyfile } from '@riftdweb/types'
+import { TaskQueue } from '@riftdweb/queue'
 import bytes from 'bytes'
 import { getReasonPhrase, StatusCodes } from 'http-status-codes'
 import values from 'lodash/values'
@@ -21,7 +22,6 @@ import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
 import { useSkynet } from '../../contexts/skynet'
 import { usePortal } from '../../hooks/usePortal'
-import { TaskQueue } from '../../shared/taskQueue'
 import { getSize } from '../../shared/uploads'
 
 const taskQueue = TaskQueue('uploads', {

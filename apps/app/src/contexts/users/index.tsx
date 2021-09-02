@@ -6,28 +6,28 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { Feed } from '@riftdweb/types'
+import { TaskQueue } from '@riftdweb/queue'
+import { createLogger } from '@riftdweb/logger'
 import useSWR, { mutate, SWRResponse } from 'swr'
 import debounce from 'lodash/debounce'
 import uniq from 'lodash/uniq'
 import throttle from 'lodash/throttle'
 import { socialDAC, useSkynet } from '../skynet'
-import { syncUser } from '../../workers/user'
-import { Feed } from '@riftdweb/types'
-import { TaskQueue } from '../../shared/taskQueue'
-import { syncUserFeed } from '../../workers/user/resources/feed'
+import { syncUser } from '../../services/user'
+import { syncUserFeed } from '../../services/user/resources/feed'
 import { IUser, UsersMap } from '@riftdweb/types'
-import { cacheUsersMap, fetchUsersMap } from '../../workers/workerApi'
+import { cacheUsersMap, fetchUsersMap } from '../../services/serviceApi'
 import { ControlRef } from '../skynet/ref'
-import { createLogger } from '../../shared/logger'
 import { suggestionList } from './suggestionList'
 import { seedList } from './seedList'
 import { denyList } from './denyList'
 import { apiLimiter } from '../skynet/api'
-import { recomputeFollowers } from '../../workers/usersIndexer/utils'
-import { buildUser } from '../../workers/user/buildUser'
-import { checkIsUserUpToDate } from '../../workers/user/checks'
+import { recomputeFollowers } from '../../services/usersIndexer/utils'
+import { buildUser } from '../../services/user/buildUser'
+import { checkIsUserUpToDate } from '../../services/user/checks'
 import { getDataKeyUsers } from '../../shared/dataKeys'
-import { clearAllTokens } from '../../workers/tokens'
+import { clearAllTokens } from '../../services/tokens'
 import { EntriesResponse } from '../../components/_shared/EntriesState'
 import { useKey } from '../../hooks/useKey'
 
@@ -367,7 +367,7 @@ export function UsersProvider({ children }: Props) {
         const task = async () => {
           try {
             // Sync myUser
-            const user = await syncUser(ref, myUserId, 'get')
+            const user = await syncUser(ref, myUserId, 'read')
             // Add following user ids in case they do not exist yet (first time user)
             await addNewUserIds(user.following.data)
             // Recompute followers right away so that relationships work right away

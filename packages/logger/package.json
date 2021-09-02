@@ -1,0 +1,13 @@
+{
+  "name": "@riftdweb/logger",
+  "version": "1.0.0",
+  "main": "dist/riftdweb-logger.cjs.js",
+  "module": "dist/riftdweb-logger.esm.js",
+  "typings": "dist/riftdweb-logger.cjs.d.ts",
+  "author": "Alex Freska",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "dependencies": {
+    "date-fns": "^2.23.0"
+  }
+}

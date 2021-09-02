@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { useSkynet } from '../contexts/skynet'
 import { IUser } from '@riftdweb/types'
-import { syncUser } from '../workers/user'
+import { syncUser } from '../services/user'
 import { getDataKeyUsers } from '../shared/dataKeys'
 
 export function useUser(userId?: string): IUser | undefined {

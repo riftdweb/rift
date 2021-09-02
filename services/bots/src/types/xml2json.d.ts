@@ -1,1 +1,1 @@
-declare module 'xml2json'
+declare module 'xml2json';

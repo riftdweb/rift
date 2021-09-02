@@ -8,7 +8,7 @@ const spin = keyframes({
 export default function LogoIcon() {
   return (
     <Image
-      src="/logo-full.svg"
+      src="/logo.svg"
       css={{
         height: '25px',
         position: 'relative',

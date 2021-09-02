@@ -7,6 +7,7 @@ import { DnsProvider } from '../contexts/dns'
 import { SkyfilesProvider } from '../contexts/skyfiles'
 import { ThemeProvider } from '../contexts/theme'
 import { SearchProvider } from '../contexts/search'
+// import { FsProvider } from '../contexts/files'
 
 export function Providers({ children }) {
   const { isInitializing } = useSkynet()
@@ -29,6 +30,8 @@ export function Providers({ children }) {
                 </FeedProvider>
               </SearchProvider>
             </UsersProvider>
+            {/* <FsProvider>
+            </FsProvider> */}
           </DnsProvider>
         </DomainsProvider>
       </AppsProvider>

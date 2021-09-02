@@ -1,4 +1,5 @@
 import { Domain, DomainKey } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
 import debounce from 'lodash/debounce'
 import {
   createContext,
@@ -13,7 +14,6 @@ import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDomains } from '../shared/dataKeys'
-import { createLogger } from '../shared/logger'
 import { DATA_MYSKY_BASE_PATH, usePath } from '../hooks/path'
 import { useSkynet } from './skynet'
 

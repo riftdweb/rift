@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { useSkynet } from '../../contexts/skynet'
 import { useUsers } from '../../contexts/users'
-import { Task } from '../../shared/taskQueue'
+import { Task } from '@riftdweb/queue'
 
 type Props = {
   task: Task<any>

@@ -46,6 +46,7 @@ export function SkylinkDnsMenu({
         <DropdownMenuLabel>DNS</DropdownMenuLabel>
         {dns.data?.entries.map((dnsEntry) => (
           <DropdownMenuItem
+            key={dnsEntry.id}
             onSelect={() =>
               updateDnsEntry(dnsEntry.id, {
                 dataLink: skylink,

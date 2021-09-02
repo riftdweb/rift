@@ -21,7 +21,7 @@ import { useUsers } from '../../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import { getDataKeyFeeds } from '../../shared/dataKeys'
 import { useUser } from '../../hooks/useUser'
-import { syncUser } from '../../workers/user'
+import { syncUser } from '../../services/user'
 
 type Props = {
   userId: string

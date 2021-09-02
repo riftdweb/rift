@@ -44,6 +44,7 @@ export function Searchbar() {
           ref={ref}
           value={searchValue}
           onChange={onChange}
+          spellCheck={false}
           onFocus={() => setIsFocused(true)}
           css={{ padding: '0 $2' }}
           placeholder="Search users or skylinks"

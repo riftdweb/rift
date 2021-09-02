@@ -124,7 +124,7 @@ export function Following() {
             >
               <EntriesState
                 response={following}
-                validatingMessage="Loading"
+                validatingMessage="Loading your user lists"
                 emptyMessage="Not following anyone yet."
               >
                 {following.data?.entries.map((userId) => (

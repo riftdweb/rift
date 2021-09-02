@@ -30,6 +30,7 @@ import { getDataKeyUsers } from '../../shared/dataKeys'
 import { clearAllTokens } from '../../services/tokens'
 import { EntriesResponse } from '../../components/_shared/EntriesState'
 import { useKey } from '../../hooks/useKey'
+import { wait } from '../../shared/wait'
 
 const log = createLogger('context/users')
 const taskQueue = TaskQueue('users')
@@ -150,7 +151,10 @@ export function UsersProvider({ children }: Props) {
   // Init step 1
   const usersMap = useSWR(
     getKey([appDomain, dataKeyUsers]),
-    () => fetchUsersMap(ref),
+    () =>
+      fetchUsersMap(ref, {
+        priority: 4,
+      }),
     {
       revalidateOnFocus: false,
     }
@@ -373,6 +377,10 @@ export function UsersProvider({ children }: Props) {
             // Recompute followers right away so that relationships work right away
             // before all users are fully synced
             await recomputeFollowers(ref)
+
+            // Allow followers to update all data hooks
+            await wait(100)
+
             // Set init state to complete
             setInitState(initStates.complete)
             return {

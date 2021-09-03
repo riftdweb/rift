@@ -152,7 +152,7 @@ Rift Home includes an activity feed that gives you a high-level view of activity
 
 ### Files
 
-> 🚧 This feature is currently being refactored into a filesystem feature including a file explorer with directories for organizing files, content-specific viewers, and full encryption.
+> 🚧 This feature is currently being refactored into a filesystem feature including a file explorer with directories for organizing files, content-specific viewers for things like video streaming and markdown editing, and full encryption.
 
 Rift Files allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
 

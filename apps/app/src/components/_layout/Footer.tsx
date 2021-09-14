@@ -56,18 +56,18 @@ export default function Footer() {
               >
                 Skynet
               </Link>{' '}
-              app, Rift provides a fully decentralized experience where all user
-              data is tied to a self-sovereign identity and stored in a
-              decentralized, globally accessible, permissioned filesystem (
+              application, Rift provides a fully decentralized experience where
+              all user data is tied to a self-sovereign identity and stored in
+              an encrypted{' '}
               <Link
                 href="https://blog.sia.tech/mysky-your-home-on-the-global-operating-system-of-the-future-5a288f89825c"
                 target="_blank"
                 css={{ color: '$gray700' }}
               >
-                MySky
-              </Link>
-              ) that only you control. The Rift application and all user data
-              loads identically from from any public or private Skynet portal.
+                filesystem
+              </Link>{' '}
+              that only the user controls. The Rift application and all user
+              data can be accessed from any public or private Skynet portal.
             </Text>
           </Flex>
           <Box css={{ flex: 1 }} />

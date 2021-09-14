@@ -211,7 +211,6 @@ export async function fetchUsersMap(
     path: getDataKeyUsers('usersMap'),
     priority: params.priority,
   })
-
   return response.data && response.data.entries
     ? response.data
     : {

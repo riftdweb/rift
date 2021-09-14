@@ -1,31 +1,21 @@
 import { Badge, Flex } from '@riftdweb/design-system'
-import dataUrl from './images/data.png'
-import dnsUrl from './images/dns.png'
-import filesSetDnsUrl from './images/files-set-dns.png'
-import filesUrl from './images/files.png'
-import homeUrl from './images/home.png'
-import homeAlgoUrl from './images/home-algo.png'
-import insightsUrl from './images/insights.png'
-import profileUrl from './images/profile.png'
-import postAlgoUrl from './images/post-algo.png'
-import insightsSmallUrl from './images/insights-small.png'
-import tuneSmallUrl from './images/tune-small.png'
-import searhSkylinkUrl from './images/search-skylink.png'
+import social from './images/social.png'
+import files from './images/files.png'
+import dev from './images/dev.png'
+
+import algoVisualize from './images/algo-visualize.png'
+import algoInsights from './images/algo-insights.png'
+import algoTune from './images/algo-tune.png'
+
 import { useCallback, useEffect, useState } from 'react'
 
 const imageMap = {
-  data: dataUrl,
-  dns: dnsUrl,
-  filesSetDns: filesSetDnsUrl,
-  files: filesUrl,
-  home: homeUrl,
-  homeAlgo: homeAlgoUrl,
-  insights: insightsUrl,
-  profile: profileUrl,
-  searchSkylink: searhSkylinkUrl,
-  postAlgo: postAlgoUrl,
-  insightsSmall: insightsSmallUrl,
-  tuneSmall: tuneSmallUrl,
+  social,
+  files,
+  dev,
+  algoVisualize,
+  algoInsights,
+  algoTune,
 }
 
 type ImageName = keyof typeof imageMap
@@ -73,6 +63,7 @@ export function useCarousel(items: ImageItemProp[]) {
     return () => {
       clearInterval(interval)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intervalKey])
 
   return {
@@ -99,14 +90,28 @@ export function CarouselTags({
         textAlign: 'center',
         gap: '$1',
         justifyContent: 'center',
+        flexWrap: 'wrap',
+        '@bp2': {
+          flexWrap: 'inherit',
+        },
       }}
     >
       {items.map((item) => (
         <Badge
-          size="2"
+          key={item.url}
+          size="1"
           onClick={() => setCurrentItem(item)}
           variant={currentItem.image === item.image ? 'blue' : undefined}
-          css={{ cursor: 'pointer' }}
+          css={{
+            marginBottom: '2px',
+            cursor: 'pointer',
+            // size="2"
+            '@bp2': {
+              height: '$5',
+              px: '$2',
+              fontSize: '$2',
+            },
+          }}
           interactive
         >
           {item.title}

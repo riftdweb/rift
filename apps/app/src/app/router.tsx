@@ -1,11 +1,9 @@
-import { Box } from '@riftdweb/design-system'
 import { lazy, Suspense } from 'react'
 import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
-import SpinnerIcon from '../components/_icons/SpinnerIcon'
 import { DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from '../hooks/path'
 import { LayoutApp } from '../components/_layout/LayoutApp'
 import { Config } from './_config'
-import { LayoutLanding } from '../components/_layout/LayoutLanding'
+import { LoadingState } from '../components/_shared/LoadingState'
 
 const Home = lazy(() => import('../pages/Home'))
 const SocialProfile = lazy(() => import('../pages/SocialProfile'))
@@ -24,24 +22,15 @@ export function App() {
   return (
     <Router>
       <Config>
-        <LayoutLanding>
+        <LayoutApp>
           <Suspense
             fallback={
-              <Box
+              <LoadingState
+                color="$gray600"
                 css={{
-                  display: 'flex',
-                  height: '200px',
+                  margin: '200px auto',
                 }}
-              >
-                <Box
-                  css={{
-                    margin: 'auto',
-                    color: '$gray600',
-                  }}
-                >
-                  <SpinnerIcon />
-                </Box>
-              </Box>
+              />
             }
           >
             <Switch>
@@ -99,7 +88,7 @@ export function App() {
               <Redirect from="/*" to="/" />
             </Switch>
           </Suspense>
-        </LayoutLanding>
+        </LayoutApp>
       </Config>
     </Router>
   )

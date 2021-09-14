@@ -18,6 +18,10 @@ export function SocialProfile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
+  useEffect(() => {
+    document.getElementById('main-container').scrollTo(0, 0)
+  }, [userId])
+
   return (
     <Layout overflow="hidden">
       <Box>

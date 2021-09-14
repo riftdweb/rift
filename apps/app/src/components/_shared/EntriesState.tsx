@@ -1,29 +1,9 @@
 import { Fragment } from 'react'
-import { Flex, Text } from '@riftdweb/design-system'
 import { useHasNoEntries } from '../../hooks/useHasNoEntries'
-import SpinnerIcon from '../_icons/SpinnerIcon'
 import { SWRResponse } from 'swr'
 import { Feed } from '@riftdweb/types'
 import { NonIdealState } from './NonIdealState'
-
-function LoadingState({ message }) {
-  return (
-    <Flex
-      css={{
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '$2',
-        margin: '30px auto',
-        color: '$gray900',
-      }}
-    >
-      <SpinnerIcon />
-      <Text size="2" css={{ color: '$gray900' }}>
-        {message}
-      </Text>
-    </Flex>
-  )
-}
+import { LoadingState } from './LoadingState'
 
 export type EntriesResponse<T> = {
   data?: Feed<T>

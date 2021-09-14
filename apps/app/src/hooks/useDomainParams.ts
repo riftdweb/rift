@@ -21,7 +21,7 @@ type Return = {
 export function useDomainParams(): Return {
   const history = useHistory()
   const { pathname } = useLocation()
-  const { myUserId, appDomain } = useSkynet()
+  const { myUserId, appDomain, isReady } = useSkynet()
   const {
     viewingUserId,
     domainName: encodedDomainName,
@@ -87,7 +87,7 @@ export function useDomainParams(): Return {
     const dataBaseUserPath = getDataPath()
 
     // If loading or at the base user path do nothing
-    if (isValidating || pathname === dataBaseUserPath) {
+    if (!isReady || isValidating || pathname === dataBaseUserPath) {
       return
     }
 
@@ -119,6 +119,7 @@ export function useDomainParams(): Return {
     }
   }, [
     getDataPath,
+    isReady,
     isValidating,
     pathname,
     domains,

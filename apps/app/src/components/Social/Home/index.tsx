@@ -3,7 +3,7 @@ import { Layout } from '../Layout'
 import { Controls } from './Controls'
 import { Box } from '@riftdweb/design-system'
 
-export function Home() {
+export function SocialHome() {
   return (
     <Layout overflow="hidden">
       <Box>

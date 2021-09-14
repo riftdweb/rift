@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { isSkylinkV2, parseSkylink } from 'skynet-js'
 import { convertSkylinkToBase32 } from 'skynet-js'
 import useSWR from 'swr'
 import { useSkynet } from '../contexts/skynet'
 import { usePortal } from './usePortal'
 import bytes from 'bytes'
+import { triggerToast } from '../shared/toast'
 
 export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
   const { portal } = usePortal()
@@ -121,6 +122,27 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
 
   const isV2 = skylink && isSkylinkV2(skylink)
 
+  const pin = useCallback(() => {
+    const func = async () => {
+      try {
+        const response = await fetch(
+          `https://${portal}/skynet/pin/${skylink}`,
+          {
+            method: 'post',
+          }
+        )
+        if (response.ok) {
+          triggerToast('Successfully pinned skyfile')
+        } else {
+          triggerToast('Error pinning skyfile', 'error')
+        }
+      } catch (e) {
+        triggerToast('Error pinning skyfile', 'error')
+      }
+    }
+    func()
+  }, [skylink, portal])
+
   return {
     isApp,
     isDirectory,
@@ -135,6 +157,7 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
     weblinkSubdomain,
     data,
     isValidating,
+    pin,
     health: {
       isEnabled: !skipFetch,
       quick: healthQuick,

@@ -33,6 +33,7 @@ export function SkylinkContextMenu({
     weblink,
     weblinkPath,
     weblinkSubdomain,
+    pin,
   } = useSkylink(rawSkylink, skipFetch)
 
   return (
@@ -58,6 +59,7 @@ export function SkylinkContextMenu({
         >
           Open weblink
         </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => pin()}>Pin</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Copy</DropdownMenuLabel>
         <DropdownMenuItem

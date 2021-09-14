@@ -43,7 +43,7 @@ export function SocialProfile() {
                 <Box css={{ mr: '$1' }}>
                   <ArrowLeftIcon />
                 </Box>
-                Back to feed
+                Back
               </Button>
             </Link>
             <Box css={{ flex: 1 }} />

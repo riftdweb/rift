@@ -37,7 +37,7 @@ export function Following() {
           >
             Log in to follow other users and build a personalized feed.
           </Text>
-          <Button onClick={() => login()}>Log in with MySky</Button>
+          <Button onClick={() => login()}>Log in with Skynet</Button>
         </Flex>
       </StickySection>
     )

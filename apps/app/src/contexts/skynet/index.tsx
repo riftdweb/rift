@@ -103,6 +103,7 @@ export function SkynetProvider({ children }: Props) {
         log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
+        console.log('Portal: ', portal)
         console.log('App domain: ', appDomain)
         log('App domain: ', appDomain)
         const _mySky = await client.loadMySky(appDomain, {

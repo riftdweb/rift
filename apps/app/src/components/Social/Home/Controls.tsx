@@ -44,7 +44,9 @@ export function Controls() {
             {myUserId ? (
               <Button onClick={() => createPostAndNavigate(value)}>Post</Button>
             ) : (
-              <Button onClick={() => login()}>Log in with MySky to post</Button>
+              <Button onClick={() => login()}>
+                Log in with Skynet to post
+              </Button>
             )}
           </Flex>
         </Flex>

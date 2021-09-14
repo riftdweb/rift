@@ -18,6 +18,10 @@ export function SocialProfile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
+  useEffect(() => {
+    document.getElementById('main-container').scrollTo(0, 0)
+  }, [userId])
+
   return (
     <Layout overflow="hidden">
       <Box>
@@ -39,7 +43,7 @@ export function SocialProfile() {
                 <Box css={{ mr: '$1' }}>
                   <ArrowLeftIcon />
                 </Box>
-                Back to feed
+                Back
               </Button>
             </Link>
             <Box css={{ flex: 1 }} />

@@ -50,7 +50,7 @@ export function IdentityContextMenu({
   if (!myUserId) {
     return (
       <DropdownMenu onOpenChange={setIsOpen}>
-        <Tooltip align="end" content="Log in with MySky">
+        <Tooltip align="end" content="Log in with Skynet">
           <DropdownMenuTrigger
             as={Button}
             variant={variant}
@@ -82,7 +82,7 @@ export function IdentityContextMenu({
           <DropdownMenuLabel>No account</DropdownMenuLabel>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onSelect={login}>
-            Log in with MySky
+            Log in with Skynet
             {isOpen && (
               <Box
                 css={{

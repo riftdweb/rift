@@ -1,5 +1,5 @@
 import { Link1Icon, TriangleUpIcon } from '@radix-ui/react-icons'
-import { Box, Card, Flex, Text, Tooltip } from '@riftdweb/design-system'
+import { Box, Card, Flex, Image, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { useFeed } from '../../../../contexts/feed'
 import { Entry } from '@riftdweb/types'
@@ -100,6 +100,12 @@ export function FeedItem({ entry, index }: Props) {
 
   const userId = entry.userId
 
+  const imageUrl = post.content.media?.image
+    ? post.content.media.image.length
+      ? post.content.media.image[0].url
+      : (post.content.media.image as any).url
+    : null
+
   return (
     <Card
       onMouseEnter={() => setIsHovering(true)}
@@ -159,6 +165,7 @@ export function FeedItem({ entry, index }: Props) {
         >
           <Flex
             css={{
+              flexDirection: 'column',
               color: '$hiContrast',
             }}
           >
@@ -188,6 +195,17 @@ export function FeedItem({ entry, index }: Props) {
                 titleElements
               )}
             </Box>
+            {imageUrl && (
+              <Box
+                css={{
+                  maxHeight: '200px',
+                  // margin: '0 auto',
+                  overflow: 'hidden',
+                }}
+              >
+                <Image src={imageUrl} css={{ maxHeight: '100%' }} />
+              </Box>
+            )}
           </Flex>
           <Flex css={{ gap: '$1', alignItems: 'center' }}>
             {userId && (

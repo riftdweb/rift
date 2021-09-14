@@ -103,19 +103,24 @@ export function SkynetProvider({ children }: Props) {
         log('Skynet Provider: initializing')
         // load invisible iframe and define app's data domain
         // needed for permissions write
+        console.log('Portal: ', portal)
         console.log('App domain: ', appDomain)
         log('App domain: ', appDomain)
         const _mySky = await client.loadMySky(appDomain, {
           // dev: true,
           // debug: true,
         })
-        // load necessary DACs and permissions
+
+        // Would these need to reinit if user changes?
+        // Currently there is no way to switch users without a reload but
+        // in the future this may need to be included in any reset process
         await _mySky.loadDacs(
           // fileSystemDAC,
           feedDAC as any,
           userProfileDAC as any,
           socialDAC as any
         )
+
         setMySky(_mySky)
 
         // check if user is already logged in with permissions

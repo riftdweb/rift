@@ -1,14 +1,17 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
+import { useSkynet } from '../../../contexts/skynet'
 import { useDomainParams } from '../../../hooks/useDomainParams'
 import { DragSizing } from '../../_shared/DragSizing'
+import { LoadingState } from '../../_shared/LoadingState'
 import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
 import { ViewingUser } from './ViewingUser'
 
 export function KeysWorkspace() {
+  const { isReady } = useSkynet()
   const { domain, domainKey, viewingUserId } = useDomainParams()
   const [keysTreeWidth] = useLocalStorageState<string>('keysTreeWidth', '200px')
 
@@ -104,22 +107,24 @@ export function KeysWorkspace() {
                 <Heading css={{ textAlign: 'center', marginBottom: '$3' }}>
                   Skynet data explorer
                 </Heading>
-                <Text
-                  css={{
-                    color: '$gray900',
-                    textAlign: 'center',
-                    margin: '0 auto $3 auto',
-                    lineHeight: '20px',
-                    maxWidth: '400px',
-                    display: 'none',
-                    '@bp3': {
-                      display: 'block',
-                    },
-                  }}
-                >
-                  Add a data domain to get started, and then open a file with
-                  the menu on the left.
-                </Text>
+                {isReady && (
+                  <Text
+                    css={{
+                      color: '$gray900',
+                      textAlign: 'center',
+                      margin: '0 auto $3 auto',
+                      lineHeight: '20px',
+                      maxWidth: '400px',
+                      display: 'none',
+                      '@bp3': {
+                        display: 'block',
+                      },
+                    }}
+                  >
+                    Add a data domain to get started, and then open a file with
+                    the menu on the left.
+                  </Text>
+                )}
                 <Text
                   css={{
                     color: '$gray900',
@@ -145,12 +150,16 @@ export function KeysWorkspace() {
                     },
                   }}
                 >
-                  <AddDomain variant="gray">
-                    <Box css={{ mr: '$1' }}>
-                      <PlusIcon />
-                    </Box>
-                    Add Domain
-                  </AddDomain>
+                  {isReady ? (
+                    <AddDomain variant="gray">
+                      <Box css={{ mr: '$1' }}>
+                        <PlusIcon />
+                      </Box>
+                      Add Domain
+                    </AddDomain>
+                  ) : (
+                    <LoadingState message="Initializing" />
+                  )}
                 </Box>
               </Box>
             </Box>

@@ -56,15 +56,15 @@ Rift is built as a pure Skynet app, meaning its only dependency is access to the
 
 ### Permissionless
 
-Rift and Skynet are permissionless and self-sovereign - anyone can create a network-wide pseudo-anonymous [Skynet account](https://blog.sia.tech/mysky-your-home-on-the-global-operating-system-of-the-future-5a288f89825c) which is just a keypair. Only the key holder has the ability to access, decrypt, and modify data.
+Rift and Skynet are permissionless and self-sovereign - anyone can create a network-wide pseudo-anonymous [Skynet account](https://blog.sia.tech/mysky-your-home-on-the-global-operating-system-of-the-future-5a288f89825c) which is just a cryptographic keypair. Only the key holder has the ability to access, decrypt, and modify data.
 
 ### Private
 
-When signed in to Rift, all metadata is encrypted and stored in a personal filesystem on the Skynet network. Features such as the filesystem encrypt all files by default. Certain data such as a your profile and feed are meant to be public but beyond this everything encrypted and private.
+When signed in to Rift, all metadata and files are encrypted and stored in your personal filesystem on the Skynet network. Certain data such as a your profile and feed are intentionally made public but beyond this everything is encrypted and private by default.
 
 ### Open
 
-In addition to storing all data in a private space, Rift runs on open data storage standards (DACs) for things like files, profiles, posts, feeds, and the social graph. This means with your permission, other applications can seamlessly access the exact same source data. This is important because it means your files and videos automatically move with you when you decide you like a different app for file sharing or video streaming.
+In addition to storing all data in a private space, Rift runs on open data storage standards for things like files, profiles, posts, feeds, and the social graph. This means that with your permission, other applications can seamlessly access the exact same source data. This is important because it means your files and videos automatically move with you when you decide you like a different app for file sharing or video streaming.
 
 ### Fast
 

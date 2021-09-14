@@ -11,11 +11,14 @@ export function usePortal() {
   const [devPortal, setDevPortal] = useSelectedDevPortal()
   const portal = useMemo(() => {
     const hostname = window.location.hostname
-    const parts = hostname.split('.')
-    // localhost
-    if (parts.length === 1) {
+    if (
+      hostname === 'localhost' ||
+      hostname.endsWith('.eth.link') ||
+      hostname.endsWith('.eth')
+    ) {
       return devPortal
     }
+    const parts = hostname.split('.')
     // riftapp.hns.siasky.net
     //        hash.siasky.net
     //         www.siasky.net/hash

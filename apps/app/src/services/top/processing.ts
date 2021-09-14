@@ -1,10 +1,11 @@
+import { Entry } from '@riftdweb/types'
 import retext from 'retext'
 import keywords from 'retext-keywords'
 import pos from 'retext-pos'
-import { Entry } from '@riftdweb/types'
 
 function extractKeywords(entry: Entry): Promise<Entry> {
   const text = entry.post.content.title || entry.post.content.text
+
   return new Promise((resolve, reject) => {
     retext()
       .use(pos) // Make sure to use `retext-pos` before `retext-keywords`.

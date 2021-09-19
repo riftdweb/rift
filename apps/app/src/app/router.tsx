@@ -10,6 +10,7 @@ const SocialProfile = lazy(() => import('../pages/SocialProfile'))
 const FeedInsights = lazy(() => import('../pages/FeedInsights'))
 const Skyfiles = lazy(() => import('../pages/Skyfiles'))
 // const Files = lazy(() => import('../pages/Files'))
+const Docs = lazy(() => import('../pages/Docs'))
 const Data = lazy(() => import('../pages/Data'))
 const Dns = lazy(() => import('../pages/Dns'))
 const Tools = lazy(() => import('../pages/Tools'))
@@ -34,7 +35,13 @@ export function App() {
             }
           >
             <Switch>
-              <Route path="/files">
+              <Route path="/docs/:blockId">
+                <Docs />
+              </Route>
+              <Route path="/docs">
+                <Docs />
+              </Route>
+              <Route path="/uploads">
                 <Skyfiles />
               </Route>
               {/* <Route path="/files/*">

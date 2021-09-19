@@ -11,9 +11,15 @@ import { useCallback, useState } from 'react'
 export function useDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const openDialog = useCallback(() => {
-    setIsOpen(true)
-  }, [setIsOpen])
+  const openDialog = useCallback(
+    (e?: any) => {
+      if (e) {
+        e.preventDefault()
+      }
+      setIsOpen(true)
+    },
+    [setIsOpen]
+  )
 
   const closeDialog = useCallback(
     (e?: any) => {

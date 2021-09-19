@@ -1,10 +1,11 @@
 import {
-  FilePlusIcon,
+  FileIcon,
   GearIcon,
   GlobeIcon,
   HomeIcon,
   MixIcon,
   StackIcon,
+  UploadIcon,
 } from '@radix-ui/react-icons'
 import { Box, Flex, TabLink } from '@riftdweb/design-system'
 import { Link, useLocation } from 'react-router-dom'
@@ -28,15 +29,21 @@ export function TabNav() {
             </Box>
             Home
           </TabLink>
+          <TabLink as={Link} to="/docs" active={route.split('/')[1] === 'docs'}>
+            <Box css={{ mr: '$1' }}>
+              <FileIcon />
+            </Box>
+            Docs
+          </TabLink>
           <TabLink
             as={Link}
-            to="/files"
-            active={route.split('/')[1] === 'files'}
+            to="/uploads"
+            active={route.split('/')[1] === 'uploads'}
           >
             <Box css={{ mr: '$1' }}>
-              <FilePlusIcon />
+              <UploadIcon />
             </Box>
-            Files
+            Uploads
           </TabLink>
           <TabLink
             as={Link}

@@ -107,7 +107,7 @@ export default function Navbar() {
                   },
                 }}
               >
-                <Link to="/files" as="button" content="Upload files">
+                <Link to="/uploads" as="button" content="Upload files">
                   <PlusIcon />
                 </Link>
                 <DropdownMenu>
@@ -117,7 +117,7 @@ export default function Navbar() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       as={RLink}
-                      to="/files"
+                      to="/uploads"
                       css={{ textDecoration: 'none', cursor: 'pointer' }}
                     >
                       Upload files

@@ -36,7 +36,12 @@ export function LayoutApp({ children }: Props) {
         </Switch>
         {children}
       </Container>
-      <Footer />
+      <Switch>
+        <Route path="/docs"></Route>
+        <Route path="/*">
+          <Footer />
+        </Route>
+      </Switch>
     </Box>
   )
 }

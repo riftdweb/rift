@@ -164,7 +164,7 @@ export function Uploader({
                 subfiles: newUploadFiles.reduce(
                   (acc, skyfile) => ({
                     ...acc,
-                    [skyfile.metadata.filename]: {
+                    [skyfile.metadata.path]: {
                       contenttype: skyfile.contentType,
                       filename: skyfile.metadata.filename,
                       len: skyfile.metadata.length,

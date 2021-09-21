@@ -22,12 +22,15 @@ export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
         cursor: 'pointer',
       }}
     >
-      <Flex css={{ gap: '$1', width: '100%' }}>
+      <Flex css={{ gap: '$1', width: '100%', alignItems: 'center' }}>
         <Text
           css={{
+            position: 'relative',
+            top: '-1px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            lineHeight: '20px',
             color,
             '&:hover': {
               color: '$blue800',

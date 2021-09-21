@@ -53,6 +53,7 @@ export function FunctionMenu() {
           />
           {[1, 2, 3, 4, 5, 6].map((level) => (
             <MenuItem
+              key={level}
               onClick={() =>
                 editor.chain().focus().toggleHeading({ level }).run()
               }

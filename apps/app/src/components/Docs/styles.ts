@@ -40,6 +40,10 @@ export const styles = {
       lineHeight: 1.1,
     },
 
+    '> p': {
+      lineHeight: '20px',
+    },
+
     code: {
       backgroundColor: '$gray500',
       color: '#616161',

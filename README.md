@@ -10,7 +10,7 @@
 
 Rift is an app that aims to provide a decentralized alternative to the core Internet apps we all use and depend on every day.
 
-Rift includes **social feeds, file sharing, document editing, search, video streaming**, as well as advanced tools for managing personal data, DNS, and more.
+Rift includes **document editing, file sharing, social feeds, search, video streaming**, as well as advanced tools for managing personal data, DNS, and more.
 
 Rift is a work-in-progress but aims to provide the productivity, social, and developer features from Internet giants like Google, Facebook, or Amazon ...but reimagined as software you control.
 
@@ -150,13 +150,21 @@ Rift Home includes an activity feed that gives you a high-level view of activity
 <img src="https://raw.githubusercontent.com/riftdweb/rift/main/assets/home/activity.png" width="50%" alt="Activity" />
 </p>
 
+### Docs
+
+Rift Docs is a block-based document editor that supports a variety of content types and formatting options and includes keyboard and markdown shortcuts. Rift Docs will soon allow users to share documents and publish documents as webpages and to social feeds.
+
+![Docs](https://raw.githubusercontent.com/riftdweb/rift/main/assets/docs/docs.png)
+
 ### Files
 
-> 🚧 This feature is currently being refactored into a filesystem feature including a file explorer with directories for organizing files, content-specific viewers for things like video streaming and markdown editing, and full encryption.
+> 🚧 Rift Files is an upcoming filesystem feature that will include a file explorer with support for directories, drag and drop, file search, and full encryption. The file explorer will also include content-specific viewers for things like viewing PDFs and streaming videos.
 
-Rift Files allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
+### Uploads
 
-![Files](https://raw.githubusercontent.com/riftdweb/rift/main/assets/files/files.png)
+Rift Uploads (previously known as Rift Files) allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
+
+![Uploads](https://raw.githubusercontent.com/riftdweb/rift/main/assets/uploads/uploads.png)
 
 ### Data
 
@@ -227,7 +235,7 @@ The `yarn` command will also run a postinstall script that directly links togeth
 
 ## Complexity
 
-Skynet applications follow a new paradigm. Although they can be built with familiar web technologies, they require a very different approach from traditional stateless client-server architectures. The approach is more similar to building peer-to-peer software, requiring significant local state continuous and processing. Due to Skynet's decentralized and user-controlled model, data is partitioned by user across the network and therefore client applications must handle all data indexing, transformation, and transactions. This results in difficulties around data access, data synchronization and consistency, transactional race conditions, and comes with a very different latency profile. External indexing services are a potential way to offload some of this processing and are a good fit for indexing features such as network-wide social feeds and search, but they add an element of trust and only cover a subset of unencrypted use cases, therefore a trustless and private decentralized application requires onboard indexing capabilities.
+Skynet applications follow a new paradigm. Although they can be built with familiar web technologies, they require a very different approach from traditional stateless client-server architectures. The approach is more similar to building peer-to-peer software, requiring significant local state and continuous processing. Due to Skynet's decentralized and user-controlled model, data is partitioned by user across the network and therefore client applications must handle all data indexing, transformation, and transactions. This results in difficulties around data access, data synchronization and consistency, transactional race conditions, and comes with a very different latency profile. External indexing services are a potential way to offload some of this processing and are a good fit for indexing features such as network-wide social feeds and search, but they add an element of trust and only cover a subset of unencrypted use cases, therefore a trustless and private decentralized application requires onboard indexing capabilities.
 
 ## Architecture
 
@@ -273,7 +281,11 @@ Below are two tables that demonstrate how some of the Rift internal functions pr
 
 #### Eventual consistency
 
-The goal of the Rift indexer is to provide eventual consistency, where the prioritization and expiration strategy supports a user experience where data is passively re-indexed ahead of probable interactions, upon interaction a "stale-while-revalidate" pattern leverages mostly-recent data while asynchronously re-indexing, and things gracefully fallback to wait for indexing when the accessed resource is completely new.
+The goal of the Rift indexer is to provide eventual consistency, where the prioritization and expiration strategy supports a user experience where data is:
+
+1. Passively (re)indexed ahead of probable interactions.
+2. On interaction, rendered with a "stale-while-revalidate" pattern leveraging mostly-recent data while asynchronously re-indexing.
+3. On unpredictable first-time interaction, indexed while the user waits.
 
 #### Long-running cancelable workflows
 
@@ -281,9 +293,9 @@ The indexer is built from long-running workflows that fetch, transform, and cach
 
 #### Task queueing, pooling, and rate limiting
 
-The described task processing leverages a custom library (@riftdweb/queue) that supports queueing tasks, prioritizing tasks, sharing identical tasks and raising priority, and dropping tasks. The library includes a TaskQueue mode that leverages a queue and pool size for configuring concurrency.
+The described task processing leverages a custom library (@riftdweb/queue) that supports queueing tasks, prioritizing tasks, reprioritizing tasks, sharing identical tasks, and dropping tasks. The library includes a TaskQueue mode that leverages a queue and pool size for configuring concurrency.
 
-The library also includes a separate RateLimiter mode for that employs a modified "leaky bucket" algorithm with a configurable burst and bucket size where overflow goes into a queue. Rift uses the RateLimiter to keep Portal requests within server-side rate limits to avoid getting throttled while maximizing requests per minute.
+The library also includes a separate RateLimiter mode that employs a modified "leaky bucket" algorithm with a configurable burst and bucket size where overflow goes into a queue. Rift uses the RateLimiter to keep Portal requests within server-side rate limits to avoid getting throttled while maximizing requests per minute.
 
 #### Simulated locking, transactions, and safe updates
 

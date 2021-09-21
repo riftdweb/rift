@@ -112,7 +112,7 @@ function updateDocDataNetwork(docId: string, update: () => void) {
 
 export function DocsProvider({ children }: Props) {
   const openDocId = useParamId()
-  const { Api, appDomain, getKey } = useSkynet()
+  const { Api, isReady, appDomain, getKey } = useSkynet()
   const history = useHistory()
 
   const [menuMode, setMenuMode] = useState<MenuMode>('kbd')
@@ -229,7 +229,6 @@ export function DocsProvider({ children }: Props) {
       }
 
       const docIndex = docList.data.entries.findIndex((doc) => doc.id === docId)
-      log(docIndex)
 
       if (!~docIndex) {
         return false
@@ -279,12 +278,13 @@ export function DocsProvider({ children }: Props) {
     [setDocStateMap]
   )
 
+  const isInitializing = !docList.data || docState.isFetching
   const currentDocPath = getDataKeyDocs(openDocId)
   const currentDocFetchKey = getKey(['docs', openDocId])
 
   useEffect(
     () => {
-      if (!currentDocFetchKey) {
+      if (!openDocId || !currentDocFetchKey) {
         return null
       }
       const func = async () => {
@@ -312,7 +312,7 @@ export function DocsProvider({ children }: Props) {
               priority: 4,
             })
             const docData = data || defaultContent
-            log(docData)
+
             upsertDocState(currentDocId, {
               networkState: docData,
               localState: docData,
@@ -362,6 +362,7 @@ export function DocsProvider({ children }: Props) {
               await Api.setJSON({
                 path: currentDocPath,
                 json,
+                priority: 4,
               })
             } catch (e) {
               log('syncing error', currentDocPath)
@@ -400,17 +401,15 @@ export function DocsProvider({ children }: Props) {
     },
   })
 
-  const isInitializing = !docList.data || docState.isFetching
-
   useEffect(() => {
-    if (!docList.data) {
+    if (!isReady || !docList.data || !openDocId) {
       return
     }
     if (!docList.data?.entries.find(({ id }) => id === openDocId)) {
       history.replace('/docs')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openDocId, docList])
+  }, [isReady, openDocId, docList])
 
   const value = {
     isInitializing,

@@ -35,7 +35,7 @@ export function App() {
             }
           >
             <Switch>
-              <Route path="/docs/:blockId">
+              <Route path="/docs/:docId">
                 <Docs />
               </Route>
               <Route path="/docs">

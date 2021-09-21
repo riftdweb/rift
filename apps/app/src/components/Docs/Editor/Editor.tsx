@@ -20,10 +20,7 @@ export function Editor() {
       <EditorHeading />
       <Box
         css={{
-          // border: '1px solid $gray400',
-          // backgroundColor: '$gray100',
           borderRadius: '$2',
-          // borderLeft: '1px solid $gray200',
         }}
       >
         {docId ? (

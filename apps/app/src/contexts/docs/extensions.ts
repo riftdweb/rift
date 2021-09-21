@@ -1,5 +1,4 @@
 import { ReactNodeViewRenderer } from '@tiptap/react'
-// import StarterKit from '@tiptap/starter-kit'
 
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
@@ -28,8 +27,6 @@ import TaskItem from '@tiptap/extension-task-item'
 import Highlight from '@tiptap/extension-highlight'
 import Placeholder from '@tiptap/extension-placeholder'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-
-// import BubbleMenu from '@tiptap/extension-bubble-menu'
 
 import lowlight from 'lowlight'
 import { CodeBlockComponent } from './CodeBlockComponent'

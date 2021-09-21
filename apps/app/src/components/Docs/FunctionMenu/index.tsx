@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
+import times from 'lodash/times'
 import { useDocs } from '../../../contexts/docs'
 import { ScrollArea } from '../../_shared/ScrollArea'
 import { MenuItem } from './MenuItem'
@@ -60,7 +61,7 @@ export function FunctionMenu() {
               isActive={editor.isActive('heading', { level })}
               name={`h${level}`}
               kbd={['⌘', 'Alt', level]}
-              md={repeat('#', level)}
+              md={times(level, () => '#').join('')}
             />
           ))}
           <MenuItem
@@ -149,12 +150,4 @@ export function FunctionMenu() {
       </ScrollArea>
     </Box>
   )
-}
-
-function repeat(str: string, times: number) {
-  let result = ''
-  for (let i = 0; i < times; i++) {
-    result += str
-  }
-  return result
 }

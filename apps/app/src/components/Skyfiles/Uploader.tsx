@@ -23,9 +23,7 @@ import { v4 as uuid } from 'uuid'
 import { useSkynet } from '../../contexts/skynet'
 import { usePortal } from '../../hooks/usePortal'
 import { getSize } from '../../shared/uploads'
-import { createLogger } from '@riftdweb/logger'
 
-const log = createLogger('uploads')
 const taskQueue = TaskQueue('uploads', {
   poolSize: 5,
 })
@@ -103,7 +101,6 @@ export function Uploader({
   })
 
   const handleDrop = async (droppedFiles) => {
-    log('droppedFiles', droppedFiles)
     // Make File data serializable
     let newUploadFiles: Skyfile[] = droppedFiles.map((file) => ({
       id: uuid(),
@@ -134,7 +131,6 @@ export function Uploader({
       },
       fileHandle: file,
     }))
-    log('newUploadFiles', newUploadFiles)
 
     // get the file path from the first file
     const rootDir = getRootDirectory(newUploadFiles[0])
@@ -192,8 +188,6 @@ export function Uploader({
             },
           ]
         : newUploadFiles
-
-    log('newSkyfiles', newSkyfiles)
 
     addSkyfiles(newSkyfiles)
 

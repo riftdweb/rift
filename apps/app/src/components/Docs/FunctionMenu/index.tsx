@@ -43,7 +43,7 @@ export function FunctionMenu() {
               size="0"
               onClick={() => setMenuMode(menuMode === 'kbd' ? 'md' : 'kbd')}
             >
-              {menuMode === 'kbd' ? 'Keyboard' : 'Mardown'}
+              {menuMode === 'kbd' ? 'Keyboard' : 'Markdown'}
             </Button>
           </Header>
           <MenuItem
@@ -77,6 +77,13 @@ export function FunctionMenu() {
             name="bullet list"
             kbd={['⌘', 'Shift', 8]}
             md="-"
+          />
+          <MenuItem
+            onClick={() => editor.chain().focus().toggleTaskList().run()}
+            isActive={editor.isActive('taskList')}
+            name="task list"
+            kbd={['⌘', 'Shift', 9]}
+            md="[ ]"
           />
           <MenuItem
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}

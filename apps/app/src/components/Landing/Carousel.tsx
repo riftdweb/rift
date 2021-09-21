@@ -1,4 +1,5 @@
 import { Badge, Flex } from '@riftdweb/design-system'
+import docs from './images/docs.png'
 import social from './images/social.png'
 import files from './images/files.png'
 import dev from './images/dev.png'
@@ -10,6 +11,7 @@ import algoTune from './images/algo-tune.png'
 import { useCallback, useEffect, useState } from 'react'
 
 const imageMap = {
+  docs,
   social,
   files,
   dev,

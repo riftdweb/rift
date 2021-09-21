@@ -16,6 +16,7 @@ export type EntriesResponse<T> = {
 
 type Props<T> = {
   response: EntriesResponse<T>
+  loadingElement?: React.ReactElement
   loadingState?: string
   emptyTitle?: string
   emptyMessage?: string
@@ -25,6 +26,7 @@ type Props<T> = {
 
 export function EntriesState<T>({
   response,
+  loadingElement,
   loadingState,
   validatingMessage,
   emptyTitle,
@@ -43,8 +45,14 @@ export function EntriesState<T>({
   if (loadingState) {
     return <LoadingState message={`${loadingState}...`} />
   }
+
   // If SWR is validating, render generic loading state
   if (response.isValidating) {
+    // If an explicit loading component is provided render it
+    if (loadingElement) {
+      return loadingElement
+    }
+
     return <LoadingState message={validatingMessage || 'Loading feed'} />
   }
 

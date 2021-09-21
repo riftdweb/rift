@@ -6,6 +6,10 @@ import { LandingCta } from './LandingCta'
 export function LandingMain() {
   const landingCarouselProps = useCarousel([
     {
+      title: 'Document editing',
+      image: 'docs',
+    },
+    {
       title: 'File sharing',
       image: 'files',
     },

@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/riftdweb/rift/main/assets/home/home.png" alt="logo" width="100%" />
+<img src="https://raw.githubusercontent.com/riftdweb/rift/main/assets/main.png" alt="Rift" width="100%" />
 
 # Rift
 
@@ -152,9 +152,9 @@ Rift Home includes an activity feed that gives you a high-level view of activity
 
 ### Docs
 
-Rift Docs is a block-based document editor that supports a variety of content types and formatting options and includes keyboard and markdown shortcuts. Rift Docs will soon allow users to share documents and publish documents as webpages and to social feeds.
-
 ![Docs](https://raw.githubusercontent.com/riftdweb/rift/main/assets/docs/docs.png)
+
+Rift Docs is a block-based document editor that supports a variety of content types and formatting options and includes keyboard and markdown shortcuts. Rift Docs will soon allow users to share documents and publish documents as webpages and to social feeds.
 
 ### Files
 
@@ -162,15 +162,15 @@ Rift Docs is a block-based document editor that supports a variety of content ty
 
 ### Uploads
 
-Rift Uploads (previously known as Rift Files) allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
-
 ![Uploads](https://raw.githubusercontent.com/riftdweb/rift/main/assets/uploads/uploads.png)
+
+Rift Uploads (previously known as Rift Files) allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
 
 ### Data
 
-Rift Data is a developer-oriented feature for inspecting and updating SkyDB and MySky DAC data domains files. These are the JSON files that power Rift, data sharing standards (DACs), and everything on Skynet. The Rift Data tool provides a JSON editor and functions for saving, reverting, formatting and more.
-
 ![Data](https://raw.githubusercontent.com/riftdweb/rift/main/assets/data/data.png)
+
+Rift Data is a developer-oriented feature for inspecting and updating SkyDB and MySky DAC data domains files. These are the JSON files that power Rift, data sharing standards (DACs), and everything on Skynet. The Rift Data tool provides a JSON editor and functions for saving, reverting, formatting and more.
 
 Rift Data includes a tree-style file browser that can be configured to include common data domains. The wizard for adding data domains suggests common domains and files. Files can be edited depending on the permissions of the specific file.
 
@@ -186,9 +186,9 @@ The user being viewed can be changed by clicking on the user widget in the top-l
 
 ### DNS
 
-Rift DNS is a feature for managing resolver skylinks. Resolver skylinks are mutable skylinks that can be used to serve and dynamically update decentralized websites. Resolver skylinks are commonly used with Handshake, DNSLink, and ENS to serve websites. Rift DNS lets you create a record which will generate a new resolver skylink. Rift DNS also lets you update existing records which points the existing resolver skylink to a new data skylink.
-
 ![DNS](https://raw.githubusercontent.com/riftdweb/rift/main/assets/dns/dns.png)
+
+Rift DNS is a feature for managing resolver skylinks. Resolver skylinks are mutable skylinks that can be used to serve and dynamically update decentralized websites. Resolver skylinks are commonly used with Handshake, DNSLink, and ENS to serve websites. Rift DNS lets you create a record which will generate a new resolver skylink. Rift DNS also lets you update existing records which points the existing resolver skylink to a new data skylink.
 
 ### Ecosystem
 

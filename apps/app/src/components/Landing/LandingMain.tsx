@@ -11,7 +11,7 @@ export function LandingMain() {
     },
     {
       title: 'File sharing',
-      image: 'files',
+      image: 'uploads',
     },
     {
       title: 'Social feeds',

@@ -2,12 +2,12 @@ import { useParams } from 'react-router-dom'
 import { Box, Button, Flex } from '@riftdweb/design-system'
 import { Feed } from './Feed'
 import { Layout } from '../Layout'
-import { Link } from '../../_shared/Link'
+import { Link } from '@riftdweb/core/src/components/_shared/Link'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
-import { UserProfile } from '../../_shared/UserProfile'
+import { UserProfile } from '@riftdweb/core/src/components/_shared/UserProfile'
 import { useEffect } from 'react'
-import { syncUser } from '../../../services/user'
-import { useSkynet } from '../../../contexts/skynet'
+import { syncUser } from '@riftdweb/core/src/services/user'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
 
 export function SocialProfile() {
   const { controlRef: ref } = useSkynet()

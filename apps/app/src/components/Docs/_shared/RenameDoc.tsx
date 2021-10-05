@@ -10,8 +10,8 @@ import {
 import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
-import { useDocs } from '../../../contexts/docs'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useDocs } from '@riftdweb/core/src/contexts/docs'
+import { SpinnerIcon } from '@riftdweb/core/src/components/_icons/SpinnerIcon'
 
 const buildSchema = () =>
   Yup.object().shape({

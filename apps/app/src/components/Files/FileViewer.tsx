@@ -1,7 +1,7 @@
 import { Container, Box, Flex, Text, Card } from '@riftdweb/design-system'
 import { Fragment, useEffect, useState } from 'react'
-import { useFs } from '../../contexts/files'
-import { Link } from '../_shared/Link'
+import { useFs } from '@riftdweb/core/src/contexts/files'
+import { Link } from '@riftdweb/core/src/components/_shared/Link'
 import { getFileUrl } from './download'
 
 export function FileViewer() {

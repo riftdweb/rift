@@ -1,14 +1,14 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
 import { Fragment } from 'react'
-import { useSkynet } from '../../../../contexts/skynet'
-import { useUsers } from '../../../../contexts/users'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
+import { useUsers } from '@riftdweb/core/src/contexts/users'
 import { FollowingContextMenu } from './FollowingContextMenu'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { Follow } from './Follow'
 import { SuggestedFollow } from './SuggestedFollow'
-import { EntriesState } from '../../../_shared/EntriesState'
-import { ScrollArea } from '../../../_shared/ScrollArea'
+import { EntriesState } from '@riftdweb/core/src/components/_shared/EntriesState'
+import { ScrollArea } from '@riftdweb/core/src/components/_shared/ScrollArea'
 
 export function Following() {
   const { myUserId, login } = useSkynet()

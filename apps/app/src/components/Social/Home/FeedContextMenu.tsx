@@ -12,11 +12,11 @@ import {
 } from '@riftdweb/design-system'
 import { Fragment } from 'react'
 import { Link as RLink } from 'react-router-dom'
-import { useFeed } from '../../../contexts/feed'
-import { useSkynet } from '../../../contexts/skynet'
-import { DATA_PRIVATE_FEATURES } from '../../../shared/config'
-import { getDataKeyFeeds } from '../../../shared/dataKeys'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useFeed } from '@riftdweb/core/src/contexts/feed'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
+import { DATA_PRIVATE_FEATURES } from '@riftdweb/core/src/shared/config'
+import { getDataKeyFeeds } from '@riftdweb/core/src/shared/dataKeys'
+import { SpinnerIcon } from '@riftdweb/core/src/components/_icons/SpinnerIcon'
 
 type Props = {
   variant?: ButtonVariants['variant']

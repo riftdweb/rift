@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
-import { Link } from '../../_shared/Link'
+import { Link } from '@riftdweb/core/src/components/_shared/Link'
 
 export function Nav() {
   return (

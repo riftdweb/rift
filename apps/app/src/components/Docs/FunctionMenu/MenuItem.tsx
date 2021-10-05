@@ -1,5 +1,5 @@
 import { Code, Text, Box, Button, Flex, Kbd } from '@riftdweb/design-system'
-import { useDocs } from '../../../contexts/docs'
+import { useDocs } from '@riftdweb/core/src/contexts/docs'
 
 type Props = {
   onClick: () => void

@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import { App } from '@riftdweb/types'
 // import { useHistory } from 'react-router-dom'
-import { Link } from '../../_shared/Link'
+import { Link } from '@riftdweb/core/src/components/_shared/Link'
 // import { AddApp } from './AddApp'
 
 type Props = {

@@ -11,10 +11,10 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
 import * as Yup from 'yup'
-import { useDns } from '../../../contexts/dns'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
-import { Dialog, useDialog } from '../../_shared/Dialog'
-import { SkylinkInfo } from '../../_shared/SkylinkInfo'
+import { useDns } from '@riftdweb/core/src/contexts/dns'
+import { SpinnerIcon } from '@riftdweb/core/src/components/_icons/SpinnerIcon'
+import { Dialog, useDialog } from '@riftdweb/core/src/components/_shared/Dialog'
+import { SkylinkInfo } from '@riftdweb/core/src/components/_shared/SkylinkInfo'
 
 const buildSchema = (existingNames: string[] = []) =>
   Yup.object().shape({
@@ -63,9 +63,10 @@ export function AddDnsEntry() {
     [dns.data]
   )
 
-  const validationSchema = useMemo(() => buildSchema(existingNames), [
-    existingNames,
-  ])
+  const validationSchema = useMemo(
+    () => buildSchema(existingNames),
+    [existingNames]
+  )
 
   const formik = useFormik({
     initialValues: {

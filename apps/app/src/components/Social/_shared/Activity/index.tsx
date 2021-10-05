@@ -1,13 +1,13 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
-import { useFeed } from '../../../../contexts/feed'
-import { useUser } from '../../../../hooks/useUser'
-import { Link } from '../../../_shared/Link'
+import { useFeed } from '@riftdweb/core/src/contexts/feed'
+import { useUser } from '@riftdweb/core/src/hooks/useUser'
+import { Link } from '@riftdweb/core/src/components/_shared/Link'
 import { ActivityContextMenu } from './ActivityContextMenu'
-import { Avatar } from '../../../_shared/Avatar'
+import { Avatar } from '@riftdweb/core/src/components/_shared/Avatar'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
-import { EntriesState } from '../../../_shared/EntriesState'
-import { ScrollArea } from '../../../_shared/ScrollArea'
+import { EntriesState } from '@riftdweb/core/src/components/_shared/EntriesState'
+import { ScrollArea } from '@riftdweb/core/src/components/_shared/ScrollArea'
 
 function ActivityItem({ userId, message, at }) {
   const user = useUser(userId)

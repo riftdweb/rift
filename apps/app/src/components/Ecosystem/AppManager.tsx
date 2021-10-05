@@ -1,8 +1,8 @@
 import { Box } from '@riftdweb/design-system'
 import { useParams } from 'react-router-dom'
-import { usePortal } from '../../hooks/usePortal'
-import { skapps } from '../../shared/skapps'
-import { Grid } from '../_shared/Grid'
+import { usePortal } from '@riftdweb/core/src/hooks/usePortal'
+import { skapps } from '@riftdweb/core/src/shared/skapps'
+import { Grid } from '@riftdweb/core/src/components/_shared/Grid'
 import { SkappCard } from './SkappCard'
 import { Nav } from './_shared/Nav'
 

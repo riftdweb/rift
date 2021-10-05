@@ -11,8 +11,8 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
-import { useDomains } from '../../../contexts/domains'
-import { usePath } from '../../../hooks/path'
+import { useDomains } from '@riftdweb/core/src/contexts/domains'
+import { usePath } from '@riftdweb/core/src/hooks/path'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 const getFullPath = (treeNode: TreeNodeDirectory, val: string) =>
@@ -80,14 +80,15 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
     [getDataPath, history, domain, addKey, closeDialog, treeNode]
   )
 
-  const existingKeys = useMemo(() => domain.keys.map((key) => key.key), [
-    domain,
-  ])
+  const existingKeys = useMemo(
+    () => domain.keys.map((key) => key.key),
+    [domain]
+  )
 
-  const validationSchema = useMemo(() => buildSchema(treeNode, existingKeys), [
-    treeNode,
-    existingKeys,
-  ])
+  const validationSchema = useMemo(
+    () => buildSchema(treeNode, existingKeys),
+    [treeNode, existingKeys]
+  )
 
   const formik = useFormik({
     initialValues: {

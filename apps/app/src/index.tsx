@@ -1,11 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { App } from './app/router'
+import { App } from '@riftdweb/core'
 import reportWebVitals from './reportWebVitals'
+import { AppRoutes } from './_routes'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App name="Rift">
+      <AppRoutes />
+    </App>
   </React.StrictMode>,
   document.getElementById('root')
 )

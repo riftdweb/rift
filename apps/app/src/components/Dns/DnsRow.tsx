@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { DnsEntry } from '@riftdweb/types'
 import { formatDistance } from 'date-fns'
-import { SkylinkPeek } from '../_shared/SkylinkPeek'
+import { SkylinkPeek } from '@riftdweb/core/src/components/_shared/SkylinkPeek'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 
 type Props = {

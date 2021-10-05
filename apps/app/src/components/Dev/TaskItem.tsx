@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
-import { useSkynet } from '../../contexts/skynet'
-import { useUsers } from '../../contexts/users'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
+import { useUsers } from '@riftdweb/core/src/contexts/users'
 import { Task } from '@riftdweb/queue'
 
 type Props = {

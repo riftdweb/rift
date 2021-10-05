@@ -12,9 +12,9 @@ import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
-import { useSkynet } from '../../../contexts/skynet'
-import { useAvatarUrl } from '../../../hooks/useAvatarUrl'
-import { useDomainParams } from '../../../hooks/useDomainParams'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
+import { useAvatarUrl } from '@riftdweb/core/src/hooks/useAvatarUrl'
+import { useDomainParams } from '@riftdweb/core/src/hooks/useDomainParams'
 
 export function ViewingUser() {
   const { Api, myUserId } = useSkynet()

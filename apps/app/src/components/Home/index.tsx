@@ -1,7 +1,7 @@
-import { useSkynet } from '../../contexts/skynet'
+import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
 import { Landing } from '../Landing'
 import { SocialHome } from '../Social/Home'
-import { LoadingState } from '../_shared/LoadingState'
+import { LoadingState } from '@riftdweb/core/src/components/_shared/LoadingState'
 
 export function Home() {
   const { myUserId, isReady } = useSkynet()

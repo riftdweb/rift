@@ -1,3 +1,4 @@
+import React, { useCallback, useState } from 'react'
 import {
   Button,
   ButtonVariants,
@@ -6,7 +7,6 @@ import {
   DialogTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useCallback, useState } from 'react'
 
 export function useDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false)

@@ -1,8 +1,8 @@
+import React, { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ActivityFeed } from '@riftdweb/types'
 import { fetchActivity } from '../../services/serviceApi'
 import { useSkynet } from '../skynet'
-import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/ref'
 
 type Props = {

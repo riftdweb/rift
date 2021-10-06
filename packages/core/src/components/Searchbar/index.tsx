@@ -1,3 +1,4 @@
+import React from 'react'
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
 import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'

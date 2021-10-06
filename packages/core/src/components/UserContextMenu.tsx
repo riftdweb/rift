@@ -1,3 +1,4 @@
+import React, { Fragment, useMemo } from 'react'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
@@ -14,7 +15,6 @@ import { copyToClipboard } from '../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
 import { useSkynet } from '../contexts/skynet'
 import { isFollowing } from '../contexts/users'
-import { Fragment, useMemo } from 'react'
 import { useFeed } from '../contexts/feed'
 import { SpinnerIcon } from './_icons/SpinnerIcon'
 import { useUsers } from '../contexts/users'

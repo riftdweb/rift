@@ -2,7 +2,7 @@ import { createLogger } from '@riftdweb/logger'
 import { Feed } from '@riftdweb/types'
 import { v4 as uuid } from 'uuid'
 import debounce from 'lodash/debounce'
-import {
+import React, {
   createContext,
   useCallback,
   useContext,

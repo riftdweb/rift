@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { ExternalLinkIcon, PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Box,
@@ -13,7 +14,6 @@ import {
   Link,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useState } from 'react'
 import { useSkynet } from '../../../contexts/skynet'
 import { usePortal } from '../../../hooks/usePortal'
 import { useUser } from '../../../hooks/useUser'

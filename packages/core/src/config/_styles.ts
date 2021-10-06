@@ -2,6 +2,10 @@ import { injectStyle } from 'react-toastify/dist/inject-style'
 import { globalCss } from '@riftdweb/design-system'
 
 export const globalNormalizeStyles = globalCss({
+  '*, *::before, *::after': {
+    boxSizing: 'border-box',
+  },
+
   body: {
     margin: 0,
     fontFamily:

@@ -1,5 +1,5 @@
+import React, { Fragment } from 'react'
 import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
-import { Fragment } from 'react'
 import { useSearch } from '../../contexts/search'
 import { useUsers } from '../../contexts/users'
 import { SpinnerIcon } from '../_icons/SpinnerIcon'

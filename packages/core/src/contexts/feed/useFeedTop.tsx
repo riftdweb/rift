@@ -1,8 +1,8 @@
+import React, { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { EntryFeed } from '@riftdweb/types'
 import { fetchTopEntries } from '../../services/serviceApi'
 import { useSkynet } from '../skynet'
-import { useEffect, useMemo, useState } from 'react'
 import { ControlRef } from '../skynet/ref'
 
 type Props = { ref: ControlRef }

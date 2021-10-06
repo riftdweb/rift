@@ -35,7 +35,12 @@
     "@radix-ui/react-tooltip": "0.0.9",
     "@radix-ui/react-use-layout-effect": "^0.0.1",
     "@stitches/core": "^1.2.3",
-    "@stitches/react": "0.1.9",
+    "@stitches/react": "0.1.9"
+  },
+  "devDependencies": {
+    "react": "^17.0.2"
+  },
+  "peerDependencies": {
     "react": "^17.0.2"
   }
 }

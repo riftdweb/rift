@@ -1,3 +1,4 @@
+import React from 'react'
 import { Flex, Text } from '@riftdweb/design-system'
 import { SpinnerIcon } from './_icons/SpinnerIcon'
 

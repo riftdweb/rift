@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import React, { Suspense } from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import { LayoutApp, LoadingState } from '../components'
 import { Config } from './_config'

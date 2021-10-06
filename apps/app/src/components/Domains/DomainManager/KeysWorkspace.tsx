@@ -33,7 +33,7 @@ export function KeysWorkspace() {
           gap: '$1',
           display: 'none',
           '@bp3': {
-            display: 'block',
+            display: 'flex',
           },
         }}
       >

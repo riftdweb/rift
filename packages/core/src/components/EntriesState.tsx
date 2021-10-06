@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { useHasNoEntries } from '../hooks/useHasNoEntries'
 import { SWRResponse } from 'swr'
 import { Feed } from '@riftdweb/types'

@@ -1,3 +1,4 @@
+import React from 'react'
 import { GlobeIcon } from '@radix-ui/react-icons'
 import {
   Button,

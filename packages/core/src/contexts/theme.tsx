@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import { darkTheme } from '@riftdweb/design-system'
 import { useCallback, useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'

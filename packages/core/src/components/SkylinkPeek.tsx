@@ -1,3 +1,4 @@
+import React from 'react'
 import { Code, Tooltip } from '@riftdweb/design-system'
 import { isSkylinkV2 } from 'skynet-js'
 import { copyToClipboard } from '../shared/clipboard'

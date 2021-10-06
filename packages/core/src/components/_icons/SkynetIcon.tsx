@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, styled } from '@riftdweb/design-system'
 
 type Props = {

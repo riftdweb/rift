@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Container } from '@riftdweb/design-system'
 import { Route, Switch } from 'react-router-dom'
 import { useSkynet } from '../../contexts/skynet'

@@ -1,5 +1,5 @@
+import React, { useEffect } from 'react'
 import { Flex, Text } from '@riftdweb/design-system'
-import { useEffect } from 'react'
 import { useUsers } from '../../contexts/users'
 import { UserProfile } from '../UserProfile'
 

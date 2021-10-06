@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react'
 import { Box, Flex, Panel } from '@riftdweb/design-system'
-import { useEffect, useState } from 'react'
 import { parseSkylink } from 'skynet-js'
 import { ScrollArea } from '../ScrollArea'
 import { SkylinkLookup } from './SkylinkLookup'

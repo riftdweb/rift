@@ -1,3 +1,4 @@
+import React from 'react'
 import * as RadixScrollArea from '@radix-ui/react-scroll-area'
 import { styled } from '@riftdweb/design-system'
 

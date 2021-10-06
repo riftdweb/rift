@@ -1,3 +1,4 @@
+import React from 'react'
 import { Flex, Box, Text, Container, Image } from '@riftdweb/design-system'
 import { portals } from '../../shared/portals'
 import { LogoIcon } from '../_icons/LogoIcon'

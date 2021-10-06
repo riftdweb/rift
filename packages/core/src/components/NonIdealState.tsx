@@ -1,3 +1,4 @@
+import React from 'react'
 import { Flex, Subheading, Text } from '@riftdweb/design-system'
 
 type Props = {

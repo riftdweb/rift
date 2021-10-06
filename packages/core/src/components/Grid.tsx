@@ -1,3 +1,4 @@
+import React from 'react'
 import { Grid as MGrid } from '@riftdweb/design-system'
 
 type Props = {

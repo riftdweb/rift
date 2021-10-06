@@ -1,6 +1,4 @@
-import { App } from '@riftdweb/types'
-import debounce from 'lodash/debounce'
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -8,6 +6,8 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { App } from '@riftdweb/types'
+import debounce from 'lodash/debounce'
 import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
 import { v4 as uuid } from 'uuid'

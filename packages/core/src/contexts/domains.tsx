@@ -1,7 +1,4 @@
-import { Domain, DomainKey } from '@riftdweb/types'
-import { createLogger } from '@riftdweb/logger'
-import debounce from 'lodash/debounce'
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -9,6 +6,9 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { Domain, DomainKey } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
+import debounce from 'lodash/debounce'
 import { useHistory } from 'react-router-dom'
 import { deriveChildSeed } from 'skynet-js'
 import useSWR from 'swr'

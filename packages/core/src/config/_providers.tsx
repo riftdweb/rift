@@ -1,3 +1,4 @@
+import React from 'react'
 import { IdProvider } from '@radix-ui/react-id'
 import { SkynetProvider } from '../contexts/skynet'
 import { DomainsProvider } from '../contexts/domains'

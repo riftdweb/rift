@@ -1,8 +1,4 @@
-import useSWR from 'swr'
-import { Entry, EntryFeed } from '@riftdweb/types'
-import { fetchUserEntries } from '../../services/serviceApi'
-import { useSkynet } from '../skynet'
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useCallback,
@@ -10,6 +6,10 @@ import {
   useMemo,
   useState,
 } from 'react'
+import useSWR from 'swr'
+import { Entry, EntryFeed } from '@riftdweb/types'
+import { fetchUserEntries } from '../../services/serviceApi'
+import { useSkynet } from '../skynet'
 import { useParamUserId } from './useParamUserId'
 import { ControlRef } from '../skynet/ref'
 import { dedupePendingUserEntries } from './utils'

@@ -1,3 +1,4 @@
+import React from 'react'
 import { getCssString } from '@riftdweb/design-system'
 import Helmet from 'react-helmet'
 import { ToastContainer } from 'react-toastify'

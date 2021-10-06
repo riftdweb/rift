@@ -1,10 +1,10 @@
-import React from 'react';
-import { styled, StitchesVariants, CSS } from '../stitches.config';
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { Box } from './Box';
-import { Status } from './Status';
+import React from 'react'
+import { styled, StitchesVariants, CSS } from '../stitches.config'
+import * as AvatarPrimitive from '@radix-ui/react-avatar'
+import { Box } from './Box'
+import { Status } from './Status'
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
+import type * as Polymorphic from '@radix-ui/react-polymorphic'
 
 const StyledAvatar = styled(AvatarPrimitive.Root, {
   alignItems: 'center',
@@ -168,7 +168,7 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
     variant: 'gray',
     shape: 'circle',
   },
-});
+})
 
 const StyledAvatarImage = styled(AvatarPrimitive.Image, {
   display: 'flex',
@@ -176,7 +176,7 @@ const StyledAvatarImage = styled(AvatarPrimitive.Image, {
   boxSizing: 'border-box',
   height: '100%',
   width: '100%',
-});
+})
 
 const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
   textTransform: 'uppercase',
@@ -207,12 +207,12 @@ const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
   defaultVariants: {
     size: '2',
   },
-});
+})
 
 export const AvatarNestedItem = styled('div', {
   boxShadow: '0 0 0 2px $colors$loContrast',
   borderRadius: '50%',
-});
+})
 
 export const AvatarGroup = styled('div', {
   display: 'flex',
@@ -220,31 +220,34 @@ export const AvatarGroup = styled('div', {
   [`& ${AvatarNestedItem}:nth-child(n+2)`]: {
     marginRight: '-$1',
   },
-});
+})
 
-type StatusVariants = React.ComponentProps<typeof Status>;
-type StatusColors = Pick<StatusVariants, 'variant'>;
+type StatusVariants = React.ComponentProps<typeof Status>
+type StatusColors = Pick<StatusVariants, 'variant'>
 
-type AvatarCSSProp = { css?: CSS };
+type AvatarCSSProp = { css?: CSS }
 // TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type AvatarVariants = Omit<StitchesVariants<typeof StyledAvatar>, 'size'>;
+type AvatarVariants = Omit<StitchesVariants<typeof StyledAvatar>, 'size'>
 type AvatarOwnProps = Polymorphic.OwnProps<typeof AvatarPrimitive.Root> &
   AvatarCSSProp &
   AvatarVariants & {
-    alt?: string;
-    src?: string;
-    fallback?: React.ReactNode;
-    status?: StatusColors['variant'];
-    size?: any; // TODO: Fix when this is merged https://github.com/modulz/stitches/issues/421
-  };
+    alt?: string
+    src?: string
+    fallback?: React.ReactNode
+    status?: StatusColors['variant']
+    size?: any // TODO: Fix when this is merged https://github.com/modulz/stitches/issues/421
+  }
 
 type AvatarComponent = Polymorphic.ForwardRefComponent<
   Polymorphic.IntrinsicElement<typeof AvatarPrimitive.Root>,
   AvatarOwnProps
->;
+>
 
 export const Avatar = React.forwardRef(
-  ({ alt, src, fallback, size, variant, shape, css, status, ...props }, forwardedRef) => {
+  (
+    { alt, src, fallback, size, variant, shape, css, status, ...props },
+    forwardedRef
+  ) => {
     return (
       <Box
         css={{
@@ -254,7 +257,13 @@ export const Avatar = React.forwardRef(
           width: 'fit-content',
         }}
       >
-        <StyledAvatar {...props} ref={forwardedRef} size={size} variant={variant} shape={shape}>
+        <StyledAvatar
+          {...props}
+          ref={forwardedRef}
+          size={size}
+          variant={variant}
+          shape={shape}
+        >
           <StyledAvatarImage alt={alt} src={src} />
           <StyledAvatarFallback size={size}>{fallback}</StyledAvatarFallback>
         </StyledAvatar>
@@ -271,10 +280,13 @@ export const Avatar = React.forwardRef(
             }}
           >
             {/* TODO: Fix when this is merged https://github.com/modulz/stitches/issues/421 */}
-            <Status size={size > 2 ? ('2' as any) : ('1' as any)} variant={status} />
+            <Status
+              size={size > 2 ? ('2' as any) : ('1' as any)}
+              variant={status}
+            />
           </Box>
         )}
       </Box>
-    );
+    )
   }
-) as AvatarComponent;
+) as AvatarComponent

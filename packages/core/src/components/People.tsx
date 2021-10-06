@@ -1,3 +1,4 @@
+import React from 'react'
 import { Flex, Box } from '@riftdweb/design-system'
 import { useUsers } from '../contexts/users'
 import { Avatar } from './Avatar'

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Avatar as DAvatar } from '@riftdweb/design-system'
 import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useAvatarUrl } from '../hooks/useAvatarUrl'

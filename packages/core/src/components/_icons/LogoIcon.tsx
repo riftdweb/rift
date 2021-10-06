@@ -1,3 +1,4 @@
+import React from 'react'
 import { Image, keyframes } from '@riftdweb/design-system'
 
 const spin = keyframes({

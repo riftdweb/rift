@@ -1,9 +1,6 @@
 import { lazy } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
-import {
-  DATA_BASE_PATH,
-  DATA_MYSKY_BASE_PATH,
-} from '@riftdweb/core/src/hooks/path'
+import { DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from '@riftdweb/core'
 
 const Home = lazy(() => import('./pages/Home'))
 const SocialProfile = lazy(() => import('./pages/SocialProfile'))

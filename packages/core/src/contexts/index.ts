@@ -1,7 +1,8 @@
 export { DocsProvider, useDocs } from './docs'
 export type { Doc, DocData } from './docs'
 export { FeedProvider, useFeed } from './feed'
-export { FsProvider, useFs } from './files'
+export { FsProvider, useFs, useDrop } from './files'
+export type { Node, NodeFile, NodeDirectory } from './files'
 export {
   SkynetProvider,
   useSkynet,

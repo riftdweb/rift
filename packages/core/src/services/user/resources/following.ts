@@ -7,7 +7,7 @@ import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
 import { socialDAC } from '../../../contexts/skynet'
 import { apiLimiter } from '../../../contexts/skynet/api'
-import { getTokenName } from '..'
+import { getTokenName } from '../utils'
 
 const resourceName = 'following'
 const taskQueue = TaskQueue(`sync/${resourceName}`, {

@@ -14,7 +14,7 @@ import { Bar } from '@visx/shape'
 import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import throttle from 'lodash/throttle'
 import { useCallback, useMemo, useState } from 'react'
-import { useFeed } from '@riftdweb/core/src/contexts/feed'
+import { useFeed } from '@riftdweb/core'
 
 const verticalMargin = 120
 

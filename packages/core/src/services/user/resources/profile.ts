@@ -9,7 +9,7 @@ import {
 import { ControlRef } from '../../../contexts/skynet/ref'
 import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
-import { getTokenName } from '..'
+import { getTokenName } from '../utils'
 
 const resourceName = 'profile'
 const taskQueue = TaskQueue(`sync/${resourceName}`, {

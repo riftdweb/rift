@@ -6139,7 +6139,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@*, classnames@^2.2.5, classnames@^2.2.6:
+classnames@*, classnames@^2.2.5:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -12104,13 +12104,6 @@ nlcst-to-string@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/nlcst-to-string/-/nlcst-to-string-2.0.4.tgz#9315dfab80882bbfd86ddf1b706f53622dc400cc"
   integrity sha512-3x3jwTd6UPG7vi5k4GEzvxJ5rDA7hVUIRNHPblKuMVP9Z3xmlsd9cgLcpAMkc5uPOBna82EeshROFhsPkbnTZg==
-
-nlcst-to-string@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/nlcst-to-string/-/nlcst-to-string-3.0.0.tgz#3a75a3385fcb155584b1638cd0de9663abf63ac0"
-  integrity sha512-zhjRsqZUAyRQxz7E2DnxtJD7DTNfR2HhCbJsX39l5sM4ZaGO+CsbZCU4cF10Sj3GLl2zS4e13/rQrL+DSfx37g==
-  dependencies:
-    "@types/unist" "^2.0.0"
 
 no-case@^3.0.4:
   version "3.0.4"

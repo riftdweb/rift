@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import React from 'react'
-import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
+import { useSkynet } from '@riftdweb/core'
 import { MySkyLoggedIn } from './MySkyLoggedIn'
 
 export function MySky() {

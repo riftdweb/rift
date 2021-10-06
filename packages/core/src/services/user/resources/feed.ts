@@ -10,7 +10,7 @@ import { cacheUserEntries, compileUserEntries } from '../../serviceApi'
 import { clearToken, handleToken } from '../../tokens'
 import { addEntries } from '../../feedAggregator'
 import { checkIsUpToDate } from '../checks'
-import { getLogName, getTokenName } from '..'
+import { getLogName, getTokenName } from '../utils'
 
 const resourceName = 'feed'
 // Keep pool a little bigger than the indexer batch size

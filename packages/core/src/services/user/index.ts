@@ -8,6 +8,7 @@ import { waitFor } from '../../shared/wait'
 import { syncProfile } from './resources/profile'
 import { syncFollowing } from './resources/following'
 import { syncMeta } from './resources/meta'
+import { getLogName } from './utils'
 
 const FALSE_START_WAIT_INTERVAL = 1_000
 
@@ -75,7 +76,4 @@ export async function syncUser(
   }
 }
 
-export const getTokenName = (userId: string, resourceName: string) =>
-  `users/${userId}/sync/${resourceName}`
-export const getLogName = (userId: string, resourceName?: string) =>
-  `users/${userId.slice(0, 5)}/sync${resourceName ? `/${resourceName}` : ''}`
+export { checkIsUserUpToDate } from './checks'

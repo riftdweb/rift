@@ -247,3 +247,5 @@ function useParamFilePath(): string[] {
 
   return path
 }
+
+export { useDrop } from './useDrop'

@@ -1,5 +1,5 @@
 import { Box, Input } from '@riftdweb/design-system'
-import { useDrop } from '@riftdweb/core/src/contexts/files/useDrop'
+import { useDrop } from '@riftdweb/core'
 
 type Props = {
   directoryPath?: string

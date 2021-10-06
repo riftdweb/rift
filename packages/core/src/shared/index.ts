@@ -22,6 +22,7 @@ export {
 } from './dataKeys'
 export { links } from './links'
 export { portals } from './portals'
+export { reportWebVitals } from './reportWebVitals'
 export { skapps } from './skapps'
 export { triggerToast } from './toast'
 export { getSize } from './uploads'

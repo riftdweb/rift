@@ -1,6 +1,6 @@
 import { Flex, Container } from '@riftdweb/design-system'
 import { useParams } from 'react-router-dom'
-import { Link } from '@riftdweb/core/src/components/_shared/Link'
+import { Link } from '@riftdweb/core'
 import { DevTaskManager } from './TaskManager'
 import { DevIndexingManager } from './IndexingManager'
 

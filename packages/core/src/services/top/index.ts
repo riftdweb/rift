@@ -102,3 +102,5 @@ export async function updateTopFeed(
     }
   }
 }
+
+export { scoreEntry } from './scoring'

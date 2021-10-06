@@ -1,5 +1,5 @@
 import { DirectoryFile } from 'fs-dac-library/dist/cjs/skystandards'
-import { fileSystemDAC } from '@riftdweb/core/src/contexts/skynet'
+import { fileSystemDAC } from '@riftdweb/core'
 
 export async function downloadFile(file: DirectoryFile) {
   const blob = await fileSystemDAC.downloadFileData(file.file, file.mimeType)

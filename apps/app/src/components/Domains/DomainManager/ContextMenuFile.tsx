@@ -9,8 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@riftdweb/design-system'
-import { useDomains } from '@riftdweb/core/src/contexts/domains'
-import { copyToClipboard } from '@riftdweb/core/src/shared/clipboard'
+import { useDomains } from '@riftdweb/core'
+import { copyToClipboard } from '@riftdweb/core'
 import { TreeNodeFile } from './KeysTree/transformKeys'
 
 type Props = {

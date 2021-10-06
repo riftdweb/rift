@@ -11,10 +11,10 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
-import { useFeed } from '@riftdweb/core/src/contexts/feed'
-import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
-import { getDataKeyFeeds } from '@riftdweb/core/src/shared/dataKeys'
-import { SpinnerIcon } from '@riftdweb/core/src/components/_icons/SpinnerIcon'
+import { useFeed } from '@riftdweb/core'
+import { useSkynet } from '@riftdweb/core'
+import { getDataKeyFeeds } from '@riftdweb/core'
+import { SpinnerIcon } from '@riftdweb/core'
 
 type Props = {
   variant?: ButtonVariants['variant']

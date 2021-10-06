@@ -6,9 +6,8 @@
   "typings": "dist/riftdweb-design-system.cjs.d.ts",
   "author": "Alex Freska",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true,
   "scripts": {
-    "build": "rollup -c"
+    "publish": "yarn publish"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "0.0.7",
@@ -37,10 +36,5 @@
     "@radix-ui/react-use-layout-effect": "^0.0.1",
     "@stitches/react": "0.1.9",
     "react": "^17.0.2"
-  },
-  "devDependencies": {
-    "rollup": "^2.45.2",
-    "rollup-plugin-typescript2": "^0.30.0",
-    "typescript": "^4.2.4"
   }
 }

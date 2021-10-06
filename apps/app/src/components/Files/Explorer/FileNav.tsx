@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Input, Text } from '@riftdweb/design-system'
 import { Fragment, useState } from 'react'
-import { useFs } from '@riftdweb/core/src/contexts/files'
-import { Link } from '@riftdweb/core/src/components/_shared/Link'
+import { useFs } from '@riftdweb/core'
+import { Link } from '@riftdweb/core'
 
 export function FileNav() {
   const { activePath, createDirectory } = useFs()

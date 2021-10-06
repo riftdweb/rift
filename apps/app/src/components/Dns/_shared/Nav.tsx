@@ -1,5 +1,5 @@
 import { Box, Flex, Heading } from '@riftdweb/design-system'
-import { Link } from '@riftdweb/core/src/components/_shared/Link'
+import { Link } from '@riftdweb/core'
 import { AddDnsEntry } from './AddDnsEntry'
 import { LearnHow } from './LearnHow'
 

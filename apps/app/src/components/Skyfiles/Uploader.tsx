@@ -20,9 +20,9 @@ import { useBeforeunload } from 'react-beforeunload'
 import { useDropzone } from 'react-dropzone'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
-import { useSkynet } from '@riftdweb/core/src/contexts/skynet'
-import { usePortal } from '@riftdweb/core/src/hooks/usePortal'
-import { getSize } from '@riftdweb/core/src/shared/uploads'
+import { useSkynet } from '@riftdweb/core'
+import { usePortal } from '@riftdweb/core'
+import { getSize } from '@riftdweb/core'
 
 const taskQueue = TaskQueue('uploads', {
   poolSize: 5,

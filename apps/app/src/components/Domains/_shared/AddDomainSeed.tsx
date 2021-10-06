@@ -14,7 +14,7 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { v4 as uuid } from 'uuid'
 import * as Yup from 'yup'
-import { useDomains } from '@riftdweb/core/src/contexts/domains'
+import { useDomains } from '@riftdweb/core'
 
 const defaultDomainValues: Partial<Domain> = {
   parentSeed: '',

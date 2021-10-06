@@ -11,8 +11,8 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
-import { useDomains } from '@riftdweb/core/src/contexts/domains'
-import { usePath } from '@riftdweb/core/src/hooks/path'
+import { useDomains } from '@riftdweb/core'
+import { usePath } from '@riftdweb/core'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 const getFullPath = (treeNode: TreeNodeDirectory, val: string) =>

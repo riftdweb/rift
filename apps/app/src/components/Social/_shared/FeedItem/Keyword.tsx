@@ -1,6 +1,6 @@
 import { Box, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback } from 'react'
-import { useFeed } from '@riftdweb/core/src/contexts/feed'
+import { useFeed } from '@riftdweb/core'
 
 const textStyles: any = {
   lineHeight: '25px',

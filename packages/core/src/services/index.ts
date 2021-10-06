@@ -4,8 +4,8 @@ export {
   clearEntriesBuffer,
   scheduleFeedAggregator,
 } from './feedAggregator'
-export { updateTopFeed } from './top'
-export { syncUser } from './user'
+export { updateTopFeed, scoreEntry } from './top'
+export { syncUser, checkIsUserUpToDate } from './user'
 export { scheduleUsersIndexer } from './usersIndexer'
 export { startRoot } from './root'
 export {

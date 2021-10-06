@@ -6,7 +6,9 @@
   "typings": "dist/riftdweb-logger.cjs.d.ts",
   "author": "Alex Freska",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true,
+  "scripts": {
+    "publish": "yarn publish"
+  },
   "dependencies": {
     "date-fns": "^2.23.0"
   }

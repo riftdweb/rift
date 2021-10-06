@@ -1,10 +1,8 @@
 import { getCssString } from '@riftdweb/design-system'
 import Helmet from 'react-helmet'
 import { ToastContainer } from 'react-toastify'
-// import 'react-toastify/dist/ReactToastify.css'
-// import '../styles.css'
-// import '../toast.css'
 import { Providers } from './_providers'
+import './_styles'
 
 export function Config({ name, children }) {
   return (

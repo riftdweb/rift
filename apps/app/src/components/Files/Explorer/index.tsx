@@ -1,6 +1,5 @@
 import { Container, Box, Flex } from '@riftdweb/design-system'
-import { useFs } from '@riftdweb/core'
-import { EntriesState } from '@riftdweb/core'
+import { useFs, EntriesState } from '@riftdweb/core'
 import { DirectoryItem } from './RowDirectory'
 import { FileItem } from './RowFile'
 import { FileNav } from './FileNav'

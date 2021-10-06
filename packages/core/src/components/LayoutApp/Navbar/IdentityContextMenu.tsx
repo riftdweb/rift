@@ -120,7 +120,16 @@ export function IdentityContextMenu({
             <PersonIcon />
           </DropdownMenuTrigger>
         ) : (
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            as={Button}
+            css={{
+              boxShadow: 'none',
+              padding: 0,
+              '&:active, &:hover, &:focus': {
+                boxShadow: 'none',
+              },
+            }}
+          >
             <Avatar userId={myUserId} profile={myUser.profile.data} />
           </DropdownMenuTrigger>
         )}

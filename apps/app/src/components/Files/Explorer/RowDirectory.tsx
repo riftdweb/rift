@@ -1,10 +1,13 @@
 import { Box, Flex } from '@riftdweb/design-system'
 import { formatRelative } from 'date-fns'
 import { useMemo } from 'react'
-import { NodeDirectory, useFs } from '@riftdweb/core'
-import { Link } from '@riftdweb/core'
-import { FolderIcon } from '@riftdweb/core'
-import { SpinnerIcon } from '@riftdweb/core'
+import {
+  NodeDirectory,
+  useFs,
+  Link,
+  FolderIcon,
+  SpinnerIcon,
+} from '@riftdweb/core'
 import { Row } from './Row'
 import { CellText } from './CellText'
 

@@ -1,13 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { Box, Button, Flex } from '@riftdweb/design-system'
+import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import { useEffect } from 'react'
+import { Link, UserProfile, syncUser, useSkynet } from '@riftdweb/core'
 import { Feed } from './Feed'
 import { Layout } from '../Layout'
-import { Link } from '@riftdweb/core'
-import { ArrowLeftIcon } from '@radix-ui/react-icons'
-import { UserProfile } from '@riftdweb/core'
-import { useEffect } from 'react'
-import { syncUser } from '@riftdweb/core'
-import { useSkynet } from '@riftdweb/core'
 
 export function SocialProfile() {
   const { controlRef: ref } = useSkynet()

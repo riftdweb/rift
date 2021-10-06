@@ -10,13 +10,15 @@ import { Skyfile } from '@riftdweb/types'
 import bytes from 'bytes'
 import { formatDistance, parseISO } from 'date-fns'
 import { useMemo, useState } from 'react'
-import { useSkylink } from '@riftdweb/core'
-import { copyToClipboard } from '@riftdweb/core'
-import { getSize } from '@riftdweb/core'
-import { FolderIcon } from '@riftdweb/core'
-import { SpinnerIcon } from '@riftdweb/core'
-import { SkylinkDnsMenu } from '@riftdweb/core'
-import { SkylinkPeek } from '@riftdweb/core'
+import {
+  useSkylink,
+  copyToClipboard,
+  getSize,
+  FolderIcon,
+  SpinnerIcon,
+  SkylinkDnsMenu,
+  SkylinkPeek,
+} from '@riftdweb/core'
 
 const getProgressText = (progress) => {
   if (progress === -1) {

@@ -1,10 +1,12 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
-import { useSkynet } from '@riftdweb/core'
-import { useDomainParams } from '@riftdweb/core'
-import { DragSizing } from '@riftdweb/core'
-import { LoadingState } from '@riftdweb/core'
+import {
+  useSkynet,
+  useDomainParams,
+  DragSizing,
+  LoadingState,
+} from '@riftdweb/core'
 import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'

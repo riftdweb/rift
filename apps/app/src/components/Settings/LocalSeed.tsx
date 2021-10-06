@@ -12,12 +12,12 @@ import { App, Domain, Skyfile } from '@riftdweb/types'
 import { Fragment, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
-import { useDomains } from '@riftdweb/core'
-import { useSkynet } from '@riftdweb/core'
-import { useLocalRootSeed } from '@riftdweb/core'
-import { copyToClipboard } from '@riftdweb/core'
-import { DATA_PRIVATE_FEATURES } from '@riftdweb/core'
 import {
+  useDomains,
+  useSkynet,
+  useLocalRootSeed,
+  copyToClipboard,
+  DATA_PRIVATE_FEATURES,
   dataKeysExportList,
   getDataKeyDomains,
   getDataKeyApps,

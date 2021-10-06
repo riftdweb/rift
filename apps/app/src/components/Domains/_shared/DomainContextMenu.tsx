@@ -12,8 +12,7 @@ import {
 import { Domain } from '@riftdweb/types'
 import { Fragment } from 'react'
 import { genKeyPairFromSeed } from 'skynet-js'
-import { useDomains } from '@riftdweb/core'
-import { copyToClipboard } from '@riftdweb/core'
+import { useDomains, copyToClipboard } from '@riftdweb/core'
 
 type Props = {
   domain: Domain

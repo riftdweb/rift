@@ -1,7 +1,5 @@
 import { Flex } from '@riftdweb/design-system'
-import { useFeed } from '@riftdweb/core'
-import { useSkynet } from '@riftdweb/core'
-import { EntriesState } from '@riftdweb/core'
+import { useFeed, useSkynet, EntriesState } from '@riftdweb/core'
 import { FeedItem } from '../_shared/FeedItem'
 
 export function Feed() {

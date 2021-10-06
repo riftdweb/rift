@@ -1,5 +1,4 @@
-import { UserContextMenu } from '@riftdweb/core'
-import { User } from '@riftdweb/core'
+import { UserContextMenu, User } from '@riftdweb/core'
 
 type Props = {
   userId: string

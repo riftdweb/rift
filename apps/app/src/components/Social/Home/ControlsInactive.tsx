@@ -14,8 +14,7 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useFeed } from '@riftdweb/core'
-import { Link } from '@riftdweb/core'
+import { useFeed, Link } from '@riftdweb/core'
 import { RelativeTime } from '../_shared/RelativeTime'
 import { FeedContextMenu } from './FeedContextMenu'
 

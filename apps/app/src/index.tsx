@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { App } from '@riftdweb/core'
-import { reportWebVitals } from '@riftdweb/core'
+import { App, reportWebVitals } from '@riftdweb/core'
 import { AppRoutes } from './_routes'
 
 ReactDOM.render(

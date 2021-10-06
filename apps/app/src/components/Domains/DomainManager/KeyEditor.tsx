@@ -3,10 +3,12 @@ import { Domain, DomainKey } from '@riftdweb/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
-import { useDomains } from '@riftdweb/core'
-import { useSkynet } from '@riftdweb/core'
-import { useDomainParams } from '@riftdweb/core'
-import { triggerToast } from '@riftdweb/core'
+import {
+  useDomains,
+  useSkynet,
+  useDomainParams,
+  triggerToast,
+} from '@riftdweb/core'
 import { KeysToolbar } from './KeysToolbar'
 
 const importConfigFiles = () => {

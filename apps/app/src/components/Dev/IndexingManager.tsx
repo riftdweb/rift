@@ -1,9 +1,11 @@
 import { Box, Flex, Panel, Subheading, Text } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
-import { useSkynet } from '@riftdweb/core'
-import { useUsers } from '@riftdweb/core'
-import { checkIsUserUpToDate } from '@riftdweb/core'
-import { EntriesResponse } from '@riftdweb/core'
+import {
+  useSkynet,
+  useUsers,
+  checkIsUserUpToDate,
+  EntriesResponse,
+} from '@riftdweb/core'
 
 export function DevIndexingManager() {
   const { controlRef: ref } = useSkynet()

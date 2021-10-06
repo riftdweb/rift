@@ -3234,6 +3234,11 @@
   resolved "https://registry.yarnpkg.com/@stitches/core/-/core-0.1.9.tgz#6cc42ae6052f6900f9add164232449ff8d62c4ba"
   integrity sha512-70gVb0uhgV6BOJmloirWEGZmofk/Hzr5yWlub1rtm4CvimD3Xl5xr9fVkjcTu+REC6ILCJCnlEP4WmilTfXNOA==
 
+"@stitches/core@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@stitches/core/-/core-1.2.3.tgz#7dd5b45155891e95cd8b5ee1dd15330b5bebe65b"
+  integrity sha512-ccduUnfkBX9o1WybNtvaOKQhKcmQGRPUqpRLKNvtwR7fyZnKwv9ZvoMmt41gZxVnVutJAc4mlT0ENFJNF5lwCw==
+
 "@stitches/react@0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@stitches/react/-/react-0.1.9.tgz#b16e05c9ee7e34369bb3b051b92a997ab379863f"

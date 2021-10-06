@@ -1,6 +1,5 @@
 import { Box, Container, Flex } from '@riftdweb/design-system'
-import { useDns } from '@riftdweb/core'
-import { EntriesState } from '@riftdweb/core'
+import { useDns, EntriesState } from '@riftdweb/core'
 import { DnsRow } from './DnsRow'
 import { Nav } from './_shared/Nav'
 

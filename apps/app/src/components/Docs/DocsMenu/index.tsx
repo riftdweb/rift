@@ -46,6 +46,7 @@ export function DocsMenu() {
             {docList.data?.entries.sort(sort).map((doc) => (
               <Link
                 to={`/docs/${doc.id}`}
+                key={doc.id}
                 css={{
                   display: 'block',
                   padding: '$1 $3',

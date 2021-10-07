@@ -1,18 +1,26 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { getCssString } from '@riftdweb/design-system'
 import Helmet from 'react-helmet'
 import { ToastContainer } from 'react-toastify'
-import { Providers } from './_providers'
 import {
   globalNormalizeStyles,
   globalToastStyles,
   globalToastCustomStyles,
 } from './_styles'
 
-export function Config({ name, children }) {
+export function Config({ name, children, providers }) {
   globalNormalizeStyles()
   globalToastStyles()
   globalToastCustomStyles()
+
+  const Providers = useMemo(
+    () => () =>
+      providers
+        .slice()
+        .reverse()
+        .reduce((el, Provider) => <Provider>{el}</Provider>, children),
+    [providers, children]
+  )
 
   return (
     <div>
@@ -27,7 +35,7 @@ export function Config({ name, children }) {
         />
       </Helmet>
       <ToastContainer />
-      <Providers>{children}</Providers>
+      <Providers />
     </div>
   )
 }

@@ -281,6 +281,7 @@ export function DocsProvider({ children }: Props) {
   const isInitializing = !docList.data || docState.isFetching
   const currentDocPath = getDataKeyDocs(openDocId)
   const currentDocFetchKey = getKey(['docs', openDocId])
+  const currentDocFetchDeps = currentDocFetchKey || [null, null, null]
 
   useEffect(
     () => {
@@ -338,7 +339,7 @@ export function DocsProvider({ children }: Props) {
       func()
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    currentDocFetchKey ? currentDocFetchKey : [currentDocFetchKey]
+    currentDocFetchDeps
   )
 
   const handleUpdate = useCallback(

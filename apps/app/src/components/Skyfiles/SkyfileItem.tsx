@@ -93,20 +93,24 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           gap: '$1',
         }}
       >
-        <Box css={{ color: '$gray900' }}>{iconElement}</Box>
+        <Box css={{ color: '$gray900', position: 'relative', top: '1px' }}>
+          {iconElement}
+        </Box>
         <Box css={{ flex: 2, overflow: 'hidden' }}>
           <Text
             size="3"
             css={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              lineHeight: '24px',
               whiteSpace: 'nowrap',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
             }}
           >
-            <Link target="_blank" css={{ outline: 'none' }} href={weblink}>
+            <Link
+              target="_blank"
+              css={{ outline: 'none', textDecoration: 'none' }}
+              href={weblink}
+            >
               {metadata.filename}
             </Link>
           </Text>
@@ -118,6 +122,8 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             '@bp1': {
               display: 'flex',
             },
+            position: 'relative',
+            top: '1px',
           }}
         >
           {skylink && <SkylinkPeek skylink={skylink} />}
@@ -131,7 +137,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             },
           }}
         >
-          <Text css={{ color: '$gray900' }}>{size}</Text>
+          <Text css={{ color: '$gray900', lineHeight: '24px' }}>{size}</Text>
         </Box>
         <Box
           css={{
@@ -142,7 +148,11 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             },
           }}
         >
-          {portal && <Text css={{ color: '$gray800' }}>{portal}</Text>}
+          {portal && (
+            <Text css={{ color: '$gray800', lineHeight: '24px' }}>
+              {portal}
+            </Text>
+          )}
         </Box>
         {status === 'complete' ? (
           <Box
@@ -156,6 +166,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
                 textAlign: 'right',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                lineHeight: '24px',
                 whiteSpace: 'nowrap',
               }}
             >

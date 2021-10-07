@@ -120,3 +120,5 @@ export {
   global,
   keyframes,
 } from './stitches.config'
+
+export { globalCss } from '@stitches/core'

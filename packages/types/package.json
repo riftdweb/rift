@@ -6,7 +6,9 @@
   "typings": "dist/riftdweb-types.cjs.d.ts",
   "author": "Alex Freska",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true,
+  "scripts": {
+    "publish": "yarn publish"
+  },
   "dependencies": {
     "@skynethub/userprofile-library": "^0.1.10-beta",
     "feed-dac-library": "^0.2.2"

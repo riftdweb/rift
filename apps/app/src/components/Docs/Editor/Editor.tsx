@@ -1,9 +1,8 @@
 import { EditorContent } from '@tiptap/react'
 import { Flex, Box } from '@riftdweb/design-system'
-import { useDocs } from '../../../contexts/docs'
+import { useDocs, NonIdealState } from '@riftdweb/core'
 import { EditorSkeleton } from './EditorSkeleton'
 import { EditorHeading } from './EditorHeading'
-import { NonIdealState } from '../../_shared/NonIdealState'
 
 export function Editor() {
   const { docId, editor, isInitializing } = useDocs()

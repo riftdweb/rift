@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
-import { useSkynet } from '../../contexts/skynet'
+import { useSkynet } from '@riftdweb/core'
 
 export function LandingCta() {
   const { login } = useSkynet()

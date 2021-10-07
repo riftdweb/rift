@@ -9,15 +9,17 @@ import {
 } from '@riftdweb/design-system'
 import { Fragment, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useDomains } from '../../contexts/domains'
-import { DATA_MYSKY_BASE_PATH } from '../../hooks/path'
-import { useSkynet } from '../../contexts/skynet'
-import { useApps } from '../../contexts/apps'
-import { useSkyfiles } from '../../contexts/skyfiles'
-import { copyToClipboard } from '../../shared/clipboard'
-import { DATA_PRIVATE_FEATURES } from '../../shared/config'
-import { dataKeysExportList } from '../../shared/dataKeys'
-import { User } from '../_shared/User'
+import {
+  useDomains,
+  DATA_MYSKY_BASE_PATH,
+  useSkynet,
+  useApps,
+  useSkyfiles,
+  copyToClipboard,
+  DATA_PRIVATE_FEATURES,
+  dataKeysExportList,
+  User,
+} from '@riftdweb/core'
 import { exportData } from './_shared/exportData'
 
 export function MySkyLoggedIn() {

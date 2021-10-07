@@ -2,9 +2,12 @@ import { Box } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Treebeard } from 'react-treebeard'
-import { useDomains } from '../../../../contexts/domains'
-import { DATA_MYSKY_BASE_PATH, usePath } from '../../../../hooks/path'
-import { useDomainParams } from '../../../../hooks/useDomainParams'
+import {
+  useDomains,
+  DATA_MYSKY_BASE_PATH,
+  usePath,
+  useDomainParams,
+} from '@riftdweb/core'
 import animations from './animations'
 import { decorators } from './decorators'
 import { style } from './style'

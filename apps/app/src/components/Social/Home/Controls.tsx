@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Textarea } from '@riftdweb/design-system'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useFeed } from '../../../contexts/feed'
-import { useSkynet } from '../../../contexts/skynet'
+import { useFeed, useSkynet } from '@riftdweb/core'
 import { ControlsInactive } from './ControlsInactive'
 
 export function Controls() {

@@ -1,13 +1,15 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
-import { useFeed } from '../../../../contexts/feed'
-import { useUser } from '../../../../hooks/useUser'
-import { Link } from '../../../_shared/Link'
+import {
+  useFeed,
+  useUser,
+  Link,
+  Avatar,
+  EntriesState,
+  ScrollArea,
+} from '@riftdweb/core'
 import { ActivityContextMenu } from './ActivityContextMenu'
-import { Avatar } from '../../../_shared/Avatar'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
-import { EntriesState } from '../../../_shared/EntriesState'
-import { ScrollArea } from '../../../_shared/ScrollArea'
 
 function ActivityItem({ userId, message, at }) {
   const user = useUser(userId)

@@ -9,7 +9,7 @@ import {
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
 import sia from 'sia-js'
-import { copyToClipboard } from '../../shared/clipboard'
+import { copyToClipboard } from '@riftdweb/core'
 
 function mnemonicToBytes(mnemonic: string) {
   const mnemonicBytes = sia.mnemonics.mnemonicToBytes(mnemonic)

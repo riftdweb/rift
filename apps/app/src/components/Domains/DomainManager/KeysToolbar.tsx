@@ -21,8 +21,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { useMemo } from 'react'
-import { copyToClipboard } from '../../../shared/clipboard'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { copyToClipboard, SpinnerIcon } from '@riftdweb/core'
 
 type Props = {
   skylink: string

@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
 import { DnsEntry } from '@riftdweb/types'
 import { formatDistance } from 'date-fns'
-import { SkylinkPeek } from '../_shared/SkylinkPeek'
+import { SkylinkPeek } from '@riftdweb/core'
 import { UpdateDnsEntry } from './_shared/UpdateDnsEntry'
 
 type Props = {
@@ -36,12 +36,22 @@ export function DnsRow({ dnsEntry }: Props) {
           }}
         >
           <Box css={{ flex: 1 }}>
-            <Text>{name}</Text>
+            <Text
+              css={{
+                lineHeight: '24px',
+              }}
+            >
+              {name}
+            </Text>
           </Box>
-          <Box css={{ flex: 1, display: 'flex' }}>
+          <Box
+            css={{ flex: 1, display: 'flex', position: 'relative', top: '1px' }}
+          >
             <SkylinkPeek skylink={entryLink} />
           </Box>
-          <Box css={{ flex: 1, display: 'flex' }}>
+          <Box
+            css={{ flex: 1, display: 'flex', position: 'relative', top: '1px' }}
+          >
             <SkylinkPeek skylink={dataLink} />
           </Box>
           <Box
@@ -58,6 +68,7 @@ export function DnsRow({ dnsEntry }: Props) {
                 color: '$gray900',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                lineHeight: '24px',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -81,6 +92,7 @@ export function DnsRow({ dnsEntry }: Props) {
                 color: '$gray900',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                lineHeight: '24px',
                 whiteSpace: 'nowrap',
               }}
             >

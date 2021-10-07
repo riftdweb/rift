@@ -10,13 +10,15 @@ import { Skyfile } from '@riftdweb/types'
 import bytes from 'bytes'
 import { formatDistance, parseISO } from 'date-fns'
 import { useMemo, useState } from 'react'
-import { useSkylink } from '../../hooks/useSkylink'
-import { copyToClipboard } from '../../shared/clipboard'
-import { getSize } from '../../shared/uploads'
-import FolderIcon from '../_icons/FolderIcon'
-import SpinnerIcon from '../_icons/SpinnerIcon'
-import { SkylinkDnsMenu } from '../_shared/SkylinkDnsMenu'
-import { SkylinkPeek } from '../_shared/SkylinkPeek'
+import {
+  useSkylink,
+  copyToClipboard,
+  getSize,
+  FolderIcon,
+  SpinnerIcon,
+  SkylinkDnsMenu,
+  SkylinkPeek,
+} from '@riftdweb/core'
 
 const getProgressText = (progress) => {
   if (progress === -1) {
@@ -91,20 +93,24 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           gap: '$1',
         }}
       >
-        <Box css={{ color: '$gray900' }}>{iconElement}</Box>
+        <Box css={{ color: '$gray900', position: 'relative', top: '1px' }}>
+          {iconElement}
+        </Box>
         <Box css={{ flex: 2, overflow: 'hidden' }}>
           <Text
             size="3"
             css={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              lineHeight: '24px',
               whiteSpace: 'nowrap',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
             }}
           >
-            <Link target="_blank" css={{ outline: 'none' }} href={weblink}>
+            <Link
+              target="_blank"
+              css={{ outline: 'none', textDecoration: 'none' }}
+              href={weblink}
+            >
               {metadata.filename}
             </Link>
           </Text>
@@ -116,6 +122,8 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             '@bp1': {
               display: 'flex',
             },
+            position: 'relative',
+            top: '1px',
           }}
         >
           {skylink && <SkylinkPeek skylink={skylink} />}
@@ -129,7 +137,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             },
           }}
         >
-          <Text css={{ color: '$gray900' }}>{size}</Text>
+          <Text css={{ color: '$gray900', lineHeight: '24px' }}>{size}</Text>
         </Box>
         <Box
           css={{
@@ -140,7 +148,11 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             },
           }}
         >
-          {portal && <Text css={{ color: '$gray800' }}>{portal}</Text>}
+          {portal && (
+            <Text css={{ color: '$gray800', lineHeight: '24px' }}>
+              {portal}
+            </Text>
+          )}
         </Box>
         {status === 'complete' ? (
           <Box
@@ -154,6 +166,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
                 textAlign: 'right',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                lineHeight: '24px',
                 whiteSpace: 'nowrap',
               }}
             >

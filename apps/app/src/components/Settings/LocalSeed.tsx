@@ -12,17 +12,17 @@ import { App, Domain, Skyfile } from '@riftdweb/types'
 import { Fragment, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSWR from 'swr'
-import { useDomains } from '../../contexts/domains'
-import { useSkynet } from '../../contexts/skynet'
-import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
-import { copyToClipboard } from '../../shared/clipboard'
-import { DATA_PRIVATE_FEATURES } from '../../shared/config'
 import {
+  useDomains,
+  useSkynet,
+  useLocalRootSeed,
+  copyToClipboard,
+  DATA_PRIVATE_FEATURES,
   dataKeysExportList,
   getDataKeyDomains,
   getDataKeyApps,
   getDataKeyFiles,
-} from '../../shared/dataKeys'
+} from '@riftdweb/core'
 import { exportData } from './_shared/exportData'
 
 const dataKeyDomains = getDataKeyDomains()

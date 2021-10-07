@@ -1,10 +1,12 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
-import { useSkynet } from '../../../contexts/skynet'
-import { useDomainParams } from '../../../hooks/useDomainParams'
-import { DragSizing } from '../../_shared/DragSizing'
-import { LoadingState } from '../../_shared/LoadingState'
+import {
+  useSkynet,
+  useDomainParams,
+  DragSizing,
+  LoadingState,
+} from '@riftdweb/core'
 import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
@@ -31,7 +33,7 @@ export function KeysWorkspace() {
           gap: '$1',
           display: 'none',
           '@bp3': {
-            display: 'block',
+            display: 'flex',
           },
         }}
       >

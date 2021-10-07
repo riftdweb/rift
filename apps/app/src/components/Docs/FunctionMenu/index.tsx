@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
 import times from 'lodash/times'
-import { useDocs } from '../../../contexts/docs'
-import { ScrollArea } from '../../_shared/ScrollArea'
+import { useDocs, ScrollArea } from '@riftdweb/core'
 import { MenuItem } from './MenuItem'
 
 type HeaderProps = {

@@ -20,10 +20,7 @@ import debounce from 'lodash/debounce'
 import difference from 'lodash/difference'
 import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
-import { useDomains } from '../../../contexts/domains'
-import { useSkynet } from '../../../contexts/skynet'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
-import { Link } from '../../_shared/Link'
+import { useDomains, useSkynet, SpinnerIcon, Link } from '@riftdweb/core'
 import { getDefaultPaths, SUGGESTED_DOMAINS } from './suggestedDomains'
 
 const dGetHnsData = debounce(

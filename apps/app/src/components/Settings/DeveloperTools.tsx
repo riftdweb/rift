@@ -1,6 +1,6 @@
 import { LayoutIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Paragraph } from '@riftdweb/design-system'
-import { Link } from '../_shared/Link'
+import { Link } from '@riftdweb/core'
 
 export function DeveloperTools() {
   return (

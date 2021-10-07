@@ -1,4 +1,4 @@
-import { useFs } from '../../contexts/files'
+import { useFs } from '@riftdweb/core'
 import { FileExplorer } from './Explorer'
 import { FileViewer } from './FileViewer'
 

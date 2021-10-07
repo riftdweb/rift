@@ -1,5 +1,5 @@
 import { Flex, Image, Paragraph, Subheading } from '@riftdweb/design-system'
-import { Dialog, useDialog } from '../../../_shared/Dialog'
+import { Dialog, useDialog } from '@riftdweb/core'
 import resolverUrl from './images/resolver.png'
 import manageUrl from './images/manage.png'
 import txtUrl from './images/txt.png'

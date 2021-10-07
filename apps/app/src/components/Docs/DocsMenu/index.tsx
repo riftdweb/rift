@@ -1,8 +1,5 @@
 import { Box, Flex, Text } from '@riftdweb/design-system'
-import { Doc, useDocs } from '../../../contexts/docs'
-import { EntriesState } from '../../_shared/EntriesState'
-import { Link } from '../../_shared/Link'
-import { ScrollArea } from '../../_shared/ScrollArea'
+import { Doc, useDocs, EntriesState, Link, ScrollArea } from '@riftdweb/core'
 import { DocContextMenu } from '../_shared/BlockContextMenu'
 import { AddDoc } from './AddDoc'
 import { DocsMenuSkeleton } from './DocsMenuSkeleton'
@@ -49,6 +46,7 @@ export function DocsMenu() {
             {docList.data?.entries.sort(sort).map((doc) => (
               <Link
                 to={`/docs/${doc.id}`}
+                key={doc.id}
                 css={{
                   display: 'block',
                   padding: '$1 $3',

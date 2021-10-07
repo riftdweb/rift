@@ -6,7 +6,7 @@ import {
   Subheading,
   Text,
 } from '@riftdweb/design-system'
-import { useLink } from '../../hooks/useLink'
+import { useLink } from '@riftdweb/core'
 
 type Props = {
   url: string

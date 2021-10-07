@@ -36,7 +36,7 @@ jobs:
 
       # Ready to run steps that rely on node_modules
       - name: Build application
-        run: yarn bots:build
+        run: yarn build:bots
 
       - name: Run bots
         env:

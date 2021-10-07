@@ -6,7 +6,7 @@ import {
   Heading,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useDocs } from '../../../contexts/docs'
+import { useDocs } from '@riftdweb/core'
 import { RenameDoc } from '../_shared/RenameDoc'
 import { DocContextMenu } from '../_shared/BlockContextMenu'
 import { Pencil2Icon } from '@radix-ui/react-icons'

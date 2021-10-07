@@ -12,10 +12,13 @@ import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { parseSkylink } from 'skynet-js'
 import * as Yup from 'yup'
-import { useDns } from '../../../contexts/dns'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
-import { Dialog, useDialog } from '../../_shared/Dialog'
-import { SkylinkInfo } from '../../_shared/SkylinkInfo'
+import {
+  useDns,
+  SpinnerIcon,
+  Dialog,
+  useDialog,
+  SkylinkInfo,
+} from '@riftdweb/core'
 
 const buildSchema = () =>
   Yup.object().shape({

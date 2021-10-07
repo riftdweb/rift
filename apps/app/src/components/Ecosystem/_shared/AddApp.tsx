@@ -22,10 +22,7 @@ import { useFormik } from 'formik'
 import debounce from 'lodash/debounce'
 import { useCallback, useMemo, useState } from 'react'
 import * as Yup from 'yup'
-import { useSkynet } from '../../../contexts/skynet'
-import { useApps } from '../../../contexts/apps'
-import { skapps } from '../../../shared/skapps'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useSkynet, useApps, skapps, SpinnerIcon } from '@riftdweb/core'
 
 const defaultAppValues: Partial<App> = {
   name: '',

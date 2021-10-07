@@ -6,13 +6,18 @@
     "postinstall": "manypkg check && preconstruct dev",
     "packages:build": "preconstruct build",
     "start": "manypkg run @riftdweb/app start",
-    "build": "yarn packages:build && manypkg run @riftdweb/app build",
-    "bots:build": "yarn packages:build && manypkg run @riftdweb/bots build",
+    "build:app": "yarn packages:build && manypkg run @riftdweb/app build",
+    "build:bots": "yarn packages:build && manypkg run @riftdweb/bots build",
     "format": "prettier --write './**/src/**/*.{ts,tsx}'",
-    "app:format": "prettier --write 'apps/app/src/**/*.{ts,tsx}'",
+    "format:app": "prettier --write 'apps/app/src/**/*.{ts,tsx}'",
     "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
     "fresh": "yarn clean && yarn",
-    "analyze": "source-map-explorer apps/app/build/static/js/*.js"
+    "analyze": "source-map-explorer apps/app/build/static/js/*.js",
+    "release:core": "yarn packages:build && manypkg run @riftdweb/core publish",
+    "release:ds": "yarn packages:build && manypkg run @riftdweb/design-system publish",
+    "release:logger": "yarn packages:build && manypkg run @riftdweb/logger publish",
+    "release:types": "yarn packages:build && manypkg run @riftdweb/types publish",
+    "release:queue": "yarn packages:build && manypkg run @riftdweb/queue publish"
   },
   "workspaces": [
     "packages/*",

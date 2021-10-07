@@ -1,5 +1,4 @@
-import { UserContextMenu } from '../../../_shared/UserContextMenu'
-import { User } from '../../../_shared/User'
+import { UserContextMenu, User } from '@riftdweb/core'
 
 type Props = {
   userId: string

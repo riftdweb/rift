@@ -6,7 +6,9 @@
   "typings": "dist/riftdweb-queue.cjs.d.ts",
   "author": "Alex Freska",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true,
+  "scripts": {
+    "publish": "yarn publish"
+  },
   "dependencies": {
     "@riftdweb/logger": "^1.0.0",
     "uuid": "^8.3.2"

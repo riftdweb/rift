@@ -58,6 +58,7 @@ export function LandingMain() {
           css={{
             borderBottom: '1px solid $gray500',
             overflow: 'hidden',
+            padding: '5px 0 0 0',
             '@bp2': {
               padding: '10px 30px 0',
             },

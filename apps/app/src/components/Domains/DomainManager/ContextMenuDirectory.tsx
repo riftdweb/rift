@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
   Flex,
 } from '@riftdweb/design-system'
-import { copyToClipboard } from '../../../shared/clipboard'
+import { copyToClipboard } from '@riftdweb/core'
 import { AddKeyDialog } from './AddKeyDialog'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 

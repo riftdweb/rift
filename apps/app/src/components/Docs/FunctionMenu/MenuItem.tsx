@@ -1,5 +1,5 @@
 import { Code, Text, Box, Button, Flex, Kbd } from '@riftdweb/design-system'
-import { useDocs } from '../../../contexts/docs'
+import { useDocs } from '@riftdweb/core'
 
 type Props = {
   onClick: () => void
@@ -42,8 +42,8 @@ export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
         <Box css={{ flex: 1 }} />
         {menuMode === 'kbd' && kbd && (
           <Flex css={{ ml: '$1' }}>
-            {kbd.map((k) => (
-              <Kbd size="1" css={{ color }}>
+            {kbd.map((k, i) => (
+              <Kbd key={i} size="1" css={{ color }}>
                 {k}
               </Kbd>
             ))}

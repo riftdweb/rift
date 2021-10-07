@@ -3,10 +3,12 @@ import { Domain, DomainKey } from '@riftdweb/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
-import { useDomains } from '../../../contexts/domains'
-import { useSkynet } from '../../../contexts/skynet'
-import { useDomainParams } from '../../../hooks/useDomainParams'
-import { triggerToast } from '../../../shared/toast'
+import {
+  useDomains,
+  useSkynet,
+  useDomainParams,
+  triggerToast,
+} from '@riftdweb/core'
 import { KeysToolbar } from './KeysToolbar'
 
 const importConfigFiles = () => {
@@ -104,10 +106,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(() => value === editingValue, [
-    value,
-    editingValue,
-  ])
+  const isDataLatest = useMemo(
+    () => value === editingValue,
+    [value, editingValue]
+  )
 
   const isValid = useMemo(() => {
     try {

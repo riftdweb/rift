@@ -10,9 +10,7 @@ import {
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useDocs } from '../../../contexts/docs'
-import { copyToClipboard } from '../../../shared/clipboard'
-import SpinnerIcon from '../../_icons/SpinnerIcon'
+import { useDocs, copyToClipboard, SpinnerIcon } from '@riftdweb/core'
 
 type Props = {
   docId: string

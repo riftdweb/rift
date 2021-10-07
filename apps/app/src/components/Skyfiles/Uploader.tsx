@@ -20,9 +20,7 @@ import { useBeforeunload } from 'react-beforeunload'
 import { useDropzone } from 'react-dropzone'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
-import { useSkynet } from '../../contexts/skynet'
-import { usePortal } from '../../hooks/usePortal'
-import { getSize } from '../../shared/uploads'
+import { useSkynet, usePortal, getSize } from '@riftdweb/core'
 
 const taskQueue = TaskQueue('uploads', {
   poolSize: 5,
@@ -389,11 +387,11 @@ export function Uploader({
             <Flex css={{ gap: '$2' }}>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(false)}>
                 <Text>files</Text>
-                <Radio value="files" />
+                <Radio value="files" css={{ border: 'none' }} />
               </Flex>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(true)}>
                 <Text>directory</Text>
-                <Radio value="directory" />
+                <Radio value="directory" css={{ border: 'none' }} />
               </Flex>
             </Flex>
           </RadioGroup>

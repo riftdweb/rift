@@ -14,6 +14,11 @@ export const globalNormalizeStyles = globalCss({
     '-moz-osx-font-smoothing': 'grayscale',
   },
 
+  // Necessary for Rift Docs elements, could be moved into that scope
+  'p, h1, h2, h3, h4, h5, h6': {
+    margin: 0,
+  },
+
   svg: {
     display: 'block',
     verticalAlign: 'middle',

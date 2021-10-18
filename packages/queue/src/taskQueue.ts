@@ -9,6 +9,7 @@ const defaultParams: Params = {
   mode: 'normal',
   dropStrategy: 'latest',
   maxQueueSize: undefined,
+  disableLogger: false,
 }
 
 export function TaskQueue<T>(
@@ -21,12 +22,15 @@ export function TaskQueue<T>(
     dropStrategy,
     processingInterval,
     mode,
+    disableLogger,
   }: Params = {
     ...defaultParams,
     ...params,
   }
 
-  const log = createLogger(`${name}/TaskQueue`)
+  const log = createLogger(`${name}/TaskQueue`, {
+    disable: disableLogger,
+  })
 
   // queue
   const queue: Task<any>[] = []

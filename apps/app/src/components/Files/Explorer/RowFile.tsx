@@ -1,46 +1,46 @@
-import { Box, Flex } from '@riftdweb/design-system'
-import { FileIcon } from '@radix-ui/react-icons'
+import { Badge, Box, Flex, Tooltip } from '@riftdweb/design-system'
 import { formatRelative } from 'date-fns'
 import bytes from 'bytes'
-import { useMemo } from 'react'
-import { Link, NodeFile, useFs, SpinnerIcon } from '@riftdweb/core'
+import { Link, FsFile, useFs } from '@riftdweb/core'
 import { CellText } from './CellText'
 import { Row } from './Row'
+import { RowThumbnail } from './RowThumbnail'
+import { useEncryptionData } from '../_shared/useEncryptionData'
+import { useVersionData } from '../_shared/useVersionData'
 
 type Props = {
-  file: NodeFile
+  file: FsFile
 }
 
 export function FileItem({ file }: Props) {
-  const { activePath } = useFs()
-  const { pending } = file
-  const {
-    name,
-    // created,
-    modified,
-    // history, // map of 'file' objects
-    // version,
-    mimeType,
-  } = file.data
-  const {
-    // chunkSize,
-    // encryptionType,
-    // hash,
-    // key,
-    size,
-    // ts,
-    // url, // skylink
-  } = file.data.file
+  const { activeNode } = useFs()
+  const { name, modified, mimeType } = file.data
+  const { size } = file.data.file
 
-  const iconElement = useMemo(() => {
-    if (pending) {
-      return <SpinnerIcon />
-    }
-    return <FileIcon />
-  }, [pending])
+  const backgroundColor =
+    file.status === undefined
+      ? 'inherit'
+      : file.status === 'complete'
+      ? '$green200'
+      : '$green100'
+
+  const version = useVersionData(file)
+  const encryption = useEncryptionData(file)
 
   return (
-    <Row filePath={''}>
+    <Row>
+      {!!file.upload?.progress && (
+        <Box
+          css={{
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            height: '100%',
+            backgroundColor,
+            width: `${file.upload.progress * 100}%`,
+          }}
+        />
+      )}
       <Flex
         css={{
           position: 'relative',
@@ -50,7 +50,7 @@ export function FileItem({ file }: Props) {
           gap: '$1',
         }}
       >
-        <Box css={{ color: '$gray900' }}>{iconElement}</Box>
+        <RowThumbnail file={file} />
         <Box
           css={{
             flex: 2,
@@ -58,7 +58,7 @@ export function FileItem({ file }: Props) {
           }}
         >
           <Link
-            to={`/files/${[...activePath, file.data.name].join('/')}`}
+            to={`/files/${[...activeNode, file.data.name].join('/')}`}
             css={{
               display: 'block',
               textOverflow: 'ellipsis',
@@ -72,12 +72,22 @@ export function FileItem({ file }: Props) {
             }}
           >
             {name}
+            {version > 1 && (
+              <Tooltip content={`Version ${version}`}>
+                <Badge css={{ ml: '$1' }}>v{version}</Badge>
+              </Tooltip>
+            )}
           </Link>
         </Box>
         <CellText>
           {bytes(size, { unitSeparator: ' ', decimalPlaces: '1' })}
         </CellText>
         <CellText>{mimeType}</CellText>
+        <Box css={{ flex: 1, color: '$gray900' }}>
+          <Tooltip content={`Encryption: ${encryption.type}`}>
+            <Badge>{encryption.label}</Badge>
+          </Tooltip>
+        </Box>
         <CellText
           textCss={{
             textAlign: 'right',

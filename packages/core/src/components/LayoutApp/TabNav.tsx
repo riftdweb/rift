@@ -5,6 +5,7 @@ import {
   GlobeIcon,
   HomeIcon,
   MixIcon,
+  Pencil2Icon,
   StackIcon,
   UploadIcon,
 } from '@radix-ui/react-icons'
@@ -32,9 +33,19 @@ export function TabNav() {
           </TabLink>
           <TabLink as={Link} to="/docs" active={route.split('/')[1] === 'docs'}>
             <Box css={{ mr: '$1' }}>
-              <FileIcon />
+              <Pencil2Icon />
             </Box>
             Docs
+          </TabLink>
+          <TabLink
+            as={Link}
+            to="/files"
+            active={route.split('/')[1] === 'files'}
+          >
+            <Box css={{ mr: '$1' }}>
+              <FileIcon />
+            </Box>
+            Files
           </TabLink>
           <TabLink
             as={Link}

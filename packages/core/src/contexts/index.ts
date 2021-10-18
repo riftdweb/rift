@@ -1,15 +1,13 @@
 export { DocsProvider, useDocs } from './docs'
 export type { Doc, DocData } from './docs'
 export { FeedProvider, useFeed } from './feed'
-export { FsProvider, useFs, useDrop } from './files'
-export type { Node, NodeFile, NodeDirectory } from './files'
+export * from './files'
 export {
   SkynetProvider,
   useSkynet,
   feedDAC,
   userProfileDAC,
   socialDAC,
-  // fileSystemDAC,
   fileSystemDAC,
   useControlRef,
   apiLimiter,

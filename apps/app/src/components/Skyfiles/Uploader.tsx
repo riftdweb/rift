@@ -218,11 +218,11 @@ export function Uploader({
         UPLOAD_STATE_CACHE[skyfile.id] = state
       }
 
-      // Reject files larger than our hard limit of 1 GB with proper message
-      if (getSize(skyfile) > bytes('1 GB')) {
+      // Reject files larger than our hard limit of 1 TB with proper message
+      if (getSize(skyfile) > bytes('1 TB')) {
         onUploadStateChange(skyfile.id, {
           status: 'error',
-          error: 'This upload size exceeds the maximum allowed size of 1 GB.',
+          error: 'This upload size exceeds the maximum allowed size of 1 TB.',
         })
 
         return
@@ -387,11 +387,17 @@ export function Uploader({
             <Flex css={{ gap: '$2' }}>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(false)}>
                 <Text>files</Text>
-                <Radio value="files" css={{ border: 'none' }} />
+                <Radio
+                  value="files"
+                  css={{ border: 'none', backgroundColor: 'transparent' }}
+                />
               </Flex>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(true)}>
                 <Text>directory</Text>
-                <Radio value="directory" css={{ border: 'none' }} />
+                <Radio
+                  value="directory"
+                  css={{ border: 'none', backgroundColor: 'transparent' }}
+                />
               </Flex>
             </Flex>
           </RadioGroup>

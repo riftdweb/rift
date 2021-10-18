@@ -7,6 +7,7 @@ import { Link } from './Link'
 type Props = {
   userId: string
   link?: boolean
+  to?: string
   profile?: IUserProfile
   size?: '1' | '2' | '3'
   color?: string
@@ -16,6 +17,7 @@ export function Avatar({
   userId,
   profile,
   link = false,
+  to,
   color,
   size = '2',
 }: Props) {
@@ -35,7 +37,7 @@ export function Avatar({
   )
 
   if (link) {
-    return <Link to={`/users/${userId}`}>{avatar}</Link>
+    return <Link to={to || `/users/${userId}`}>{avatar}</Link>
   }
 
   return avatar

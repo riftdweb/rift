@@ -1,55 +1,39 @@
-import { Container, Box, Flex } from '@riftdweb/design-system'
+import { Box } from '@riftdweb/design-system'
 import { useFs, EntriesState } from '@riftdweb/core'
 import { DirectoryItem } from './RowDirectory'
 import { FileItem } from './RowFile'
-import { FileNav } from './FileNav'
+import { Layout } from '../_shared/Layout'
 import { Header } from './Header'
 import { Drop } from './Drop'
 
 export function FileExplorer() {
-  const { activePath, directoryIndex } = useFs()
+  const { activeNodePath, activeDirectoryPath, sortedIndex } = useFs()
 
   return (
-    <Container size="3" css={{ py: '$5' }}>
-      <Flex css={{ flexDirection: 'column', gap: '$5' }}>
-        <Box>
-          <FileNav />
-          <Box
-            css={{
-              position: 'relative',
-              margin: '$3 0',
-              border: '1px solid $gray500',
-              backgroundColor: '$panel',
-              borderRadius: '$3',
-              // overflow: 'hidden',
-            }}
+    <Layout>
+      <Drop directoryPath={activeDirectoryPath}>
+        <Box
+          css={{
+            position: 'relative',
+          }}
+        >
+          <Header />
+          <EntriesState
+            key={activeNodePath}
+            response={sortedIndex}
+            emptyMessage="Folder is empty"
+            validatingMessage=""
           >
-            <Drop directoryPath="/">
-              <Box
-                css={{
-                  position: 'relative',
-                }}
-              >
-                <Header />
-                <EntriesState
-                  key={activePath.join('/')}
-                  response={directoryIndex}
-                  emptyMessage="Folder is empty"
-                  validatingMessage="Loading folder"
-                >
-                  {directoryIndex.data?.entries.map((file) =>
-                    file.type === 'directory' ? (
-                      <DirectoryItem key={file.data.name} file={file} />
-                    ) : (
-                      <FileItem key={file.data.name} file={file} />
-                    )
-                  )}
-                </EntriesState>
-              </Box>
-            </Drop>
-          </Box>
+            {sortedIndex.data?.entries.map((file) =>
+              file.type === 'directory' ? (
+                <DirectoryItem key={file.data.name} file={file} />
+              ) : (
+                <FileItem key={file.data.name} file={file} />
+              )
+            )}
+          </EntriesState>
         </Box>
-      </Flex>
-    </Container>
+      </Drop>
+    </Layout>
   )
 }

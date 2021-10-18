@@ -11,7 +11,15 @@ export function LandingCta() {
           Get started with a Skynet identity
         </Button>
       </Box>
-      <Text css={{ color: '$gray900' }}>
+      <Text
+        css={{
+          color: '$gray900',
+          fontSize: '$1',
+          '@bp2': {
+            fontSize: '$3',
+          },
+        }}
+      >
         No email, personal information, or cryptocurrency required. Encrypted
         and private.
       </Text>

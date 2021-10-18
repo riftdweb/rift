@@ -45,25 +45,32 @@ const usersMapTaskQueue = TaskQueue('usersMap', {
   dropStrategy: 'earliest',
 })
 
-const throttledCacheUsersMap = throttle(
-  async (ref: ControlRef, userMap: UsersMap) => {
-    const task = async () => {
-      try {
-        log('Caching usersMap start')
-        await cacheUsersMap(ref, userMap)
-        log('Caching usersMap done')
-      } catch (e) {
-        log('Error caching usersMap', e)
-      }
+async function cacheUsersMapFunc(
+  ref: ControlRef,
+  userMap: UsersMap,
+  force?: boolean
+) {
+  const task = async () => {
+    try {
+      log('Caching usersMap start')
+      // Priority 3 so that it takes precedence over routine indexing
+      await cacheUsersMap(ref, userMap, {
+        priority: 3,
+      })
+      log('Caching usersMap done')
+    } catch (e) {
+      log('Error caching usersMap', e)
     }
-    return usersMapTaskQueue.add(task, {
-      meta: {
-        operation: 'set',
-      },
-    })
-  },
-  2_000
-)
+  }
+  return usersMapTaskQueue.add(task, {
+    priority: force ? 1 : 0,
+    meta: {
+      operation: 'set',
+    },
+  })
+}
+
+const throttledCacheUsersMap = throttle(cacheUsersMapFunc, 30_000)
 
 export function isFollowing(user?: IUser) {
   return !!user && ['friend', 'following'].includes(user.relationship.data)
@@ -236,7 +243,10 @@ export function UsersProvider({ children }: Props) {
   )
 
   const upsertUser = useCallback(
-    (user: { userId: string } & Partial<IUser>): Promise<void> => {
+    (
+      user: { userId: string } & Partial<IUser>,
+      force?: boolean
+    ): Promise<void> => {
       const func = async () => {
         const nextUsersMap = await usersMap.mutate((data) => {
           const baseUser = buildUser(user.userId)
@@ -261,7 +271,11 @@ export function UsersProvider({ children }: Props) {
           mutate(getKey([getDataKeyUsers(user.userId)]))
         }, 1000)
 
-        throttledCacheUsersMap(ref, nextUsersMap)
+        if (force) {
+          cacheUsersMapFunc(ref, nextUsersMap, true)
+        } else {
+          throttledCacheUsersMap(ref, nextUsersMap)
+        }
       }
       return func()
     },
@@ -502,18 +516,29 @@ export function UsersProvider({ children }: Props) {
 
         // Optimistically we are now following them
         const myUser = getUser(myUserId)
-        await upsertUser({
-          userId: myUserId,
-          following: {
-            data: uniq([...myUser.following.data, userId]),
-            // Update time so that upcoming syncUser calls do not rollback optimistic data
-            updatedAt: new Date().getTime(),
+        await upsertUser(
+          {
+            userId: myUserId,
+            following: {
+              data: uniq([...myUser.following.data, userId]),
+              // Update time so that upcoming syncUser calls do not rollback optimistic data
+              updatedAt: new Date().getTime(),
+            },
           },
-        })
+          true
+        )
 
         await recomputeFollowers(ref)
 
         changeSuggestionsKey()
+
+        // Force user initiated update to the users index to persist
+        await upsertUser(
+          {
+            userId: myUserId,
+          },
+          true
+        )
 
         await allFollowing.mutate(
           (data) => ({
@@ -595,6 +620,14 @@ export function UsersProvider({ children }: Props) {
         })
 
         await recomputeFollowers(ref)
+
+        // Force user initiated update to the users index to persist
+        await upsertUser(
+          {
+            userId: myUserId,
+          },
+          true
+        )
 
         await allFollowing.mutate(
           (data) => ({

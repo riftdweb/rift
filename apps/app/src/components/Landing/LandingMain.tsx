@@ -11,7 +11,7 @@ export function LandingMain() {
     },
     {
       title: 'File sharing',
-      image: 'uploads',
+      image: 'files',
     },
     {
       title: 'Social feeds',
@@ -74,15 +74,15 @@ export function LandingMain() {
                 },
                 '@bp2': {
                   height: '400px',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                  },
                 },
                 '@bp3': {
                   height: '500px',
                 },
                 transition: 'all 0.1s ease-in-out',
                 bottom: 0,
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                },
               }}
             >
               <Box

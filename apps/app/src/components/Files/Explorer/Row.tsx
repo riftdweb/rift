@@ -3,21 +3,23 @@ import { Drop } from './Drop'
 type Props = {
   children: React.ReactNode
   directoryPath?: string
-  filePath?: string
 }
 
-export function Row({ directoryPath, filePath, children }: Props) {
+export const thumbSize = 20
+
+export function Row({ directoryPath, children }: Props) {
   return (
     <Drop
       directoryPath={directoryPath}
-      filePath={filePath}
       css={{
         position: 'relative',
         width: '100%',
         height: '40px',
         borderBottom: '1px solid $gray200',
-        'last-of-type': {
+        '&:last-of-type': {
           borderBottom: 'none',
+          borderBottomLeftRadius: '$3',
+          borderBottomRightRadius: '$3',
         },
         '&:hover': {
           backgroundColor: '$gray100',

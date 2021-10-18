@@ -65,7 +65,7 @@ export function Footer() {
                 target="_blank"
                 css={{ color: '$gray700' }}
               >
-                filesystem
+                file system
               </Link>{' '}
               that only the user controls. The Rift application and all user
               data can be accessed from any public or private Skynet portal.

@@ -1,5 +1,6 @@
 export { usePath, DATA_BASE_PATH, DATA_MYSKY_BASE_PATH } from './path'
 export { useAvatarUrl } from './useAvatarUrl'
+export { useBlurHash } from './useBlurHash'
 export { useDomainParams } from './useDomainParams'
 export { useHasNoEntries } from './useHasNoEntries'
 export { useKey } from './useKey'

@@ -60,7 +60,7 @@ Rift and Skynet are permissionless and self-sovereign - anyone can create a netw
 
 ### Private
 
-When signed in to Rift, all metadata and files are encrypted and stored in your personal filesystem on the Skynet network. Certain data such as a your profile and feed are intentionally made public but beyond this everything is encrypted and private by default.
+When signed in to Rift, all metadata and files are encrypted and stored in your personal file system on the Skynet network. Certain data such as a your profile and feed are intentionally made public but beyond this everything is encrypted and private by default.
 
 ### Open
 
@@ -102,7 +102,7 @@ The Skylink context menu also includes many convenience functions for copying an
 
 > Coming soon
 
-### Filesystem search
+### File search
 
 > Coming soon
 
@@ -158,13 +158,15 @@ Rift Docs is a block-based document editor that supports a variety of content ty
 
 ### Files
 
-> 🚧 Rift Files is an upcoming filesystem feature that will include a file explorer with support for directories, drag and drop, file search, and full encryption. The file explorer will also include content-specific viewers for things like viewing PDFs and streaming videos.
+![Docs](https://raw.githubusercontent.com/riftdweb/rift/main/assets/files/files.png)
+
+Rift Files is a file system feature that includes a file explorer with support for directories, drag and drop, file search, and full encryption. The file explorer includes content-specific viewers for things like viewing PDFs and streaming videos, this lets you manage and view your files and media right in the browser. Rift Files is built on the File System DAC which means that all the same files can be viewed through other applications such as Vup, a native suite of file explorer apps.
 
 ### Uploads
 
 ![Uploads](https://raw.githubusercontent.com/riftdweb/rift/main/assets/uploads/uploads.png)
 
-Rift Uploads (previously known as Rift Files) allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
+Rift Uploads allows you to upload files to Skynet as Skyfiles or Skyfile directories. These uploads are added to a persistent list that shows upload progress, allows for filtering, and gives an overview of metadata such as file name, skylink, size, and the time of upload. The feature also provides convenience functions for copying common data to clipboard and quickly updating an existing DNS record. These files are uploaded without encryption so the feature is a convenient way to keep track of files meant to be publicly shared or used as websites.
 
 ### Data
 

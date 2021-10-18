@@ -78,8 +78,8 @@ export function LandingOwnData() {
               </Link>
               {', '}a new Internet protocol where no single app or corporation
               directly controls your data. Apps request permission and then
-              access your data from a fully encrypted and decentralized
-              filesystem that only you control!
+              access your data from a fully encrypted and decentralized file
+              system that only you control!
             </Text>
           </Paragraph>
         </Flex>
@@ -115,7 +115,7 @@ export function LandingOwnData() {
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               When signed in to Rift, all metadata and files are encrypted and
-              stored in your personal filesystem on the Skynet network. Certain
+              stored in your personal file system on the Skynet network. Certain
               data such as a your profile and feed are intentionally made public
               but beyond this everything is encrypted and private by default.
             </Text>

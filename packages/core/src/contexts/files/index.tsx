@@ -1,59 +1,76 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react'
-import { Feed, Skyfile } from '@riftdweb/types'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { Feed } from '@riftdweb/types'
 import { createLogger } from '@riftdweb/logger'
-import { useHistory } from 'react-router-dom'
-import {
-  DirectoryFile,
-  DirectoryIndex,
-} from 'fs-dac-library/dist/cjs/skystandards'
+import sortBy from 'lodash/sortBy'
+import uniqBy from 'lodash/uniqBy'
 import useSWR, { SWRResponse } from 'swr'
 import { usePathOutsideRouter } from '../../hooks/usePathOutsideRouter'
 import { fileSystemDAC, useSkynet } from '../skynet'
 import { useBeforeunload } from 'react-beforeunload'
+import { SortDir, useSort } from '../../hooks/useSort'
+import { EntriesResponse, upsertItem } from '../..'
+import { ThrottleMap } from './throttleMap'
+import { FsNode, FsFile } from './types'
+import { getDirectoryIndex } from './fs'
+import { Download, useDownloads } from './useDownloads'
+import { buildFsDirectory } from './utils'
 
 const log = createLogger('files/context')
 
-type Directory = DirectoryIndex['directories']['']
+const throttleUploadProgress = ThrottleMap()
 
-export type Node = NodeFile | NodeDirectory
+type SortKey =
+  | 'id'
+  | 'data.name'
+  | 'data.size'
+  | 'data.type'
+  | 'data.modified'
+  | 'data.file.encryptionType'
 
-export type NodeFile = {
-  type: 'file'
-  data: DirectoryFile
-  pending?: boolean
+export type CreateDirectoryParams = {
+  name: string
 }
 
-export type NodeDirectory = {
-  type: 'directory'
-  data: Directory
-  pending?: boolean
-}
+export type FilesState = {
+  activeNode: string[]
+  activeNodePath: string
+  activeDirectory: SWRResponse<string[], any>
+  activeDirectoryPath: string
 
-type State = {
-  activePath: string[]
+  activeDirectoryIndex: SWRResponse<Feed<FsNode>, any>
+  sortedIndex: EntriesResponse<FsNode>
+  sortKey: SortKey
+  sortDir: SortDir
+  toggleSort: (sortKey: SortKey) => void
 
-  directoryIndex: SWRResponse<Feed<Node>, any>
-  createDirectory: (name: string) => void
-
-  activeFile?: NodeFile
+  createDirectory: (params: CreateDirectoryParams) => Promise<boolean>
+  activeFile?: FsFile
 
   // From uploader
-  addFiles: (skyfiles: Skyfile[]) => void
-  updateFile: (id: string, state: Partial<Skyfile>) => void
-  updateFileUploadStatus: (
+  uploadsMap: Record<string, FsFile[]>
+  upsertUploads: (directoryPath: string, files: FsFile[]) => void
+  getUploads: (directoryPath: string) => FsFile[]
+  setUploadProgress: (
+    directoryPath: string,
     id: string,
-    state: Partial<Skyfile['upload']>
+    progress: number
   ) => void
-  // areUploadsInProgress: boolean
-  // toggleDirectoryModeRadio: (e: any) => void
-  // directoryMode: boolean
-  // setDirectoryMode: (mode: boolean) => void
-  // getRootProps: any
-  // getInputProps: any
-  // isDragActive: boolean
+  setUploadComplete: (directoryPath: string, id: string) => void
+  setUploadError: (directoryPath: string, id: string, error: string) => void
+
+  // Download
+  getDownload: (path: string) => Download
+  startDownload: (file: FsFile, saveToMachine?: boolean) => void
 }
 
-const FsContext = createContext({} as State)
+const FsContext = createContext({} as FilesState)
 export const useFs = () => useContext(FsContext)
 
 type Props = {
@@ -61,62 +78,87 @@ type Props = {
 }
 
 export function FsProvider({ children }: Props) {
-  const { getKey } = useSkynet()
+  const { getKey, controlRef: ref } = useSkynet()
 
-  const activePath = useParamFilePath()
+  const activeNode = useParamNode()
+  const activeNodePath = activeNode.join('/')
+  const { sortKey, sortDir, toggleSort } = useSort<SortKey>('id')
 
-  const { data: activeDirectory } = useSWR(
-    getKey(activePath),
-    async (): Promise<string[]> => {
-      const lastPart = activePath[activePath.length - 1]
+  const [uploadsMap, _setUploadsMap] = useState<Record<string, FsFile[]>>({})
 
-      let activeDirectory = activePath
+  const getUploads = useCallback(
+    (directoryPath: string) => uploadsMap[directoryPath] || [],
+    [uploadsMap]
+  )
 
-      // Simple check
-      if (lastPart?.includes('.')) {
-        log('Found dot in file name')
-        activeDirectory = activePath.slice(0, activePath.length - 1)
-      } else {
-        log('Fetching and checking parent dir')
-        const parentDirectoryIndex = await fileSystemDAC.getDirectoryIndex(
-          activePath.slice(0, activePath.length - 1).join('/')
+  const setUploads = useCallback(
+    (directoryPath: string, newUploads: FsFile[]) => {
+      _setUploadsMap((map) => {
+        return {
+          ...map,
+          [directoryPath]: newUploads,
+        }
+      })
+    },
+    [_setUploadsMap]
+  )
+
+  const upsertUploads = useCallback(
+    (directoryPath: string, newUploads: FsFile[]) => {
+      _setUploadsMap((map) => {
+        const existingUploads = getUploads(directoryPath)
+        const uploads = newUploads.reduce(
+          (acc, upload) => upsertItem(acc, upload),
+          existingUploads
         )
-        if (parentDirectoryIndex.files[lastPart]) {
-          activeDirectory = activePath.slice(0, activePath.length - 1)
+        return {
+          ...map,
+          [directoryPath]: uploads,
+        }
+      })
+    },
+    [_setUploadsMap, getUploads]
+  )
+
+  const activeDirectory = useSWR(
+    getKey([...activeNode, 'directory']),
+    async (): Promise<string[]> => {
+      const lastPart = activeNode[activeNode.length - 1]
+
+      let _activeDirectory = activeNode
+
+      // If the activePath is not greater than 1 then the root directory is open
+      if (activeNode.length > 1) {
+        // If the activePath includes a . in the last part then a file is definitely open
+        if (lastPart?.includes('.')) {
+          _activeDirectory = activeNode.slice(0, activeNode.length - 1)
+        } else {
+          // Otherwise fetch and explicitly check if the second to last part is a directory with the file
+          const parentDirectoryIndex = await fileSystemDAC.getDirectoryIndex(
+            activeNode.slice(0, activeNode.length - 1).join('/')
+          )
+          if (parentDirectoryIndex.files[lastPart]) {
+            _activeDirectory = activeNode.slice(0, activeNode.length - 1)
+          }
         }
       }
 
-      return activeDirectory
+      return _activeDirectory
     },
     {
       revalidateOnFocus: false,
     }
   )
 
-  const directoryIndex = useSWR(
-    activeDirectory ? getKey(activePath) : null,
-    async (): Promise<Feed<Node>> => {
-      const _directoryIndex = await fileSystemDAC.getDirectoryIndex(
-        activeDirectory.join('/')
-      )
+  const activeDirectoryPath = activeDirectory.data?.join('/') || ''
 
-      const directories = Object.entries(_directoryIndex.directories).map(
-        ([_, directory]) =>
-          ({
-            data: directory,
-            type: 'directory',
-          } as Node)
-      )
-      const files = Object.entries(_directoryIndex.files).map(
-        ([_, file]) =>
-          ({
-            data: file,
-            type: 'file',
-          } as Node)
-      )
-      log('here', directories, files)
+  const activeDirectoryIndex = useSWR(
+    activeDirectory.data ? getKey([...activeNode, 'index']) : null,
+    async (): Promise<Feed<FsNode>> => {
+      const nodes = await getDirectoryIndex(activeDirectory.data.join('/'))
+
       return {
-        entries: [...directories, ...files],
+        entries: nodes,
         updatedAt: new Date().getTime(),
       }
     },
@@ -124,92 +166,183 @@ export function FsProvider({ children }: Props) {
       revalidateOnFocus: false,
     }
   )
-  log(activeDirectory, directoryIndex.data)
+
+  useEffect(() => {
+    const files = activeDirectoryIndex.data?.entries
+
+    if (!files || !files.length) {
+      return
+    }
+
+    const uploads = getUploads(activeDirectoryPath)
+
+    setUploads(
+      activeDirectoryPath,
+      uploads.filter(
+        (upload) =>
+          !files.find(
+            (file) =>
+              file.id === upload.id && file.data.version >= upload.data.version
+          )
+      )
+    )
+    // data changes after a mutate resyncs the index
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeDirectoryIndex.data])
+
+  const setUploadPending = useCallback(
+    (directoryPath: string, id: string) => {
+      const fileUploads = getUploads(directoryPath)
+      const fileUpload = fileUploads.find((u) => u.id === id)
+
+      if (!fileUpload) {
+        return
+      }
+
+      const nextState: FsFile = {
+        ...fileUpload,
+        status: 'pending',
+        upload: undefined,
+      }
+
+      const newFileUploads = upsertItem(fileUploads, nextState)
+      upsertUploads(directoryPath, newFileUploads)
+    },
+    [getUploads, upsertUploads]
+  )
+
+  const setUploadProgress = useCallback(
+    (directoryPath: string, id: string, progress: number) => {
+      log(directoryPath, id, progress)
+      if (progress === 1) {
+        setUploadPending(directoryPath, id)
+      }
+      throttleUploadProgress(directoryPath + id, () => {
+        const fileUploads = getUploads(directoryPath)
+        const fileUpload = fileUploads.find((u) => u.id === id)
+
+        if (!fileUpload) {
+          return
+        }
+
+        const nextState: FsFile = {
+          ...fileUpload,
+          upload: {
+            ...fileUpload.upload,
+            progress,
+          },
+        }
+
+        const newFileUploads = upsertItem(fileUploads, nextState)
+        upsertUploads(directoryPath, newFileUploads)
+      })
+    },
+    [getUploads, upsertUploads, setUploadPending]
+  )
+
+  const setUploadComplete = useCallback(
+    (directoryPath: string, id: string) => {
+      const fileUploads = getUploads(directoryPath)
+      const fileUpload = fileUploads.find((u) => u.id === id)
+
+      if (!fileUpload) {
+        return
+      }
+
+      const newFileUploads = upsertItem(fileUploads, {
+        ...fileUpload,
+        status: 'complete',
+        upload: undefined,
+      })
+      upsertUploads(directoryPath, newFileUploads)
+
+      if (activeDirectoryPath === directoryPath) {
+        activeDirectoryIndex.mutate()
+      }
+    },
+    [activeDirectoryIndex, activeDirectoryPath, getUploads, upsertUploads]
+  )
+
+  const setUploadError = useCallback(
+    (directoryPath: string, id: string, error: string) => {
+      const fileUploads = getUploads(directoryPath)
+      const fileUpload = fileUploads.find((u) => u.id === id)
+      const newFileUploads = upsertItem(fileUploads, {
+        ...fileUpload,
+        status: 'error',
+        upload: {
+          ...fileUpload.upload,
+          error,
+        },
+      })
+      upsertUploads(directoryPath, newFileUploads)
+      if (activeDirectoryPath === directoryPath) {
+        activeDirectoryIndex.mutate()
+      }
+    },
+    [activeDirectoryIndex, activeDirectoryPath, getUploads, upsertUploads]
+  )
+
+  const activeDirectoryPendingUploads = useMemo(() => {
+    const directoryPath = activeDirectory.data?.join('/')
+    if (directoryPath) {
+      return getUploads(directoryPath)
+    } else {
+      return []
+    }
+  }, [activeDirectory, getUploads])
 
   const activeFile = useMemo(() => {
-    if (!directoryIndex.data) {
+    if (!activeDirectoryIndex.data) {
       return undefined
     }
-    const fileName = decodeURI(activePath[activePath.length - 1])
-    log('here', directoryIndex.data)
-    return directoryIndex.data?.entries.find(
+    const fileName = decodeURI(activeNode[activeNode.length - 1])
+    return activeDirectoryIndex.data?.entries.find(
       (entry) => entry.type === 'file' && entry.data.name === fileName
-    ) as NodeFile
-  }, [activePath, directoryIndex])
+    ) as FsFile
+  }, [activeNode, activeDirectoryIndex])
 
   const createDirectory = useCallback(
-    (name: string) => {
+    ({ name }: { name: string }): Promise<boolean> => {
       const func = async () => {
-        directoryIndex.mutate(
+        activeDirectoryIndex.mutate(
           (data) => ({
             updatedAt: new Date().getTime(),
             entries: data.entries.concat([
-              {
-                pending: true,
-                type: 'directory',
+              buildFsDirectory(activeDirectoryPath, name, {
+                status: 'pending',
                 data: {
                   name,
                   created: new Date().getTime(),
                 },
-              },
+              }),
             ]),
           }),
           false
         )
 
-        await fileSystemDAC.createDirectory(activeDirectory.join('/'), name)
+        const _func = async () => {
+          await fileSystemDAC.createDirectory(activeDirectoryPath, name)
 
-        directoryIndex.mutate()
+          activeDirectoryIndex.mutate()
+        }
+
+        _func()
+        return true
       }
-      func()
+
+      return func()
     },
-    [directoryIndex, activeDirectory]
+    [activeDirectoryIndex, activeDirectoryPath]
   )
 
-  // From uploader
-  const addFiles = useCallback(
-    (skyfiles: Skyfile[]) => {
-      log('addFiles', skyfiles)
-      directoryIndex.mutate(
-        (data) => ({
-          updatedAt: new Date().getTime(),
-          entries: data.entries.concat(
-            skyfiles.map((skyfile) => ({
-              pending: true,
-              type: 'file',
-              data: {
-                name: skyfile.metadata.filename,
-                created: new Date().getTime(),
-                modified: new Date().getTime(),
-                version: 0,
-                file: {
-                  url: '',
-                  key: '',
-                  encryptionType: '',
-                  size: 0,
-                  chunkSize: 0,
-                  hash: '',
-                  ts: 0,
-                },
-              },
-            }))
-          ),
-        }),
-        false
-      )
-    },
-    [directoryIndex]
+  const areUploadsInProgress = useMemo(
+    () =>
+      !!activeDirectoryIndex.data?.entries.find((entry) =>
+        ['pending', 'uploading'].includes(entry.status)
+      ),
+    [activeDirectoryIndex]
   )
-  const updateFile = useCallback((id: string, state: Partial<Skyfile>) => {
-    log('updateFile', id, state)
-  }, [])
-  const updateFileUploadStatus = useCallback(
-    (id: string, state: Partial<Skyfile['upload']>) => {
-      log('updateFileUploadStatus', id, state)
-    },
-    []
-  )
-  const areUploadsInProgress = false
 
   useBeforeunload((e) => {
     if (areUploadsInProgress) {
@@ -217,22 +350,102 @@ export function FsProvider({ children }: Props) {
     }
   })
 
-  const value = {
-    directoryIndex,
-    createDirectory,
-    activePath,
-    activeFile,
-    addFiles,
-    updateFileUploadStatus,
-    updateFile,
-  }
+  const sortedIndex = useMemo(() => {
+    if (!activeDirectoryIndex.data) {
+      if (!activeDirectoryIndex.error) {
+        return {
+          data: null,
+          isValidating: true,
+        }
+      } else {
+        return {
+          data: null,
+          error: activeDirectoryIndex.error,
+          isValidating: activeDirectoryIndex.isValidating,
+        }
+      }
+    }
+
+    const entries = sortBy(
+      uniqBy(
+        [
+          ...activeDirectoryPendingUploads,
+          ...(activeDirectoryIndex.data.entries || []),
+        ],
+        'data.name'
+      ),
+      [sortKey]
+    )
+    if (sortDir === 'desc') {
+      entries.reverse()
+    }
+    return {
+      data: {
+        entries,
+        updatedAt: 0,
+      },
+      isValidating: activeDirectoryIndex.isValidating,
+    }
+  }, [activeDirectoryIndex, sortDir, sortKey, activeDirectoryPendingUploads])
+
+  const { getDownload, startDownload } = useDownloads(
+    activeNodePath,
+    activeFile
+  )
+
+  const value = useMemo(
+    () => ({
+      activeDirectoryIndex,
+      sortedIndex,
+      createDirectory,
+      activeNode,
+      activeNodePath,
+      activeDirectory,
+      activeDirectoryPath,
+      activeFile,
+      sortKey,
+      sortDir,
+      toggleSort,
+      uploadsMap,
+      getUploads,
+      upsertUploads,
+      setUploadProgress,
+      setUploadComplete,
+      setUploadError,
+      getDownload,
+      startDownload,
+    }),
+    [
+      activeDirectoryIndex,
+      sortedIndex,
+      createDirectory,
+      activeNode,
+      activeNodePath,
+      activeDirectory,
+      activeDirectoryPath,
+      activeFile,
+      sortKey,
+      sortDir,
+      toggleSort,
+      uploadsMap,
+      getUploads,
+      upsertUploads,
+      setUploadProgress,
+      setUploadComplete,
+      setUploadError,
+      getDownload,
+      startDownload,
+    ]
+  )
+
+  useEffect(() => {
+    ref.current.files = value
+  }, [ref, value])
 
   return <FsContext.Provider value={value}>{children}</FsContext.Provider>
 }
 
-function useParamFilePath(): string[] {
-  const { appDomain } = useSkynet()
-  const history = useHistory()
+function useParamNode(): string[] {
   const allPath = usePathOutsideRouter()
 
   if (allPath[0] !== 'files') {
@@ -241,11 +454,10 @@ function useParamFilePath(): string[] {
 
   const path = allPath.slice(1)
 
-  if (path.length === 0) {
-    history.push(`/files/${appDomain}`)
-  }
-
   return path
 }
 
 export { useDrop } from './useDrop'
+export * from './types'
+export * from './download'
+export * from './useDownloads'

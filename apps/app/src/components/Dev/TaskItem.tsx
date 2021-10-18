@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@riftdweb/design-system'
+import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useSkynet, useUsers } from '@riftdweb/core'
 import { Task } from '@riftdweb/queue'
 
@@ -35,11 +35,40 @@ export function TaskItem({ task, color, dupeCount }: Props) {
           <Text css={{ color: '$gray900', flex: 1 }}>
             {task.id.slice(0, 5)}
           </Text>
-          {dupeCount > 1 && <Text css={{ color: '$red900' }}>{dupeCount}</Text>}
-          {shareCount > 1 && (
-            <Text css={{ color: '$green900' }}>{shareCount}</Text>
+          {dupeCount > 1 && (
+            <Tooltip content="Task potential duplicate count">
+              <Text
+                css={{
+                  color: '$red900',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                {dupeCount}
+              </Text>
+            </Tooltip>
           )}
-          <Text css={{ color: '$hiContrast' }}>{task.priority}</Text>
+          {shareCount > 1 && (
+            <Tooltip content="Task share count">
+              <Text
+                css={{
+                  color: '$green900',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                {shareCount}
+              </Text>
+            </Tooltip>
+          )}
+          <Tooltip content="Task priority">
+            <Text
+              css={{
+                color: '$hiContrast',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              {task.priority}
+            </Text>
+          </Tooltip>
         </Flex>
         <Flex css={{ justifyContent: 'space-between', gap: '$1' }}>
           <Text

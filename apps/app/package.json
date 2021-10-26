@@ -11,7 +11,7 @@
   "dependencies": {
     "@radix-ui/react-icons": "^1.0.3",
     "@riftdweb/core": "^1.0.0",
-    "@riftdweb/design-system": "^1.0.0",
+    "@riftdweb/design-system": "^2.0.0",
     "@riftdweb/types": "^1.0.0",
     "@skynethub/userprofile-library": "^0.1.10-beta",
     "@visx/axis": "^1.8.0",

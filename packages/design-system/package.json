@@ -1,6 +1,6 @@
 {
   "name": "@riftdweb/design-system",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "dist/riftdweb-design-system.cjs.js",
   "module": "dist/riftdweb-design-system.esm.js",
   "typings": "dist/riftdweb-design-system.cjs.d.ts",

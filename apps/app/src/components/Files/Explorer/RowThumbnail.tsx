@@ -59,7 +59,7 @@ export function RowThumbnail({ file }: Props) {
     <Box
       css={{
         position: 'relative',
-        color: thumbElement ? 'white' : '$gray900',
+        color: thumbElement ? 'white' : '$gray11',
         height: `${thumbSize}px`,
         width: `${thumbSize}px`,
         borderRadius: '2px',

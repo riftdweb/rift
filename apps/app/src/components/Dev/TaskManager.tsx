@@ -90,7 +90,7 @@ export function DevTaskManager() {
                       <TaskItem
                         key={task.id}
                         task={task}
-                        color="$purple700"
+                        color="$purple8"
                         dupeCount={dupeKeyCountMap[task.key]}
                       />
                     ))}

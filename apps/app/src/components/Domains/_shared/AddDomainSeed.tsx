@@ -86,14 +86,14 @@ export function AddDomainSeed({ closeDialog }: Props) {
       >
         <Box>
           <Flex css={{ flexDirection: 'column', gap: '$3' }}>
-            <Paragraph css={{ color: '$gray900' }}>
+            <Paragraph css={{ color: '$gray11' }}>
               Add a data domain manually via explicit seed.
             </Paragraph>
             <Flex css={{ flexDirection: 'column', gap: '$2' }}>
               <Flex>
                 <Text>Name</Text>
                 {formik.errors.name && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.name}
                   </Text>
                 )}
@@ -110,7 +110,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
               <Flex>
                 <Text>Seed</Text>
                 {formik.errors.parentSeed && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.parentSeed}
                   </Text>
                 )}
@@ -124,7 +124,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
                   placeholder="Seed value"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
                   }}
                 />
                 <Tooltip content="Generate random seed">
@@ -143,13 +143,11 @@ export function AddDomainSeed({ closeDialog }: Props) {
               <Flex>
                 <Text>Child seed</Text>
                 {formik.errors.childSeed ? (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.childSeed}
                   </Text>
                 ) : (
-                  <Text
-                    css={{ color: '$gray900', flex: 1, textAlign: 'right' }}
-                  >
+                  <Text css={{ color: '$gray11', flex: 1, textAlign: 'right' }}>
                     Optional
                   </Text>
                 )}

@@ -119,7 +119,7 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
             <Flex css={{ flexDirection: 'column', gap: '$2' }}>
               <Flex>
                 {formik.errors.key && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.key}
                   </Text>
                 )}
@@ -142,7 +142,7 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
                   placeholder="path.json"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
                   }}
                 />
               </ControlGroup>

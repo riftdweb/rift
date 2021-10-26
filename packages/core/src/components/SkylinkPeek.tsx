@@ -18,7 +18,7 @@ export function SkylinkPeek({ skylink }: Props) {
           padding: '2px',
           fontSize: '12px',
           cursor: 'pointer',
-          border: '1px solid $gray400',
+          border: '1px solid $gray5',
           borderRadius: '3px',
           '&:hover': {
             textDecoration: 'underline',

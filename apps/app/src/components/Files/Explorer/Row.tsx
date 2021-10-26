@@ -15,14 +15,14 @@ export function Row({ directoryPath, children }: Props) {
         position: 'relative',
         width: '100%',
         height: '40px',
-        borderBottom: '1px solid $gray200',
+        borderBottom: '1px solid $gray3',
         '&:last-of-type': {
           borderBottom: 'none',
           borderBottomLeftRadius: '$3',
           borderBottomRightRadius: '$3',
         },
         '&:hover': {
-          backgroundColor: '$gray100',
+          backgroundColor: '$gray1',
         },
       }}
     >

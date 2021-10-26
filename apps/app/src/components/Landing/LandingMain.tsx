@@ -30,11 +30,11 @@ export function LandingMain() {
           size="4"
           css={{
             marginTop: '$5',
-            fontSize: '$8',
+            // fontSize: '$8',
             textAlign: 'center',
-            '@bp2': {
-              fontSize: '$9',
-            },
+            // '@bp2': {
+            //   fontSize: '$9',
+            // },
           }}
         >
           The Internet apps you depend on every day, reimagined as software you
@@ -57,7 +57,7 @@ export function LandingMain() {
         </Container>
         <Box
           css={{
-            borderBottom: '1px solid $gray500',
+            borderBottom: '1px solid $gray6',
             overflow: 'hidden',
             padding: '5px 0 0 0',
             '@bp2': {

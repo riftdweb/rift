@@ -329,12 +329,12 @@ export function Uploader({
   return (
     <Box
       css={{
-        border: '1px dashed $gray500',
+        border: '1px dashed $gray6',
         borderRadius: '$3',
         overflow: 'hidden',
         cursor: 'pointer',
         '&:hover': {
-          backgroundColor: '$gray100',
+          backgroundColor: '$gray2',
           transition: 'all .1s',
         },
       }}
@@ -353,8 +353,8 @@ export function Uploader({
           },
           ...(isDragActive
             ? {
-                backgroundColor: '$blue100',
-                border: '1px solid $blue500',
+                backgroundColor: '$blue2',
+                border: '1px solid $blue6',
               }
             : {}),
         }}
@@ -367,7 +367,7 @@ export function Uploader({
           <Text
             size="3"
             css={{
-              color: '$gray900',
+              color: '$gray11',
               margin: '$1 0 $3',
               lineHeight: '22px',
             }}

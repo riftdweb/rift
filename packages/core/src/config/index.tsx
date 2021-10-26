@@ -11,7 +11,7 @@ export function App({ name, providers, children }) {
           <Suspense
             fallback={
               <LoadingState
-                color="$gray600"
+                color="$gray7"
                 css={{
                   margin: '200px auto',
                 }}

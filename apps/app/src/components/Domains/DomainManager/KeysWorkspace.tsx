@@ -43,11 +43,11 @@ export function KeysWorkspace() {
             height: '100%',
             overflow: 'hidden',
             borderRadius: '6px',
-            border: '1px solid $gray500',
-            // backgroundColor: '$gray400',
+            border: '1px solid $gray6',
+            // backgroundColor: '$gray5',
             backgroundColor: '$panel',
             transition: 'background-color 0.1s',
-            '&:hover': { backgroundColor: '$slate300' },
+            '&:hover': { backgroundColor: '$slate4' },
           }}
         >
           <DragSizing
@@ -93,7 +93,7 @@ export function KeysWorkspace() {
               css={{
                 position: 'relative',
                 flex: 1,
-                backgroundColor: '$slate100',
+                backgroundColor: '$slate2',
                 borderRadius: '4px',
               }}
             >
@@ -112,7 +112,7 @@ export function KeysWorkspace() {
                 {isReady && (
                   <Text
                     css={{
-                      color: '$gray900',
+                      color: '$gray11',
                       textAlign: 'center',
                       margin: '0 auto $3 auto',
                       lineHeight: '20px',
@@ -129,7 +129,7 @@ export function KeysWorkspace() {
                 )}
                 <Text
                   css={{
-                    color: '$gray900',
+                    color: '$gray11',
                     textAlign: 'center',
                     margin: '0 auto $3 auto',
                     lineHeight: '20px',

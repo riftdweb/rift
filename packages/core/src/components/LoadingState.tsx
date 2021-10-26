@@ -8,7 +8,7 @@ type Props = {
   css?: {}
 }
 
-export function LoadingState({ message, css, color = '$gray900' }: Props) {
+export function LoadingState({ message, css, color = '$gray11' }: Props) {
   return (
     <Flex
       css={{

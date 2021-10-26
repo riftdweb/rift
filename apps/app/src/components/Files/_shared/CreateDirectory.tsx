@@ -1,4 +1,4 @@
-import { Pencil2Icon } from '@radix-ui/react-icons'
+import { CardStackPlusIcon, Pencil2Icon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -73,7 +73,8 @@ export function CreateDirectory() {
       {...dialogProps}
       content="Create Directory"
       triggerSize="2"
-      triggerElement={<Pencil2Icon />}
+      triggerVariant="gray"
+      triggerElement={<CardStackPlusIcon />}
     >
       <form onSubmit={formik.handleSubmit}>
         <Flex
@@ -90,7 +91,7 @@ export function CreateDirectory() {
                   <Text>Name</Text>
                   {formik.errors.name && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.name}
                     </Text>

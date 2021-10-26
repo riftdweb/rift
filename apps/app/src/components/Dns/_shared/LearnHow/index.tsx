@@ -26,7 +26,7 @@ export function LearnHow() {
         <Heading size="1">
           Pointing a Handshake domain to a Skynet website
         </Heading>
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           Setting up a Handshake domain as a Skynet website is easy. All it
           requires is configuring the Handshake domain with a TXT record
           containing a resolver skylink (mutable skylink). The Rift DNS
@@ -35,9 +35,9 @@ export function LearnHow() {
         <Image
           src={resolverUrl}
           alt="resolver skylinks"
-          css={{ border: '1px solid $gray400' }}
+          css={{ border: '1px solid $gray5' }}
         />
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           The resolver skylink will resolve to the current target skylink
           configured in the Rift DNS interface. You can update your Handshake
           website at any time by updating the target skylink - the change will
@@ -46,35 +46,35 @@ export function LearnHow() {
         <Image
           src={manageUrl}
           alt="manage handshake domain"
-          css={{ border: '1px solid $gray400' }}
+          css={{ border: '1px solid $gray5' }}
         />
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           To set up the Handshake domain, navigate to the domain on Namebase and
           select "Manage".
         </Paragraph>
         <Image
           src={txtUrl}
           alt="set txt record"
-          css={{ border: '1px solid $gray400' }}
+          css={{ border: '1px solid $gray5' }}
         />
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           Create a new TXT record in the "Blockchain DNS records" section. Set
           the value to be the resolver skylink found on the Rift DNS interface.
         </Paragraph>
         <Image
           src={saveUrl}
           alt="save changes"
-          css={{ border: '1px solid $gray400' }}
+          css={{ border: '1px solid $gray5' }}
         />
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           Remember to save the changes, and note the required fees.
         </Paragraph>
         <Image
           src={statusUrl}
           alt="handshake status"
-          css={{ border: '1px solid $gray400' }}
+          css={{ border: '1px solid $gray5' }}
         />
-        <Paragraph css={{ color: '$gray900' }}>
+        <Paragraph css={{ color: '$gray11' }}>
           This initial setup takes about 10 minutes depending on the Handshake
           blockchain. Once the status indicator at the top of the page turns
           green, the configuration is complete. Note that after this initial

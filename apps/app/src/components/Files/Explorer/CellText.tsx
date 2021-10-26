@@ -12,7 +12,7 @@ type Props = {
 }
 
 const activeColor = '$hiContrast'
-const inactiveColor = '$gray900'
+const inactiveColor = '$gray11'
 
 function getColor(active: boolean) {
   return active ? activeColor : inactiveColor

@@ -29,7 +29,7 @@ export function AudioViewer({ file, download }: ViewerProps) {
       <Box
         css={{
           position: 'relative',
-          color: '$gray900',
+          color: '$gray11',
           height: `${size}px`,
           width: `${size}px`,
           borderRadius: '2px',
@@ -60,10 +60,10 @@ export function AudioViewer({ file, download }: ViewerProps) {
         <Text>{title || file.data.name}</Text>
         {(artist || album) && (
           <Flex css={{ gap: '$1' }}>
-            {artist && <Text css={{ color: '$gray700' }}>{artist}</Text>}
-            {artist && album && <Text css={{ color: '$gray700' }}>-</Text>}
+            {artist && <Text css={{ color: '$gray8' }}>{artist}</Text>}
+            {artist && album && <Text css={{ color: '$gray8' }}>-</Text>}
             {album && (
-              <Text css={{ color: '$gray700' }}>
+              <Text css={{ color: '$gray8' }}>
                 {`${album}${date ? ` (${date})` : ''}`}
               </Text>
             )}
@@ -80,9 +80,7 @@ export function AudioViewer({ file, download }: ViewerProps) {
         )
       ) : (
         <Box>
-          <Button onClick={() => startDownload(file)}>
-            Download and play
-          </Button>
+          <Button onClick={() => startDownload(file)}>Download and play</Button>
         </Box>
       )}
     </Flex>

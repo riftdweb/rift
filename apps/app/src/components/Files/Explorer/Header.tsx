@@ -10,8 +10,8 @@ export function Header() {
       css={{
         padding: '$2 $3',
         gap: '$1',
-        borderBottom: '1px solid $gray300',
-        color: '$gray900',
+        borderBottom: '1px solid $gray4',
+        color: '$gray11',
         fontSize: '14px',
         height: '44px',
         alignItems: 'center',
@@ -22,7 +22,7 @@ export function Header() {
         onClick={() => toggleSort('data.name')}
         textCss={{
           fontWeight: sortKey === 'data.name' ? 500 : 400,
-          color: sortKey === 'data.name' ? '$hiContrast' : '$gray900',
+          color: sortKey === 'data.name' ? '$hiContrast' : '$gray11',
         }}
         css={{
           flex: 2,
@@ -38,7 +38,7 @@ export function Header() {
         onClick={() => toggleSort('data.size')}
         textCss={{
           fontWeight: sortKey === 'data.size' ? 500 : 400,
-          color: sortKey === 'data.size' ? '$hiContrast' : '$gray900',
+          color: sortKey === 'data.size' ? '$hiContrast' : '$gray11',
         }}
         icon={
           sortKey === 'data.size' &&
@@ -51,7 +51,7 @@ export function Header() {
         onClick={() => toggleSort('data.type')}
         textCss={{
           fontWeight: sortKey === 'data.type' ? 500 : 400,
-          color: sortKey === 'data.type' ? '$hiContrast' : '$gray900',
+          color: sortKey === 'data.type' ? '$hiContrast' : '$gray11',
         }}
         icon={
           sortKey === 'data.type' &&
@@ -66,7 +66,7 @@ export function Header() {
         textCss={{
           fontWeight: sortKey === 'data.file.encryptionType' ? 500 : 400,
           color:
-            sortKey === 'data.file.encryptionType' ? '$hiContrast' : '$gray900',
+            sortKey === 'data.file.encryptionType' ? '$hiContrast' : '$gray11',
         }}
         icon={
           sortKey === 'data.file.encryptionType' &&
@@ -80,7 +80,7 @@ export function Header() {
         textCss={{
           textAlign: 'right',
           fontWeight: sortKey === 'data.modified' ? 500 : 400,
-          color: sortKey === 'data.modified' ? '$hiContrast' : '$gray900',
+          color: sortKey === 'data.modified' ? '$hiContrast' : '$gray11',
         }}
         icon={
           sortKey === 'data.modified' &&

@@ -5,7 +5,7 @@ import { AddDoc } from './AddDoc'
 import { DocsMenuSkeleton } from './DocsMenuSkeleton'
 
 function Header({ name }) {
-  return <Text css={{ color: '$gray700' }}>{name}</Text>
+  return <Text css={{ color: '$gray8' }}>{name}</Text>
 }
 
 export function DocsMenu() {
@@ -50,10 +50,10 @@ export function DocsMenu() {
                 css={{
                   display: 'block',
                   padding: '$1 $3',
-                  backgroundColor: docId === doc.id ? '$gray400' : 'none',
+                  backgroundColor: docId === doc.id ? '$gray5' : 'none',
                   textDecoration: 'none',
                   '&:hover': {
-                    backgroundColor: '$gray400',
+                    backgroundColor: '$gray5',
                     textDecoration: 'none',
                   },
                 }}

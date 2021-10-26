@@ -34,7 +34,7 @@ export function LandingOwnData() {
               css={{
                 display: 'inline',
                 borderRadius: '2px',
-                backgroundColor: '$pink900',
+                backgroundColor: '$pink10',
                 color: '$loContrast',
                 padding: '3px 1px',
               }}
@@ -45,7 +45,7 @@ export function LandingOwnData() {
                 css={{
                   fontWeight: '600',
                   display: 'inline',
-                  backgroundColor: '$pink900',
+                  backgroundColor: '$pink10',
                   fontStyle: 'italic',
                   color: '$loContrast',
                 }}
@@ -65,7 +65,7 @@ export function LandingOwnData() {
               css={{
                 display: 'inline',
                 borderRadius: '2px',
-                backgroundColor: '$pink900',
+                backgroundColor: '$pink10',
                 color: '$loContrast',
                 padding: '3px 1px',
               }}

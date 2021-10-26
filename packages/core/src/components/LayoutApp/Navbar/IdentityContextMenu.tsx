@@ -67,7 +67,7 @@ export function IdentityContextMenu({
                     position: 'absolute',
                     top: 0,
                     right: 0,
-                    backgroundColor: '$violet900',
+                    backgroundColor: '$violet10',
                     borderRadius: '$round',
                     height: '8px',
                     width: '8px',
@@ -90,7 +90,7 @@ export function IdentityContextMenu({
                   position: 'absolute',
                   top: '5px',
                   right: '5px',
-                  backgroundColor: '$violet900',
+                  backgroundColor: '$violet10',
                   borderRadius: '$round',
                   height: '8px',
                   width: '8px',
@@ -154,7 +154,7 @@ export function IdentityContextMenu({
             textDecoration: 'none !important',
             cursor: 'pointer',
             '&:hover': {
-              backgroundColor: '$blue800',
+              backgroundColor: '$blue9',
             },
             '&:hover > div': {
               color: 'white',
@@ -163,7 +163,7 @@ export function IdentityContextMenu({
         >
           Edit profile
           <Box
-            css={{ color: '$gray900', '&:hover': { color: 'white' }, ml: '$1' }}
+            css={{ color: '$gray11', '&:hover': { color: 'white' }, ml: '$1' }}
           >
             <ExternalLinkIcon />
           </Box>

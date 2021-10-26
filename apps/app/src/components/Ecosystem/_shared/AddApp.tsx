@@ -150,7 +150,7 @@ export function AddApp() {
                     <Text>Name</Text>
                     {formik.errors.name && (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.name}
                       </Text>
@@ -169,7 +169,7 @@ export function AddApp() {
                     <Text>HNS Domain</Text>
                     {formik.errors.hnsDomain && (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.hnsDomain}
                       </Text>
@@ -194,13 +194,13 @@ export function AddApp() {
                       </Tooltip>
                     ) : formik.errors.hnsDomain ? (
                       <Tooltip align="end" content="No app found at HNS domain">
-                        <Button size="2" css={{ color: '$red900' }}>
+                        <Button size="2" css={{ color: '$red10' }}>
                           <ExclamationTriangleIcon />
                         </Button>
                       </Tooltip>
                     ) : (
                       <Tooltip align="end" content="App found at HNS domain">
-                        <Button size="2" css={{ color: '$green900' }}>
+                        <Button size="2" css={{ color: '$green10' }}>
                           <CheckIcon />
                         </Button>
                       </Tooltip>
@@ -212,13 +212,13 @@ export function AddApp() {
                     <Text>Description</Text>
                     {formik.errors.description ? (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.childSeed}
                       </Text>
                     ) : (
                       <Text
-                        css={{ color: '$gray900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$gray11', flex: 1, textAlign: 'right' }}
                       >
                         Optional
                       </Text>

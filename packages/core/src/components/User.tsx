@@ -83,7 +83,7 @@ export function User({
           {showName && profile?.data?.firstName && (
             <Text
               css={{
-                color: '$gray800 !important',
+                color: '$gray10 !important',
                 fontSize: `$${fontSize}`,
                 display: 'none',
                 '@bp1': {

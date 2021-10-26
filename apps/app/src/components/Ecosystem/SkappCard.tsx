@@ -45,8 +45,8 @@ export function SkappCard({
           <Tooltip content="The ability to lock app versions is coming soon">
             <Box
               css={{
-                color: lockedOn ? '$gray900' : '$gray600',
-                '&:hover': { color: '$gray800' },
+                color: lockedOn ? '$gray11' : '$gray7',
+                '&:hover': { color: '$gray10' },
               }}
             >
               {lockedOn ? <LockClosedIcon /> : <LockOpen2Icon />}
@@ -57,7 +57,7 @@ export function SkappCard({
         <Flex css={{ ai: 'center', my: '$2' }}>
           <Code>{hnsDomain}</Code>
         </Flex>
-        <Text size="3" css={{ color: '$slate900', lineHeight: '23px' }}>
+        <Text size="3" css={{ color: '$slate10', lineHeight: '23px' }}>
           {description}
         </Text>
         <Flex css={{ ai: 'center', mt: '$3', flexWrap: 'wrap' }}>

@@ -91,9 +91,7 @@ export function RenameDoc({ docId, name, closeEditing }) {
         </Flex>
         <Flex>
           {formik.errors.name && (
-            <Text css={{ color: '$red900', flex: 1 }}>
-              {formik.errors.name}
-            </Text>
+            <Text css={{ color: '$red10', flex: 1 }}>{formik.errors.name}</Text>
           )}
         </Flex>
       </Flex>

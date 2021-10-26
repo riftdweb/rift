@@ -25,7 +25,7 @@ export function Drop({ directoryPath, css, children }: Props) {
           height: '100%',
           ...(directoryPath && isDragActive
             ? {
-                backgroundColor: '$blue200',
+                backgroundColor: '$blue3',
               }
             : {}),
         }}
@@ -43,7 +43,7 @@ export function Drop({ directoryPath, css, children }: Props) {
           borderRadius: '2px',
           ...(directoryPath && isDragActive
             ? {
-                border: '3px solid $blue700',
+                border: '3px solid $blue8',
               }
             : {}),
         }}

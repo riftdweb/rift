@@ -13,9 +13,9 @@ export function Toggle({ onClick }) {
         position: 'relative',
         verticalAlign: 'top',
         width: '15px',
-        color: '$gray600',
+        color: '$gray7',
         '&:hover': {
-          color: '$gray900',
+          color: '$gray11',
         },
       }}
     >

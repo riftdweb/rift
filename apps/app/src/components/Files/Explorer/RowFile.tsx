@@ -21,8 +21,8 @@ export function FileItem({ file }: Props) {
     file.status === undefined
       ? 'inherit'
       : file.status === 'complete'
-      ? '$green200'
-      : '$green100'
+      ? '$green3'
+      : '$green2'
 
   const version = useVersionData(file)
   const encryption = useEncryptionData(file)
@@ -83,7 +83,7 @@ export function FileItem({ file }: Props) {
           {bytes(size, { unitSeparator: ' ', decimalPlaces: '1' })}
         </CellText>
         <CellText>{mimeType}</CellText>
-        <Box css={{ flex: 1, color: '$gray900' }}>
+        <Box css={{ flex: 1, color: '$gray11' }}>
           <Tooltip content={`Encryption: ${encryption.type}`}>
             <Badge>{encryption.label}</Badge>
           </Tooltip>

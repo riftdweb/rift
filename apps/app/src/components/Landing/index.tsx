@@ -21,7 +21,7 @@ export function Landing() {
         </Container>
         <Container size="3" css={{ my: '$9' }}>
           <Flex css={{ flexDirection: 'column', gap: '$6' }}>
-            <Heading size="4" css={{ fontSize: '$8', textAlign: 'center' }}>
+            <Heading size="3" css={{ textAlign: 'center' }}>
               Control your destiny
             </Heading>
             <LandingCta />

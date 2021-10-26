@@ -65,9 +65,9 @@ export function UserContextMenu({
             css={{
               right,
               position: 'relative',
-              color: '$gray500',
+              color: '$gray6',
               '&:hover': {
-                color: '$gray900',
+                color: '$gray11',
               },
             }}
           >
@@ -120,7 +120,7 @@ export function UserContextMenu({
             textDecoration: 'none',
             cursor: 'pointer',
             '&:hover': {
-              backgroundColor: '$blue800',
+              backgroundColor: '$blue9',
             },
           }}
         >
@@ -136,7 +136,7 @@ export function UserContextMenu({
               textDecoration: 'none',
               cursor: 'pointer',
               '&:hover': {
-                backgroundColor: '$blue800',
+                backgroundColor: '$blue9',
               },
             }}
           >

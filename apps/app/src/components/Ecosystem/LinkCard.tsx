@@ -22,7 +22,7 @@ export const LinkCard = ({ url, title, description }: Props) => {
         <Flex css={{ ai: 'center', my: '$2', flexWrap: 'wrap' }}>
           <Code>{hnsDomain || hostname}</Code>
         </Flex>
-        <Text size="3" css={{ color: '$slate900', lineHeight: '23px' }}>
+        <Text size="3" css={{ color: '$slate10', lineHeight: '23px' }}>
           {description}
         </Text>
       </Card>

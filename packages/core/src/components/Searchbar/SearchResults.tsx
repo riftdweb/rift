@@ -36,7 +36,7 @@ export function SearchResults({ searchValue, onSelect }: Props) {
         overflow: 'hidden',
         borderTopRightRadius: 0,
         borderTopLeftRadius: 0,
-        border: '1px solid $gray500',
+        border: '1px solid $gray6',
       }}
     >
       <Box css={{ width: '100%' }}>
@@ -57,7 +57,7 @@ export function SearchResults({ searchValue, onSelect }: Props) {
                 <Box
                   css={{
                     marginBottom: '$1',
-                    borderBottom: '1px solid $gray400',
+                    borderBottom: '1px solid $gray5',
                   }}
                 />
               )}

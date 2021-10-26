@@ -81,7 +81,7 @@ export function Home() {
             )}
           </ControlGroup>
           <Flex css={{ alignItems: 'center', gap: '$1' }}>
-            <Text css={{ color: '$gray900' }}>Pages</Text>
+            <Text css={{ color: '$gray11' }}>Pages</Text>
             {skyfiles.length > 0 && (
               <Flex css={{ alignItems: 'center', gap: '$2' }}>
                 <Tooltip content="Previous page">
@@ -122,7 +122,7 @@ export function Home() {
               </Flex>
             )}
             <Box css={{ flex: 1 }} />
-            <Text css={{ color: '$gray900' }}>
+            <Text css={{ color: '$gray11' }}>
               {filterValue
                 ? `${filteredSkyfiles.length} results`
                 : completedUploadCount === skyfiles.length
@@ -134,7 +134,7 @@ export function Home() {
           <Box
             css={{
               margin: '$3 0',
-              border: '1px solid $gray500',
+              border: '1px solid $gray6',
               backgroundColor: '$panel',
               borderRadius: '$3',
               overflow: 'hidden',
@@ -144,8 +144,8 @@ export function Home() {
               css={{
                 padding: '$2 $3',
                 gap: '$1',
-                borderBottom: '1px solid $gray300',
-                color: '$gray900',
+                borderBottom: '1px solid $gray4',
+                color: '$gray11',
                 fontSize: '14px',
                 height: '44px',
                 alignItems: 'center',

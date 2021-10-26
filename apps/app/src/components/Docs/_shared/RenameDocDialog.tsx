@@ -72,7 +72,7 @@ export function RenameDocDialog({ docId, name }) {
                   <Text>Name</Text>
                   {formik.errors.name && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.name}
                     </Text>

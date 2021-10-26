@@ -14,14 +14,14 @@ export function NonIdealState({ title, message }: Props) {
         alignItems: 'center',
         gap: '$2',
         margin: '30px auto',
-        color: '$gray900',
+        color: '$gray11',
       }}
     >
       {title && <Heading size="1">{title}</Heading>}
       {message && (
         <Text
           size="2"
-          css={{ color: '$gray900', textAlign: 'center', lineHeight: '16px' }}
+          css={{ color: '$gray11', textAlign: 'center', lineHeight: '16px' }}
         >
           {message}
         </Text>

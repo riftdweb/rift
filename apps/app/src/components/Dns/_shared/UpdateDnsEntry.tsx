@@ -101,7 +101,7 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
                   <Text>Target skylink</Text>
                   {formik.errors.dataLink && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.dataLink}
                     </Text>

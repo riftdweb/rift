@@ -27,7 +27,7 @@ export function CoverArea({ file, download, children }: Props) {
       <Box
         css={{
           position: 'relative',
-          color: '$gray900',
+          color: '$gray11',
           height: `${coverSize}px`,
           width: `${coverSize}px`,
           borderRadius: '2px',

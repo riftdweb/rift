@@ -17,7 +17,7 @@ function Header({ name, children }: HeaderProps) {
         margin: '$2 $2 $2',
       }}
     >
-      <Text css={{ color: '$gray700' }}>{name}</Text>
+      <Text css={{ color: '$gray8' }}>{name}</Text>
       {children}
     </Flex>
   )

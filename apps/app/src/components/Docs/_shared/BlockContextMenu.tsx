@@ -39,8 +39,11 @@ export function DocContextMenu({
             size={size}
             css={{
               right,
-              color: '$gray500',
+              color: '$gray8',
               position: 'relative',
+              '&:hover': {
+                color: '$gray9',
+              },
             }}
           >
             {isSyncing ? <SpinnerIcon /> : <DotsHorizontalIcon />}

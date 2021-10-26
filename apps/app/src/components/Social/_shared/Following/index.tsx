@@ -27,7 +27,7 @@ export function Following() {
           <Text
             size="2"
             css={{
-              color: '$gray900',
+              color: '$gray11',
               lineHeight: '16px',
               flex: 1,
             }}

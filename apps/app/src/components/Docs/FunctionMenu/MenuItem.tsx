@@ -12,7 +12,7 @@ type Props = {
 export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
   const { menuMode } = useDocs()
 
-  const color = isActive ? '$blue900' : '$hiContrast'
+  const color = isActive ? '$blue10' : '$hiContrast'
   return (
     <Button
       onClick={onClick}
@@ -33,7 +33,7 @@ export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
             lineHeight: '20px',
             color,
             '&:hover': {
-              color: '$blue800',
+              color: '$blue9',
             },
           }}
         >
@@ -57,7 +57,7 @@ export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
                 fontSize: '12px',
                 lineHeight: '12px',
                 cursor: 'pointer',
-                border: '1px solid $gray400',
+                border: '1px solid $gray5',
                 borderRadius: '3px',
               }}
             >

@@ -78,7 +78,7 @@ export function DevIndexingManager() {
         >
           <Panel
             css={{
-              backgroundColor: '$gray200',
+              backgroundColor: '$gray3',
               padding: '$2',
             }}
           >
@@ -103,7 +103,7 @@ export function DevIndexingManager() {
                     return (
                       <Box
                         css={{
-                          backgroundColor: '$yellow900',
+                          backgroundColor: '$yellow10',
                           borderRadius: '$1',
                           padding: '$1',
                         }}
@@ -123,7 +123,7 @@ export function DevIndexingManager() {
                   return (
                     <Box
                       css={{
-                        backgroundColor: isUpToDate ? 'none' : '$red900',
+                        backgroundColor: isUpToDate ? 'none' : '$red10',
                         borderRadius: '$1',
                         padding: '$1',
                       }}
@@ -161,7 +161,7 @@ export function DevIndexingManager() {
               <Panel
                 css={{
                   padding: '$2',
-                  backgroundColor: '$gray200',
+                  backgroundColor: '$gray3',
                 }}
               >
                 <Flex css={{ flexDirection: 'column', gap: '$3' }}>
@@ -212,9 +212,7 @@ export function DevIndexingManager() {
                           <Box
                             key={userId}
                             css={{
-                              backgroundColor: isUpToDate
-                                ? '$gray400'
-                                : '$red900',
+                              backgroundColor: isUpToDate ? '$gray5' : '$red10',
                               borderRadius: '$1',
                               padding: '$1',
                             }}

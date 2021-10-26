@@ -15,7 +15,7 @@ export function StickyHeading({ title, contextMenu, css = {} }: Props) {
         backgroundColor: '$loContrast',
         position: 'sticky',
         zIndex: 1,
-        borderBottom: '1px solid $gray200',
+        borderBottom: '1px solid $gray3',
         paddingBottom: '$1',
         ...css,
       }}
@@ -28,7 +28,7 @@ export function StickyHeading({ title, contextMenu, css = {} }: Props) {
       >
         <Text
           css={{
-            color: '$gray900',
+            color: '$gray11',
             fontWeight: '600',
             flex: 1,
           }}

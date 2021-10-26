@@ -17,7 +17,7 @@ export function UserLookup({ searchValue }) {
     <Flex css={{ flexDirection: 'column', gap: '$2', padding: '$1 $3 $2 $3' }}>
       <Text
         css={{
-          color: '$gray900',
+          color: '$gray11',
           fontWeight: '600',
           flex: 1,
         }}

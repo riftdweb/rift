@@ -74,12 +74,12 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
       css={{
         position: 'relative',
         height: '40px',
-        borderBottom: '1px solid $gray300',
+        borderBottom: '1px solid $gray4',
         '&:last-of-type': {
           borderBottom: 'none',
         },
         '&:hover': {
-          backgroundColor: '$gray100',
+          backgroundColor: '$gray2',
         },
       }}
     >
@@ -93,7 +93,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           gap: '$1',
         }}
       >
-        <Box css={{ color: '$gray900', position: 'relative', top: '1px' }}>
+        <Box css={{ color: '$gray11', position: 'relative', top: '1px' }}>
           {iconElement}
         </Box>
         <Box css={{ flex: 2, overflow: 'hidden' }}>
@@ -137,7 +137,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             },
           }}
         >
-          <Text css={{ color: '$gray900', lineHeight: '24px' }}>{size}</Text>
+          <Text css={{ color: '$gray11', lineHeight: '24px' }}>{size}</Text>
         </Box>
         <Box
           css={{
@@ -149,9 +149,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           }}
         >
           {portal && (
-            <Text css={{ color: '$gray800', lineHeight: '24px' }}>
-              {portal}
-            </Text>
+            <Text css={{ color: '$gray10', lineHeight: '24px' }}>{portal}</Text>
           )}
         </Box>
         {status === 'complete' ? (
@@ -162,7 +160,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           >
             <Text
               css={{
-                color: '$gray900',
+                color: '$gray11',
                 textAlign: 'right',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -177,12 +175,12 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             </Text>
           </Box>
         ) : (
-          <Box css={{ color: '$gray900', flex: 1, textAlign: 'right' }}>
+          <Box css={{ color: '$gray11', flex: 1, textAlign: 'right' }}>
             {status === 'uploading' && getProgressText(progress)}
             {status === 'processing' && 'Processing...'}
             {status === 'error' && (
               <Tooltip content={error}>
-                <Link css={{ color: '$red900', textAlign: 'right' }}>
+                <Link css={{ color: '$red10', textAlign: 'right' }}>
                   {'Upload failed'}
                 </Link>
               </Tooltip>
@@ -194,7 +192,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
         <Flex
           css={{
             position: 'relative',
-            backgroundColor: '$gray100',
+            backgroundColor: '$gray2',
             visibility: isHovering ? 'inherit' : 'hidden',
             alignItems: 'center',
             float: 'right',
@@ -229,6 +227,6 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
   )
 }
 
-// <Text css={{ color: '$red900', textAlign: 'right' }}>
+// <Text css={{ color: '$red10', textAlign: 'right' }}>
 //   {error || 'Upload failed.'}
 // </Text>

@@ -50,10 +50,10 @@ export function UserProfile({
   if (profile?.data?.location) {
     infoElements.push(
       <Flex key="location" css={{ gap: '$1', alignItems: 'center' }}>
-        <Text css={{ fontSize: '$2', color: '$gray900' }}>
+        <Text css={{ fontSize: '$2', color: '$gray11' }}>
           <GlobeIcon />
         </Text>
-        <Text css={{ fontSize: '$2', color: '$gray900' }}>
+        <Text css={{ fontSize: '$2', color: '$gray11' }}>
           {profile.data?.location}
         </Text>
       </Flex>
@@ -63,10 +63,10 @@ export function UserProfile({
   if (user?.feed.data && ~user.feed.data.count) {
     infoElements.push(
       <Flex key="posts" css={{ gap: '$1', alignItems: 'center' }}>
-        <Text css={{ fontSize: '$2', color: '$gray900' }}>
+        <Text css={{ fontSize: '$2', color: '$gray11' }}>
           <ChatBubbleIcon />
         </Text>
-        <Text css={{ fontSize: '$2', color: '$gray900' }}>
+        <Text css={{ fontSize: '$2', color: '$gray11' }}>
           {`${user.feed.data.count} posts`}
         </Text>
       </Flex>
@@ -101,21 +101,21 @@ export function UserProfile({
           !isMyself &&
           (isFriend(user) ? (
             <Flex css={{ gap: '$1', alignItems: 'center' }}>
-              <Text css={{ fontSize: '$2', color: '$gray900' }}>Friends</Text>
+              <Text css={{ fontSize: '$2', color: '$gray11' }}>Friends</Text>
             </Flex>
           ) : isFollowing(user) ? (
             <Flex css={{ gap: '$1', alignItems: 'center' }}>
-              <Text css={{ fontSize: '$2', color: '$gray900' }}>Following</Text>
+              <Text css={{ fontSize: '$2', color: '$gray11' }}>Following</Text>
             </Flex>
           ) : isFollower(user) ? (
             <Button size="1" onClick={() => handleFollow(userId)}>
-              <Text css={{ fontSize: '$2', color: '$gray900' }}>
+              <Text css={{ fontSize: '$2', color: '$gray11' }}>
                 Follow back
               </Text>
             </Button>
           ) : (
             <Button size="1" onClick={() => handleFollow(userId)}>
-              <Text css={{ fontSize: '$2', color: '$gray900' }}>Follow</Text>
+              <Text css={{ fontSize: '$2', color: '$gray11' }}>Follow</Text>
             </Button>
           ))}
       </Flex>
@@ -157,7 +157,7 @@ export function UserProfile({
               <Text
                 css={{
                   fontSize: '$2',
-                  color: '$gray800',
+                  color: '$gray10',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -169,7 +169,7 @@ export function UserProfile({
                 <Text
                   css={{
                     fontSize: '$2',
-                    color: '$gray800',
+                    color: '$gray10',
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -183,7 +183,7 @@ export function UserProfile({
                 <Text
                   size="1"
                   css={{
-                    color: '$gray800',
+                    color: '$gray10',
                     whiteSpace: 'nowrap',
                   }}
                 >

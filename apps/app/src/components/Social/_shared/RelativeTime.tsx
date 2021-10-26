@@ -8,7 +8,7 @@ type Props = {
 
 export function RelativeTime({ time, prefix }: Props) {
   return time ? (
-    <Text size="1" css={{ color: '$gray900' }}>
+    <Text size="1" css={{ color: '$gray11' }}>
       {prefix}{' '}
       {formatDistance(parseISO(new Date(time).toISOString()), new Date(), {
         addSuffix: true,

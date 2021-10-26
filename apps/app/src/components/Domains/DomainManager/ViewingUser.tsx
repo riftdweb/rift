@@ -89,7 +89,7 @@ export function ViewingUser() {
           css={{
             zIndex: 1,
             borderRadius: '50%',
-            border: '1px solid $slate600',
+            border: '1px solid $slate7',
           }}
         >
           <Avatar

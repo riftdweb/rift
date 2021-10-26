@@ -33,7 +33,7 @@ export function Docs() {
           css={{
             position: 'sticky',
             top: '$5',
-            backgroundColor: '$gray200',
+            backgroundColor: '$gray3',
             borderRadius: '0 $2 $2 0',
           }}
         >
@@ -64,7 +64,7 @@ export function Docs() {
           css={{
             position: 'sticky',
             top: '$5',
-            backgroundColor: '$gray200',
+            backgroundColor: '$gray3',
             borderRadius: '$2 0 0 $2',
           }}
         >

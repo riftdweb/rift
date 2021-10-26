@@ -20,7 +20,7 @@ export function TabNav() {
   return (
     <Box css={{ width: '100%' }}>
       <ScrollArea orientation="horizontal">
-        <Flex css={{ borderBottom: '1px solid $slate500', padding: '0 $5' }}>
+        <Flex css={{ borderBottom: '1px solid $slate5', padding: '0 $5' }}>
           <TabLink
             as={Link}
             to="/"

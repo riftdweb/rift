@@ -15,13 +15,13 @@ export function DnsRow({ dnsEntry }: Props) {
     <Box
       css={{
         position: 'relative',
-        borderBottom: '1px solid $gray300',
+        borderBottom: '1px solid $gray4',
         cursor: 'pointer',
         '&:last-of-type': {
           borderBottom: 'none',
         },
         '&:hover': {
-          backgroundColor: '$gray100',
+          backgroundColor: '$gray2',
         },
       }}
     >
@@ -65,7 +65,7 @@ export function DnsRow({ dnsEntry }: Props) {
           >
             <Text
               css={{
-                color: '$gray900',
+                color: '$gray11',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 lineHeight: '24px',
@@ -89,7 +89,7 @@ export function DnsRow({ dnsEntry }: Props) {
           >
             <Text
               css={{
-                color: '$gray900',
+                color: '$gray11',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 lineHeight: '24px',

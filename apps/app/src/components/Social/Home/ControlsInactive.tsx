@@ -51,7 +51,7 @@ export function ControlsInactive({ setEditing }: Props) {
           }}
         >
           {current.loadingState ? (
-            <Text size="1" css={{ color: '$gray900' }}>
+            <Text size="1" css={{ color: '$gray11' }}>
               {current.loadingState}...
             </Text>
           ) : (

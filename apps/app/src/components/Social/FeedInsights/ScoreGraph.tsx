@@ -66,7 +66,7 @@ export function ScoreGraph({ width, height }: Props) {
           entry.post.content.text?.includes(filterValue)
         const color = isMatch
           ? 'var(--colors-hiContrast)'
-          : 'var(--colors-gray400)'
+          : 'var(--colors-gray5)'
         return {
           entry,
           isMatch,
@@ -181,10 +181,10 @@ export function ScoreGraph({ width, height }: Props) {
       </ControlGroup>
       <svg width={width} height={height}>
         <AxisBottom
-          stroke={'var(--colors-gray800)'}
-          tickStroke={'var(--colors-gray800)'}
+          stroke={'var(--colors-gray10)'}
+          tickStroke={'var(--colors-gray10)'}
           tickLabelProps={() => ({
-            fill: 'var(--colors-gray800)',
+            fill: 'var(--colors-gray10)',
           })}
           top={yMax}
           tickFormat={(value: Date) => {
@@ -203,10 +203,10 @@ export function ScoreGraph({ width, height }: Props) {
           numTicks={width > 520 ? 10 : 5}
         />
         <AxisLeft
-          stroke={'var(--colors-gray900)'}
-          tickStroke={'var(--colors-gray900)'}
+          stroke={'var(--colors-gray11)'}
+          tickStroke={'var(--colors-gray11)'}
           labelProps={{
-            fill: 'var(--colors-gray900)',
+            fill: 'var(--colors-gray11)',
           }}
           scale={yScale}
         />
@@ -230,7 +230,7 @@ export function ScoreGraph({ width, height }: Props) {
         <Line
           from={{ x: xScale(new Date()), y: margin.top }}
           to={{ x: xScale(new Date()), y: height - 41 }}
-          stroke={'var(--colors-blue300)'}
+          stroke={'var(--colors-blue4)'}
           strokeWidth={2}
           pointerEvents="none"
         />
@@ -239,7 +239,7 @@ export function ScoreGraph({ width, height }: Props) {
             <Line
               from={{ x: tooltipLeft, y: margin.top }}
               to={{ x: tooltipLeft, y: height + margin.top }}
-              stroke={'var(--colors-gray900)'}
+              stroke={'var(--colors-gray11)'}
               strokeWidth={2}
               pointerEvents="none"
               strokeDasharray="5,2"
@@ -259,7 +259,7 @@ export function ScoreGraph({ width, height }: Props) {
               cx={tooltipLeft}
               cy={tooltipTop}
               r={4}
-              fill={'var(--colors-gray900)'}
+              fill={'var(--colors-gray11)'}
               stroke="white"
               strokeWidth={2}
               pointerEvents="none"
@@ -284,26 +284,26 @@ export function ScoreGraph({ width, height }: Props) {
             }}
           >
             <Text size="1" css={{ paddingTop: '$2' }}>
-              <Text css={{ display: 'inline', color: '$gray900' }}>
+              <Text css={{ display: 'inline', color: '$gray11' }}>
                 At time{' '}
               </Text>
               <Text
                 css={{
                   display: 'inline',
-                  color: '$blue900',
+                  color: '$blue10',
                   fontWeight: 600,
                 }}
               >
                 {format(selectedData.time, 'h:mmaaa')}
               </Text>
-              <Text css={{ display: 'inline', color: '$gray900' }}>
+              <Text css={{ display: 'inline', color: '$gray11' }}>
                 {' '}
                 current content score is:{' '}
               </Text>
               <Text
                 css={{
                   display: 'inline',
-                  color: '$blue900',
+                  color: '$blue10',
                   fontWeight: 600,
                 }}
               >
@@ -320,12 +320,12 @@ export function ScoreGraph({ width, height }: Props) {
               }}
             />
             {selectedData.entry.post.content.title && (
-              <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
+              <Text size="2" css={{ fontWeight: '600', color: '$gray11' }}>
                 {selectedData.entry.post.content.title}
               </Text>
             )}
             {selectedData.entry.post.content.text && (
-              <Text size="2" css={{ fontWeight: '600', color: '$gray900' }}>
+              <Text size="2" css={{ fontWeight: '600', color: '$gray11' }}>
                 {selectedData.entry.post.content.text}
               </Text>
             )}

@@ -16,7 +16,7 @@ export function UserResults({ searchValue, onSelect }) {
       <Flex css={{ gap: '$2', padding: '$1 $3 $1 $3' }}>
         <Text
           css={{
-            color: '$gray900',
+            color: '$gray11',
             fontWeight: '600',
             flex: 1,
           }}
@@ -32,7 +32,7 @@ export function UserResults({ searchValue, onSelect }) {
               >
                 <Text
                   css={{
-                    color: '$gray600',
+                    color: '$gray7',
                   }}
                 >
                   {`Indexing ${userCounts.pendingIndexing}`}
@@ -46,7 +46,7 @@ export function UserResults({ searchValue, onSelect }) {
               >
                 <Text
                   css={{
-                    color: '$gray800',
+                    color: '$gray10',
                   }}
                 >
                   {`Discovered ${userCounts.discovered}`}
@@ -60,7 +60,7 @@ export function UserResults({ searchValue, onSelect }) {
               >
                 <Text
                   css={{
-                    color: '$gray800',
+                    color: '$gray10',
                   }}
                 >
                   {userSearchResultsCount === 1
@@ -84,7 +84,7 @@ export function UserResults({ searchValue, onSelect }) {
                 key={userItem.userId}
                 css={{
                   padding: '$2 $4 $2 $3',
-                  borderBottom: '1px solid $gray200',
+                  borderBottom: '1px solid $gray3',
                   transition: 'all 0.1s linear',
                   '&:last-of-type': {
                     borderBottom: 'none',
@@ -104,14 +104,14 @@ export function UserResults({ searchValue, onSelect }) {
           })}
         </Flex>
       ) : !hasIndexingStarted ? (
-        <Flex css={{ gap: '$1', color: '$gray900', padding: '$2 $4 $2 $3' }}>
+        <Flex css={{ gap: '$1', color: '$gray11', padding: '$2 $4 $2 $3' }}>
           <SpinnerIcon />
-          <Text css={{ color: '$gray900' }}>
+          <Text css={{ color: '$gray11' }}>
             One moment, initializing search index
           </Text>
         </Flex>
       ) : (
-        <Text css={{ color: '$gray900', padding: '$2 $4 $2 $3' }}>
+        <Text css={{ color: '$gray11', padding: '$2 $4 $2 $3' }}>
           No results. Try searching by the user's username, first name, last
           name, about info, or location.
         </Text>

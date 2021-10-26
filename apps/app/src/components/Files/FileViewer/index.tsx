@@ -34,12 +34,12 @@ export function FileViewer() {
         css={{
           gap: '$2',
           padding: '$2 $3',
-          borderBottom: '1px solid $gray500',
+          borderBottom: '1px solid $gray6',
         }}
       >
         <Tooltip align="start" content={`Size: ${size} bytes`}>
           <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
-            <Text css={{ color: '$gray900' }}>
+            <Text css={{ color: '$gray11' }}>
               {bytes(size, {
                 unitSeparator: ' ',
                 decimalPlaces: '1',
@@ -50,26 +50,26 @@ export function FileViewer() {
         <Flex css={{ flex: 1 }} />
         <Tooltip content={`Mime type: ${mimeType}`}>
           <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
-            <Box css={{ color: '$gray900' }}>
+            <Box css={{ color: '$gray11' }}>
               <QuestionMarkCircledIcon />
             </Box>
-            <Text css={{ color: '$gray900' }}>{mimeType}</Text>
+            <Text css={{ color: '$gray11' }}>{mimeType}</Text>
           </Flex>
         </Tooltip>
         <Tooltip content={`Encryption: ${encryption.type}`}>
           <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
-            <Box css={{ color: '$gray900' }}>
+            <Box css={{ color: '$gray11' }}>
               <LockClosedIcon />
             </Box>
-            <Text css={{ color: '$gray900' }}>{encryption.label}</Text>
+            <Text css={{ color: '$gray11' }}>{encryption.label}</Text>
           </Flex>
         </Tooltip>
         <Tooltip align="end" content={`Version: ${version}`}>
           <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
-            <Box css={{ color: '$gray900' }}>
+            <Box css={{ color: '$gray11' }}>
               <InfoCircledIcon />
             </Box>
-            <Text css={{ color: '$gray900' }}>{version}</Text>
+            <Text css={{ color: '$gray11' }}>{version}</Text>
           </Flex>
         </Tooltip>
       </Flex>

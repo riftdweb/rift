@@ -41,9 +41,9 @@ export function FeedContextMenu({ variant, right = '0', size = '1' }: Props) {
             css={{
               right,
               position: 'relative',
-              color: '$gray500',
+              color: '$gray6',
               '&:hover': {
-                color: '$gray900',
+                color: '$gray11',
               },
             }}
           >
@@ -72,7 +72,7 @@ export function FeedContextMenu({ variant, right = '0', size = '1' }: Props) {
                 textDecoration: 'none',
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: '$blue800',
+                  backgroundColor: '$blue9',
                 },
               }}
             >

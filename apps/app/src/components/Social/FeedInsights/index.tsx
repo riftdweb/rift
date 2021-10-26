@@ -20,7 +20,7 @@ export function FeedInsights() {
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
               <Flex css={{ flexDirection: 'column', gap: '$6' }}>
                 <Flex css={{ alignItems: 'center' }}>
-                  <Heading size="1" css={{ color: '$gray900' }}>
+                  <Heading size="1" css={{ color: '$gray11' }}>
                     Content relevancy scoring over time
                   </Heading>
                   <Box css={{ flex: 1 }} />
@@ -38,7 +38,7 @@ export function FeedInsights() {
                 }}
               />
               <Flex css={{ flexDirection: 'column', gap: '$6' }}>
-                <Heading size="1" css={{ color: '$gray900' }}>
+                <Heading size="1" css={{ color: '$gray11' }}>
                   Keyword interaction events
                 </Heading>
                 <KeywordsGraph width={width} height={HEIGHT} />
@@ -52,7 +52,7 @@ export function FeedInsights() {
               >
                 <Text
                   css={{
-                    color: '$gray900',
+                    color: '$gray11',
                     textAlign: 'center',
                     margin: '0 auto',
                     maxWidth: '400px',

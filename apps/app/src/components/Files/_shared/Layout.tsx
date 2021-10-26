@@ -11,7 +11,7 @@ export function Layout({ children }) {
             css={{
               position: 'relative',
               margin: '$3 0',
-              border: '1px solid $gray500',
+              border: '1px solid $gray6',
               backgroundColor: '$panel',
               borderRadius: '$3',
               // overflow: 'hidden',

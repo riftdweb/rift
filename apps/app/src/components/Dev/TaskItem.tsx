@@ -25,21 +25,19 @@ export function TaskItem({ task, color, dupeCount }: Props) {
       css={{
         margin: '$1 0',
         padding: '$1',
-        backgroundColor: color || '$gray200',
+        backgroundColor: color || '$gray3',
         overflow: 'hidden',
         borderRadius: '$1',
       }}
     >
       <Flex css={{ flexDirection: 'column', gap: '$1' }}>
         <Flex css={{ justifyContent: 'space-between', gap: '$1' }}>
-          <Text css={{ color: '$gray900', flex: 1 }}>
-            {task.id.slice(0, 5)}
-          </Text>
+          <Text css={{ color: '$gray11', flex: 1 }}>{task.id.slice(0, 5)}</Text>
           {dupeCount > 1 && (
             <Tooltip content="Task potential duplicate count">
               <Text
                 css={{
-                  color: '$red900',
+                  color: '$red10',
                   '&:hover': { textDecoration: 'underline' },
                 }}
               >
@@ -51,7 +49,7 @@ export function TaskItem({ task, color, dupeCount }: Props) {
             <Tooltip content="Task share count">
               <Text
                 css={{
-                  color: '$green900',
+                  color: '$green10',
                   '&:hover': { textDecoration: 'underline' },
                 }}
               >

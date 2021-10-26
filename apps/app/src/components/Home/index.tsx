@@ -7,7 +7,7 @@ export function Home() {
   if (!isReady) {
     return (
       <LoadingState
-        color="$gray600"
+        color="$gray7"
         css={{
           margin: '200px auto',
         }}

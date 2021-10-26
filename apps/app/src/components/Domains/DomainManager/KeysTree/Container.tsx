@@ -76,7 +76,7 @@ export function Container({
         '&:hover': { color: '$hiContrast' },
         ...(node.active
           ? {
-              background: '$slate700',
+              background: '$slate8',
               borderRadius: '4px',
               color: '$hiContrast',
             }

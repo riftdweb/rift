@@ -26,7 +26,7 @@ export function ContextMenuFile({
   variant,
   right = '0',
   size = '1',
-  color = '$gray900',
+  color = '$gray11',
   onOpenChange,
 }: Props) {
   const { removeKey } = useDomains()

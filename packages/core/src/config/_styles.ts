@@ -42,7 +42,7 @@ export const globalToastCustomStyles = globalCss({
   },
 
   '.Toastify__toast--error': {
-    backgroundColor: '$red900 !important',
+    backgroundColor: '$red10 !important',
     border: '1px solid $panel !important',
     minHeight: 'inherit !important',
     /* box-shadow: 0 1px 10px 0 var(--colors-panel), 0 2px 15px 0 var(--colors-panel); */
@@ -60,6 +60,6 @@ export const globalToastCustomStyles = globalCss({
 
   '.Toastify__close-button--default': {
     // some reason $ color does not work
-    color: 'var(--colors-gray-400) !important',
+    color: 'var(--colors-gray-5) !important',
   },
 })

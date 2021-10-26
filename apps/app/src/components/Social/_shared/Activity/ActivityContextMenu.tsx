@@ -45,9 +45,9 @@ export function ActivityContextMenu({
             css={{
               right,
               position: 'relative',
-              color: '$gray500',
+              color: '$gray6',
               '&:hover': {
-                color: '$gray900',
+                color: '$gray11',
               },
             }}
           >
@@ -74,7 +74,7 @@ export function ActivityContextMenu({
             textDecoration: 'none',
             cursor: 'pointer',
             '&:hover': {
-              backgroundColor: '$blue800',
+              backgroundColor: '$blue9',
             },
           }}
         >

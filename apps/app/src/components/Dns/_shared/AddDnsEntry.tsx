@@ -102,7 +102,7 @@ export function AddDnsEntry() {
                   <Text>Name</Text>
                   {formik.errors.name && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.name}
                     </Text>
@@ -123,7 +123,7 @@ export function AddDnsEntry() {
                   <Text>Skylink</Text>
                   {formik.errors.dataLink && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.dataLink}
                     </Text>

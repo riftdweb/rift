@@ -3,10 +3,10 @@ import {
   Code,
   Container,
   Flex,
-  Input,
+  TextField,
   Radio,
   RadioGroup,
-  Subheading,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { Skyfile } from '@riftdweb/types'
@@ -218,11 +218,11 @@ export function Uploader({
         UPLOAD_STATE_CACHE[skyfile.id] = state
       }
 
-      // Reject files larger than our hard limit of 1 GB with proper message
-      if (getSize(skyfile) > bytes('1 GB')) {
+      // Reject files larger than our hard limit of 1 TB with proper message
+      if (getSize(skyfile) > bytes('1 TB')) {
         onUploadStateChange(skyfile.id, {
           status: 'error',
-          error: 'This upload size exceeds the maximum allowed size of 1 GB.',
+          error: 'This upload size exceeds the maximum allowed size of 1 TB.',
         })
 
         return
@@ -329,12 +329,12 @@ export function Uploader({
   return (
     <Box
       css={{
-        border: '1px dashed $gray500',
+        border: '1px dashed $gray6',
         borderRadius: '$3',
         overflow: 'hidden',
         cursor: 'pointer',
         '&:hover': {
-          backgroundColor: '$gray100',
+          backgroundColor: '$gray2',
           transition: 'all .1s',
         },
       }}
@@ -353,21 +353,21 @@ export function Uploader({
           },
           ...(isDragActive
             ? {
-                backgroundColor: '$blue100',
-                border: '1px solid $blue500',
+                backgroundColor: '$blue2',
+                border: '1px solid $blue6',
               }
             : {}),
         }}
         {...getRootProps()}
       >
-        <Subheading>
+        <Heading size="1">
           Upload {directoryMode ? 'a directory' : 'files'}
-        </Subheading>
+        </Heading>
         <Container size="1">
           <Text
             size="3"
             css={{
-              color: '$gray900',
+              color: '$gray11',
               margin: '$1 0 $3',
               lineHeight: '22px',
             }}
@@ -387,17 +387,23 @@ export function Uploader({
             <Flex css={{ gap: '$2' }}>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(false)}>
                 <Text>files</Text>
-                <Radio value="files" css={{ border: 'none' }} />
+                <Radio
+                  value="files"
+                  css={{ border: 'none', backgroundColor: 'transparent' }}
+                />
               </Flex>
               <Flex css={{ gap: '$1' }} onClick={() => setDirectoryMode(true)}>
                 <Text>directory</Text>
-                <Radio value="directory" css={{ border: 'none' }} />
+                <Radio
+                  value="directory"
+                  css={{ border: 'none', backgroundColor: 'transparent' }}
+                />
               </Flex>
             </Flex>
           </RadioGroup>
         </Flex>
       </Flex>
-      <Input {...getInputProps()} />
+      <TextField {...getInputProps()} />
     </Box>
   )
 }

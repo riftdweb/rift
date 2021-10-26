@@ -1,6 +1,4 @@
-type Item = {
-  id: string
-}
+type Item = {}
 
 export const mergeItem = <T extends Item>(
   col: T[],

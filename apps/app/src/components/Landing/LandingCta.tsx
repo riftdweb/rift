@@ -5,13 +5,23 @@ export function LandingCta() {
   const { login } = useSkynet()
 
   return (
-    <Flex css={{ flexDirection: 'column', gap: '$2', textAlign: 'center' }}>
+    <Flex css={{ flexDirection: 'column', gap: '$3', textAlign: 'center' }}>
       <Box>
         <Button size="2" onClick={() => login()} css={{ cursor: 'pointer' }}>
           Get started with a Skynet identity
         </Button>
       </Box>
-      <Text css={{ color: '$gray900' }}>
+      <Text
+        size="3"
+        css={{
+          color: '$gray11',
+          fontSize: '$1',
+          lineHeight: '16px',
+          '@bp2': {
+            fontSize: '$3',
+          },
+        }}
+      >
         No email, personal information, or cryptocurrency required. Encrypted
         and private.
       </Text>

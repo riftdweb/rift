@@ -1,14 +1,13 @@
-import { Box, Input } from '@riftdweb/design-system'
+import { Box, TextField } from '@riftdweb/design-system'
 import { useDrop } from '@riftdweb/core'
 
 type Props = {
   directoryPath?: string
-  filePath?: string
   children: React.ReactNode
   css?: {}
 }
 
-export function Drop({ directoryPath, filePath, css, children }: Props) {
+export function Drop({ directoryPath, css, children }: Props) {
   const { getRootProps, getInputProps, isDragActive } = useDrop(directoryPath)
 
   const props = getRootProps()
@@ -24,9 +23,9 @@ export function Drop({ directoryPath, filePath, css, children }: Props) {
           left: 0,
           width: '100%',
           height: '100%',
-          ...(isDragActive
+          ...(directoryPath && isDragActive
             ? {
-                backgroundColor: '$blue200',
+                backgroundColor: '$blue3',
               }
             : {}),
         }}
@@ -42,15 +41,15 @@ export function Drop({ directoryPath, filePath, css, children }: Props) {
           height: '100%',
           border: '3px solid transparent',
           borderRadius: '2px',
-          ...(isDragActive
+          ...(directoryPath && isDragActive
             ? {
-                border: '3px solid $blue700',
+                border: '3px solid $blue8',
               }
             : {}),
         }}
       />
       {children}
-      <Input {...getInputProps()} />
+      <TextField {...getInputProps()} />
     </Box>
   )
 }

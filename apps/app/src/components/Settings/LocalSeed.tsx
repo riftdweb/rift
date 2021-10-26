@@ -88,14 +88,14 @@ export function LocalSeed() {
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Heading
           css={{
-            borderBottom: '1px solid $gray300',
+            borderBottom: '1px solid $gray4',
             paddingBottom: '$2',
             marginBottom: '$2',
           }}
         >
           Local seed
         </Heading>
-        <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
+        <Paragraph css={{ color: '$gray11', fontSize: '$3' }}>
           Using Rift without a MySky indentity saves App data to a locally
           cached seed.{' '}
           {myUserId && 'Log out of MySky to switch back to this data.'}

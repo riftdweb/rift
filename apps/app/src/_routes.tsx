@@ -6,7 +6,7 @@ const Home = lazy(() => import('./pages/Home'))
 const SocialProfile = lazy(() => import('./pages/SocialProfile'))
 const FeedInsights = lazy(() => import('./pages/FeedInsights'))
 const Skyfiles = lazy(() => import('./pages/Skyfiles'))
-// const Files = lazy(() => import('../pages/Files'))
+const Files = lazy(() => import('./pages/Files'))
 const Docs = lazy(() => import('./pages/Docs'))
 const Data = lazy(() => import('./pages/Data'))
 const Dns = lazy(() => import('./pages/Dns'))
@@ -28,12 +28,12 @@ export function AppRoutes() {
       <Route path="/uploads">
         <Skyfiles />
       </Route>
-      {/* <Route path="/files/*">
-                <Files />
-              </Route>
-              <Route path="/files">
-                <Files />
-              </Route> */}
+      <Route path="/files/*">
+        <Files />
+      </Route>
+      <Route path="/files">
+        <Files />
+      </Route>
       <Route path={`${DATA_MYSKY_BASE_PATH}/:viewingUserId/:domainName/*`}>
         <Data />
       </Route>

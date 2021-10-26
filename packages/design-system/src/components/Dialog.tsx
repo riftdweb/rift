@@ -1,19 +1,16 @@
 import React from 'react';
-import { styled } from '../stitches.config';
+import { styled, CSS } from '../stitches.config';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { overlayStyles } from './Overlay';
 import { panelStyles } from './Panel';
 import { IconButton } from './IconButton';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
 type DialogProps = React.ComponentProps<typeof DialogPrimitive.Root> & {
   children: React.ReactNode;
 };
 
-const StyledOverlay = styled(DialogPrimitive.Overlay, {
-  ...overlayStyles,
+const StyledOverlay = styled(DialogPrimitive.Overlay, overlayStyles, {
   position: 'fixed',
   top: 0,
   right: 0,
@@ -30,8 +27,7 @@ export function Dialog({ children, ...props }: DialogProps) {
   );
 }
 
-const StyledContent = styled(DialogPrimitive.Content, {
-  ...panelStyles,
+const StyledContent = styled(DialogPrimitive.Content, panelStyles, {
   position: 'fixed',
   top: '50%',
   left: '50%',
@@ -51,29 +47,30 @@ const StyledContent = styled(DialogPrimitive.Content, {
   },
 });
 
-const StyledCloseButton = styled(IconButton, {
+const StyledCloseButton = styled(DialogPrimitive.Close, {
   position: 'absolute',
   top: '$2',
   right: '$2',
 });
 
-type DialogContentOwnProps = Polymorphic.OwnProps<typeof DialogPrimitive.Content> & {
-  css?: any;
-};
+type DialogContentPrimitiveProps = React.ComponentProps<typeof DialogPrimitive.Content>;
+type DialogContentProps = DialogContentPrimitiveProps & { css?: CSS };
 
-type DialogContentComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof DialogPrimitive.Content>,
-  DialogContentOwnProps
->;
-
-export const DialogContent = React.forwardRef(({ children, ...props }, forwardedRef) => (
+export const DialogContent = React.forwardRef<
+  React.ElementRef<typeof StyledContent>,
+  DialogContentProps
+>(({ children, ...props }, forwardedRef) => (
   <StyledContent {...props} ref={forwardedRef}>
     {children}
-    <DialogPrimitive.Close as={StyledCloseButton} variant="ghost">
-      <Cross1Icon />
-    </DialogPrimitive.Close>
+    <StyledCloseButton asChild>
+      <IconButton variant="ghost">
+        <Cross1Icon />
+      </IconButton>
+    </StyledCloseButton>
   </StyledContent>
-)) as DialogContentComponent;
+));
 
 export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
+export const DialogTitle = DialogPrimitive.Title;
+export const DialogDescription = DialogPrimitive.Description;

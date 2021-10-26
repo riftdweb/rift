@@ -3,7 +3,7 @@ import { ExternalLinkIcon, PersonIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -32,9 +32,9 @@ const pulse = keyframes({
 })
 
 type Props = {
-  variant?: ButtonVariants['variant']
+  variant?: ButtonVariant
   right?: string
-  size?: string
+  size?: '1' | '2'
 }
 
 export function IdentityContextMenu({
@@ -51,31 +51,32 @@ export function IdentityContextMenu({
     return (
       <DropdownMenu onOpenChange={setIsOpen}>
         <Tooltip align="end" content="Log in with Skynet">
-          <DropdownMenuTrigger
-            as={Button}
-            variant={variant}
-            size={size}
-            css={{
-              right,
-              position: 'relative',
-            }}
-          >
-            <RocketIcon />
-            {!isOpen && (
-              <Box
-                css={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  backgroundColor: '$violet900',
-                  borderRadius: '$round',
-                  height: '8px',
-                  width: '8px',
-                  animation: `${pulse} 2s infinite`,
-                  willChange: 'transform',
-                }}
-              />
-            )}
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={variant}
+              size={size}
+              css={{
+                right,
+                position: 'relative',
+              }}
+            >
+              <RocketIcon />
+              {!isOpen && (
+                <Box
+                  css={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    backgroundColor: '$violet10',
+                    borderRadius: '$round',
+                    height: '8px',
+                    width: '8px',
+                    animation: `${pulse} 2s infinite`,
+                    willChange: 'transform',
+                  }}
+                />
+              )}
+            </Button>
           </DropdownMenuTrigger>
         </Tooltip>
         <DropdownMenuContent align="end">
@@ -89,7 +90,7 @@ export function IdentityContextMenu({
                   position: 'absolute',
                   top: '5px',
                   right: '5px',
-                  backgroundColor: '$violet900',
+                  backgroundColor: '$violet10',
                   borderRadius: '$round',
                   height: '8px',
                   width: '8px',
@@ -108,29 +109,31 @@ export function IdentityContextMenu({
     <DropdownMenu>
       <Tooltip align="end" content="Open MySky menu">
         {!myUser ? (
-          <DropdownMenuTrigger
-            as={Button}
-            variant={variant}
-            size={size}
-            css={{
-              right,
-              position: 'relative',
-            }}
-          >
-            <PersonIcon />
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={variant}
+              size={size}
+              css={{
+                right,
+                position: 'relative',
+              }}
+            >
+              <PersonIcon />
+            </Button>
           </DropdownMenuTrigger>
         ) : (
-          <DropdownMenuTrigger
-            as={Button}
-            css={{
-              boxShadow: 'none',
-              padding: 0,
-              '&:active, &:hover, &:focus': {
+          <DropdownMenuTrigger asChild>
+            <Button
+              css={{
                 boxShadow: 'none',
-              },
-            }}
-          >
-            <Avatar userId={myUserId} profile={myUser.profile.data} />
+                padding: 0,
+                '&:active, &:hover, &:focus': {
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              <Avatar userId={myUserId} profile={myUser.profile.data} />
+            </Button>
           </DropdownMenuTrigger>
         )}
       </Tooltip>
@@ -151,7 +154,7 @@ export function IdentityContextMenu({
             textDecoration: 'none !important',
             cursor: 'pointer',
             '&:hover': {
-              backgroundColor: '$blue800',
+              backgroundColor: '$blue9',
             },
             '&:hover > div': {
               color: 'white',
@@ -160,7 +163,7 @@ export function IdentityContextMenu({
         >
           Edit profile
           <Box
-            css={{ color: '$gray900', '&:hover': { color: 'white' }, ml: '$1' }}
+            css={{ color: '$gray11', '&:hover': { color: 'white' }, ml: '$1' }}
           >
             <ExternalLinkIcon />
           </Box>

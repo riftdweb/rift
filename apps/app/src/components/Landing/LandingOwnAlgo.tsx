@@ -4,7 +4,7 @@ import {
   Image,
   Paragraph,
   Text,
-  Title,
+  Heading,
 } from '@riftdweb/design-system'
 import { CarouselTags, useCarousel } from './Carousel'
 import { Fragment } from 'react'
@@ -29,7 +29,9 @@ export function LandingOwnAlgo() {
     <Fragment>
       <Box css={{ flex: 1 }}>
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <Title css={{ fontSize: '$8' }}>Own your algorithms</Title>
+          <Heading size="4" css={{ fontSize: '$8' }}>
+            Own your algorithms
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               The importance of user-owned data also extends to data processing.

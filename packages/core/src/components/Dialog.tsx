@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   Dialog as DsDialog,
   DialogContent,
   DialogTrigger,
@@ -51,7 +51,7 @@ type Props = {
   triggerAs?: any
   triggerElement: React.ReactNode
   triggerSize?: string
-  triggerVariant?: ButtonVariants['variant']
+  triggerVariant?: ButtonVariant
   children: React.ReactNode
   isOpen: boolean
   openDialog: () => void
@@ -70,27 +70,32 @@ export function Dialog({
   isOpen,
   children,
 }: Props) {
+  const Trigger = triggerAs
   return (
     <DsDialog open={isOpen} onOpenChange={setDialog}>
       {content ? (
         <Tooltip align="end" content={content}>
-          <DialogTrigger
-            size={triggerSize}
-            variant={triggerVariant}
-            as={triggerAs}
-            onClick={openDialog}
-          >
-            {triggerElement}
+          <DialogTrigger asChild>
+            <Trigger
+              size={triggerSize}
+              variant={triggerVariant}
+              ghost={!triggerVariant}
+              as={triggerAs}
+              onClick={openDialog}
+            >
+              {triggerElement}
+            </Trigger>
           </DialogTrigger>
         </Tooltip>
       ) : (
-        <DialogTrigger
-          size={triggerSize}
-          variant={triggerVariant}
-          as={triggerAs}
-          onClick={openDialog}
-        >
-          {triggerElement}
+        <DialogTrigger asChild>
+          <Trigger
+            size={triggerSize}
+            variant={triggerVariant}
+            onClick={openDialog}
+          >
+            {triggerElement}
+          </Trigger>
         </DialogTrigger>
       )}
       <DialogContent

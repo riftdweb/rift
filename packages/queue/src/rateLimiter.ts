@@ -8,24 +8,28 @@ type Params = {
   capacity?: number
   processingInterval?: number
   ratePerMinute?: number
+  disableLogger?: boolean
 }
 
 const defaultParams = {
   capacity: 30,
   processingInterval: 2_000,
   ratePerMinute: 60,
+  disableLogger: false,
 }
 
 export function RateLimiter<T>(
   name: string,
   params: Params = {}
 ): ITaskQueue<T> {
-  const { capacity, processingInterval, ratePerMinute } = {
+  const { capacity, processingInterval, ratePerMinute, disableLogger } = {
     ...defaultParams,
     ...params,
   }
 
-  const log = createLogger(`${name}/Limiter`)
+  const log = createLogger(`${name}/Limiter`, {
+    disable: disableLogger,
+  })
 
   // queue
   const queue: Task<any>[] = []

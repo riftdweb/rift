@@ -10,6 +10,7 @@
     "build:bots": "yarn packages:build && manypkg run @riftdweb/bots build",
     "format": "prettier --write './**/src/**/*.{ts,tsx}'",
     "format:app": "prettier --write 'apps/app/src/**/*.{ts,tsx}'",
+    "lint:core": "eslint 'packages/core/src/**/*.{ts,tsx}'",
     "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
     "fresh": "yarn clean && yarn",
     "analyze": "source-map-explorer apps/app/build/static/js/*.js",
@@ -30,8 +31,23 @@
     "@changesets/cli": "^2.16.0",
     "@manypkg/cli": "^0.17.0",
     "@preconstruct/cli": "^2.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^7.11.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-testing-library": "^3.9.2",
     "prettier": "^2.2.1",
     "source-map-explorer": "^2.5.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "preconstruct": {
     "packages": [

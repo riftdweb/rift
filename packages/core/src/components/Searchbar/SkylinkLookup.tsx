@@ -7,7 +7,7 @@ export function SkylinkLookup({ searchValue }) {
     <Flex css={{ flexDirection: 'column', gap: '$2', padding: '$1 $3 $2 $3' }}>
       <Text
         css={{
-          color: '$gray900',
+          color: '$gray11',
           fontWeight: '600',
           flex: 1,
         }}
@@ -15,7 +15,7 @@ export function SkylinkLookup({ searchValue }) {
         Skylink
       </Text>
       {!searchValue ? (
-        <Text css={{ color: '$gray800' }}>
+        <Text css={{ color: '$gray10' }}>
           Enter a skylink to view file details.
         </Text>
       ) : (

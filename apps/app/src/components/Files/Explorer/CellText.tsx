@@ -1,23 +1,71 @@
-import { Box, Text } from '@riftdweb/design-system'
+import { Flex, Box, Text, Tooltip } from '@riftdweb/design-system'
 
 type Props = {
   css?: {}
   textCss?: {}
+  onClick?: () => void
+  icon?: React.ReactNode
+  iconContent?: string
+  active?: boolean
+  flex?: number
   children?: React.ReactNode
 }
 
-export function CellText({ css, textCss, children }: Props) {
+const activeColor = '$hiContrast'
+const inactiveColor = '$gray11'
+
+function getColor(active: boolean) {
+  return active ? activeColor : inactiveColor
+}
+
+export function CellText({
+  onClick,
+  css,
+  textCss,
+  active,
+  children,
+  flex = 1,
+  icon,
+  iconContent,
+}: Props) {
   return (
-    <Box
+    <Flex
+      onClick={onClick}
       css={{
-        flex: 1,
+        flex,
+        alignItems: 'center',
+        gap: '$1',
         overflow: 'hidden',
         ...css,
       }}
     >
+      {icon &&
+        (iconContent ? (
+          <Tooltip content={iconContent}>
+            <Box
+              css={{
+                position: 'relative',
+                top: '2px',
+                color: getColor(active),
+              }}
+            >
+              {icon}
+            </Box>
+          </Tooltip>
+        ) : (
+          <Box
+            css={{
+              position: 'relative',
+              top: '2px',
+              color: getColor(active),
+            }}
+          >
+            {icon}
+          </Box>
+        ))}
       <Text
         css={{
-          color: '$gray900',
+          color: getColor(active),
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
@@ -27,6 +75,6 @@ export function CellText({ css, textCss, children }: Props) {
       >
         {children}
       </Text>
-    </Box>
+    </Flex>
   )
 }

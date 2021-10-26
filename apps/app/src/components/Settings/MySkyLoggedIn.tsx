@@ -51,7 +51,7 @@ export function MySkyLoggedIn() {
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Heading
           css={{
-            borderBottom: '1px solid $gray300',
+            borderBottom: '1px solid $gray4',
             paddingBottom: '$2',
             marginBottom: '$2',
           }}
@@ -59,7 +59,7 @@ export function MySkyLoggedIn() {
           MySky
         </Heading>
         <Flex css={{ alignItems: 'center', gap: '$2' }}>
-          <Text css={{ color: '$gray900' }}>Currently logged in as</Text>
+          <Text css={{ color: '$gray11' }}>Currently logged in as</Text>
           <User userId={myUserId} />
         </Flex>
         {DATA_PRIVATE_FEATURES && (

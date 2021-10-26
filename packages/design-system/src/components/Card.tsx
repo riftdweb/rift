@@ -1,20 +1,11 @@
-import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
+import { styled } from '../stitches.config';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
-const DEFAULT_TAG = 'div';
-
-type CardCSSProp = { css?: CSS };
-type CardVariants = StitchesVariants<typeof StyledCard>;
-type CardOwnProps = CardCSSProp & CardVariants;
-
-const StyledCard = styled(DEFAULT_TAG, {
+export const Card = styled('div', {
   appearance: 'none',
   border: 'none',
   boxSizing: 'border-box',
   font: 'inherit',
-  lineheight: '1',
+  lineHeight: '1',
   outline: 'none',
   padding: 0,
   textAlign: 'inherit',
@@ -54,7 +45,7 @@ const StyledCard = styled(DEFAULT_TAG, {
         },
         '&:focus': {
           '&::before': {
-            boxShadow: 'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
+            boxShadow: 'inset 0 0 0 1px $colors$blue8, 0 0 0 1px $colors$blue8',
           },
         },
       },
@@ -87,7 +78,7 @@ const StyledCard = styled(DEFAULT_TAG, {
           },
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
+          boxShadow: 'inset 0 0 0 1px $colors$blue8, 0 0 0 1px $colors$blue8',
         },
       },
       active: {
@@ -99,15 +90,9 @@ const StyledCard = styled(DEFAULT_TAG, {
           opacity: '1',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
+          boxShadow: 'inset 0 0 0 1px $colors$blue8, 0 0 0 1px $colors$blue8',
         },
       },
     },
   },
 });
-
-type CardComponent = Polymorphic.ForwardRefComponent<typeof DEFAULT_TAG, CardOwnProps>;
-
-export const Card = React.forwardRef((props, forwardedRef) => {
-  return <StyledCard {...props} ref={forwardedRef} />;
-}) as CardComponent;

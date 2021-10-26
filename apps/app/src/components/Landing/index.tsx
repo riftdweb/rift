@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Title } from '@riftdweb/design-system'
+import { Box, Container, Flex, Heading } from '@riftdweb/design-system'
 import { LandingMain } from './LandingMain'
 import { LandingOwnData } from './LandingOwnData'
 import { LandingOwnAlgo } from './LandingOwnAlgo'
@@ -21,9 +21,9 @@ export function Landing() {
         </Container>
         <Container size="3" css={{ my: '$9' }}>
           <Flex css={{ flexDirection: 'column', gap: '$6' }}>
-            <Title css={{ fontSize: '$8', textAlign: 'center' }}>
+            <Heading size="3" css={{ textAlign: 'center' }}>
               Control your destiny
-            </Title>
+            </Heading>
             <LandingCta />
           </Flex>
         </Container>

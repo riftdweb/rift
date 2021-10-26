@@ -36,7 +36,7 @@ export function SocialProfile() {
               tooltipAlign="end"
               css={{ padding: 0 }}
             >
-              <Button variant="ghost" css={{ color: '$gray900' }}>
+              <Button ghost css={{ color: '$gray11' }}>
                 <Box css={{ mr: '$1' }}>
                   <ArrowLeftIcon />
                 </Box>

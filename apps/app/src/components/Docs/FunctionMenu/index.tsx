@@ -17,7 +17,7 @@ function Header({ name, children }: HeaderProps) {
         margin: '$2 $2 $2',
       }}
     >
-      <Text css={{ color: '$gray700' }}>{name}</Text>
+      <Text css={{ color: '$gray8' }}>{name}</Text>
       {children}
     </Flex>
   )
@@ -39,7 +39,7 @@ export function FunctionMenu() {
         <Flex css={{ flexDirection: 'column' }}>
           <Header name="Blocks">
             <Button
-              size="0"
+              size="1"
               onClick={() => setMenuMode(menuMode === 'kbd' ? 'md' : 'kbd')}
             >
               {menuMode === 'kbd' ? 'Keyboard' : 'Markdown'}

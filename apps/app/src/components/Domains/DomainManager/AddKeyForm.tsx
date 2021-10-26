@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
@@ -119,7 +119,7 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
             <Flex css={{ flexDirection: 'column', gap: '$2' }}>
               <Flex>
                 {formik.errors.key && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.key}
                   </Text>
                 )}
@@ -134,15 +134,15 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
                     : treeNode.fullKey}
                   /
                 </Button>
-                <Input
+                <TextField
                   name="key"
                   value={formik.values.key}
                   onChange={(e) => setNewKey(e.target.value)}
-                  size="3"
+                  size="2"
                   placeholder="path.json"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
                   }}
                 />
               </ControlGroup>
@@ -150,7 +150,7 @@ export function AddKeyForm({ treeNode, closeDialog }: Props) {
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-          <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
+          <Button size="2" ghost type="button" onClick={closeDialog}>
             Cancel
           </Button>
           <Button size="2" type="submit" disabled={!formik.isValid}>

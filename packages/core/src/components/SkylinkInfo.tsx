@@ -33,9 +33,9 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
     return (
       rawSkylink &&
       !skylink && (
-        <Flex css={{ gap: '$2', alignItems: 'center', color: '$gray900' }}>
+        <Flex css={{ gap: '$2', alignItems: 'center', color: '$gray11' }}>
           <ExclamationTriangleIcon />
-          <Text css={{ color: '$gray900', top: '-1px', position: 'relative' }}>
+          <Text css={{ color: '$gray11', top: '-1px', position: 'relative' }}>
             Invalid Skylink
           </Text>
         </Flex>
@@ -70,7 +70,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
             {data.metadata.filename}
           </Link>
           <Flex css={{ marginRight: '-10px' }}>
-            <Button<any> as="a" variant="ghost" href={weblink} target="_blank">
+            <Button<any> as="a" ghost href={weblink} target="_blank">
               <ExternalLinkIcon />
             </Button>
             <SkylinkContextMenu skylink={skylink} />
@@ -84,7 +84,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              color: '$gray800',
+              color: '$gray10',
             }}
           >
             {isDirectory
@@ -92,29 +92,27 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
               : 'File'}
           </Text>
           <Fragment>
-            <Text size="1" css={{ color: '$gray800' }}>
+            <Text size="1" css={{ color: '$gray10' }}>
               {isV2 ? 'Resolver skylink' : 'Data skylink'}
             </Text>
-            <Text size="1" css={{ color: '$gray800' }}>
+            <Text size="1" css={{ color: '$gray10' }}>
               •
             </Text>
           </Fragment>
-          <Text size="1" css={{ color: '$gray800' }}>
+          <Text size="1" css={{ color: '$gray10' }}>
             {contentType}
           </Text>
-          <Text size="1" css={{ color: '$gray800' }}>
+          <Text size="1" css={{ color: '$gray10' }}>
             •
           </Text>
-          <Text size="1" css={{ color: '$gray800' }}>
+          <Text size="1" css={{ color: '$gray10' }}>
             {size}
           </Text>
-          <Text size="1" css={{ color: '$gray800' }}>
+          <Text size="1" css={{ color: '$gray10' }}>
             •
           </Text>
           {health.isEnabled && isCheckingHealth && (
-            <Box
-              css={{ color: healthStatus ? healthStatus.color : '$gray800' }}
-            >
+            <Box css={{ color: healthStatus ? healthStatus.color : '$gray10' }}>
               <SpinnerIcon size="12" />
             </Box>
           )}
@@ -139,7 +137,7 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
             <Text
               size="1"
               css={{
-                color: '$gray800',
+                color: '$gray10',
               }}
             >
               Checking health
@@ -148,13 +146,13 @@ export function SkylinkInfo({ skylink: rawSkylink }: Props) {
         </Flex>
       </Flex>
     ) : isValidating ? (
-      <Box css={{ color: '$gray900' }}>
+      <Box css={{ color: '$gray11' }}>
         <SpinnerIcon />
       </Box>
     ) : (
-      <Flex css={{ gap: '$2', alignItems: 'center', color: '$gray900' }}>
+      <Flex css={{ gap: '$2', alignItems: 'center', color: '$gray11' }}>
         <ExclamationTriangleIcon />
-        <Text css={{ color: '$gray900', top: '-1px', position: 'relative' }}>
+        <Text css={{ color: '$gray11', top: '-1px', position: 'relative' }}>
           Error loading Skyfile
         </Text>
       </Flex>
@@ -177,7 +175,7 @@ function getHealthStatus(
 } {
   if (isPending && redundancy >= excellent) {
     return {
-      color: '$green900',
+      color: '$green10',
       label: 'Excellent health',
       redundancy,
       isPending,
@@ -185,7 +183,7 @@ function getHealthStatus(
   }
   if (isPending && redundancy >= good) {
     return {
-      color: '$green900',
+      color: '$green10',
       label: 'At least good health',
       redundancy,
       isPending,
@@ -193,7 +191,7 @@ function getHealthStatus(
   }
   if (isPending) {
     return {
-      color: '$gray800',
+      color: '$gray10',
       label: 'Checking health',
       redundancy,
       isPending,
@@ -202,7 +200,7 @@ function getHealthStatus(
 
   if (redundancy >= excellent) {
     return {
-      color: '$green900',
+      color: '$green10',
       label: 'Excellent health',
       redundancy,
       isPending,
@@ -210,7 +208,7 @@ function getHealthStatus(
   }
   if (redundancy >= good) {
     return {
-      color: '$green900',
+      color: '$green10',
       label: 'Good health',
       redundancy,
       isPending,
@@ -218,14 +216,14 @@ function getHealthStatus(
   }
   if (redundancy >= poor) {
     return {
-      color: '$red900',
+      color: '$red10',
       label: `Poor health (${redundancy})`,
       redundancy,
       isPending,
     }
   }
   return {
-    color: '$red900',
+    color: '$red10',
     label: `Health at risk (${redundancy})`,
     redundancy,
     isPending,

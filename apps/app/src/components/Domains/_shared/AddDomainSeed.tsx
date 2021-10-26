@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Paragraph,
   Text,
   Tooltip,
@@ -86,23 +86,23 @@ export function AddDomainSeed({ closeDialog }: Props) {
       >
         <Box>
           <Flex css={{ flexDirection: 'column', gap: '$3' }}>
-            <Paragraph css={{ color: '$gray900' }}>
+            <Paragraph css={{ color: '$gray11' }}>
               Add a data domain manually via explicit seed.
             </Paragraph>
             <Flex css={{ flexDirection: 'column', gap: '$2' }}>
               <Flex>
                 <Text>Name</Text>
                 {formik.errors.name && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.name}
                   </Text>
                 )}
               </Flex>
-              <Input
+              <TextField
                 name="name"
                 value={formik.values.name}
                 onChange={formik.handleChange}
-                size="3"
+                size="2"
                 placeholder="human readable name"
               />
             </Flex>
@@ -110,21 +110,21 @@ export function AddDomainSeed({ closeDialog }: Props) {
               <Flex>
                 <Text>Seed</Text>
                 {formik.errors.parentSeed && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.parentSeed}
                   </Text>
                 )}
               </Flex>
               <ControlGroup>
-                <Input
+                <TextField
                   name="parentSeed"
                   value={formik.values.parentSeed}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="Seed value"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
                   }}
                 />
                 <Tooltip content="Generate random seed">
@@ -143,22 +143,20 @@ export function AddDomainSeed({ closeDialog }: Props) {
               <Flex>
                 <Text>Child seed</Text>
                 {formik.errors.childSeed ? (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.childSeed}
                   </Text>
                 ) : (
-                  <Text
-                    css={{ color: '$gray900', flex: 1, textAlign: 'right' }}
-                  >
+                  <Text css={{ color: '$gray11', flex: 1, textAlign: 'right' }}>
                     Optional
                   </Text>
                 )}
               </Flex>
-              <Input
+              <TextField
                 name="childSeed"
                 value={formik.values.childSeed}
                 onChange={formik.handleChange}
-                size="3"
+                size="2"
                 placeholder="Child seed, eg: 'MyApp'"
               />
               {formik.errors.childSeed && (
@@ -168,7 +166,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-          <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
+          <Button size="2" ghost type="button" onClick={closeDialog}>
             Cancel
           </Button>
           <Button size="2" type="submit" disabled={!formik.isValid}>

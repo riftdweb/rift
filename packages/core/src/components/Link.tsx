@@ -22,7 +22,7 @@ export function Link({
   target,
   children,
   tooltipAlign,
-  variant = 'ghost',
+  variant,
   onClick,
   css,
   content,
@@ -36,6 +36,7 @@ export function Link({
       return (
         <Button
           variant={variant as any}
+          ghost={!variant}
           css={_css}
           as={RLink}
           to={to}
@@ -52,6 +53,7 @@ export function Link({
     return (
       <Button
         variant={variant as any}
+        ghost={!variant}
         css={_css}
         as={RLink}
         to={to}

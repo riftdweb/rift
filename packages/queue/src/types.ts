@@ -4,6 +4,7 @@ export type Params = {
   dropStrategy: 'earliest' | 'latest'
   processingInterval: number
   mode: 'normal' | 'dedupe'
+  disableLogger: boolean
 }
 
 export type TaskMeta = {

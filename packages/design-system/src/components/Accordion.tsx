@@ -3,21 +3,46 @@ import { styled, CSS } from '../stitches.config';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 
-import * as Polymorphic from '@radix-ui/react-polymorphic';
-
 const StyledAccordion = styled(AccordionPrimitive.Root, {});
 
+type AccordionPrimitiveProps = React.ComponentProps<typeof AccordionPrimitive.Root>;
+type AccordionProps = AccordionPrimitiveProps & { css?: CSS };
+
+export const Accordion = React.forwardRef<React.ElementRef<typeof StyledAccordion>, AccordionProps>(
+  ({ children, ...props }, forwardedRef) => (
+    <StyledAccordion
+      ref={forwardedRef}
+      {...props}
+      {...(props.type === 'single' ? { collapsible: true } : {})}
+    >
+      {children}
+    </StyledAccordion>
+  )
+);
+
 const StyledItem = styled(AccordionPrimitive.Item, {
-  borderTop: '1px solid $colors$slate500',
+  borderTop: '1px solid $colors$slate6',
 
   '&:last-of-type': {
-    borderBottom: '1px solid $colors$slate500',
+    borderBottom: '1px solid $colors$slate6',
   },
 });
 
-const StyledHeader = styled(AccordionPrimitive.Header, {});
+const StyledHeader = styled(AccordionPrimitive.Header, {
+  all: 'unset',
+});
 
-const StyledButton = styled(AccordionPrimitive.Button, {
+const StyledTrigger = styled(AccordionPrimitive.Trigger, {
+  all: 'unset',
+  boxSizing: 'border-box',
+  userSelect: 'none',
+  '&::before': {
+    boxSizing: 'border-box',
+  },
+  '&::after': {
+    boxSizing: 'border-box',
+  },
+
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -27,13 +52,13 @@ const StyledButton = styled(AccordionPrimitive.Button, {
 
   '@hover': {
     '&:hover': {
-      backgroundColor: '$slate100',
+      backgroundColor: '$slate2',
     },
   },
 
   '&:focus': {
     outline: 'none',
-    boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+    boxShadow: 'inset 0 0 0 1px $colors$slate8, 0 0 0 1px $colors$slate8',
   },
 
   svg: {
@@ -47,28 +72,24 @@ const StyledButton = styled(AccordionPrimitive.Button, {
   },
 });
 
-type AccordionButtonOwnProps = Polymorphic.OwnProps<typeof AccordionPrimitive.Button> & {
-  css?: any;
-};
+type AccordionTriggerPrimitiveProps = React.ComponentProps<typeof AccordionPrimitive.Trigger>;
+type AccordionTriggerProps = AccordionTriggerPrimitiveProps & { css?: CSS };
 
-type AccordionButtonComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof AccordionPrimitive.Button>,
-  AccordionButtonOwnProps
->;
-
-export const AccordionButton = React.forwardRef(({ children, ...props }, forwardedRef) => (
+export const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof StyledTrigger>,
+  AccordionTriggerProps
+>(({ children, ...props }, forwardedRef) => (
   <StyledHeader>
-    <StyledButton {...props} ref={forwardedRef}>
+    <StyledTrigger {...props} ref={forwardedRef}>
       {children}
       <ChevronDownIcon />
-    </StyledButton>
+    </StyledTrigger>
   </StyledHeader>
-)) as AccordionButtonComponent;
+));
 
-const StyledPanel = styled(AccordionPrimitive.Panel, {
+const StyledContent = styled(AccordionPrimitive.Content, {
   p: '$2',
 });
 
-export const Accordion = StyledAccordion;
 export const AccordionItem = StyledItem;
-export const AccordionPanel = StyledPanel;
+export const AccordionContent = StyledContent;

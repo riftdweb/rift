@@ -11,7 +11,7 @@ export function Status({ entry }: Props) {
       css={{
         position: 'relative',
         left: '-3px',
-        color: isPending ? '$gray700' : '$green700',
+        color: isPending ? '$gray8' : '$green8',
       }}
     >
       <Box>

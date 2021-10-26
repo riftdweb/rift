@@ -3,14 +3,14 @@ export const styles = {
     padding: '$2',
     color: '$hiContrast',
 
-    borderBottom: '2px solid $gray100',
+    borderBottom: '2px solid $gray2',
     '&:focus': {
       outline: 'none',
-      borderBottom: '2px solid $gray200',
+      borderBottom: '2px solid $gray2',
     },
 
     '.has-focus': {
-      borderLeft: '1px solid $blue400',
+      borderLeft: '1px solid $blue5',
       borderRadius: '3px',
     },
 
@@ -45,7 +45,7 @@ export const styles = {
     },
 
     code: {
-      backgroundColor: '$gray500',
+      backgroundColor: '$gray6',
       color: '#616161',
     },
 
@@ -113,13 +113,13 @@ export const styles = {
 
     blockquote: {
       paddingLeft: '1rem',
-      borderLeft: '2px solid $gray500',
+      borderLeft: '2px solid $gray6',
       borderRadius: '0 !important',
     },
 
     hr: {
       border: 'none',
-      borderTop: '2px solid $gray500',
+      borderTop: '2px solid $gray6',
       margin: '2rem 0',
     },
 

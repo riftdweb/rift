@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Image, Title } from '@riftdweb/design-system'
+import { Box, Container, Flex, Image, Heading } from '@riftdweb/design-system'
 import { CarouselTags, useCarousel } from './Carousel'
 import { Fragment } from 'react'
 import { LandingCta } from './LandingCta'
@@ -11,7 +11,7 @@ export function LandingMain() {
     },
     {
       title: 'File sharing',
-      image: 'uploads',
+      image: 'files',
     },
     {
       title: 'Social feeds',
@@ -26,19 +26,20 @@ export function LandingMain() {
   return (
     <Fragment>
       <Container size="3">
-        <Title
+        <Heading
+          size="4"
           css={{
             marginTop: '$5',
-            fontSize: '$8',
+            // fontSize: '$8',
             textAlign: 'center',
-            '@bp2': {
-              fontSize: '$9',
-            },
+            // '@bp2': {
+            //   fontSize: '$9',
+            // },
           }}
         >
           The Internet apps you depend on every day, reimagined as software you
           control.
-        </Title>
+        </Heading>
       </Container>
       <Flex
         css={{
@@ -56,7 +57,7 @@ export function LandingMain() {
         </Container>
         <Box
           css={{
-            borderBottom: '1px solid $gray500',
+            borderBottom: '1px solid $gray6',
             overflow: 'hidden',
             padding: '5px 0 0 0',
             '@bp2': {
@@ -74,15 +75,15 @@ export function LandingMain() {
                 },
                 '@bp2': {
                   height: '400px',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                  },
                 },
                 '@bp3': {
                   height: '500px',
                 },
                 transition: 'all 0.1s ease-in-out',
                 bottom: 0,
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                },
               }}
             >
               <Box

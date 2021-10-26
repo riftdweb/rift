@@ -3,6 +3,7 @@ import { IUser, UsersMap } from '@riftdweb/types'
 import { RefObject, useRef } from 'react'
 import { SWRResponse } from 'swr'
 import { Feed, ActivityFeed, EntryFeed } from '@riftdweb/types'
+import { FilesState } from '../files'
 import { Api } from './api'
 
 type TokenKey =
@@ -73,6 +74,7 @@ const controlRefDefaults = {
       setLoadingState: (state?: string) => void
     }
   },
+  files: {} as FilesState,
 }
 export type ControlRefDefaults = typeof controlRefDefaults
 export type ControlRef = RefObject<ControlRefDefaults>

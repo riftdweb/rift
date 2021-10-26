@@ -115,7 +115,7 @@ export function FeedItem({ entry, index }: Props) {
         borderRadius: '9px',
         border:
           new Date().getTime() - entry.post.ts < 1000 * 60 * 1
-            ? '2px solid $green400'
+            ? '2px solid $green5'
             : 'none',
       }}
     >
@@ -142,7 +142,7 @@ export function FeedItem({ entry, index }: Props) {
                 css={{
                   textAlign: 'center',
                   position: 'relative',
-                  color: '$gray800',
+                  color: '$gray10',
                   fontSize: '10px',
                 }}
               >
@@ -227,13 +227,13 @@ export function FeedItem({ entry, index }: Props) {
                     display: 'none',
                   },
                   margin: '0 $1',
-                  color: '$gray900',
+                  color: '$gray11',
                 }}
               >
                 <Link target="_blank" onClick={incrementCounters} href={link}>
                   <Box
                     css={{
-                      color: '$gray900',
+                      color: '$gray11',
                     }}
                   >
                     <Link1Icon />
@@ -260,7 +260,7 @@ export function FeedItem({ entry, index }: Props) {
                     css={{
                       ...textStyles,
                       fontSize: '$1',
-                      color: '$violet900',
+                      color: '$violet10',
                     }}
                   >
                     {hnsDomain}
@@ -285,7 +285,7 @@ export function FeedItem({ entry, index }: Props) {
                     css={{
                       ...textStyles,
                       fontSize: '$1',
-                      color: '$gray900',
+                      color: '$gray11',
                     }}
                   >
                     {hostname}

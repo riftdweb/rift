@@ -11,7 +11,7 @@ import {
   Code,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -129,21 +129,21 @@ export function AddDomainMySky({ closeDialog }: Props) {
               <Flex>
                 <Text>Data domain</Text>
                 {formik.errors.dataDomain && (
-                  <Text css={{ color: '$red900', flex: 1, textAlign: 'right' }}>
+                  <Text css={{ color: '$red10', flex: 1, textAlign: 'right' }}>
                     {formik.errors.dataDomain}
                   </Text>
                 )}
               </Flex>
               <ControlGroup>
-                <Input
+                <TextField
                   name="dataDomain"
                   value={formik.values.dataDomain}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="eg: feed-dac.hns"
                   css={{
                     boxShadow:
-                      'inset 0 0 0 1px var(--colors-blue500), inset 0 0 0 100px var(--colors-blue200) !important',
+                      'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
                   }}
                 />
                 {formik.isValidating ? (
@@ -154,13 +154,13 @@ export function AddDomainMySky({ closeDialog }: Props) {
                   </Tooltip>
                 ) : formik.errors.dataDomain ? (
                   <Tooltip align="end" content="No app found at HNS domain">
-                    <Button size="2" css={{ color: '$red900' }}>
+                    <Button size="2" css={{ color: '$red10' }}>
                       <ExclamationTriangleIcon />
                     </Button>
                   </Tooltip>
                 ) : (
                   <Tooltip align="end" content="App found at HNS domain">
-                    <Button size="2" css={{ color: '$green900' }}>
+                    <Button size="2" css={{ color: '$green10' }}>
                       <CheckIcon />
                     </Button>
                   </Tooltip>
@@ -170,7 +170,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
             {!formik.values.dataDomain && suggestedDomains.length && (
               <Flex
                 css={{
-                  color: '$gray900',
+                  color: '$gray11',
                   gap: '$1',
                   textAlign: 'center',
                   flexWrap: 'wrap',
@@ -180,7 +180,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                   css={{
                     position: 'relative',
                     top: '1px',
-                    color: '$gray900',
+                    color: '$gray11',
                   }}
                 >
                   Suggestions:
@@ -199,16 +199,16 @@ export function AddDomainMySky({ closeDialog }: Props) {
             {formik.values.dataDomain && !formik.errors.dataDomain && (
               <Box>
                 {isReadOnly ? (
-                  <Flex css={{ color: '$gray900', gap: '$1' }}>
+                  <Flex css={{ color: '$gray11', gap: '$1' }}>
                     <LockClosedIcon />
-                    <Text css={{ color: '$gray900' }}>
+                    <Text css={{ color: '$gray11' }}>
                       File permissions will be read-only
                     </Text>
                   </Flex>
                 ) : (
-                  <Flex css={{ color: '$gray900', gap: '$1' }}>
+                  <Flex css={{ color: '$gray11', gap: '$1' }}>
                     <Pencil2Icon />
-                    <Text css={{ color: '$gray900' }}>
+                    <Text css={{ color: '$gray11' }}>
                       File permissions will be read-write
                     </Text>
                   </Flex>
@@ -224,7 +224,9 @@ export function AddDomainMySky({ closeDialog }: Props) {
                     name="addDefaultPaths"
                     size="2"
                     checked={formik.values.addDefaultPaths}
-                    onCheckedChange={formik.handleChange}
+                    onCheckedChange={(checked) => {
+                      formik.setFieldValue('addDefaultPaths', checked, false)
+                    }}
                   />
                 </Flex>
                 <Code css={{ overflow: 'auto' }}>
@@ -239,7 +241,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-          <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
+          <Button size="2" ghost type="button" onClick={closeDialog}>
             Cancel
           </Button>
           <Button

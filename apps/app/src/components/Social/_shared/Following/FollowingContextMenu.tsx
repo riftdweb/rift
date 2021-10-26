@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -13,13 +13,13 @@ import { Link as RLink } from 'react-router-dom'
 import { useSkynet } from '@riftdweb/core'
 
 type Props = {
-  variant?: ButtonVariants['variant']
+  variant?: ButtonVariant
   right?: string
-  size?: string
+  size?: '1' | '2'
 }
 
 export function FollowingContextMenu({
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
 }: Props) {
@@ -27,20 +27,22 @@ export function FollowingContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open following menu">
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-            color: '$gray500',
-            '&:hover': {
-              color: '$gray900',
-            },
-          }}
-        >
-          <DotsHorizontalIcon />
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            ghost={!variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+              color: '$gray6',
+              '&:hover': {
+                color: '$gray11',
+              },
+            }}
+          >
+            <DotsHorizontalIcon />
+          </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">
@@ -52,7 +54,7 @@ export function FollowingContextMenu({
             textDecoration: 'none',
             cursor: 'pointer',
             '&:hover': {
-              backgroundColor: '$blue800',
+              backgroundColor: '$blue9',
             },
           }}
         >

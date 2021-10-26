@@ -23,16 +23,16 @@ export function Keyword({ value, stem, isHovering }: Props) {
   let intensity = null
 
   // if (score > 80) {
-  //   intensity = '$violet700'
+  //   intensity = '$violet8'
   // } else if (score > 40) {
-  //   intensity = '$violet600'
+  //   intensity = '$violet7'
   // } else if (score > 20) {
-  //   intensity = '$violet500'
+  //   intensity = '$violet6'
   // } else if (score > 10) {
-  //   intensity = '$violet400'
+  //   intensity = '$violet5'
   // } else if (score > 0) {
   if (score > 0) {
-    intensity = '$violet700'
+    intensity = '$violet8'
   }
 
   const noop = useCallback((e) => {
@@ -46,7 +46,7 @@ export function Keyword({ value, stem, isHovering }: Props) {
           ...textStyles,
           position: 'relative',
           borderRadius: '2px',
-          backgroundColor: intensity || (isHovering ? '$teal700' : 'none'),
+          backgroundColor: intensity || (isHovering ? '$teal8' : 'none'),
           transition: 'background-color 0.1s ease-out',
         }}
       >
@@ -61,8 +61,7 @@ export function Keyword({ value, stem, isHovering }: Props) {
                 right: '0px',
                 borderRadius: '2px',
                 padding: '2px 2px 0 2px',
-                backgroundColor:
-                  intensity || (isHovering ? '$teal700' : 'none'),
+                backgroundColor: intensity || (isHovering ? '$teal8' : 'none'),
               }}
             >
               <Text>{score}</Text>

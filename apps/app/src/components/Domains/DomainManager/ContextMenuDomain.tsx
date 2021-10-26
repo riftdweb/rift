@@ -1,12 +1,12 @@
-import { ButtonVariants, Flex } from '@riftdweb/design-system'
+import { ButtonVariant, Flex } from '@riftdweb/design-system'
 import { DomainContextMenu } from '../_shared/DomainContextMenu'
 import { AddKeyDialog } from './AddKeyDialog'
 import { TreeNodeDirectory } from './KeysTree/transformKeys'
 
 type Props = {
   treeNode: TreeNodeDirectory
-  variant?: ButtonVariants['variant']
-  size?: string
+  variant?: ButtonVariant
+  size?: '1' | '2'
   right?: string
   color?: string
   onOpenChange?: (val: boolean) => void
@@ -14,10 +14,10 @@ type Props = {
 
 export function ContextMenuDomain({
   treeNode,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
-  color = '$gray900',
+  color = '$gray11',
   onOpenChange,
 }: Props) {
   return (
@@ -29,17 +29,19 @@ export function ContextMenuDomain({
         onOpenChange={onOpenChange}
       />
       {/* <DropdownMenu onOpenChange={onOpenChange}>
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-            color,
-          }}
-        >
-          <DotsHorizontalIcon />
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            ghost={!variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+              color,
+            }}
+          >
+            <DotsHorizontalIcon />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Copy</DropdownMenuLabel>

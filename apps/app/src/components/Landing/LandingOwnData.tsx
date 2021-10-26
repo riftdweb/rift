@@ -4,7 +4,7 @@ import {
   Link,
   Paragraph,
   Text,
-  Title,
+  Heading,
 } from '@riftdweb/design-system'
 import { Fragment } from 'react'
 
@@ -13,7 +13,9 @@ export function LandingOwnData() {
     <Fragment>
       <Box>
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <Title css={{ fontSize: '$8' }}>Own your data</Title>
+          <Heading size="4" css={{ fontSize: '$8' }}>
+            Own your data
+          </Heading>
           <Paragraph>
             <Text
               css={{
@@ -32,7 +34,7 @@ export function LandingOwnData() {
               css={{
                 display: 'inline',
                 borderRadius: '2px',
-                backgroundColor: '$pink900',
+                backgroundColor: '$pink10',
                 color: '$loContrast',
                 padding: '3px 1px',
               }}
@@ -43,7 +45,7 @@ export function LandingOwnData() {
                 css={{
                   fontWeight: '600',
                   display: 'inline',
-                  backgroundColor: '$pink900',
+                  backgroundColor: '$pink10',
                   fontStyle: 'italic',
                   color: '$loContrast',
                 }}
@@ -63,7 +65,7 @@ export function LandingOwnData() {
               css={{
                 display: 'inline',
                 borderRadius: '2px',
-                backgroundColor: '$pink900',
+                backgroundColor: '$pink10',
                 color: '$loContrast',
                 padding: '3px 1px',
               }}
@@ -78,8 +80,8 @@ export function LandingOwnData() {
               </Link>
               {', '}a new Internet protocol where no single app or corporation
               directly controls your data. Apps request permission and then
-              access your data from a fully encrypted and decentralized
-              filesystem that only you control!
+              access your data from a fully encrypted and decentralized file
+              system that only you control!
             </Text>
           </Paragraph>
         </Flex>
@@ -93,7 +95,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Permissionless</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Permissionless
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               Rift and Skynet are permissionless and self-sovereign - anyone can
@@ -111,11 +115,13 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Private</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Private
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               When signed in to Rift, all metadata and files are encrypted and
-              stored in your personal filesystem on the Skynet network. Certain
+              stored in your personal file system on the Skynet network. Certain
               data such as a your profile and feed are intentionally made public
               but beyond this everything is encrypted and private by default.
             </Text>
@@ -131,7 +137,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Open</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Open
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               In addition to storing all data in a private space, Rift runs on
@@ -152,7 +160,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Decentralized</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Decentralized
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               Rift is built as a pure Skynet app, meaning its only dependency is

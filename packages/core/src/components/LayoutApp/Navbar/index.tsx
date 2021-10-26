@@ -46,7 +46,7 @@ export function Navbar() {
   )
 
   return (
-    <Box css={{ borderBottom: '1px solid $gray200' }}>
+    <Box css={{ borderBottom: '1px solid $gray3' }}>
       <Container size="4">
         <Flex css={{ py: '$3', alignItems: 'center', gap: '$1' }}>
           <Box
@@ -98,7 +98,7 @@ export function Navbar() {
               },
             }}
           >
-            <Flex css={{ gap: '$1', color: '$gray600', position: 'relative' }}>
+            <Flex css={{ gap: '$1', color: '$gray7', position: 'relative' }}>
               <ControlGroup
                 css={{
                   display: 'none',
@@ -111,8 +111,10 @@ export function Navbar() {
                   <PlusIcon />
                 </Link>
                 <DropdownMenu>
-                  <DropdownMenuTrigger as={Button}>
-                    <TriangleDownIcon />
+                  <DropdownMenuTrigger asChild>
+                    <Button>
+                      <TriangleDownIcon />
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem

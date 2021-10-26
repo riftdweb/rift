@@ -11,6 +11,8 @@ type Props = {
   width?: string
   showName?: boolean
   size?: '1' | '2' | '3'
+  fontSize?: '3' | '4'
+  to?: string
   avatarColor?: string
   css?: {}
   textCss?: {}
@@ -20,8 +22,10 @@ export function User({
   userId,
   onClick,
   size = '2',
+  fontSize = '3',
   width = '200px',
   showName = false,
+  to,
   avatarColor,
   textCss,
   css,
@@ -59,7 +63,7 @@ export function User({
             textDecoration: 'none',
           },
         }}
-        to={`/users/${userId}`}
+        to={to || `/users/${userId}`}
       >
         <Flex
           css={{
@@ -67,14 +71,20 @@ export function User({
           }}
         >
           {profile?.data?.username ? (
-            <Text>{profile?.data?.username}</Text>
+            <Text css={{ fontSize: `$${fontSize}` }}>
+              {profile?.data?.username}
+            </Text>
           ) : (
-            <Text>{`${userId.slice(0, 5)}...`}</Text>
+            <Text css={{ fontSize: `$${fontSize}` }}>{`${userId.slice(
+              0,
+              5
+            )}...`}</Text>
           )}
           {showName && profile?.data?.firstName && (
             <Text
               css={{
-                color: '$gray800 !important',
+                color: '$gray10 !important',
+                fontSize: `$${fontSize}`,
                 display: 'none',
                 '@bp1': {
                   display: 'inline',

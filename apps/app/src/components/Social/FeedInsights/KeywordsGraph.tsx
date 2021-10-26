@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
 } from '@riftdweb/design-system'
 import { localPoint } from '@visx/event'
@@ -117,7 +117,7 @@ export function KeywordsGraph({ width, height }: Props) {
   return (
     <Box css={{ position: 'relative' }}>
       <ControlGroup css={{ marginBottom: '$2' }}>
-        <Input
+        <TextField
           placeholder="Search keywords"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
@@ -143,8 +143,8 @@ export function KeywordsGraph({ width, height }: Props) {
                 height={barHeight}
                 fill={
                   selectedData?.stem === d.stem
-                    ? 'var(--colors-blue900)'
-                    : 'var(--colors-gray900)'
+                    ? 'var(--colors-blue10)'
+                    : 'var(--colors-gray11)'
                 }
                 onClick={() => handleBoostScore(d)}
                 onContextMenu={(e) => {
@@ -182,11 +182,11 @@ export function KeywordsGraph({ width, height }: Props) {
                 padding: '$1 0',
               }}
             >
-              <Text css={{ color: '$gray900' }}>
+              <Text css={{ color: '$gray11' }}>
                 <Text
                   css={{
                     display: 'inline',
-                    color: '$blue900',
+                    color: '$blue10',
                     fontWeight: 600,
                   }}
                 >
@@ -198,13 +198,13 @@ export function KeywordsGraph({ width, height }: Props) {
                 <Text
                   css={{
                     display: 'inline',
-                    color: '$blue900',
+                    color: '$blue10',
                     fontWeight: 600,
                   }}
                 >
                   {selectedData.count}
                 </Text>
-                <Text css={{ display: 'inline', color: '$gray900' }}>
+                <Text css={{ display: 'inline', color: '$gray11' }}>
                   {' '}
                   interactions
                 </Text>
@@ -228,7 +228,7 @@ export function KeywordsGraph({ width, height }: Props) {
                 padding: '$1 0',
               }}
             >
-              <Text css={{ color: '$gray900' }}>
+              <Text css={{ color: '$gray11' }}>
                 Boost or reduce score factor with right and left click.
               </Text>
             </Flex>

@@ -22,10 +22,10 @@ export function Dev() {
           <Link
             to={'/dev/task-manager'}
             css={{
-              color: toolName === 'task-manager' ? '$hiContrast' : '$gray700',
+              color: toolName === 'task-manager' ? '$hiContrast' : '$gray8',
               cursor: 'pointer',
               '&:hover': {
-                color: toolName === 'task-manager' ? '$hiContrast' : '$gray900',
+                color: toolName === 'task-manager' ? '$hiContrast' : '$gray11',
               },
             }}
           >
@@ -34,12 +34,11 @@ export function Dev() {
           <Link
             to={'/dev/indexing-manager'}
             css={{
-              color:
-                toolName === 'indexing-manager' ? '$hiContrast' : '$gray700',
+              color: toolName === 'indexing-manager' ? '$hiContrast' : '$gray8',
               cursor: 'pointer',
               '&:hover': {
                 color:
-                  toolName === 'indexing-manager' ? '$hiContrast' : '$gray900',
+                  toolName === 'indexing-manager' ? '$hiContrast' : '$gray11',
               },
             }}
           >

@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTrigger,
   Flex,
-  Subheading,
+  Heading,
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
 import { AddKeyForm } from './AddKeyForm'
@@ -51,8 +51,10 @@ export function AddKeyDialog({ treeNode }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
-      <DialogTrigger as={Button} variant="ghost" onClick={openDialog}>
-        <PlusIcon />
+      <DialogTrigger asChild>
+        <Button ghost onClick={openDialog}>
+          <PlusIcon />
+        </Button>
       </DialogTrigger>
       <DialogContent
         onClick={stopPropagation}
@@ -61,7 +63,9 @@ export function AddKeyDialog({ treeNode }: Props) {
         }}
       >
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <Subheading css={{ mb: '$2' }}>Add Path</Subheading>
+          <Heading size="1" css={{ mb: '$2' }}>
+            Add Path
+          </Heading>
           <AddKeyForm treeNode={treeNode} closeDialog={closeDialog} />
         </Flex>
       </DialogContent>

@@ -13,7 +13,7 @@ export function Dns() {
         <Box
           css={{
             margin: '$3 0',
-            border: '1px solid $gray500',
+            border: '1px solid $gray6',
             backgroundColor: '$panel',
             borderRadius: '$3',
             overflow: 'hidden',
@@ -23,8 +23,8 @@ export function Dns() {
             css={{
               padding: '$2 $3',
               gap: '$1',
-              borderBottom: '1px solid $gray300',
-              color: '$gray900',
+              borderBottom: '1px solid $gray4',
+              color: '$gray11',
               fontSize: '14px',
               height: '44px',
               alignItems: 'center',

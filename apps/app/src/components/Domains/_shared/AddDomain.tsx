@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTrigger,
   Flex,
-  Subheading,
+  Heading,
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
 import { AddDomainMySky } from './AddDomainMySky'
@@ -15,7 +15,7 @@ type Props = {
   variant?: string
 }
 
-export function AddDomain({ children, variant = 'ghost' }: Props) {
+export function AddDomain({ children, variant }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const openDialog = useCallback(
@@ -51,8 +51,10 @@ export function AddDomain({ children, variant = 'ghost' }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
-      <DialogTrigger as={Button} variant={variant as any} onClick={openDialog}>
-        {children || <PlusIcon />}
+      <DialogTrigger asChild>
+        <Button variant={variant as any} ghost={!variant} onClick={openDialog}>
+          {children || <PlusIcon />}
+        </Button>
       </DialogTrigger>
       <DialogContent
         onClick={stopPropagation}
@@ -61,7 +63,9 @@ export function AddDomain({ children, variant = 'ghost' }: Props) {
         }}
       >
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <Subheading css={{ mb: '$2' }}>Add Domain</Subheading>
+          <Heading size="1" css={{ mb: '$2' }}>
+            Add Domain
+          </Heading>
           <AddDomainMySky closeDialog={closeDialog} />
         </Flex>
       </DialogContent>

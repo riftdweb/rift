@@ -1,8 +1,6 @@
 import React from 'react';
-import { styled, StitchesVariants, CSS } from '../stitches.config';
+import { styled, VariantProps, CSS } from '../stitches.config';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
-
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
 const StyledThumb = styled(SwitchPrimitive.Thumb, {
   position: 'absolute',
@@ -22,19 +20,9 @@ const StyledThumb = styled(SwitchPrimitive.Thumb, {
 });
 
 const StyledSwitch = styled(SwitchPrimitive.Root, {
-  // Reset
-  alignItems: 'center',
-  appearance: 'none',
+  all: 'unset',
   boxSizing: 'border-box',
-  display: 'inline-flex',
-  justifyContent: 'center',
-  lineHeight: '1',
-  margin: '0',
-  outline: 'none',
-  padding: '0',
-  textDecoration: 'none',
   userSelect: 'none',
-  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
   '&::before': {
     boxSizing: 'border-box',
   },
@@ -42,17 +30,26 @@ const StyledSwitch = styled(SwitchPrimitive.Root, {
     boxSizing: 'border-box',
   },
 
-  backgroundColor: '$slate400',
+  // Reset
+  alignItems: 'center',
+  display: 'inline-flex',
+  justifyContent: 'center',
+  lineHeight: '1',
+  margin: '0',
+  outline: 'none',
+  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+
+  backgroundColor: '$slate5',
   borderRadius: '$pill',
   position: 'relative',
   '&:focus': {
-    boxShadow: '0 0 0 2px $colors$slate700',
+    boxShadow: '0 0 0 2px $colors$slate8',
   },
 
   '&[data-state="checked"]': {
-    backgroundColor: '$blue800',
+    backgroundColor: '$blue9',
     '&:focus': {
-      boxShadow: '0 0 0 2px $colors$blue700',
+      boxShadow: '0 0 0 2px $colors$blue8',
     },
   },
 
@@ -81,18 +78,14 @@ const StyledSwitch = styled(SwitchPrimitive.Root, {
   },
 });
 
-type ButtonCSSProp = { css?: CSS };
-type SwitchVariants = StitchesVariants<typeof StyledSwitch>;
-type SwitchOwnProps = Polymorphic.OwnProps<typeof SwitchPrimitive.Root> &
-  ButtonCSSProp &
-  SwitchVariants;
-type SwitchComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof SwitchPrimitive.Root>,
-  SwitchOwnProps
->;
+type SwitchVariants = VariantProps<typeof StyledSwitch>;
+type SwitchPrimitiveProps = React.ComponentProps<typeof SwitchPrimitive.Root>;
+type SwitchProps = SwitchPrimitiveProps & SwitchVariants & { css?: CSS };
 
-export const Switch = React.forwardRef((props, forwardedRef) => (
-  <StyledSwitch {...props} ref={forwardedRef}>
-    <StyledThumb />
-  </StyledSwitch>
-)) as SwitchComponent;
+export const Switch = React.forwardRef<React.ElementRef<typeof StyledSwitch>, SwitchProps>(
+  (props, forwardedRef) => (
+    <StyledSwitch {...props} ref={forwardedRef}>
+      <StyledThumb />
+    </StyledSwitch>
+  )
+);

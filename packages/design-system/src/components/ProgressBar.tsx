@@ -1,8 +1,6 @@
 import React from 'react';
-import { styled, css, keyframes, CSS, StitchesVariants } from '../stitches.config';
+import { styled, keyframes, CSS, VariantProps } from '../stitches.config';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
 const indeterminateProgress = keyframes({
   '0%': {
@@ -27,13 +25,13 @@ const StyledProgressBar = styled(ProgressPrimitive.Root, {
   borderRadius: '$pill',
 
   '&[data-state="indeterminate"]': {
-    backgroundColor: '$slate300',
+    backgroundColor: '$slate4',
     '&::after': {
       animationName: indeterminateProgress,
       animationDuration: '1500ms',
       animationIterationCount: 'infinite',
       animationTimingFunction: 'cubic-bezier(0.65, 0, 0.35, 1)',
-      backgroundColor: '$slate600',
+      backgroundColor: '$slate7',
       boxSizing: 'border-box',
       borderRadius: '$pill',
       content: '""',
@@ -48,10 +46,10 @@ const StyledProgressBar = styled(ProgressPrimitive.Root, {
   variants: {
     variant: {
       gray: {
-        background: '$slate700',
+        background: '$slate8',
       },
       blue: {
-        backgroundColor: '$blue800',
+        backgroundColor: '$blue9',
       },
       gradient: {
         backgroundImage:
@@ -72,21 +70,18 @@ const ProgressBarIndicator = styled(ProgressPrimitive.Indicator, {
   bottom: 0,
   left: 0,
   width: '100%',
-  backgroundColor: '$slate300',
+  backgroundColor: '$slate4',
   transition: 'transform 150ms cubic-bezier(0.65, 0, 0.35, 1)',
 });
 
-type ProgressBarCSSProp = { css?: CSS };
-type ProgressBarVariants = StitchesVariants<typeof StyledProgressBar>;
-type ProgressBarOwnProps = Polymorphic.OwnProps<typeof ProgressPrimitive.Root> &
-  ProgressBarCSSProp &
-  ProgressBarVariants;
-type ProgressBarComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof ProgressPrimitive.Root>,
-  ProgressBarOwnProps
->;
+type ProgressBarVariants = VariantProps<typeof StyledProgressBar>;
+type ProgressBarPrimitiveProps = React.ComponentProps<typeof ProgressPrimitive.Root>;
+type ProgressBarProps = ProgressBarPrimitiveProps & ProgressBarVariants & { css?: CSS };
 
-export const ProgressBar = React.forwardRef(({ value, max = 100, ...props }, forwardedRef) => {
+export const ProgressBar = React.forwardRef<
+  React.ElementRef<typeof StyledProgressBar>,
+  ProgressBarProps
+>(({ value, max = 100, ...props }, forwardedRef) => {
   const percentage = value != null ? Math.round((value / max) * 100) : null;
 
   return (
@@ -94,4 +89,4 @@ export const ProgressBar = React.forwardRef(({ value, max = 100, ...props }, for
       <ProgressBarIndicator style={{ transform: `translateX(${percentage}%)` }} />
     </StyledProgressBar>
   );
-}) as ProgressBarComponent;
+});

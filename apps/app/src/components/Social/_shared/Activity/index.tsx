@@ -33,7 +33,7 @@ function ActivityItem({ userId, message, at }) {
         <Text size="1" css={{ lineHeight: '18px' }}>
           <Link
             to={`/users/${userId}`}
-            css={{ color: '$violet900', display: 'inline' }}
+            css={{ color: '$violet10', display: 'inline' }}
           >
             {profile?.data?.username || 'User'}
           </Link>

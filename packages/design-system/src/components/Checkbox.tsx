@@ -1,24 +1,12 @@
 import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
+import { styled, CSS, VariantProps } from '../stitches.config';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
 const StyledCheckbox = styled(CheckboxPrimitive.Root, {
-  // Reset
-  alignItems: 'center',
-  appearance: 'none',
+  all: 'unset',
   boxSizing: 'border-box',
-  display: 'inline-flex',
-  justifyContent: 'center',
-  lineHeight: '1',
-  margin: '0',
-  outline: 'none',
-  padding: '0',
-  textDecoration: 'none',
   userSelect: 'none',
-  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
   '&::before': {
     boxSizing: 'border-box',
   },
@@ -26,18 +14,28 @@ const StyledCheckbox = styled(CheckboxPrimitive.Root, {
     boxSizing: 'border-box',
   },
 
+  alignItems: 'center',
+  appearance: 'none',
+  display: 'inline-flex',
+  justifyContent: 'center',
+  lineHeight: '1',
+  margin: '0',
+  outline: 'none',
+  padding: '0',
+  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+
   color: '$hiContrast',
-  boxShadow: 'inset 0 0 0 1px $colors$slate600',
+  boxShadow: 'inset 0 0 0 1px $colors$slate7',
   overflow: 'hidden',
   '@hover': {
     '&:hover': {
-      boxShadow: 'inset 0 0 0 1px $colors$slate700',
+      boxShadow: 'inset 0 0 0 1px $colors$slate8',
     },
   },
   '&:focus': {
     outline: 'none',
-    borderColor: '$red600',
-    boxShadow: 'inset 0 0 0 1px $colors$blue800, 0 0 0 1px $colors$blue800',
+    borderColor: '$red7',
+    boxShadow: 'inset 0 0 0 1px $colors$blue9, 0 0 0 1px $colors$blue9',
   },
 
   variants: {
@@ -67,22 +65,16 @@ const StyledIndicator = styled(CheckboxPrimitive.Indicator, {
   width: '100%',
 });
 
-type CheckboxCSSProp = { css?: CSS };
-// TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type CheckboxVariants = Omit<StitchesVariants<typeof StyledCheckbox>, 'size'>;
-type CheckboxOwnProps = Polymorphic.OwnProps<typeof CheckboxPrimitive.Root> &
-  CheckboxCSSProp &
-  CheckboxVariants & { size?: any };
+type CheckboxPrimitiveProps = React.ComponentProps<typeof CheckboxPrimitive.Root>;
+type CheckboxVariants = VariantProps<typeof StyledCheckbox>;
+type CheckboxProps = CheckboxPrimitiveProps & CheckboxVariants & { css?: CSS };
 
-type CheckboxComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof CheckboxPrimitive.Root>,
-  CheckboxOwnProps
->;
-
-export const Checkbox = React.forwardRef((props, forwardedRef) => (
-  <StyledCheckbox {...props} ref={forwardedRef}>
-    <StyledIndicator>
-      <CheckIcon />
-    </StyledIndicator>
-  </StyledCheckbox>
-)) as CheckboxComponent;
+export const Checkbox = React.forwardRef<React.ElementRef<typeof StyledCheckbox>, CheckboxProps>(
+  (props, forwardedRef) => (
+    <StyledCheckbox {...props} ref={forwardedRef}>
+      <StyledIndicator>
+        <CheckIcon />
+      </StyledIndicator>
+    </StyledCheckbox>
+  )
+);

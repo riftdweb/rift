@@ -1,33 +1,19 @@
 import { Box, Flex } from '@riftdweb/design-system'
 import { formatRelative } from 'date-fns'
-import { useMemo } from 'react'
-import {
-  NodeDirectory,
-  useFs,
-  Link,
-  FolderIcon,
-  SpinnerIcon,
-} from '@riftdweb/core'
+import { FsDirectory, useFs, Link } from '@riftdweb/core'
 import { Row } from './Row'
 import { CellText } from './CellText'
+import { RowThumbnail } from './RowThumbnail'
 
 type Props = {
-  file: NodeDirectory
+  file: FsDirectory
 }
 
 export function DirectoryItem({ file }: Props) {
-  const { activePath } = useFs()
-  const { pending } = file
+  const { activeNode } = useFs()
   const { name, created } = file.data
 
-  const fsPath = [...activePath, file.data.name].join('/')
-
-  const iconElement = useMemo(() => {
-    if (pending) {
-      return <SpinnerIcon />
-    }
-    return <FolderIcon />
-  }, [pending])
+  const fsPath = [...activeNode, file.data.name].join('/')
 
   return (
     <Row directoryPath={fsPath}>
@@ -40,7 +26,7 @@ export function DirectoryItem({ file }: Props) {
           gap: '$1',
         }}
       >
-        <Box css={{ color: '$gray900' }}>{iconElement}</Box>
+        <RowThumbnail file={file} />
         <Box
           css={{
             flex: 2,
@@ -66,6 +52,7 @@ export function DirectoryItem({ file }: Props) {
         </Box>
         <CellText />
         <CellText />
+        <CellText flex={0.75} />
         <CellText
           textCss={{
             textAlign: 'right',

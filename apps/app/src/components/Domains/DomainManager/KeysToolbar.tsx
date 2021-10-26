@@ -80,7 +80,7 @@ export function KeysToolbar({
           css={{
             lineHeight: '20px',
             cursor: 'pointer',
-            border: '1px solid $gray400',
+            border: '1px solid $gray5',
             borderRadius: '3px',
             '&:hover': {
               textDecoration: 'underline',
@@ -97,18 +97,18 @@ export function KeysToolbar({
       </Tooltip>
       {isReadOnly ? (
         <Tooltip content="File permissions are read-only">
-          <Box css={{ color: '$gray900', margin: '0 $1 0 $2' }}>
+          <Box css={{ color: '$gray11', margin: '0 $1 0 $2' }}>
             <LockClosedIcon />
           </Box>
         </Tooltip>
       ) : (
         <Tooltip content="File permissions are read-write">
-          <Box css={{ color: '$gray900', margin: '0 $1 0 $2' }}>
+          <Box css={{ color: '$gray11', margin: '0 $1 0 $2' }}>
             <Pencil2Icon />
           </Box>
         </Tooltip>
       )}
-      <Text size="1" css={{ flex: 1, color: '$gray900' }}>
+      <Text size="1" css={{ flex: 1, color: '$gray11' }}>
         {message}
       </Text>
       <ControlGroup>
@@ -160,8 +160,10 @@ export function KeysToolbar({
           Save
         </Button>
         <DropdownMenu>
-          <DropdownMenuTrigger as={Button}>
-            <DotsHorizontalIcon />
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <DotsHorizontalIcon />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem css={{ width: '100%' }} onSelect={removeKey}>

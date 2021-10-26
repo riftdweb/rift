@@ -9,7 +9,7 @@ import React, {
 import { FeedDAC } from 'feed-dac-library'
 import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
-// import { FileSystemDAC } from 'fs-dac-library'
+import { FileSystemDAC } from 'fs-dac-library'
 import { clearAllTaskQueues } from '@riftdweb/queue'
 import { createLogger } from '@riftdweb/logger'
 import { MySky, SkynetClient } from 'skynet-js'
@@ -28,11 +28,15 @@ const log = createLogger('contexts/skynet', {
 export const feedDAC = new FeedDAC()
 export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
-// export const fileSystemDAC = new FileSystemDAC()
-export const fileSystemDAC = {} as any
+export const fileSystemDAC = new FileSystemDAC()
 
-// // @ts-ignore
-// window.fileSystemDAC = fileSystemDAC
+// @ts-ignore
+window.dacs = {
+  feedDAC,
+  userProfileDAC,
+  socialDAC,
+  fileSystemDAC,
+}
 
 type State = {
   isReady: boolean
@@ -115,7 +119,7 @@ export function SkynetProvider({ children }: Props) {
         // Currently there is no way to switch users without a reload but
         // in the future this may need to be included in any reset process
         await _mySky.loadDacs(
-          // fileSystemDAC,
+          fileSystemDAC,
           feedDAC as any,
           userProfileDAC as any,
           socialDAC as any

@@ -1,4 +1,4 @@
-import { Box, Subheading, Text } from '@riftdweb/design-system'
+import { Box, Heading, Text } from '@riftdweb/design-system'
 
 type Props = {
   title: string
@@ -7,8 +7,8 @@ type Props = {
 
 export const LandingCard = ({ title, description }: Props) => (
   <Box>
-    <Subheading>{title}</Subheading>
-    <Text size="3" css={{ color: '$slate900', lineHeight: '23px' }}>
+    <Heading size="1">{title}</Heading>
+    <Text size="3" css={{ color: '$slate10', lineHeight: '23px' }}>
       {description}
     </Text>
   </Box>

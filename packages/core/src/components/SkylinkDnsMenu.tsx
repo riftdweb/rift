@@ -2,7 +2,7 @@ import React from 'react'
 import { GlobeIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -14,15 +14,15 @@ import { useDns } from '../contexts/dns'
 
 type Props = {
   skylink: string
-  variant?: ButtonVariants['variant']
-  size?: string
+  variant?: ButtonVariant
+  size?: '1' | '2'
   right?: string
   onOpenChange?: (val: boolean) => void
 }
 
 export function SkylinkDnsMenu({
   skylink,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
   onOpenChange,
@@ -31,16 +31,18 @@ export function SkylinkDnsMenu({
   return (
     <DropdownMenu onOpenChange={onOpenChange}>
       <Tooltip content="Update DNS record">
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-          }}
-        >
-          <GlobeIcon />
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            ghost={!variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+            }}
+          >
+            <GlobeIcon />
+          </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">

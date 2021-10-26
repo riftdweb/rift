@@ -8,7 +8,7 @@ export function DeveloperTools() {
       <Flex css={{ flexDirection: 'column', gap: '$2' }}>
         <Heading
           css={{
-            borderBottom: '1px solid $gray300',
+            borderBottom: '1px solid $gray4',
             paddingBottom: '$2',
             marginBottom: '$2',
           }}
@@ -16,7 +16,7 @@ export function DeveloperTools() {
           Developer tools
         </Heading>
         <Flex css={{ flexDirection: 'column', gap: '$4' }}>
-          <Paragraph css={{ color: '$gray900', fontSize: '$3' }}>
+          <Paragraph css={{ color: '$gray11', fontSize: '$3' }}>
             The Task and Indexing Manager tools provide visibility into the
             scheduling, processing, and prioritization of background tasks.
             Because Rift is fully decentralized, the application continuously

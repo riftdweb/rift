@@ -11,10 +11,10 @@ import {
   DialogContent,
   DialogTrigger,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
-  Textarea,
+  TextArea,
   Tooltip,
 } from '@riftdweb/design-system'
 import { App } from '@riftdweb/types'
@@ -124,8 +124,10 @@ export function AddApp() {
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
       <Tooltip align="end" content="Add App">
-        <DialogTrigger size="2" as={Button} onClick={openDialog}>
-          <Pencil2Icon />
+        <DialogTrigger asChild>
+          <Button size="1" onClick={openDialog}>
+            <Pencil2Icon />
+          </Button>
         </DialogTrigger>
       </Tooltip>
       <DialogContent
@@ -140,7 +142,7 @@ export function AddApp() {
               gap: '$3',
             }}
           >
-            <Subheading>Add App</Subheading>
+            <Heading size="1">Add App</Heading>
             <Box css={{ mt: '$2' }}>
               <Flex css={{ flexDirection: 'column', gap: '$3' }}>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -148,17 +150,17 @@ export function AddApp() {
                     <Text>Name</Text>
                     {formik.errors.name && (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.name}
                       </Text>
                     )}
                   </Flex>
-                  <Input
+                  <TextField
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    size="3"
+                    size="2"
                     placeholder="eg: SkyFeed"
                   />
                 </Flex>
@@ -167,18 +169,18 @@ export function AddApp() {
                     <Text>HNS Domain</Text>
                     {formik.errors.hnsDomain && (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.hnsDomain}
                       </Text>
                     )}
                   </Flex>
                   <ControlGroup>
-                    <Input
+                    <TextField
                       name="hnsDomain"
                       value={formik.values.hnsDomain}
                       onChange={formik.handleChange}
-                      size="3"
+                      size="2"
                       placeholder="eg: skyfeed"
                     />
                     {formik.isValidating ? (
@@ -192,13 +194,13 @@ export function AddApp() {
                       </Tooltip>
                     ) : formik.errors.hnsDomain ? (
                       <Tooltip align="end" content="No app found at HNS domain">
-                        <Button size="2" css={{ color: '$red900' }}>
+                        <Button size="2" css={{ color: '$red10' }}>
                           <ExclamationTriangleIcon />
                         </Button>
                       </Tooltip>
                     ) : (
                       <Tooltip align="end" content="App found at HNS domain">
-                        <Button size="2" css={{ color: '$green900' }}>
+                        <Button size="2" css={{ color: '$green10' }}>
                           <CheckIcon />
                         </Button>
                       </Tooltip>
@@ -210,19 +212,19 @@ export function AddApp() {
                     <Text>Description</Text>
                     {formik.errors.description ? (
                       <Text
-                        css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                       >
                         {formik.errors.childSeed}
                       </Text>
                     ) : (
                       <Text
-                        css={{ color: '$gray900', flex: 1, textAlign: 'right' }}
+                        css={{ color: '$gray11', flex: 1, textAlign: 'right' }}
                       >
                         Optional
                       </Text>
                     )}
                   </Flex>
-                  <Textarea
+                  <TextArea
                     name="description"
                     value={formik.values.description}
                     onChange={formik.handleChange}
@@ -236,12 +238,7 @@ export function AddApp() {
               </Flex>
             </Box>
             <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-              <Button
-                size="2"
-                variant="ghost"
-                type="button"
-                onClick={closeDialog}
-              >
+              <Button size="2" ghost type="button" onClick={closeDialog}>
                 Cancel
               </Button>
               <Button size="2" type="submit" disabled={!formik.isValid}>

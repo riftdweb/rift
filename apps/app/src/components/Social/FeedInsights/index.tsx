@@ -1,4 +1,4 @@
-import { Box, Flex, Subheading, Text } from '@riftdweb/design-system'
+import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import { Layout } from '../Layout'
 import { Nav } from './Nav'
 import { Algorithm } from './Algorithm'
@@ -20,9 +20,9 @@ export function FeedInsights() {
             <Flex css={{ flexDirection: 'column', gap: '$6' }}>
               <Flex css={{ flexDirection: 'column', gap: '$6' }}>
                 <Flex css={{ alignItems: 'center' }}>
-                  <Subheading css={{ color: '$gray900' }}>
+                  <Heading size="1" css={{ color: '$gray11' }}>
                     Content relevancy scoring over time
-                  </Subheading>
+                  </Heading>
                   <Box css={{ flex: 1 }} />
                   <Algorithm />
                 </Flex>
@@ -38,9 +38,9 @@ export function FeedInsights() {
                 }}
               />
               <Flex css={{ flexDirection: 'column', gap: '$6' }}>
-                <Subheading css={{ color: '$gray900' }}>
+                <Heading size="1" css={{ color: '$gray11' }}>
                   Keyword interaction events
-                </Subheading>
+                </Heading>
                 <KeywordsGraph width={width} height={HEIGHT} />
               </Flex>
               <Flex
@@ -52,7 +52,7 @@ export function FeedInsights() {
               >
                 <Text
                   css={{
-                    color: '$gray900',
+                    color: '$gray11',
                     textAlign: 'center',
                     margin: '0 auto',
                     maxWidth: '400px',

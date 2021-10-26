@@ -9,7 +9,6 @@ export type EntriesResponse<T> = {
   data?: Feed<T>
   // Compatible with SWRRResponse
   error?: SWRResponse<Feed<T>, any>['error']
-  revalidate?: SWRResponse<Feed<T>, any>['revalidate']
   mutate?: SWRResponse<Feed<T>, any>['mutate']
   isValidating?: boolean
 }
@@ -53,7 +52,13 @@ export function EntriesState<T>({
       return loadingElement
     }
 
-    return <LoadingState message={validatingMessage || 'Loading feed'} />
+    return (
+      <LoadingState
+        message={
+          validatingMessage !== undefined ? validatingMessage : 'Loading feed'
+        }
+      />
+    )
   }
 
   // If data has been previously fetched and no entries exist yet

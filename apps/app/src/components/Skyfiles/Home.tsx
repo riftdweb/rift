@@ -8,7 +8,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -68,24 +68,20 @@ export function Home() {
         <Fragment>
           <ControlGroup css={{ margin: '$3 0' }}>
             <Button size="2">Filter</Button>
-            <Input
+            <TextField
               value={filterValue}
               onChange={(e) => setFilterValue(e.target.value)}
-              size="3"
+              size="2"
               placeholder="Filter files by name"
             />
             {filterValue && (
-              <Button
-                onClick={() => setFilterValue('')}
-                variant="ghost"
-                size="2"
-              >
+              <Button onClick={() => setFilterValue('')} ghost size="2">
                 <Cross2Icon />
               </Button>
             )}
           </ControlGroup>
           <Flex css={{ alignItems: 'center', gap: '$1' }}>
-            <Text css={{ color: '$gray900' }}>Pages</Text>
+            <Text css={{ color: '$gray11' }}>Pages</Text>
             {skyfiles.length > 0 && (
               <Flex css={{ alignItems: 'center', gap: '$2' }}>
                 <Tooltip content="Previous page">
@@ -97,7 +93,7 @@ export function Home() {
                       },
                     }}
                     onClick={() => setSkip(Math.max(0, skip - 20))}
-                    variant="ghost"
+                    ghost
                   >
                     <ChevronLeftIcon />
                   </Button>
@@ -118,7 +114,7 @@ export function Home() {
                         skip + 20 >= filteredSkyfiles.length ? skip : skip + 20
                       )
                     }
-                    variant="ghost"
+                    ghost
                   >
                     <ChevronRightIcon />
                   </Button>
@@ -126,7 +122,7 @@ export function Home() {
               </Flex>
             )}
             <Box css={{ flex: 1 }} />
-            <Text css={{ color: '$gray900' }}>
+            <Text css={{ color: '$gray11' }}>
               {filterValue
                 ? `${filteredSkyfiles.length} results`
                 : completedUploadCount === skyfiles.length
@@ -138,7 +134,7 @@ export function Home() {
           <Box
             css={{
               margin: '$3 0',
-              border: '1px solid $gray500',
+              border: '1px solid $gray6',
               backgroundColor: '$panel',
               borderRadius: '$3',
               overflow: 'hidden',
@@ -148,8 +144,8 @@ export function Home() {
               css={{
                 padding: '$2 $3',
                 gap: '$1',
-                borderBottom: '1px solid $gray300',
-                color: '$gray900',
+                borderBottom: '1px solid $gray4',
+                color: '$gray11',
                 fontSize: '14px',
                 height: '44px',
                 alignItems: 'center',

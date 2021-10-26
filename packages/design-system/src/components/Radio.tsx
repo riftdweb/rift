@@ -1,11 +1,9 @@
 import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
+import { styled, CSS, VariantProps } from '../stitches.config';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
 export const RadioGroup = styled(RadioGroupPrimitive.Root, {
-  display: 'block',
+  display: 'flex',
 });
 
 const StyledIndicator = styled(RadioGroupPrimitive.Indicator, {
@@ -21,15 +19,22 @@ const StyledIndicator = styled(RadioGroupPrimitive.Indicator, {
     width: '7px',
     height: '7px',
     borderRadius: '50%',
-    backgroundColor: '$blue800',
+    backgroundColor: '$blue9',
   },
 });
 
 const StyledRadio = styled(RadioGroupPrimitive.Item, {
-  // Reset
+  all: 'unset',
+  boxSizing: 'border-box',
+  userSelect: 'none',
+  '&::before': {
+    boxSizing: 'border-box',
+  },
+  '&::after': {
+    boxSizing: 'border-box',
+  },
   alignItems: 'center',
   appearance: 'none',
-  boxSizing: 'border-box',
   display: 'inline-flex',
   justifyContent: 'center',
   lineHeight: '1',
@@ -37,28 +42,21 @@ const StyledRadio = styled(RadioGroupPrimitive.Item, {
   outline: 'none',
   padding: '0',
   textDecoration: 'none',
-  userSelect: 'none',
   WebkitTapHighlightColor: 'rgba(0,0,0,0)',
-  '&::before': {
-    boxSizing: 'border-box',
-  },
-  '&::after': {
-    boxSizing: 'border-box',
-  },
 
   borderRadius: '50%',
   color: '$hiContrast',
-  boxShadow: 'inset 0 0 0 1px $colors$slate600',
+  boxShadow: 'inset 0 0 0 1px $colors$slate7',
   overflow: 'hidden',
   '@hover': {
     '&:hover': {
-      boxShadow: 'inset 0 0 0 1px $colors$slate700',
+      boxShadow: 'inset 0 0 0 1px $colors$slate8',
     },
   },
   '&:focus': {
     outline: 'none',
-    borderColor: '$red600',
-    boxShadow: 'inset 0 0 0 1px $colors$blue800, 0 0 0 1px $colors$blue800',
+    borderColor: '$red7',
+    boxShadow: 'inset 0 0 0 1px $colors$blue9, 0 0 0 1px $colors$blue9',
   },
 
   variants: {
@@ -85,20 +83,14 @@ const StyledRadio = styled(RadioGroupPrimitive.Item, {
   },
 });
 
-type RadioCSSProp = { css?: CSS };
-// TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type RadioVariants = Omit<StitchesVariants<typeof StyledRadio>, 'size'>;
-type RadioOwnProps = Polymorphic.OwnProps<typeof RadioGroupPrimitive.Item> &
-  RadioCSSProp &
-  RadioVariants & { size?: any };
+type RadioVariants = VariantProps<typeof StyledRadio>;
+type RadioGroupItemPrimitiveProps = React.ComponentProps<typeof RadioGroupPrimitive.Item>;
+type RadioProps = RadioGroupItemPrimitiveProps & RadioVariants & { css?: CSS };
 
-type RadioComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof RadioGroupPrimitive.Item>,
-  RadioOwnProps
->;
-
-export const Radio = React.forwardRef((props, forwardedRef) => (
-  <StyledRadio {...props} ref={forwardedRef}>
-    <StyledIndicator />
-  </StyledRadio>
-)) as RadioComponent;
+export const Radio = React.forwardRef<React.ElementRef<typeof StyledRadio>, RadioProps>(
+  (props, forwardedRef) => (
+    <StyledRadio {...props} ref={forwardedRef}>
+      <StyledIndicator />
+    </StyledRadio>
+  )
+);

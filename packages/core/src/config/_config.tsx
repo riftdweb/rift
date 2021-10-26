@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { getCssString } from '@riftdweb/design-system'
+import { getCssText } from '@riftdweb/design-system'
 import Helmet from 'react-helmet'
 import { ToastContainer } from 'react-toastify'
 import {
@@ -31,7 +31,7 @@ export function Config({ name, children, providers }) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style
           id="stitches"
-          dangerouslySetInnerHTML={{ __html: getCssString() }}
+          dangerouslySetInnerHTML={{ __html: getCssText() }}
         />
       </Helmet>
       <ToastContainer />

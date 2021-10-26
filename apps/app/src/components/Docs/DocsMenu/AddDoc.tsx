@@ -3,8 +3,8 @@ import {
   Box,
   Button,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
@@ -67,7 +67,7 @@ export function AddDoc() {
             gap: '$3',
           }}
         >
-          <Subheading>Add Doc</Subheading>
+          <Heading size="1">Add Doc</Heading>
           <Flex css={{ mt: '$2', flexDirection: 'column', gap: '$3' }}>
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -75,29 +75,24 @@ export function AddDoc() {
                   <Text>Name</Text>
                   {formik.errors.name && (
                     <Text
-                      css={{ color: '$red900', flex: 1, textAlign: 'right' }}
+                      css={{ color: '$red10', flex: 1, textAlign: 'right' }}
                     >
                       {formik.errors.name}
                     </Text>
                   )}
                 </Flex>
-                <Input
+                <TextField
                   name="name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder={'my new page'}
                 />
               </Flex>
             </Flex>
           </Flex>
           <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-            <Button
-              size="2"
-              variant="ghost"
-              type="button"
-              onClick={closeDialog}
-            >
+            <Button size="2" ghost type="button" onClick={closeDialog}>
               Cancel
             </Button>
             <Button

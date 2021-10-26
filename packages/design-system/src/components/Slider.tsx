@@ -1,13 +1,11 @@
 import React from 'react';
-import { styled } from '../stitches.config';
+import { styled, CSS } from '../stitches.config';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
 const SliderTrack = styled(SliderPrimitive.Track, {
   position: 'relative',
   flexGrow: 1,
-  backgroundColor: '$slate600',
+  backgroundColor: '$slate7',
   borderRadius: '$pill',
   '&[data-orientation="horizontal"]': {
     height: 2,
@@ -20,7 +18,7 @@ const SliderTrack = styled(SliderPrimitive.Track, {
 
 const SliderRange = styled(SliderPrimitive.Range, {
   position: 'absolute',
-  background: '$blue800',
+  background: '$blue9',
   borderRadius: 'inherit',
   '&[data-orientation="horizontal"]': {
     height: '100%',
@@ -80,7 +78,7 @@ export const StyledSlider = styled(SliderPrimitive.Root, {
   '@hover': {
     '&:hover': {
       [`& ${SliderTrack}`]: {
-        backgroundColor: '$slate700',
+        backgroundColor: '$slate8',
       },
       [`& ${SliderThumb}`]: {
         opacity: '1',
@@ -89,29 +87,25 @@ export const StyledSlider = styled(SliderPrimitive.Root, {
   },
 });
 
-type SliderOwnProps = Polymorphic.OwnProps<typeof SliderPrimitive.Root> & {
-  css?: any;
-};
+type SliderPrimitiveProps = React.ComponentProps<typeof SliderPrimitive.Root>;
+type SliderProps = SliderPrimitiveProps & { css?: CSS };
 
-type SliderComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof SliderPrimitive.Root>,
-  SliderOwnProps
->;
+export const Slider = React.forwardRef<React.ElementRef<typeof StyledSlider>, SliderProps>(
+  (props, forwardedRef) => {
+    const hasRange = Array.isArray(props.defaultValue || (props as any).value);
+    const thumbsArray = hasRange
+      ? props.defaultValue || (props as any).value
+      : [props.defaultValue || (props as any).value];
 
-export const Slider = React.forwardRef((props, forwardedRef) => {
-  const hasRange = Array.isArray(props.defaultValue || (props as any).value);
-  const thumbsArray = hasRange
-    ? props.defaultValue || (props as any).value
-    : [props.defaultValue || (props as any).value];
-
-  return (
-    <StyledSlider {...props} ref={forwardedRef}>
-      <SliderTrack>
-        <SliderRange />
-      </SliderTrack>
-      {thumbsArray.map((_: any, i: number) => (
-        <SliderThumb key={i} />
-      ))}
-    </StyledSlider>
-  );
-}) as SliderComponent;
+    return (
+      <StyledSlider {...props} ref={forwardedRef}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        {thumbsArray.map((_: any, i: number) => (
+          <SliderThumb key={i} />
+        ))}
+      </StyledSlider>
+    );
+  }
+);

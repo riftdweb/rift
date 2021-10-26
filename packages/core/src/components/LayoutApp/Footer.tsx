@@ -12,7 +12,7 @@ export function Footer() {
         marginTop: '50px',
         paddingTop: '50px',
         paddingBottom: '50px',
-        borderTop: '1px solid $gray200',
+        borderTop: '1px solid $gray3',
       }}
     >
       <Container size="4">
@@ -45,15 +45,15 @@ export function Footer() {
                 alt="Rift"
               />
             </Flex>
-            <Text css={{ color: '$gray800' }}>
+            <Text css={{ color: '$gray10' }}>
               Your decentralized workspace.
             </Text>
-            <Text css={{ color: '$gray700', lineHeight: '20px' }}>
+            <Text css={{ color: '$gray8', lineHeight: '20px' }}>
               As a{' '}
               <Link
                 href="https://siasky.net/"
                 target="_blank"
-                css={{ color: '$gray700' }}
+                css={{ color: '$gray8' }}
               >
                 Skynet
               </Link>{' '}
@@ -63,9 +63,9 @@ export function Footer() {
               <Link
                 href="https://blog.sia.tech/mysky-your-home-on-the-global-operating-system-of-the-future-5a288f89825c"
                 target="_blank"
-                css={{ color: '$gray700' }}
+                css={{ color: '$gray8' }}
               >
-                filesystem
+                file system
               </Link>{' '}
               that only the user controls. The Rift application and all user
               data can be accessed from any public or private Skynet portal.
@@ -95,7 +95,7 @@ export function Footer() {
                     key={url}
                     href={url}
                     target="_blank"
-                    css={{ color: '$gray800' }}
+                    css={{ color: '$gray10' }}
                   >
                     {hostname}
                   </Link>

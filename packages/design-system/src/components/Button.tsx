@@ -1,25 +1,11 @@
-import React from 'react'
-import { styled, CSS, StitchesVariants } from '../stitches.config'
+import { styled } from '../stitches.config'
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic'
-
-const DEFAULT_TAG = 'button'
-
-const StyledButton = styled(DEFAULT_TAG, {
+export const Button = styled('button', {
   // Reset
+  all: 'unset',
   alignItems: 'center',
-  appearance: 'none',
   boxSizing: 'border-box',
-  display: 'inline-flex',
-  flexShrink: 0,
-  justifyContent: 'center',
-  lineHeight: '1',
-  margin: '0',
-  outline: 'none',
-  padding: '0',
-  textDecoration: 'none',
   userSelect: 'none',
-  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
   '&::before': {
     boxSizing: 'border-box',
   },
@@ -27,9 +13,14 @@ const StyledButton = styled(DEFAULT_TAG, {
     boxSizing: 'border-box',
   },
 
+  // Custom reset?
+  display: 'inline-flex',
+  flexShrink: 0,
+  justifyContent: 'center',
+  lineHeight: '1',
+  WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+
   // Custom
-  border: 'none',
-  borderRadius: '$2',
   height: '$5',
   px: '$2',
   fontFamily: '$untitled',
@@ -38,135 +29,119 @@ const StyledButton = styled(DEFAULT_TAG, {
   fontVariantNumeric: 'tabular-nums',
 
   '&:disabled': {
-    backgroundColor: '$slate100',
-    boxShadow: 'inset 0 0 0 1px $colors$slate600',
-    color: '$slate700',
+    backgroundColor: '$slate2',
+    boxShadow: 'inset 0 0 0 1px $colors$slate7',
+    color: '$slate8',
     pointerEvents: 'none',
   },
 
   variants: {
     size: {
       '1': {
+        borderRadius: '$1',
         height: '$5',
         px: '$2',
-        fontSize: '$2',
-        lineHeight: '25px',
+        fontSize: '$1',
+        lineHeight: '$sizes$5',
       },
       '2': {
+        borderRadius: '$2',
         height: '$6',
         px: '$3',
         fontSize: '$3',
-        lineHeight: '35px',
+        lineHeight: '$sizes$6',
+      },
+      '3': {
+        borderRadius: '$2',
+        height: '$7',
+        px: '$4',
+        fontSize: '$4',
+        lineHeight: '$sizes$7',
       },
     },
     variant: {
       gray: {
         backgroundColor: '$loContrast',
-        boxShadow: 'inset 0 0 0 1px $colors$slate600',
+        boxShadow: 'inset 0 0 0 1px $colors$slate7',
         color: '$hiContrast',
         '@hover': {
           '&:hover': {
-            boxShadow: 'inset 0 0 0 1px $colors$slate700',
+            boxShadow: 'inset 0 0 0 1px $colors$slate8',
           },
         },
         '&:active': {
-          backgroundColor: '$slate100',
-          boxShadow: 'inset 0 0 0 1px $colors$slate700',
+          backgroundColor: '$slate2',
+          boxShadow: 'inset 0 0 0 1px $colors$slate8',
         },
         '&:focus': {
-          boxShadow:
-            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow: 'inset 0 0 0 1px $colors$slate8, 0 0 0 1px $colors$slate8',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$slate300',
-          boxShadow: 'inset 0 0 0 1px $colors$slate700',
+          backgroundColor: '$slate4',
+          boxShadow: 'inset 0 0 0 1px $colors$slate8',
         },
       },
       blue: {
-        backgroundColor: '$blue100',
-        boxShadow: 'inset 0 0 0 1px $colors$blue600',
-        color: '$blue900',
+        backgroundColor: '$blue2',
+        boxShadow: 'inset 0 0 0 1px $colors$blue7',
+        color: '$blue11',
         '@hover': {
           '&:hover': {
-            boxShadow: 'inset 0 0 0 1px $colors$blue700',
+            boxShadow: 'inset 0 0 0 1px $colors$blue8',
           },
         },
         '&:active': {
-          backgroundColor: '$blue200',
-          boxShadow: 'inset 0 0 0 1px $colors$blue700',
+          backgroundColor: '$blue3',
+          boxShadow: 'inset 0 0 0 1px $colors$blue8',
         },
         '&:focus': {
-          boxShadow:
-            'inset 0 0 0 1px $colors$blue700, 0 0 0 1px $colors$blue700',
+          boxShadow: 'inset 0 0 0 1px $colors$blue8, 0 0 0 1px $colors$blue8',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$blue300',
-          boxShadow: 'inset 0 0 0 1px $colors$blue700',
+          backgroundColor: '$blue4',
+          boxShadow: 'inset 0 0 0 1px $colors$blue8',
         },
       },
       green: {
-        backgroundColor: '$green100',
-        boxShadow: 'inset 0 0 0 1px $colors$green600',
-        color: '$green900',
+        backgroundColor: '$green2',
+        boxShadow: 'inset 0 0 0 1px $colors$green7',
+        color: '$green11',
         '@hover': {
           '&:hover': {
-            boxShadow: 'inset 0 0 0 1px $colors$green700',
+            boxShadow: 'inset 0 0 0 1px $colors$green8',
           },
         },
         '&:active': {
-          backgroundColor: '$green200',
-          boxShadow: 'inset 0 0 0 1px $colors$green700',
+          backgroundColor: '$green3',
+          boxShadow: 'inset 0 0 0 1px $colors$green8',
         },
         '&:focus': {
-          boxShadow:
-            'inset 0 0 0 1px $colors$green700, 0 0 0 1px $colors$green700',
+          boxShadow: 'inset 0 0 0 1px $colors$green8, 0 0 0 1px $colors$green8',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$green300',
-          boxShadow: 'inset 0 0 0 1px $colors$green700',
+          backgroundColor: '$green4',
+          boxShadow: 'inset 0 0 0 1px $colors$green8',
         },
       },
       red: {
         backgroundColor: '$loContrast',
-        boxShadow: 'inset 0 0 0 1px $colors$slate600',
-        color: '$red900',
+        boxShadow: 'inset 0 0 0 1px $colors$slate7',
+        color: '$red11',
         '@hover': {
           '&:hover': {
-            boxShadow: 'inset 0 0 0 1px $colors$slate700',
+            boxShadow: 'inset 0 0 0 1px $colors$slate8',
           },
         },
         '&:active': {
-          backgroundColor: '$red200',
-          boxShadow: 'inset 0 0 0 1px $colors$red700',
+          backgroundColor: '$red3',
+          boxShadow: 'inset 0 0 0 1px $colors$red8',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$red700, 0 0 0 1px $colors$red700',
+          boxShadow: 'inset 0 0 0 1px $colors$red8, 0 0 0 1px $colors$red8',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$red300',
-          boxShadow: 'inset 0 0 0 1px $colors$red700',
-        },
-      },
-      ghost: {
-        // AF: seems like a bug, expect it to get fixed upstream
-        // mixBlendMode: 'multiply',
-        backgroundColor: 'transparent',
-        fontWeight: 400,
-        color: '$hiContrast',
-        '@hover': {
-          '&:hover': {
-            backgroundColor: '$slate200',
-          },
-        },
-        '&:active': {
-          backgroundColor: '$slate300',
-        },
-        '&:focus': {
-          boxShadow:
-            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
-        },
-        '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$red4',
+          boxShadow: 'inset 0 0 0 1px $colors$red8',
         },
       },
       transparentWhite: {
@@ -204,61 +179,155 @@ const StyledButton = styled(DEFAULT_TAG, {
     },
     state: {
       active: {
-        backgroundColor: '$slate300',
-        boxShadow: 'inset 0 0 0 1px $colors$slate700',
-        color: '$slate900',
+        backgroundColor: '$slate4',
+        boxShadow: 'inset 0 0 0 1px $colors$slate8',
+        color: '$slate11',
         '@hover': {
           '&:hover': {
-            backgroundColor: '$slate400',
-            boxShadow: 'inset 0 0 0 1px $colors$slate700',
+            backgroundColor: '$slate5',
+            boxShadow: 'inset 0 0 0 1px $colors$slate8',
           },
         },
         '&:active': {
-          backgroundColor: '$slate400',
+          backgroundColor: '$slate5',
         },
         '&:focus': {
-          boxShadow:
-            'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow: 'inset 0 0 0 1px $colors$slate8, 0 0 0 1px $colors$slate8',
         },
       },
       waiting: {
-        backgroundColor: '$slate300',
-        boxShadow: 'inset 0 0 0 1px $colors$slate700',
+        backgroundColor: '$slate4',
+        boxShadow: 'inset 0 0 0 1px $colors$slate8',
         color: 'transparent',
         pointerEvents: 'none',
         '@hover': {
           '&:hover': {
-            backgroundColor: '$slate400',
-            boxShadow: 'inset 0 0 0 1px $colors$slate700',
+            backgroundColor: '$slate5',
+            boxShadow: 'inset 0 0 0 1px $colors$slate8',
           },
         },
         '&:active': {
-          backgroundColor: '$slate400',
+          backgroundColor: '$slate5',
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$slate700',
+          boxShadow: 'inset 0 0 0 1px $colors$slate8',
         },
       },
     },
+    ghost: {
+      true: {
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+      },
+    },
   },
+  compoundVariants: [
+    {
+      variant: 'gray',
+      ghost: 'true',
+      css: {
+        backgroundColor: 'transparent',
+        color: '$hiContrast',
+        '@hover': {
+          '&:hover': {
+            backgroundColor: '$slateA3',
+            boxShadow: 'none',
+          },
+        },
+        '&:active': {
+          backgroundColor: '$slateA4',
+        },
+        '&:focus': {
+          boxShadow:
+            'inset 0 0 0 1px $colors$slateA8, 0 0 0 1px $colors$slateA8',
+        },
+        '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
+          backgroundColor: '$slateA4',
+          boxShadow: 'none',
+        },
+      },
+    },
+    {
+      variant: 'blue',
+      ghost: 'true',
+      css: {
+        backgroundColor: 'transparent',
+        '@hover': {
+          '&:hover': {
+            backgroundColor: '$blueA3',
+            boxShadow: 'none',
+          },
+        },
+        '&:active': {
+          backgroundColor: '$blueA4',
+        },
+        '&:focus': {
+          boxShadow: 'inset 0 0 0 1px $colors$blueA8, 0 0 0 1px $colors$blueA8',
+        },
+        '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
+          backgroundColor: '$blueA4',
+          boxShadow: 'none',
+        },
+      },
+    },
+    {
+      variant: 'green',
+      ghost: 'true',
+      css: {
+        backgroundColor: 'transparent',
+        '@hover': {
+          '&:hover': {
+            backgroundColor: '$greenA3',
+            boxShadow: 'none',
+          },
+        },
+        '&:active': {
+          backgroundColor: '$greenA4',
+        },
+        '&:focus': {
+          boxShadow:
+            'inset 0 0 0 1px $colors$greenA8, 0 0 0 1px $colors$greenA8',
+        },
+        '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
+          backgroundColor: '$greenA4',
+          boxShadow: 'none',
+        },
+      },
+    },
+    {
+      variant: 'red',
+      ghost: 'true',
+      css: {
+        backgroundColor: 'transparent',
+        '@hover': {
+          '&:hover': {
+            backgroundColor: '$redA3',
+            boxShadow: 'none',
+          },
+        },
+        '&:active': {
+          backgroundColor: '$redA4',
+        },
+        '&:focus': {
+          boxShadow: 'inset 0 0 0 1px $colors$redA8, 0 0 0 1px $colors$redA8',
+        },
+        '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
+          backgroundColor: '$redA4',
+          boxShadow: 'none',
+        },
+      },
+    },
+  ],
   defaultVariants: {
     size: '1',
     variant: 'gray',
   },
 })
 
-type ButtonCSSProp = { css?: CSS }
-// TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-export type ButtonVariants = Omit<StitchesVariants<typeof StyledButton>, 'size'>
-type ButtonOwnProps = ButtonCSSProp & ButtonVariants & { size?: any }
-
-type ButtonComponent = Polymorphic.ForwardRefComponent<
-  typeof DEFAULT_TAG,
-  ButtonOwnProps
->
-
-export const Button = React.forwardRef((props, forwardedRef) => {
-  return <StyledButton {...props} ref={forwardedRef} />
-}) as ButtonComponent
-
-Button.toString = () => `.${StyledButton.className}`
+export type ButtonVariant =
+  | 'gray'
+  | 'blue'
+  | 'green'
+  | 'red'
+  | 'transparentWhite'
+  | 'transparentBlack'

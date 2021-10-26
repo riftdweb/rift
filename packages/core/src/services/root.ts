@@ -4,6 +4,10 @@ import { clearAllTokens } from './tokens'
 import { scheduleFeedAggregator } from './feedAggregator'
 import { scheduleUsersIndexer } from './usersIndexer'
 
+const disableBackgroundServices = localStorage.getItem(
+  'disableBackgroundServices'
+)
+
 const log = createLogger('root')
 
 export async function startRoot(ref: ControlRef): Promise<any> {
@@ -12,8 +16,12 @@ export async function startRoot(ref: ControlRef): Promise<any> {
   log('Clearing any existing services')
   clearAllTokens(ref)
 
-  log('Starting users indexer')
-  await scheduleUsersIndexer(ref)
+  if (disableBackgroundServices) {
+    log('Background services disabled')
+  } else {
+    log('Starting users indexer')
+    await scheduleUsersIndexer(ref)
+  }
 
   log('Starting feed latest updater')
   await scheduleFeedAggregator(ref)

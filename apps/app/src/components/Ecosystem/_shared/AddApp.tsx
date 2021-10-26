@@ -11,10 +11,10 @@ import {
   DialogContent,
   DialogTrigger,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
-  Textarea,
+  TextArea,
   Tooltip,
 } from '@riftdweb/design-system'
 import { App } from '@riftdweb/types'
@@ -124,8 +124,10 @@ export function AddApp() {
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
       <Tooltip align="end" content="Add App">
-        <DialogTrigger size="2" as={Button} onClick={openDialog}>
-          <Pencil2Icon />
+        <DialogTrigger asChild>
+          <Button size="1" onClick={openDialog}>
+            <Pencil2Icon />
+          </Button>
         </DialogTrigger>
       </Tooltip>
       <DialogContent
@@ -140,7 +142,7 @@ export function AddApp() {
               gap: '$3',
             }}
           >
-            <Subheading>Add App</Subheading>
+            <Heading size="1">Add App</Heading>
             <Box css={{ mt: '$2' }}>
               <Flex css={{ flexDirection: 'column', gap: '$3' }}>
                 <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -154,11 +156,11 @@ export function AddApp() {
                       </Text>
                     )}
                   </Flex>
-                  <Input
+                  <TextField
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    size="3"
+                    size="2"
                     placeholder="eg: SkyFeed"
                   />
                 </Flex>
@@ -174,11 +176,11 @@ export function AddApp() {
                     )}
                   </Flex>
                   <ControlGroup>
-                    <Input
+                    <TextField
                       name="hnsDomain"
                       value={formik.values.hnsDomain}
                       onChange={formik.handleChange}
-                      size="3"
+                      size="2"
                       placeholder="eg: skyfeed"
                     />
                     {formik.isValidating ? (
@@ -222,7 +224,7 @@ export function AddApp() {
                       </Text>
                     )}
                   </Flex>
-                  <Textarea
+                  <TextArea
                     name="description"
                     value={formik.values.description}
                     onChange={formik.handleChange}
@@ -236,12 +238,7 @@ export function AddApp() {
               </Flex>
             </Box>
             <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-              <Button
-                size="2"
-                variant="ghost"
-                type="button"
-                onClick={closeDialog}
-              >
+              <Button size="2" ghost type="button" onClick={closeDialog}>
                 Cancel
               </Button>
               <Button size="2" type="submit" disabled={!formik.isValid}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Flex, Subheading, Panel } from '@riftdweb/design-system'
+import { Flex, Heading, Panel } from '@riftdweb/design-system'
 import { ITaskQueue, taskQueueRegistry } from '@riftdweb/queue'
 import { Task } from '@riftdweb/queue'
 import { TaskItem } from './TaskItem'
@@ -69,7 +69,8 @@ export function DevTaskManager() {
               >
                 <Flex css={{ flexDirection: 'column', gap: '$3' }}>
                   <Flex css={{ justifyContent: 'space-between' }}>
-                    <Subheading
+                    <Heading
+                      size="1"
                       css={{
                         flex: 1,
                         overflow: 'hidden',
@@ -78,11 +79,11 @@ export function DevTaskManager() {
                       }}
                     >
                       {taskQueue.name}
-                    </Subheading>
-                    <Subheading>
+                    </Heading>
+                    <Heading size="1">
                       ({taskQueue.pendingQueue.length} |{' '}
                       {taskQueue.queue.length})
-                    </Subheading>
+                    </Heading>
                   </Flex>
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                     {taskQueue.pendingQueue.map((task) => (

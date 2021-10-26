@@ -3,8 +3,8 @@ import {
   Box,
   Button,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
@@ -94,7 +94,7 @@ export function AddDnsEntry() {
             gap: '$3',
           }}
         >
-          <Subheading>Add DNS Record</Subheading>
+          <Heading size="1">Add DNS Record</Heading>
           <Flex css={{ mt: '$2', flexDirection: 'column', gap: '$3' }}>
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -108,11 +108,11 @@ export function AddDnsEntry() {
                     </Text>
                   )}
                 </Flex>
-                <Input
+                <TextField
                   name="name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder={'eg: "kalorama.hns" or "my custom name"'}
                 />
               </Flex>
@@ -129,11 +129,11 @@ export function AddDnsEntry() {
                     </Text>
                   )}
                 </Flex>
-                <Input
+                <TextField
                   name="dataLink"
                   value={formik.values.dataLink}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="eg: CABbClj98..."
                 />
               </Flex>
@@ -145,14 +145,6 @@ export function AddDnsEntry() {
             </Box>
           </Flex>
           <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-            <Button
-              size="2"
-              variant="ghost"
-              type="button"
-              onClick={closeDialog}
-            >
-              Cancel
-            </Button>
             <Button
               size="2"
               type="submit"

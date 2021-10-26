@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Image, Title } from '@riftdweb/design-system'
+import { Box, Container, Flex, Image, Heading } from '@riftdweb/design-system'
 import { CarouselTags, useCarousel } from './Carousel'
 import { Fragment } from 'react'
 import { LandingCta } from './LandingCta'
@@ -26,7 +26,8 @@ export function LandingMain() {
   return (
     <Fragment>
       <Container size="3">
-        <Title
+        <Heading
+          size="4"
           css={{
             marginTop: '$5',
             fontSize: '$8',
@@ -38,7 +39,7 @@ export function LandingMain() {
         >
           The Internet apps you depend on every day, reimagined as software you
           control.
-        </Title>
+        </Heading>
       </Container>
       <Flex
         css={{

@@ -225,6 +225,7 @@ The `yarn` command will also run a postinstall script that directly links togeth
 
 ### Packages
 
+- **@riftdweb/core** Services, contexts, hooks, components, utils primarily used in the main app
 - **@riftdweb/design-system** Design-system and component library
 - **@riftdweb/queue** Custom task processing library necessary for the core Rift indexing services
 - **@riftdweb/logger** Custom logger with name-spaced logging and workflow tracing

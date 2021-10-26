@@ -111,8 +111,10 @@ export function Navbar() {
                   <PlusIcon />
                 </Link>
                 <DropdownMenu>
-                  <DropdownMenuTrigger as={Button}>
-                    <TriangleDownIcon />
+                  <DropdownMenuTrigger asChild>
+                    <Button>
+                      <TriangleDownIcon />
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem

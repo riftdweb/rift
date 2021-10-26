@@ -1,7 +1,7 @@
 import React from 'react'
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer'
 import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import { Box, Button, ControlGroup, Input } from '@riftdweb/design-system'
+import { Box, Button, ControlGroup, TextField } from '@riftdweb/design-system'
 import { useSearch } from '../../contexts/search'
 import { SearchResults } from './SearchResults'
 
@@ -41,7 +41,7 @@ export function Searchbar() {
         >
           <MagnifyingGlassIcon />
         </Button>
-        <Input
+        <TextField
           ref={ref}
           value={searchValue}
           onChange={onChange}
@@ -49,7 +49,7 @@ export function Searchbar() {
           onFocus={() => setIsFocused(true)}
           css={{ padding: '0 $2' }}
           placeholder="Search users or skylinks"
-          size="2"
+          size="3"
         />
         {searchValue && (
           <Button

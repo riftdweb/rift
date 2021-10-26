@@ -4,7 +4,7 @@ import {
   Link,
   Paragraph,
   Text,
-  Title,
+  Heading,
 } from '@riftdweb/design-system'
 import { Fragment } from 'react'
 
@@ -13,7 +13,9 @@ export function LandingOwnData() {
     <Fragment>
       <Box>
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <Title css={{ fontSize: '$8' }}>Own your data</Title>
+          <Heading size="4" css={{ fontSize: '$8' }}>
+            Own your data
+          </Heading>
           <Paragraph>
             <Text
               css={{
@@ -93,7 +95,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Permissionless</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Permissionless
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               Rift and Skynet are permissionless and self-sovereign - anyone can
@@ -111,7 +115,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Private</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Private
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               When signed in to Rift, all metadata and files are encrypted and
@@ -131,7 +137,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Open</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Open
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               In addition to storing all data in a private space, Rift runs on
@@ -152,7 +160,9 @@ export function LandingOwnData() {
             },
           }}
         >
-          <Title css={{ fontSize: '$7' }}>Decentralized</Title>
+          <Heading size="4" css={{ fontSize: '$7' }}>
+            Decentralized
+          </Heading>
           <Paragraph>
             <Text css={{ display: 'inline' }}>
               Rift is built as a pure Skynet app, meaning its only dependency is

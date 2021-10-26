@@ -1,10 +1,8 @@
-import React from 'react'
-import { styled, StitchesVariants, CSS } from '../stitches.config'
-import * as AvatarPrimitive from '@radix-ui/react-avatar'
-import { Box } from './Box'
-import { Status } from './Status'
-
-import type * as Polymorphic from '@radix-ui/react-polymorphic'
+import React from 'react';
+import { styled, VariantProps, CSS } from '../stitches.config';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import { Box } from './Box';
+import { Status } from './Status';
 
 const StyledAvatar = styled(AvatarPrimitive.Root, {
   alignItems: 'center',
@@ -22,7 +20,7 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
   margin: '0',
   outline: 'none',
   padding: '0',
-  fontWeight: '500',
+  fontWeight: '500' as any,
   color: '$hiContrast',
 
   '&::before': {
@@ -69,55 +67,73 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
         color: '$loContrast',
       },
       gray: {
-        backgroundColor: '$slate400',
+        backgroundColor: '$slate5',
+      },
+      tomato: {
+        backgroundColor: '$tomato5',
       },
       red: {
-        backgroundColor: '$red400',
+        backgroundColor: '$red5',
       },
       crimson: {
-        backgroundColor: '$crimson400',
+        backgroundColor: '$crimson5',
       },
       pink: {
-        backgroundColor: '$pink400',
+        backgroundColor: '$pink5',
+      },
+      plum: {
+        backgroundColor: '$plum5',
       },
       purple: {
-        backgroundColor: '$purple400',
+        backgroundColor: '$purple5',
       },
       violet: {
-        backgroundColor: '$violet400',
+        backgroundColor: '$violet5',
       },
       indigo: {
-        backgroundColor: '$indigo400',
+        backgroundColor: '$indigo5',
       },
       blue: {
-        backgroundColor: '$blue400',
+        backgroundColor: '$blue5',
       },
       cyan: {
-        backgroundColor: '$cyan400',
+        backgroundColor: '$cyan5',
       },
       teal: {
-        backgroundColor: '$teal400',
+        backgroundColor: '$teal5',
       },
       green: {
-        backgroundColor: '$green400',
+        backgroundColor: '$green5',
       },
-      lime: {
-        backgroundColor: '$lime400',
-      },
-      yellow: {
-        backgroundColor: '$yellow400',
-      },
-      orange: {
-        backgroundColor: '$orange400',
-      },
-      gold: {
-        backgroundColor: '$gold400',
+      grass: {
+        backgroundColor: '$grass5',
       },
       brown: {
-        backgroundColor: '$brown400',
+        backgroundColor: '$brown5',
       },
       bronze: {
-        backgroundColor: '$bronze400',
+        backgroundColor: '$bronze5',
+      },
+      gold: {
+        backgroundColor: '$gold5',
+      },
+      sky: {
+        backgroundColor: '$sky5',
+      },
+      mint: {
+        backgroundColor: '$mint5',
+      },
+      lime: {
+        backgroundColor: '$lime5',
+      },
+      yellow: {
+        backgroundColor: '$yellow5',
+      },
+      amber: {
+        backgroundColor: '$amber5',
+      },
+      orange: {
+        backgroundColor: '$orange5',
       },
     },
     shape: {
@@ -168,15 +184,16 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
     variant: 'gray',
     shape: 'circle',
   },
-})
+});
 
 const StyledAvatarImage = styled(AvatarPrimitive.Image, {
   display: 'flex',
   objectFit: 'cover',
   boxSizing: 'border-box',
   height: '100%',
+  verticalAlign: 'middle',
   width: '100%',
-})
+});
 
 const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
   textTransform: 'uppercase',
@@ -207,12 +224,12 @@ const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
   defaultVariants: {
     size: '2',
   },
-})
+});
 
 export const AvatarNestedItem = styled('div', {
   boxShadow: '0 0 0 2px $colors$loContrast',
   borderRadius: '50%',
-})
+});
 
 export const AvatarGroup = styled('div', {
   display: 'flex',
@@ -220,50 +237,34 @@ export const AvatarGroup = styled('div', {
   [`& ${AvatarNestedItem}:nth-child(n+2)`]: {
     marginRight: '-$1',
   },
-})
+});
 
-type StatusVariants = React.ComponentProps<typeof Status>
-type StatusColors = Pick<StatusVariants, 'variant'>
+type StatusVariants = React.ComponentProps<typeof Status>;
+type StatusColors = Pick<StatusVariants, 'variant'>;
 
-type AvatarCSSProp = { css?: CSS }
-// TODO: Remove omit fix when this is merged https://github.com/modulz/stitches/issues/421
-type AvatarVariants = Omit<StitchesVariants<typeof StyledAvatar>, 'size'>
-type AvatarOwnProps = Polymorphic.OwnProps<typeof AvatarPrimitive.Root> &
-  AvatarCSSProp &
+type AvatarVariants = VariantProps<typeof StyledAvatar>;
+type AvatarPrimitiveProps = React.ComponentProps<typeof AvatarPrimitive.Root>;
+type AvatarOwnProps = AvatarPrimitiveProps &
   AvatarVariants & {
-    alt?: string
-    src?: string
-    fallback?: React.ReactNode
-    status?: StatusColors['variant']
-    size?: any // TODO: Fix when this is merged https://github.com/modulz/stitches/issues/421
-  }
+    css?: CSS;
+    alt?: string;
+    src?: string;
+    fallback?: React.ReactNode;
+    status?: StatusColors['variant'];
+  };
 
-type AvatarComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof AvatarPrimitive.Root>,
-  AvatarOwnProps
->
-
-export const Avatar = React.forwardRef(
-  (
-    { alt, src, fallback, size, variant, shape, css, status, ...props },
-    forwardedRef
-  ) => {
+export const Avatar = React.forwardRef<React.ElementRef<typeof StyledAvatar>, AvatarOwnProps>(
+  ({ alt, src, fallback, size, variant, shape, css, status, ...props }, forwardedRef) => {
     return (
       <Box
         css={{
-          ...(css as any),
+          ...css,
           position: 'relative',
           height: 'fit-content',
           width: 'fit-content',
         }}
       >
-        <StyledAvatar
-          {...props}
-          ref={forwardedRef}
-          size={size}
-          variant={variant}
-          shape={shape}
-        >
+        <StyledAvatar {...props} ref={forwardedRef} size={size} variant={variant} shape={shape}>
           <StyledAvatarImage alt={alt} src={src} />
           <StyledAvatarFallback size={size}>{fallback}</StyledAvatarFallback>
         </StyledAvatar>
@@ -279,14 +280,10 @@ export const Avatar = React.forwardRef(
               mb: '-3px',
             }}
           >
-            {/* TODO: Fix when this is merged https://github.com/modulz/stitches/issues/421 */}
-            <Status
-              size={size > 2 ? ('2' as any) : ('1' as any)}
-              variant={status}
-            />
+            <Status size={size && size > 2 ? '2' : '1'} variant={status} />
           </Box>
         )}
       </Box>
-    )
+    );
   }
-) as AvatarComponent
+);

@@ -1,4 +1,4 @@
-import { styled, css, keyframes } from '../stitches.config';
+import { styled, keyframes } from '../stitches.config';
 
 const pulse = keyframes({
   '0%': { opacity: 0 },
@@ -6,7 +6,7 @@ const pulse = keyframes({
 });
 
 export const Skeleton = styled('div', {
-  backgroundColor: '$slate300',
+  backgroundColor: '$slate4',
   position: 'relative',
   overflow: 'hidden',
 
@@ -16,7 +16,7 @@ export const Skeleton = styled('div', {
     animationDirection: 'alternate',
     animationIterationCount: 'infinite',
     animationTimingFunction: 'ease-in-out',
-    backgroundColor: '$slate500',
+    backgroundColor: '$slate6',
     borderRadius: 'inherit',
     bottom: 0,
     content: '""',
@@ -68,7 +68,7 @@ export const Skeleton = styled('div', {
         height: '$3',
       },
       button: {
-        borderRadius: '$2',
+        borderRadius: '$1',
         height: '$5',
         width: '$8',
       },

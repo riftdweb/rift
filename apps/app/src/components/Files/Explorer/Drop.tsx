@@ -1,4 +1,4 @@
-import { Box, Input } from '@riftdweb/design-system'
+import { Box, TextField } from '@riftdweb/design-system'
 import { useDrop } from '@riftdweb/core'
 
 type Props = {
@@ -49,7 +49,7 @@ export function Drop({ directoryPath, css, children }: Props) {
         }}
       />
       {children}
-      <Input {...getInputProps()} />
+      <TextField {...getInputProps()} />
     </Box>
   )
 }

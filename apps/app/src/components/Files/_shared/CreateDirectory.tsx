@@ -4,8 +4,8 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
@@ -82,7 +82,7 @@ export function CreateDirectory() {
             gap: '$3',
           }}
         >
-          <Subheading>Create Directory</Subheading>
+          <Heading size="1">Create Directory</Heading>
           <Flex css={{ mt: '$2', flexDirection: 'column', gap: '$3' }}>
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
@@ -107,11 +107,11 @@ export function CreateDirectory() {
                       : activeDirectoryPath}
                     /
                   </Button>
-                  <Input
+                  <TextField
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    size="3"
+                    size="2"
                     placeholder={'My Photos'}
                   />
                 </ControlGroup>
@@ -119,12 +119,7 @@ export function CreateDirectory() {
             </Flex>
           </Flex>
           <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-            <Button
-              size="2"
-              variant="ghost"
-              type="button"
-              onClick={closeDialog}
-            >
+            <Button size="2" ghost type="button" onClick={closeDialog}>
               Cancel
             </Button>
             <Button

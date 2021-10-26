@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
 } from '@riftdweb/design-system'
 import { AxisBottom, AxisLeft } from '@visx/axis'
@@ -170,7 +170,7 @@ export function ScoreGraph({ width, height }: Props) {
   return (
     <Box css={{ position: 'relative' }}>
       <ControlGroup css={{ marginBottom: '$2' }}>
-        <Input
+        <TextField
           placeholder="Search scored posts"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}

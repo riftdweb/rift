@@ -39,7 +39,7 @@ export function FunctionMenu() {
         <Flex css={{ flexDirection: 'column' }}>
           <Header name="Blocks">
             <Button
-              size="0"
+              size="1"
               onClick={() => setMenuMode(menuMode === 'kbd' ? 'md' : 'kbd')}
             >
               {menuMode === 'kbd' ? 'Keyboard' : 'Markdown'}

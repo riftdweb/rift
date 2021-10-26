@@ -8,7 +8,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -68,18 +68,14 @@ export function Home() {
         <Fragment>
           <ControlGroup css={{ margin: '$3 0' }}>
             <Button size="2">Filter</Button>
-            <Input
+            <TextField
               value={filterValue}
               onChange={(e) => setFilterValue(e.target.value)}
-              size="3"
+              size="2"
               placeholder="Filter files by name"
             />
             {filterValue && (
-              <Button
-                onClick={() => setFilterValue('')}
-                variant="ghost"
-                size="2"
-              >
+              <Button onClick={() => setFilterValue('')} ghost size="2">
                 <Cross2Icon />
               </Button>
             )}
@@ -97,7 +93,7 @@ export function Home() {
                       },
                     }}
                     onClick={() => setSkip(Math.max(0, skip - 20))}
-                    variant="ghost"
+                    ghost
                   >
                     <ChevronLeftIcon />
                   </Button>
@@ -118,7 +114,7 @@ export function Home() {
                         skip + 20 >= filteredSkyfiles.length ? skip : skip + 20
                       )
                     }
-                    variant="ghost"
+                    ghost
                   >
                     <ChevronRightIcon />
                   </Button>

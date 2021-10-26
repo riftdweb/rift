@@ -1,9 +1,7 @@
 import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
+import { styled, CSS } from '../stitches.config';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { Separator } from './Separator';
-
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
 
 export const Tabs = styled(TabsPrimitive.Root, {
   display: 'flex',
@@ -12,7 +10,7 @@ export const Tabs = styled(TabsPrimitive.Root, {
   },
 });
 
-export const TabsTab = styled(TabsPrimitive.Tab, {
+export const TabsTrigger = styled(TabsPrimitive.Trigger, {
   flexShrink: 0,
   height: '$5',
   display: 'inline-flex',
@@ -23,11 +21,12 @@ export const TabsTab = styled(TabsPrimitive.Tab, {
   outline: 'none',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '$slate900',
+  color: '$slate11',
   border: '1px solid transparent',
   borderTopLeftRadius: '$2',
   borderTopRightRadius: '$2',
   zIndex: '10',
+
   '@hover': {
     '&:hover': {
       color: '$hiContrast',
@@ -36,8 +35,8 @@ export const TabsTab = styled(TabsPrimitive.Tab, {
 
   '&[data-state="active"]': {
     color: '$hiContrast',
-    borderColor: '$slate500',
-    borderBottomColor: 'white',
+    borderColor: '$slate6',
+    borderBottomColor: 'transparent',
   },
 
   '&[data-orientation="vertical"]': {
@@ -47,47 +46,41 @@ export const TabsTab = styled(TabsPrimitive.Tab, {
     borderBottomColor: 'transparent',
 
     '&[data-state="active"]': {
-      borderBottomColor: '$slate500',
-      borderRightColor: 'white',
+      borderBottomColor: '$slate6',
+      borderRightColor: 'transparent',
     },
   },
 });
-
-type TabsListCSSProp = { css?: CSS };
-type TabsListVariants = StitchesVariants<typeof StyledTabsList>;
-type TabsListOwnProps = Polymorphic.OwnProps<typeof TabsPrimitive.List> &
-  TabsListCSSProp &
-  TabsListVariants;
 
 const StyledTabsList = styled(TabsPrimitive.List, {
   flexShrink: 0,
   display: 'flex',
   '&:focus': {
     outline: 'none',
-    boxShadow: 'inset 0 0 0 1px $slate700, 0 0 0 1px $slate700',
+    boxShadow: 'inset 0 0 0 1px $slate8, 0 0 0 1px $slate8',
   },
   '&[data-orientation="vertical"]': {
     flexDirection: 'column',
-    boxShadow: 'inset -1px 0 0 $slate500',
+    boxShadow: 'inset -1px 0 0 $slate6',
   },
 });
 
-type TabsListComponent = Polymorphic.ForwardRefComponent<
-  Polymorphic.IntrinsicElement<typeof TabsPrimitive.List>,
-  TabsListOwnProps
->;
+type TabsListPrimitiveProps = React.ComponentProps<typeof TabsPrimitive.List>;
+type TabsListProps = TabsListPrimitiveProps & { css?: CSS };
 
-export const TabsList = React.forwardRef((props, forwardedRef) => (
-  <>
-    <StyledTabsList {...props} ref={forwardedRef} />
-    <Separator />
-  </>
-)) as TabsListComponent;
+export const TabsList = React.forwardRef<React.ElementRef<typeof StyledTabsList>, TabsListProps>(
+  (props, forwardedRef) => (
+    <>
+      <StyledTabsList {...props} ref={forwardedRef} />
+      <Separator />
+    </>
+  )
+);
 
-export const TabsPanel = styled(TabsPrimitive.Panel, {
+export const TabsContent = styled(TabsPrimitive.Content, {
   flexGrow: 1,
   '&:focus': {
     outline: 'none',
-    boxShadow: 'inset 0 0 0 1px $slate700, 0 0 0 1px $slate700',
+    boxShadow: 'inset 0 0 0 1px $slate8, 0 0 0 1px $slate8',
   },
 });

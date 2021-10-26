@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -14,14 +14,14 @@ import { useDocs, copyToClipboard, SpinnerIcon } from '@riftdweb/core'
 
 type Props = {
   docId: string
-  variant?: ButtonVariants['variant']
-  size?: string
+  variant?: ButtonVariant
+  size?: '1' | '2'
   right?: string
 }
 
 export function DocContextMenu({
   docId,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
 }: Props) {
@@ -32,17 +32,19 @@ export function DocContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content={isSyncing ? 'Syncing' : 'Open doc menu'}>
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            color: '$gray500',
-            position: 'relative',
-          }}
-        >
-          {isSyncing ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+        <DropdownMenuTrigger asChild>
+          <Button
+            ghost={!variant}
+            variant={variant}
+            size={size}
+            css={{
+              right,
+              color: '$gray500',
+              position: 'relative',
+            }}
+          >
+            {isSyncing ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+          </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">

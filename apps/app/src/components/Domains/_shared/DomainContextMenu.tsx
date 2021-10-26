@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,15 +16,15 @@ import { useDomains, copyToClipboard } from '@riftdweb/core'
 
 type Props = {
   domain: Domain
-  variant?: ButtonVariants['variant']
+  variant?: ButtonVariant
   right?: string
-  size?: string
+  size?: '1' | '2'
   onOpenChange?: (val: boolean) => void
 }
 
 export function DomainContextMenu({
   domain,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
   onOpenChange,
@@ -34,16 +34,18 @@ export function DomainContextMenu({
 
   return (
     <DropdownMenu onOpenChange={onOpenChange}>
-      <DropdownMenuTrigger
-        as={Button}
-        variant={variant}
-        size={size}
-        css={{
-          right,
-          position: 'relative',
-        }}
-      >
-        <DotsHorizontalIcon />
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={variant}
+          ghost={!variant}
+          size={size}
+          css={{
+            right,
+            position: 'relative',
+          }}
+        >
+          <DotsHorizontalIcon />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>

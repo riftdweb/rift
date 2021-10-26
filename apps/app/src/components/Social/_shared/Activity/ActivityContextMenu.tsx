@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -19,13 +19,13 @@ import {
 } from '@riftdweb/core'
 
 type Props = {
-  variant?: ButtonVariants['variant']
+  variant?: ButtonVariant
   right?: string
-  size?: string
+  size?: '1' | '2'
 }
 
 export function ActivityContextMenu({
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
 }: Props) {
@@ -37,20 +37,22 @@ export function ActivityContextMenu({
         align="end"
         content={activity.loadingState || 'Open activity menu'}
       >
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-            color: '$gray500',
-            '&:hover': {
-              color: '$gray900',
-            },
-          }}
-        >
-          {activity.loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            ghost={!variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+              color: '$gray500',
+              '&:hover': {
+                color: '$gray900',
+              },
+            }}
+          >
+            {activity.loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+          </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">

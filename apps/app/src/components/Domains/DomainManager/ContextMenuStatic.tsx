@@ -13,7 +13,7 @@ type Props = {
 
 export function ContextMenuStatic({
   treeNode,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
   color = '$gray900',

@@ -4,7 +4,7 @@ import {
   Avatar,
   Button,
   ControlGroup,
-  Input,
+  TextField,
   Tooltip,
   Box,
 } from '@riftdweb/design-system'
@@ -118,7 +118,7 @@ export function ViewingUser() {
           }}
         >
           {isEditing ? (
-            <Input
+            <TextField
               onClick={() => setIsEditing(true)}
               css={{
                 paddingLeft: '$4',
@@ -130,7 +130,7 @@ export function ViewingUser() {
               onChange={formik.handleChange}
             />
           ) : (
-            <Input
+            <TextField
               disabled
               css={{
                 paddingLeft: '$4',

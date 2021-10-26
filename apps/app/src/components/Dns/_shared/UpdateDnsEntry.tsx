@@ -3,8 +3,8 @@ import {
   Box,
   Button,
   Flex,
-  Input,
-  Subheading,
+  TextField,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { DnsEntry } from '@riftdweb/types'
@@ -80,14 +80,19 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
             gap: '$3',
           }}
         >
-          <Subheading>Update DNS Record</Subheading>
+          <Heading size="1">Update DNS Record</Heading>
           <Flex css={{ mt: '$2', flexDirection: 'column', gap: '$3' }}>
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                 <Flex>
                   <Text>Name</Text>
                 </Flex>
-                <Input name="name" disabled value={dnsEntry.name} size="3" />
+                <TextField
+                  name="name"
+                  disabled
+                  value={dnsEntry.name}
+                  size="2"
+                />
               </Flex>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
@@ -102,12 +107,12 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
                     </Text>
                   )}
                 </Flex>
-                <Input
+                <TextField
                   name="dataLink"
                   spellCheck={false}
                   value={formik.values.dataLink}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="eg: CABbClj98..."
                 />
               </Flex>
@@ -128,12 +133,7 @@ export function UpdateDnsEntry({ children, dnsEntry }: Props) {
               Delete
             </Button>
             <Box css={{ flex: 1 }} />
-            <Button
-              size="2"
-              variant="ghost"
-              type="button"
-              onClick={closeDialog}
-            >
+            <Button size="2" ghost type="button" onClick={closeDialog}>
               Cancel
             </Button>
             <Button

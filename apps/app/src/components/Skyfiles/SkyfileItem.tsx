@@ -202,10 +202,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           }}
         >
           <Tooltip content="Filter by name">
-            <Button
-              onClick={() => setFilterValue(metadata.filename)}
-              variant="ghost"
-            >
+            <Button onClick={() => setFilterValue(metadata.filename)} ghost>
               <MagnifyingGlassIcon />
             </Button>
           </Tooltip>
@@ -217,15 +214,12 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             }}
           />
           <Tooltip content="Open weblink">
-            <Button variant="ghost" as="a" href={weblink} target="_blank">
+            <Button ghost as="a" href={weblink} target="_blank">
               <ExternalLinkIcon />
             </Button>
           </Tooltip>
           <Tooltip content="Copy weblink">
-            <Button
-              variant="ghost"
-              onClick={() => copyToClipboard(weblink, 'weblink')}
-            >
+            <Button ghost onClick={() => copyToClipboard(weblink, 'weblink')}>
               <ClipboardIcon />
             </Button>
           </Tooltip>

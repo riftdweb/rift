@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Subheading, Text } from '@riftdweb/design-system'
+import { Flex, Heading, Text } from '@riftdweb/design-system'
 
 type Props = {
   title?: string
@@ -17,7 +17,7 @@ export function NonIdealState({ title, message }: Props) {
         color: '$gray900',
       }}
     >
-      {title && <Subheading>{title}</Subheading>}
+      {title && <Heading size="1">{title}</Heading>}
       {message && (
         <Text
           size="2"

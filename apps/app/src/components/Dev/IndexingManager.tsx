@@ -1,4 +1,4 @@
-import { Box, Flex, Panel, Subheading, Text } from '@riftdweb/design-system'
+import { Box, Flex, Panel, Heading, Text } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
 import {
   useSkynet,
@@ -84,7 +84,8 @@ export function DevIndexingManager() {
           >
             <Flex css={{ flexDirection: 'column', gap: '$3' }}>
               <Flex css={{ justifyContent: 'space-between' }}>
-                <Subheading
+                <Heading
+                  size="1"
                   css={{
                     flex: 1,
                     overflow: 'hidden',
@@ -93,7 +94,7 @@ export function DevIndexingManager() {
                   }}
                 >
                   Pending sync
-                </Subheading>
+                </Heading>
               </Flex>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                 {pendingUserIdsWithPos.map(({ userId, position }) => {
@@ -165,7 +166,8 @@ export function DevIndexingManager() {
               >
                 <Flex css={{ flexDirection: 'column', gap: '$3' }}>
                   <Flex css={{ justifyContent: 'space-between' }}>
-                    <Subheading
+                    <Heading
+                      size="1"
                       css={{
                         flex: 1,
                         overflow: 'hidden',
@@ -174,7 +176,7 @@ export function DevIndexingManager() {
                       }}
                     >
                       {name}
-                    </Subheading>
+                    </Heading>
                   </Flex>
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
                     {users.data?.entries

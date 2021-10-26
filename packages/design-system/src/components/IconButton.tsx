@@ -1,15 +1,6 @@
-import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
+import { styled } from '../stitches.config';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
-const DEFAULT_TAG = 'button';
-
-type IconButtonCSSProp = { css?: CSS };
-type IconButtonVariants = StitchesVariants<typeof StyledIconButton>;
-type IconButtonOwnProps = IconButtonCSSProp & IconButtonVariants;
-
-const StyledIconButton = styled(DEFAULT_TAG, {
+export const IconButton = styled('button', {
   // Reset
   alignItems: 'center',
   appearance: 'none',
@@ -34,63 +25,65 @@ const StyledIconButton = styled(DEFAULT_TAG, {
     boxSizing: 'border-box',
   },
   backgroundColor: '$loContrast',
-  border: '1px solid $slate600',
-  borderRadius: '$2',
+  border: '1px solid $slate7',
   '@hover': {
     '&:hover': {
-      borderColor: '$slate700',
+      borderColor: '$slate8',
     },
   },
   '&:active': {
-    backgroundColor: '$slate100',
+    backgroundColor: '$slate2',
   },
   '&:focus': {
-    borderColor: '$slate700',
-    boxShadow: '0 0 0 1px $colors$slate700',
+    borderColor: '$slate8',
+    boxShadow: '0 0 0 1px $colors$slate8',
   },
   '&:disabled': {
     pointerEvents: 'none',
     backgroundColor: 'transparent',
-    color: '$slate500',
+    color: '$slate6',
   },
 
   variants: {
     size: {
       '1': {
+        borderRadius: '$1',
         height: '$5',
         width: '$5',
       },
       '2': {
+        borderRadius: '$2',
         height: '$6',
         width: '$6',
       },
       '3': {
+        borderRadius: '$2',
         height: '$7',
         width: '$7',
       },
       '4': {
+        borderRadius: '$3',
         height: '$8',
         width: '$8',
       },
     },
     variant: {
       ghost: {
-        mixBlendMode: 'multiply',
         backgroundColor: 'transparent',
         borderWidth: '0',
         '@hover': {
           '&:hover': {
-            backgroundColor: '$slate200',
+            backgroundColor: '$slateA3',
           },
         },
         '&:focus': {
-          boxShadow: 'inset 0 0 0 1px $colors$slate700, 0 0 0 1px $colors$slate700',
+          boxShadow: 'inset 0 0 0 1px $colors$slateA8, 0 0 0 1px $colors$slateA8',
         },
         '&:active': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$slateA4',
         },
         '&[data-radix-popover-trigger][data-state="open"], &[data-radix-dropdown-menu-trigger][data-state="open"]': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$slateA4',
         },
       },
       raised: {
@@ -103,18 +96,18 @@ const StyledIconButton = styled(DEFAULT_TAG, {
           },
         },
         '&:focus': {
-          borderColor: '$slate700',
+          borderColor: '$slate8',
           boxShadow:
-            '0 0 0 1px $colors$slate700, 0 16px 32px hsl(206deg 12% 5% / 25%), 0 3px 5px hsl(0deg 0% 0% / 10%)',
+            '0 0 0 1px $colors$slate8, 0 16px 32px hsl(206deg 12% 5% / 25%), 0 3px 5px hsl(0deg 0% 0% / 10%)',
         },
         '&:active': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$slate4',
         },
       },
     },
     state: {
       active: {
-        backgroundColor: '$slate300',
+        backgroundColor: '$slate4',
         boxShadow: 'inset 0 0 0 1px hsl(206,10%,76%)',
         '@hover': {
           '&:hover': {
@@ -122,11 +115,11 @@ const StyledIconButton = styled(DEFAULT_TAG, {
           },
         },
         '&:active': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$slate4',
         },
       },
       waiting: {
-        backgroundColor: '$slate300',
+        backgroundColor: '$slate4',
         boxShadow: 'inset 0 0 0 1px hsl(206,10%,76%)',
         '@hover': {
           '&:hover': {
@@ -134,7 +127,7 @@ const StyledIconButton = styled(DEFAULT_TAG, {
           },
         },
         '&:active': {
-          backgroundColor: '$slate300',
+          backgroundColor: '$slate4',
         },
       },
     },
@@ -144,9 +137,3 @@ const StyledIconButton = styled(DEFAULT_TAG, {
     variant: 'ghost',
   },
 });
-
-type IconButtonComponent = Polymorphic.ForwardRefComponent<typeof DEFAULT_TAG, IconButtonOwnProps>;
-
-export const IconButton = React.forwardRef((props, forwardedRef) => {
-  return <StyledIconButton {...props} ref={forwardedRef} />;
-}) as IconButtonComponent;

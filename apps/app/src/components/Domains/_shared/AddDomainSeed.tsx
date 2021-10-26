@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Paragraph,
   Text,
   Tooltip,
@@ -98,11 +98,11 @@ export function AddDomainSeed({ closeDialog }: Props) {
                   </Text>
                 )}
               </Flex>
-              <Input
+              <TextField
                 name="name"
                 value={formik.values.name}
                 onChange={formik.handleChange}
-                size="3"
+                size="2"
                 placeholder="human readable name"
               />
             </Flex>
@@ -116,11 +116,11 @@ export function AddDomainSeed({ closeDialog }: Props) {
                 )}
               </Flex>
               <ControlGroup>
-                <Input
+                <TextField
                   name="parentSeed"
                   value={formik.values.parentSeed}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="Seed value"
                   css={{
                     boxShadow:
@@ -154,11 +154,11 @@ export function AddDomainSeed({ closeDialog }: Props) {
                   </Text>
                 )}
               </Flex>
-              <Input
+              <TextField
                 name="childSeed"
                 value={formik.values.childSeed}
                 onChange={formik.handleChange}
-                size="3"
+                size="2"
                 placeholder="Child seed, eg: 'MyApp'"
               />
               {formik.errors.childSeed && (
@@ -168,7 +168,7 @@ export function AddDomainSeed({ closeDialog }: Props) {
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-          <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
+          <Button size="2" ghost type="button" onClick={closeDialog}>
             Cancel
           </Button>
           <Button size="2" type="submit" disabled={!formik.isValid}>

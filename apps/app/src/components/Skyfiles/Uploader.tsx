@@ -3,10 +3,10 @@ import {
   Code,
   Container,
   Flex,
-  Input,
+  TextField,
   Radio,
   RadioGroup,
-  Subheading,
+  Heading,
   Text,
 } from '@riftdweb/design-system'
 import { Skyfile } from '@riftdweb/types'
@@ -360,9 +360,9 @@ export function Uploader({
         }}
         {...getRootProps()}
       >
-        <Subheading>
+        <Heading size="1">
           Upload {directoryMode ? 'a directory' : 'files'}
-        </Subheading>
+        </Heading>
         <Container size="1">
           <Text
             size="3"
@@ -403,7 +403,7 @@ export function Uploader({
           </RadioGroup>
         </Flex>
       </Flex>
-      <Input {...getInputProps()} />
+      <TextField {...getInputProps()} />
     </Box>
   )
 }

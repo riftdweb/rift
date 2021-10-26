@@ -1,21 +1,14 @@
-import React from 'react';
-import { styled, CSS, StitchesVariants } from '../stitches.config';
-import { Text } from '../components/Text';
+import { styled } from '../stitches.config';
+import { Text } from './Text';
 
-import type * as Polymorphic from '@radix-ui/react-polymorphic';
-
-const DEFAULT_TAG = 'a';
-
-type LinkCSSProp = { css?: CSS };
-type LinkVariants = StitchesVariants<typeof StyledLink>;
-type LinkOwnProps = LinkCSSProp & LinkVariants;
-
-const StyledLink = styled(DEFAULT_TAG, {
+export const Link = styled('a', {
+  alignItems: 'center',
+  gap: '$1',
   flexShrink: 0,
   outline: 'none',
   textDecorationLine: 'none',
   textUnderlineOffset: '3px',
-  textDecorationColor: '$slate300',
+  textDecorationColor: '$slate4',
   WebkitTapHighlightColor: 'rgba(0,0,0,0)',
   lineHeight: 'inherit',
   '@hover': {
@@ -35,30 +28,30 @@ const StyledLink = styled(DEFAULT_TAG, {
   variants: {
     variant: {
       blue: {
-        color: '$blue900',
-        textDecorationColor: '$blue300',
+        color: '$blue11',
+        textDecorationColor: '$blue4',
         '&:focus': {
-          outlineColor: '$blue700',
+          outlineColor: '$blue8',
         },
       },
       subtle: {
-        color: '$slate900',
-        textDecorationColor: '$slate300',
+        color: '$slate11',
+        textDecorationColor: '$slate4',
         '&:focus': {
-          outlineColor: '$slate700',
+          outlineColor: '$slate8',
         },
       },
       contrast: {
         color: '$hiContrast',
         textDecoration: 'underline',
-        textDecorationColor: '$slate300',
+        textDecorationColor: '$slate4',
         '@hover': {
           '&:hover': {
-            textDecorationColor: '$slate600',
+            textDecorationColor: '$slate7',
           },
         },
         '&:focus': {
-          outlineColor: '$slate700',
+          outlineColor: '$slate8',
         },
       },
     },
@@ -67,9 +60,3 @@ const StyledLink = styled(DEFAULT_TAG, {
     variant: 'contrast',
   },
 });
-
-type LinkComponent = Polymorphic.ForwardRefComponent<typeof DEFAULT_TAG, LinkOwnProps>;
-
-export const Link = React.forwardRef((props, forwardedRef) => {
-  return <StyledLink {...props} ref={forwardedRef} />;
-}) as LinkComponent;

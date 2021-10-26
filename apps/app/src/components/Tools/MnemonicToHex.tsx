@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Heading,
-  Input,
+  TextField,
   Tooltip,
 } from '@riftdweb/design-system'
 import { useCallback, useState } from 'react'
@@ -47,14 +47,14 @@ export function MnemonicToHex() {
       <Box css={{ margin: '$3 0 $3' }}>
         <Heading>Mnemonic to Hex Converter</Heading>
       </Box>
-      <Input
+      <TextField
         css={{ marginBottom: '$2' }}
         placeholder="Enter mnemonic"
         onChange={onChange}
       />
       <ControlGroup css={{ margin: '$1 0' }}>
         <Button css={{ width: '150px' }}>Hex</Button>
-        <Input
+        <TextField
           disabled
           placeholder="Hex"
           css={{ color: '$hiContrast !important' }}

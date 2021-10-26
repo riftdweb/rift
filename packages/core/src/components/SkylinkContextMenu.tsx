@@ -2,7 +2,7 @@ import React from 'react'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,14 +16,14 @@ import { copyToClipboard } from '../shared/clipboard'
 type Props = {
   skylink: string
   skipFetch?: boolean
-  variant?: ButtonVariants['variant']
-  size?: string
+  variant?: ButtonVariant
+  size?: '1' | '2'
   right?: string
 }
 
 export function SkylinkContextMenu({
   skylink: rawSkylink,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
   skipFetch,
@@ -39,16 +39,18 @@ export function SkylinkContextMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        as={Button}
-        variant={variant}
-        size={size}
-        css={{
-          right,
-          position: 'relative',
-        }}
-      >
-        <DotsHorizontalIcon />
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={variant}
+          ghost={!variant}
+          size={size}
+          css={{
+            right,
+            position: 'relative',
+          }}
+        >
+          <DotsHorizontalIcon />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>

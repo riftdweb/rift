@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
 } from '@riftdweb/design-system'
 import { useFormik } from 'formik'
@@ -57,11 +57,11 @@ export function RenameDoc({ docId, name, closeEditing }) {
         }}
       >
         <Flex css={{ gap: '$1' }}>
-          <Input
+          <TextField
             name="name"
             value={formik.values.name}
             onChange={formik.handleChange}
-            size="3"
+            size="2"
             placeholder={'my new document'}
             css={{
               fontSize: '$7',
@@ -70,12 +70,7 @@ export function RenameDoc({ docId, name, closeEditing }) {
           />
           <Box css={{ flex: 1 }} />
           <ControlGroup>
-            <Button
-              size="2"
-              variant="ghost"
-              type="button"
-              onClick={closeEditing}
-            >
+            <Button size="2" ghost type="button" onClick={closeEditing}>
               Cancel
             </Button>
             <Button

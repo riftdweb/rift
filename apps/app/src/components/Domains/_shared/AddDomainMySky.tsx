@@ -11,7 +11,7 @@ import {
   Code,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -135,11 +135,11 @@ export function AddDomainMySky({ closeDialog }: Props) {
                 )}
               </Flex>
               <ControlGroup>
-                <Input
+                <TextField
                   name="dataDomain"
                   value={formik.values.dataDomain}
                   onChange={formik.handleChange}
-                  size="3"
+                  size="2"
                   placeholder="eg: feed-dac.hns"
                   css={{
                     boxShadow:
@@ -239,7 +239,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
           </Flex>
         </Box>
         <Flex css={{ jc: 'flex-end', gap: '$1' }}>
-          <Button size="2" variant="ghost" type="button" onClick={closeDialog}>
+          <Button size="2" ghost type="button" onClick={closeDialog}>
             Cancel
           </Button>
           <Button

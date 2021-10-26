@@ -16,7 +16,7 @@ export function MenuItem({ onClick, isActive, name, kbd, md }: Props) {
   return (
     <Button
       onClick={onClick}
-      variant="ghost"
+      ghost
       css={{
         width: '100%',
         cursor: 'pointer',

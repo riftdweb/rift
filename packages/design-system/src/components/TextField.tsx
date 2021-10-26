@@ -1,26 +1,44 @@
 import { styled } from '../stitches.config';
 
-export const TextArea = styled('textarea', {
+export const TextField = styled('input', {
   // Reset
   appearance: 'none',
   borderWidth: '0',
+  boxSizing: 'border-box',
   fontFamily: 'inherit',
   margin: '0',
   outline: 'none',
-  padding: '$1',
+  padding: '0',
   width: '100%',
   WebkitTapHighlightColor: 'rgba(0,0,0,0)',
+  '&::before': {
+    boxSizing: 'border-box',
+  },
+  '&::after': {
+    boxSizing: 'border-box',
+  },
+
+  // Custom
   backgroundColor: '$loContrast',
   boxShadow: 'inset 0 0 0 1px $colors$slate7',
   color: '$hiContrast',
   fontVariantNumeric: 'tabular-nums',
-  position: 'relative',
-  minHeight: 80,
-  resize: 'vertical',
+
+  '&:-webkit-autofill': {
+    boxShadow: 'inset 0 0 0 1px $colors$blue6, inset 0 0 0 100px $colors$blue3',
+  },
+
+  '&:-webkit-autofill::first-line': {
+    fontFamily: '$untitled',
+    color: '$hiContrast',
+  },
 
   '&:focus': {
     boxShadow: 'inset 0px 0px 0px 1px $colors$blue8, 0px 0px 0px 1px $colors$blue8',
-    zIndex: '1',
+    '&:-webkit-autofill': {
+      boxShadow:
+        'inset 0px 0px 0px 1px $colors$blue8, 0px 0px 0px 1px $colors$blue8, inset 0 0 0 100px $colors$blue3',
+    },
   },
   '&::placeholder': {
     color: '$slate9',
@@ -30,7 +48,6 @@ export const TextArea = styled('textarea', {
     backgroundColor: '$slate2',
     color: '$slate8',
     cursor: 'not-allowed',
-    resize: 'none',
     '&::placeholder': {
       color: '$slate7',
     },
@@ -46,21 +63,44 @@ export const TextArea = styled('textarea', {
     size: {
       '1': {
         borderRadius: '$1',
+        height: '$5',
         fontSize: '$1',
-        lineHeight: '16px',
         px: '$1',
+        lineHeight: '$sizes$5',
+        '&:-webkit-autofill::first-line': {
+          fontSize: '$1',
+        },
       },
       '2': {
-        borderRadius: '$1',
-        fontSize: '$2',
-        lineHeight: '20px',
-        px: '$1',
-      },
-      '3': {
         borderRadius: '$2',
+        height: '$6',
         fontSize: '$3',
-        lineHeight: '23px',
         px: '$2',
+        lineHeight: '$sizes$6',
+        '&:-webkit-autofill::first-line': {
+          fontSize: '$3',
+        },
+      },
+    },
+    variant: {
+      ghost: {
+        boxShadow: 'none',
+        backgroundColor: 'transparent',
+        '@hover': {
+          '&:hover': {
+            boxShadow: 'inset 0 0 0 1px $colors$slateA7',
+          },
+        },
+        '&:focus': {
+          backgroundColor: '$loContrast',
+          boxShadow: 'inset 0px 0px 0px 1px $colors$blue8, 0px 0px 0px 1px $colors$blue8',
+        },
+        '&:disabled': {
+          backgroundColor: 'transparent',
+        },
+        '&:read-only': {
+          backgroundColor: 'transparent',
+        },
       },
     },
     state: {

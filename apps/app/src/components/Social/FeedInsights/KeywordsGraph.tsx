@@ -4,7 +4,7 @@ import {
   Button,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
 } from '@riftdweb/design-system'
 import { localPoint } from '@visx/event'
@@ -117,7 +117,7 @@ export function KeywordsGraph({ width, height }: Props) {
   return (
     <Box css={{ position: 'relative' }}>
       <ControlGroup css={{ marginBottom: '$2' }}>
-        <Input
+        <TextField
           placeholder="Search keywords"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}

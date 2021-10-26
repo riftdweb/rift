@@ -160,8 +160,10 @@ export function KeysToolbar({
           Save
         </Button>
         <DropdownMenu>
-          <DropdownMenuTrigger as={Button}>
-            <DotsHorizontalIcon />
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <DotsHorizontalIcon />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem css={{ width: '100%' }} onSelect={removeKey}>

@@ -10,7 +10,7 @@ import {
   Box,
   ControlGroup,
   Flex,
-  Input,
+  TextField,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -33,7 +33,10 @@ export function ControlsInactive({ setEditing }: Props) {
 
   return (
     <Flex css={{ flexDirection: 'column' }}>
-      <Input onClick={() => setEditing()} placeholder="Whats on your mind?" />
+      <TextField
+        onClick={() => setEditing()}
+        placeholder="Whats on your mind?"
+      />
       <Flex
         css={{
           alignItems: 'center',
@@ -88,7 +91,7 @@ export function ControlsInactive({ setEditing }: Props) {
         <ControlGroup>
           <Tooltip align="end" content="Toggle algorithmic transparency">
             <Button
-              variant="ghost"
+              ghost
               css={{ mixBlendMode: 'inherit' }}
               onClick={() => setIsVisibilityEnabled(!isVisibilityEnabled)}
             >

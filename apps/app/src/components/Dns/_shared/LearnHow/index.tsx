@@ -1,4 +1,4 @@
-import { Flex, Image, Paragraph, Subheading } from '@riftdweb/design-system'
+import { Flex, Image, Paragraph, Heading } from '@riftdweb/design-system'
 import { Dialog, useDialog } from '@riftdweb/core'
 import resolverUrl from './images/resolver.png'
 import manageUrl from './images/manage.png'
@@ -16,7 +16,6 @@ export function LearnHow() {
       content={content}
       triggerElement={triggerElement}
       triggerSize="2"
-      triggerVariant="ghost"
     >
       <Flex
         css={{
@@ -24,7 +23,9 @@ export function LearnHow() {
           gap: '$3',
         }}
       >
-        <Subheading>Pointing a Handshake domain to a Skynet website</Subheading>
+        <Heading size="1">
+          Pointing a Handshake domain to a Skynet website
+        </Heading>
         <Paragraph css={{ color: '$gray900' }}>
           Setting up a Handshake domain as a Skynet website is easy. All it
           requires is configuring the Handshake domain with a TXT record

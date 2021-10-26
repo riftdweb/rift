@@ -2,7 +2,7 @@ import React, { Fragment, useMemo } from 'react'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
-  ButtonVariants,
+  ButtonVariant,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -25,14 +25,14 @@ import { syncUser } from '../services/user'
 
 type Props = {
   userId: string
-  variant?: ButtonVariants['variant']
+  variant?: ButtonVariant
   right?: string
-  size?: string
+  size?: '1' | '2'
 }
 
 export function UserContextMenu({
   userId,
-  variant = 'ghost',
+  variant,
   right = '0',
   size = '1',
 }: Props) {
@@ -57,20 +57,22 @@ export function UserContextMenu({
   return (
     <DropdownMenu>
       <Tooltip align="end" content={combinedLoadingState || 'Open user menu'}>
-        <DropdownMenuTrigger
-          as={Button}
-          variant={variant}
-          size={size}
-          css={{
-            right,
-            position: 'relative',
-            color: '$gray500',
-            '&:hover': {
-              color: '$gray900',
-            },
-          }}
-        >
-          {combinedLoadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant}
+            ghost={!variant}
+            size={size}
+            css={{
+              right,
+              position: 'relative',
+              color: '$gray500',
+              '&:hover': {
+                color: '$gray900',
+              },
+            }}
+          >
+            {combinedLoadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+          </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">

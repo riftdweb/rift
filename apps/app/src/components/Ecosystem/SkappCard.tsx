@@ -5,7 +5,7 @@ import {
   Card,
   Code,
   Flex,
-  Subheading,
+  Heading,
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
@@ -30,7 +30,8 @@ export function SkappCard({
         variant="interactive"
       >
         <Flex css={{ ai: 'center', mb: '$2' }}>
-          <Subheading
+          <Heading
+            size="1"
             css={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -38,7 +39,7 @@ export function SkappCard({
             }}
           >
             {name}
-          </Subheading>
+          </Heading>
           <Box css={{ flex: 1 }} />
           {/* <Link href={`/apps/${id}`}> */}
           <Tooltip content="The ability to lock app versions is coming soon">

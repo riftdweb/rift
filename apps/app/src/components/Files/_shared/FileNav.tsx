@@ -34,7 +34,7 @@ export function FileNav() {
   const download = getDownload(activeNodePath)
 
   return (
-    <Flex css={{ gap: '$1', alignItems: 'center' }}>
+    <Flex css={{ gap: '$1', alignItems: 'center', height: '30px' }}>
       <Avatar userId={userId} profile={profile?.data} link to={'/files'} />
       <Flex
         css={{
@@ -100,9 +100,9 @@ export function FileNav() {
           )}
           <CreateDirectory />
         </ControlGroup>
-      ) : (
+      ) : activeNode.length > 0 ? (
         <CreateDirectory />
-      )}
+      ) : null}
     </Flex>
   )
 }

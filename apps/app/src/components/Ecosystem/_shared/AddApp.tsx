@@ -14,7 +14,7 @@ import {
   TextField,
   Heading,
   Text,
-  TextArea1,
+  TextArea,
   Tooltip,
 } from '@riftdweb/design-system'
 import { App } from '@riftdweb/types'
@@ -224,7 +224,7 @@ export function AddApp() {
                       </Text>
                     )}
                   </Flex>
-                  <TextArea1
+                  <TextArea
                     name="description"
                     value={formik.values.description}
                     onChange={formik.handleChange}

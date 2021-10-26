@@ -123,7 +123,7 @@ export {
 export { TabLink } from './components/TabLink'
 export { Tabs, TabsList, TabsContent, TabsTrigger } from './components/Tabs'
 export { Text } from './components/Text'
-export { TextArea } from './components/TextArea'
+export { TextArea1 } from './components/TextArea1'
 export { Tooltip } from './components/Tooltip'
 export { TreeItem } from './components/TreeItem'
 export { VerifiedBadge } from './components/VerifiedBadge'

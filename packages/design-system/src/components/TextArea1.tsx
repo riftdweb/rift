@@ -1,6 +1,6 @@
 import { styled } from '../stitches.config';
 
-export const TextArea = styled('textarea', {
+export const TextArea1 = styled('textarea', {
   // Reset
   appearance: 'none',
   borderWidth: '0',

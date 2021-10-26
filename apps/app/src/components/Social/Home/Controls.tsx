@@ -1,4 +1,4 @@
-import { Box, Button, Flex, TextArea } from '@riftdweb/design-system'
+import { Box, Button, Flex, TextArea1 } from '@riftdweb/design-system'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFeed, useSkynet } from '@riftdweb/core'
 import { ControlsInactive } from './ControlsInactive'
@@ -30,7 +30,7 @@ export function Controls() {
       {!isEditing && <ControlsInactive setEditing={() => setIsEditing(true)} />}
       {isEditing && (
         <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-          <TextArea
+          <TextArea1
             ref={ref}
             placeholder="Whats on your mind?"
             onChange={(e) => setValue(e.target.value)}

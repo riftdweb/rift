@@ -1,5 +1,4 @@
 import React from 'react'
-import { GitHubLogoIcon, CommitIcon } from '@radix-ui/react-icons'
 import {
   Code,
   Flex,

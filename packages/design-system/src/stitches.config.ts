@@ -200,6 +200,9 @@ export const {
       transparentPanel: 'hsl(0 0% 0% / 97%)',
       shadowLight: 'hsl(206 22% 7% / 35%)',
       shadowDark: 'hsl(206 22% 7% / 20%)',
+
+      // ADD
+      logoFilter: 'inherit',
     },
     fonts: {
       untitled: 'Untitled Sans, -apple-system, system-ui, sans-serif',
@@ -497,5 +500,8 @@ export const darkTheme = createTheme('dark-theme', {
     transparentPanel: 'hsl(0 100% 100% / 97%)',
     shadowLight: 'hsl(206 22% 7% / 35%)',
     shadowDark: 'hsl(206 22% 7% / 20%)',
+
+    // ADD
+    logoFilter: 'invert(100%)',
   },
 })

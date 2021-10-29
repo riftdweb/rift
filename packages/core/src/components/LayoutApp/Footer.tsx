@@ -1,9 +1,19 @@
 import React from 'react'
-import { Flex, Box, Text, Container, Image } from '@riftdweb/design-system'
+import { GitHubLogoIcon, CommitIcon } from '@radix-ui/react-icons'
+import {
+  Code,
+  Flex,
+  Box,
+  Text,
+  Container,
+  Image,
+} from '@riftdweb/design-system'
 import { portals } from '../../shared/portals'
 import { LogoIcon } from '../_icons/LogoIcon'
 import { SkynetHandshakeIcon } from '../_icons/SkynetHandshakeIcon'
 import { Link } from '../Link'
+
+const sha = process.env.REACT_APP_GIT_SHA
 
 export function Footer() {
   return (
@@ -75,32 +85,86 @@ export function Footer() {
           <Flex
             css={{
               flexDirection: 'column',
-              gap: '$3',
+              gap: '$6',
               maxWidth: '800px',
               '@bp2': {
                 textAlign: 'right',
               },
             }}
           >
-            <Box css={{ color: '$hiContrast', '@bp2': { marginLeft: 'auto' } }}>
-              <SkynetHandshakeIcon />
-            </Box>
-            {portals
-              .filter((portal) => !portal.disabled)
-              .map((portal) => {
-                const hostname = `riftapp.hns.${portal.domain}`
-                const url = `https://${hostname}`
-                return (
-                  <Link
-                    key={url}
-                    href={url}
-                    target="_blank"
-                    css={{ color: '$gray10' }}
+            <Flex css={{ flexDirection: 'column', gap: '$5' }}>
+              <Box
+                css={{ color: '$hiContrast', '@bp2': { marginLeft: 'auto' } }}
+              >
+                <SkynetHandshakeIcon />
+              </Box>
+              <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+                <Text size="4">Portals</Text>
+                {portals
+                  .filter((portal) => !portal.disabled)
+                  .map((portal) => {
+                    const hostname = `riftapp.hns.${portal.domain}`
+                    const url = `https://${hostname}`
+                    return (
+                      <Link
+                        key={url}
+                        href={url}
+                        target="_blank"
+                        css={{ color: '$gray10' }}
+                      >
+                        {hostname}
+                      </Link>
+                    )
+                  })}
+              </Flex>
+            </Flex>
+            <Flex css={{ flexDirection: 'column', gap: '$2' }}>
+              <Text size="4">Open Source</Text>
+              <Link
+                href="https://github.com/riftdweb/rift"
+                target="_blank"
+                css={{
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'none',
+                  },
+                }}
+              >
+                <Code
+                  css={{
+                    borderRadius: '$1',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  main
+                </Code>
+              </Link>
+              {sha && (
+                <Link
+                  href={`https://github.com/riftdweb/rift/commit/${sha}`}
+                  target="_blank"
+                  css={{
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'none',
+                    },
+                  }}
+                >
+                  <Code
+                    css={{
+                      borderRadius: '$1',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
                   >
-                    {hostname}
-                  </Link>
-                )
-              })}
+                    {sha.slice(0, 6)}
+                  </Code>
+                </Link>
+              )}
+            </Flex>
           </Flex>
         </Flex>
       </Container>

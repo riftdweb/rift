@@ -167,7 +167,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
                 )}
               </ControlGroup>
             </Flex>
-            {!formik.values.dataDomain && suggestedDomains.length && (
+            {!formik.values.dataDomain && !!suggestedDomains.length && (
               <Flex
                 css={{
                   color: '$gray11',

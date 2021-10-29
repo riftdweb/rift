@@ -18,8 +18,13 @@ import { SkyfileItem } from './SkyfileItem'
 import { Uploader } from './Uploader'
 
 export function Home() {
-  const { skyfiles, addSkyfiles, updateSkyfile, updateSkyfileUpload } =
-    useSkyfiles()
+  const {
+    skyfiles,
+    addSkyfiles,
+    removeSkyfile,
+    updateSkyfile,
+    updateSkyfileUpload,
+  } = useSkyfiles()
 
   const [limit] = useState<number>(20)
   const [skip, setSkip] = useState<number>(0)
@@ -193,6 +198,7 @@ export function Home() {
                 <SkyfileItem
                   key={skyfile.id}
                   skyfile={skyfile}
+                  removeSkyfile={removeSkyfile}
                   setFilterValue={setFilterValue}
                 />
               )

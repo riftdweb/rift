@@ -15,6 +15,7 @@ type State = {
   skyfiles: Skyfile[]
   addSkyfiles: (uploads: Skyfile[]) => void
   updateSkyfile: (id: string, state: Partial<Skyfile>) => void
+  removeSkyfile: (id: string) => void
   updateSkyfileUpload: (id: string, state: Partial<Skyfile['upload']>) => void
 }
 
@@ -80,6 +81,15 @@ export function SkyfilesProvider({ children }: Props) {
     [setSkyfiles]
   )
 
+  const removeSkyfile = useCallback(
+    (id: string) => {
+      setSkyfiles((prevSkyfiles: Skyfile[]) => {
+        return prevSkyfiles.filter((skyfile) => skyfile.id !== id)
+      })
+    },
+    [setSkyfiles]
+  )
+
   const updateSkyfileUpload = useCallback(
     (id: string, state: Partial<Skyfile['upload']>) => {
       setSkyfiles((prevSkyfiles: Skyfile[]) => {
@@ -103,6 +113,7 @@ export function SkyfilesProvider({ children }: Props) {
   const value = {
     skyfiles,
     addSkyfiles,
+    removeSkyfile,
     updateSkyfile,
     updateSkyfileUpload,
     refetchSkyfiles,

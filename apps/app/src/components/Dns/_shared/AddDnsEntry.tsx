@@ -85,6 +85,7 @@ export function AddDnsEntry() {
       {...dialogProps}
       content="Add DNS record"
       triggerSize="2"
+      triggerVariant="gray"
       triggerElement={<Pencil2Icon />}
     >
       <form onSubmit={formik.handleSubmit}>

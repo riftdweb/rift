@@ -125,6 +125,7 @@ export function DnsProvider({ children }: Props) {
         try {
           await updateRegistry(name, cleanDataLink)
         } catch (e) {
+          console.log('updateRegistry', e)
           triggerToast(`Failed to create DNS record '${name}'.`)
           return false
         }
@@ -135,6 +136,7 @@ export function DnsProvider({ children }: Props) {
             path: getDataKeyDns(name),
           })
         } catch (e) {
+          console.log('getEntryLink', e)
           triggerToast(`Failed to create DNS record '${name}'.`)
           return false
         }
@@ -182,6 +184,7 @@ export function DnsProvider({ children }: Props) {
           triggerToast(`DNS record '${name}' has been updated.`)
           return true
         } catch (e) {
+          console.log('updateRegistry', e)
           triggerToast(`Failed to update DNS record '${name}'.`)
           return false
         }

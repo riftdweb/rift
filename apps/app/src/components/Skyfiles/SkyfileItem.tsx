@@ -4,6 +4,7 @@ import {
   ExternalLinkIcon,
   FileIcon,
   MagnifyingGlassIcon,
+  TrashIcon,
 } from '@radix-ui/react-icons'
 import { Box, Button, Flex, Link, Text, Tooltip } from '@riftdweb/design-system'
 import { Skyfile } from '@riftdweb/types'
@@ -32,10 +33,12 @@ const getProgressText = (progress) => {
 type Props = {
   skyfile: Skyfile
   setFilterValue: (value: string) => void
+  removeSkyfile: (id: string) => void
 }
 
-export function SkyfileItem({ skyfile, setFilterValue }: Props) {
+export function SkyfileItem({ skyfile, setFilterValue, removeSkyfile }: Props) {
   const {
+    id,
     metadata,
     skylink: rawSkylink,
     isDirectory,
@@ -197,6 +200,7 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
             alignItems: 'center',
             float: 'right',
             height: '100%',
+            padding: '0 $1',
           }}
         >
           <Tooltip content="Filter by name">
@@ -219,6 +223,11 @@ export function SkyfileItem({ skyfile, setFilterValue }: Props) {
           <Tooltip content="Copy weblink">
             <Button ghost onClick={() => copyToClipboard(weblink, 'weblink')}>
               <ClipboardIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Delete">
+            <Button ghost onClick={() => removeSkyfile(id)}>
+              <TrashIcon />
             </Button>
           </Tooltip>
         </Flex>

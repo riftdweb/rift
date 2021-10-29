@@ -8878,10 +8878,10 @@ from2@^2.1.0:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
 
-fs-dac-library@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/fs-dac-library/-/fs-dac-library-0.2.1.tgz#77a77f82ead0a57b034d63db2b9620534c6386eb"
-  integrity sha512-fEA1v4wk1yV505zhcu5hHoEbT5FwcQ0MDKqw5puKMJ43MMu1ev6W7o/yJa42Czj4lB+eR7HwIvGvwi4qJcMYeA==
+fs-dac-library@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/fs-dac-library/-/fs-dac-library-0.2.4.tgz#a3809691d3175694f2963053b1caf1a2f7bdac22"
+  integrity sha512-tFtLIEmCjaf9VMl/XzXcGQQecFm+FV7+NvfMeTQxw5mp1sG3t9LZkheGfyDeuLxGGqRKAmXhTx/SmN6nn6JQ6Q==
   dependencies:
     post-me "^0.4.5"
     skynet-js "^4.0.12-beta"

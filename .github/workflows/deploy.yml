@@ -38,6 +38,8 @@ jobs:
       # Ready to run steps that rely on node_modules
       - name: Build application
         run: yarn build:app
+        env:
+          REACT_APP_GIT_SHA: ${{ github.sha }}
 
       - name: Deploy to Skynet
         uses: SkynetLabs/deploy-to-skynet-action@v2

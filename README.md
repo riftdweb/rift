@@ -167,7 +167,7 @@ Rift Docs is a block-based document editor that supports a variety of content ty
 
 <a name="rift-files"></a>
 
-### Files
+### 📁 Files
 
 ![Docs](https://raw.githubusercontent.com/riftdweb/rift/main/assets/files/files.png)
 

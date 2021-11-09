@@ -25,7 +25,7 @@ Rift is a work-in-progress but aims to provide the productivity, social, and dev
     - [**Omni-search**](#omni-search)
     - [**Home**](#home)
     - [**Docs**](#docs)
-    - [**Files**](#rift-files)
+    - [**Files**](#-files)
     - [**Uploads**](#uploads)
     - [**DNS**](#dns)
     - [**Ecosystem**](#ecosystem)
@@ -164,8 +164,6 @@ Rift Home includes an activity feed that gives you a high-level view of activity
 ![Docs](https://raw.githubusercontent.com/riftdweb/rift/main/assets/docs/docs.png)
 
 Rift Docs is a block-based document editor that supports a variety of content types and formatting options and includes keyboard and markdown shortcuts. Rift Docs will soon allow users to share documents and publish documents as webpages and to social feeds.
-
-<a name="rift-files"></a>
 
 ### 📁 Files
 

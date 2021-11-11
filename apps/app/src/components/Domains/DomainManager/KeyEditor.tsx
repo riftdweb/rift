@@ -158,7 +158,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
               ? 'Permission to edit this content has not been granted'
               : e.message
 
-          triggerToast(customMessage, 'error')
+          triggerToast(customMessage, { type: 'error' })
         }
 
         // Sync latest, will likely be the same

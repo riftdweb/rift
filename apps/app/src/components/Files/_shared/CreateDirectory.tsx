@@ -112,6 +112,10 @@ export function CreateDirectory() {
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
+                    css={{
+                      boxShadow:
+                        'inset 0 0 0 1px var(--colors-blue6), inset 0 0 0 100px var(--colors-blue3) !important',
+                    }}
                     size="2"
                     placeholder={'My Photos'}
                   />

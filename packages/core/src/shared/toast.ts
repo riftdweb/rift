@@ -1,22 +1,8 @@
-import { toast, ToastContent, ToastOptions, TypeOptions } from 'react-toastify'
+import { toast, ToastContent, ToastOptions } from 'react-toastify'
 
 export const triggerToast = (
   text: ToastContent,
-  type: TypeOptions = 'default'
-) => {
-  toast(text, {
-    type,
-    // position: 'bottom-right',
-    position: 'top-center',
-    hideProgressBar: true,
-    autoClose: 4000,
-    // closeOnClick: false,
-  })
-}
-
-export const triggerToastCustom = (
-  text: ToastContent,
-  options: ToastOptions
+  options: ToastOptions = {}
 ) => {
   toast(text, {
     type: 'default',

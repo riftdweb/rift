@@ -1,4 +1,3 @@
-import React from 'react'
 import { decode } from 'blurhash'
 import { useEffect, useState } from 'react'
 

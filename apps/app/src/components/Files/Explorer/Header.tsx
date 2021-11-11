@@ -39,7 +39,7 @@ export function Header() {
         css={{
           display: 'none',
           '@bp2': {
-            display: 'block',
+            display: 'flex',
           },
         }}
         textCss={{
@@ -58,7 +58,7 @@ export function Header() {
         css={{
           display: 'none',
           '@bp2': {
-            display: 'block',
+            display: 'flex',
           },
         }}
         textCss={{
@@ -77,7 +77,7 @@ export function Header() {
         css={{
           display: 'none',
           '@bp2': {
-            display: 'block',
+            display: 'flex',
           },
         }}
         onClick={() => toggleSort('data.file.encryptionType')}
@@ -97,7 +97,7 @@ export function Header() {
         css={{
           display: 'none',
           '@bp2': {
-            display: 'block',
+            display: 'flex',
           },
         }}
         onClick={() => toggleSort('data.modified')}

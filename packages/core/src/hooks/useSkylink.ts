@@ -134,10 +134,10 @@ export const useSkylink = (rawSkylink?: string, skipFetch?: boolean) => {
         if (response.ok) {
           triggerToast('Successfully pinned skyfile')
         } else {
-          triggerToast('Error pinning skyfile', 'error')
+          triggerToast('Error pinning skyfile', { type: 'error' })
         }
       } catch (e) {
-        triggerToast('Error pinning skyfile', 'error')
+        triggerToast('Error pinning skyfile', { type: 'error' })
       }
     }
     func()

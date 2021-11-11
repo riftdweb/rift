@@ -1,5 +1,16 @@
 import { FsDirectory, FsFile } from '..'
 
+export function getNodePathPath(nodePath: string): string {
+  if (nodePath.startsWith('r:') || nodePath.startsWith('rw:')) {
+    return `skyfs://${nodePath}`
+  }
+  return nodePath
+}
+
+export function getNodePath(node: string[]): string {
+  return getNodePathPath(node.join('/'))
+}
+
 export function buildFsDirectory(
   basePath: string,
   name: string,
@@ -8,7 +19,7 @@ export function buildFsDirectory(
   const type = 'directory'
   return {
     id: `${type}://${basePath}/${name}`,
-    path: `${basePath}/${name}`,
+    path: getNodePathPath(`${basePath}/${name}`),
     type: type,
     ...data,
   }
@@ -22,7 +33,7 @@ export function buildFsFile(
   const type = 'file'
   return {
     id: `${type}://${basePath}/${name}`,
-    path: `${basePath}/${name}`,
+    path: getNodePathPath(`${basePath}/${name}`),
     type: type,
     ...data,
   }

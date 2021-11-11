@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import throttle from 'lodash/throttle'
 import { FsFile } from './types'
 import { downloadFileToBlob, saveBlobToMachine } from './download'
+import { getNodePath } from './utils'
 
 const throttleDownloadProgress = throttle((func: () => void) => {
   func()
@@ -22,7 +23,7 @@ const defaultDownload = {
   promise: undefined,
 }
 
-export function useDownloads(activeNodePath: string, activeFile?: FsFile) {
+export function useDownloads(activeFile?: FsFile) {
   const [downloadMap, _setDownloadMap] = useState<{
     [filePath: string]: Download
   }>({})
@@ -105,6 +106,7 @@ export function useDownloads(activeNodePath: string, activeFile?: FsFile) {
     if (!activeFile) {
       return
     }
+    console.log('XXX', '1', activeFile)
 
     // Download in browser if smaller than 50MB
     // const mb = 500
@@ -112,10 +114,12 @@ export function useDownloads(activeNodePath: string, activeFile?: FsFile) {
     const smallEnough = activeFile.data.file.size < mb * 1024 * 1024
     const shouldDownload = smallEnough
 
+    console.log('XXX', '2', activeFile)
     if (!shouldDownload) {
       return
     }
 
+    console.log('XXX', '3', activeFile)
     startDownload(activeFile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFile])

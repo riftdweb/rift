@@ -3,11 +3,12 @@ import { useDrop } from '@riftdweb/core'
 
 type Props = {
   directoryPath?: string
+  disabled?: boolean
   children: React.ReactNode
   css?: {}
 }
 
-export function Drop({ directoryPath, css, children }: Props) {
+export function Drop({ directoryPath, disabled, css, children }: Props) {
   const { getRootProps, getInputProps, isDragActive } = useDrop(directoryPath)
 
   const props = getRootProps()
@@ -15,7 +16,7 @@ export function Drop({ directoryPath, css, children }: Props) {
   const dropProps = { ref, onDragEnter, onDragLeave, onDragOver, onDrop }
 
   return (
-    <Box css={css} {...(directoryPath ? dropProps : {})}>
+    <Box css={css} {...(directoryPath && !disabled ? dropProps : {})}>
       <Box
         css={{
           position: 'absolute',
@@ -23,7 +24,7 @@ export function Drop({ directoryPath, css, children }: Props) {
           left: 0,
           width: '100%',
           height: '100%',
-          ...(directoryPath && isDragActive
+          ...(directoryPath && !disabled && isDragActive
             ? {
                 backgroundColor: '$blue3',
               }
@@ -41,7 +42,7 @@ export function Drop({ directoryPath, css, children }: Props) {
           height: '100%',
           border: '3px solid transparent',
           borderRadius: '2px',
-          ...(directoryPath && isDragActive
+          ...(directoryPath && !disabled && isDragActive
             ? {
                 border: '3px solid $blue8',
               }
@@ -49,7 +50,7 @@ export function Drop({ directoryPath, css, children }: Props) {
         }}
       />
       {children}
-      <TextField {...getInputProps()} />
+      {!disabled && <TextField {...getInputProps()} />}
     </Box>
   )
 }

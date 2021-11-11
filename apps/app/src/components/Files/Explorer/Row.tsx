@@ -2,15 +2,17 @@ import { Drop } from './Drop'
 
 type Props = {
   children: React.ReactNode
+  dropDisabled?: boolean
   directoryPath?: string
 }
 
 export const thumbSize = 20
 
-export function Row({ directoryPath, children }: Props) {
+export function Row({ dropDisabled, directoryPath, children }: Props) {
   return (
     <Drop
       directoryPath={directoryPath}
+      disabled={dropDisabled}
       css={{
         position: 'relative',
         width: '100%',

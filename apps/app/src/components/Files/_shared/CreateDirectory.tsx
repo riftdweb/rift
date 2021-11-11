@@ -71,7 +71,7 @@ export function CreateDirectory() {
   return (
     <Dialog
       {...dialogProps}
-      content="Create Directory"
+      content="Create directory"
       triggerSize="2"
       triggerVariant="gray"
       triggerElement={<CardStackPlusIcon />}

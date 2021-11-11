@@ -5,10 +5,10 @@ import { FileViewer } from './FileViewer'
 
 export function Files() {
   const { myUserId, isReady } = useSkynet()
-  const { activeFile } = useFs()
+  const { activeFile, isActiveNodeShared } = useFs()
 
-  if (isReady && !myUserId) {
-    return <Redirect to={'/'} />
+  if (isReady && !myUserId && !isActiveNodeShared) {
+    return <Redirect to="/" />
   }
 
   if (activeFile) {

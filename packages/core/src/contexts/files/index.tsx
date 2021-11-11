@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { Feed } from '@riftdweb/types'
+import { Feed, IUser } from '@riftdweb/types'
 import { createLogger } from '@riftdweb/logger'
 import sortBy from 'lodash/sortBy'
 import uniqBy from 'lodash/uniqBy'
@@ -15,12 +15,12 @@ import { usePathOutsideRouter } from '../../hooks/usePathOutsideRouter'
 import { fileSystemDAC, useSkynet } from '../skynet'
 import { useBeforeunload } from 'react-beforeunload'
 import { SortDir, useSort } from '../../hooks/useSort'
-import { EntriesResponse, upsertItem } from '../..'
+import { EntriesResponse, upsertItem, useUser } from '../..'
 import { ThrottleMap } from './throttleMap'
 import { FsNode, FsFile } from './types'
 import { getDirectoryIndex } from './fs'
 import { Download, useDownloads } from './useDownloads'
-import { buildFsDirectory } from './utils'
+import { buildFsDirectory, getNodePath } from './utils'
 
 const log = createLogger('files/context')
 
@@ -41,6 +41,13 @@ export type CreateDirectoryParams = {
 export type FilesState = {
   activeNode: string[]
   activeNodePath: string
+
+  activeNodeOwner: IUser
+  activeNodeOwnerId?: string
+  isActiveNodeShared: boolean
+  isActiveNodeReadOnly: boolean
+  isActiveNodeReadWrite: boolean
+
   activeDirectory: SWRResponse<string[], any>
   activeDirectoryPath: string
 
@@ -78,10 +85,11 @@ type Props = {
 }
 
 export function FsProvider({ children }: Props) {
-  const { getKey, controlRef: ref } = useSkynet()
+  const { myUserId, getKey, controlRef: ref } = useSkynet()
 
   const activeNode = useParamNode()
-  const activeNodePath = activeNode.join('/')
+
+  const activeNodePath = getNodePath(activeNode)
   const { sortKey, sortDir, toggleSort } = useSort<SortKey>('id')
 
   const [uploadsMap, _setUploadsMap] = useState<Record<string, FsFile[]>>({})
@@ -135,7 +143,7 @@ export function FsProvider({ children }: Props) {
         } else {
           // Otherwise fetch and explicitly check if the second to last part is a directory with the file
           const parentDirectoryIndex = await fileSystemDAC.getDirectoryIndex(
-            activeNode.slice(0, activeNode.length - 1).join('/')
+            getNodePath(activeNode.slice(0, activeNode.length - 1))
           )
           if (parentDirectoryIndex.files[lastPart]) {
             _activeDirectory = activeNode.slice(0, activeNode.length - 1)
@@ -155,7 +163,7 @@ export function FsProvider({ children }: Props) {
   const activeDirectoryIndex = useSWR(
     activeDirectory.data ? getKey([...activeNode, 'index']) : null,
     async (): Promise<Feed<FsNode>> => {
-      const nodes = await getDirectoryIndex(activeDirectory.data.join('/'))
+      const nodes = await getDirectoryIndex(getNodePath(activeDirectory.data))
 
       return {
         entries: nodes,
@@ -388,10 +396,21 @@ export function FsProvider({ children }: Props) {
     }
   }, [activeDirectoryIndex, sortDir, sortKey, activeDirectoryPendingUploads])
 
-  const { getDownload, startDownload } = useDownloads(
-    activeNodePath,
-    activeFile
-  )
+  const { getDownload, startDownload } = useDownloads(activeFile)
+
+  const isActiveNodeShared = !!activeNode[0]?.split('==@')[1]
+
+  const activeNodeSharedOwnerId = activeNode[0]?.split('==@')[1]
+  const activeNodeOwnerId =
+    activeNodeSharedOwnerId && activeNodeSharedOwnerId !== 'shared'
+      ? activeNodeSharedOwnerId
+      : myUserId
+
+  const isActiveNodeReadOnly =
+    isActiveNodeShared && !!activeNode[0]?.includes('r:')
+  const isActiveNodeReadWrite =
+    !isActiveNodeShared || !!activeNode[0]?.includes('rw:')
+  const activeNodeOwner = useUser(activeNodeOwnerId)
 
   const value = useMemo(
     () => ({
@@ -400,6 +419,11 @@ export function FsProvider({ children }: Props) {
       createDirectory,
       activeNode,
       activeNodePath,
+      activeNodeOwner,
+      activeNodeOwnerId,
+      isActiveNodeShared,
+      isActiveNodeReadOnly,
+      isActiveNodeReadWrite,
       activeDirectory,
       activeDirectoryPath,
       activeFile,
@@ -421,6 +445,11 @@ export function FsProvider({ children }: Props) {
       createDirectory,
       activeNode,
       activeNodePath,
+      activeNodeOwner,
+      activeNodeOwnerId,
+      isActiveNodeShared,
+      isActiveNodeReadOnly,
+      isActiveNodeReadWrite,
       activeDirectory,
       activeDirectoryPath,
       activeFile,

@@ -49,7 +49,16 @@ export function FileViewer() {
         </Tooltip>
         <Flex css={{ flex: 1 }} />
         <Tooltip content={`Mime type: ${mimeType}`}>
-          <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
+          <Flex
+            css={{
+              display: 'none',
+              '@bp2': {
+                display: 'flex',
+              },
+              gap: '$1',
+              '&:hover': { color: '$hiContrast' },
+            }}
+          >
             <Box css={{ color: '$gray11' }}>
               <QuestionMarkCircledIcon />
             </Box>

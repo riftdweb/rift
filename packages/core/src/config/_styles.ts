@@ -41,6 +41,13 @@ export const globalToastCustomStyles = globalCss({
     /* box-shadow: 0 1px 10px 0 var(--colors-panel), 0 2px 15px 0 var(--colors-panel); */
   },
 
+  '.Toastify__toast--warning': {
+    backgroundColor: '$yellow4 !important',
+    border: '1px solid $yellow8 !important',
+    minHeight: 'inherit !important',
+    /* box-shadow: 0 1px 10px 0 var(--colors-panel), 0 2px 15px 0 var(--colors-panel); */
+  },
+
   '.Toastify__toast--error': {
     backgroundColor: '$red10 !important',
     border: '1px solid $panel !important',

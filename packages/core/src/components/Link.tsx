@@ -7,6 +7,7 @@ type Props = {
   children: React.ReactNode
   to?: string
   href?: string
+  size?: '1' | '2'
   variant?: string
   target?: string
   content?: string
@@ -20,6 +21,7 @@ export function Link({
   to,
   href,
   target,
+  size,
   children,
   tooltipAlign,
   variant,
@@ -40,6 +42,7 @@ export function Link({
           css={_css}
           as={RLink}
           to={to}
+          size={size}
           href={href}
           onClick={onClick}
           target={target}
@@ -57,6 +60,7 @@ export function Link({
         css={_css}
         as={RLink}
         to={to}
+        size={size}
         href={href}
         onClick={onClick}
         target={target}

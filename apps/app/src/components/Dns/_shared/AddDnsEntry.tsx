@@ -66,10 +66,9 @@ export function AddDnsEntry() {
     [dns.data]
   )
 
-  const validationSchema = useMemo(
-    () => buildSchema(existingNames),
-    [existingNames]
-  )
+  const validationSchema = useMemo(() => buildSchema(existingNames), [
+    existingNames,
+  ])
 
   const formik = useFormik({
     initialValues: {

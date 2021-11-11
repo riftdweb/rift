@@ -55,15 +55,13 @@ export function AddDomainSeed({ closeDialog }: Props) {
     [addDomain, closeDialog]
   )
 
-  const existingNames = useMemo(
-    () => domains.map((domain) => domain.name),
-    [domains]
-  )
+  const existingNames = useMemo(() => domains.map((domain) => domain.name), [
+    domains,
+  ])
 
-  const validationSchema = useMemo(
-    () => buildDomainSchema(existingNames),
-    [existingNames]
-  )
+  const validationSchema = useMemo(() => buildDomainSchema(existingNames), [
+    existingNames,
+  ])
 
   const formik = useFormik({
     initialValues: {

@@ -1,4 +1,4 @@
-export { copyToClipboard } from './clipboard'
+export { copyToClipboard, copyToClipboardCustom } from './clipboard'
 export { upsertItem, mergeItem } from './collection'
 export { DATA_PRIVATE_FEATURES } from './config'
 export {

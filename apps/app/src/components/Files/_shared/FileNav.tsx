@@ -23,7 +23,7 @@ import {
   Share1Icon,
 } from '@radix-ui/react-icons'
 import { useSharingData } from './useSharingData'
-import { copyToClipboardCustom } from '@riftdweb/core/src/shared/clipboard'
+import { copyToClipboardCustom } from '@riftdweb/core'
 
 export function FileNav() {
   const { myUserId: userId } = useSkynet()

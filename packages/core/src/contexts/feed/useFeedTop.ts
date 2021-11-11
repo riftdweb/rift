@@ -1,22 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { ActivityFeed } from '@riftdweb/types'
-import { fetchActivity } from '../../services/serviceApi'
+import { EntryFeed } from '@riftdweb/types'
+import { fetchTopEntries } from '../../services/serviceApi'
 import { useSkynet } from '../skynet'
 import { ControlRef } from '../skynet/ref'
 
-type Props = {
-  ref: ControlRef
-}
+type Props = { ref: ControlRef }
 
-export function useFeedActivity({ ref }: Props) {
+export function useFeedTop({ ref }: Props) {
   const { getKey } = useSkynet()
   const [loadingState, setLoadingState] = useState<string>()
 
-  const response = useSWR<ActivityFeed>(
-    getKey(['feed', 'activity']),
+  const response = useSWR<EntryFeed>(
+    getKey(['feed', 'top']),
     () =>
-      fetchActivity(ref, {
+      fetchTopEntries(ref, {
         priority: 4,
       }),
     {
@@ -34,7 +32,7 @@ export function useFeedActivity({ ref }: Props) {
   )
 
   useEffect(() => {
-    ref.current.feeds.activity = values
+    ref.current.feeds.top = values
   }, [ref, values])
 
   return values

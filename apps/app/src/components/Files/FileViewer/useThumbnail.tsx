@@ -19,10 +19,12 @@ export function useThumbnail(file, size = defaultSize) {
     func()
   }, [file, setUrl])
 
+  const aspectRatio = file.data.ext?.thumbnail?.aspectRatio || 1
+
   const blurHashUrl = useBlurHash(
     file.data.ext?.thumbnail?.blurHash,
-    file.data.ext?.image?.width,
-    file.data.ext?.image?.height
+    Math.floor(aspectRatio * 10),
+    Math.floor((1 / aspectRatio) * 10)
   )
 
   const element = useMemo(() => {

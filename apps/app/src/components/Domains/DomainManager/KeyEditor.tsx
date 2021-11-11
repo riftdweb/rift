@@ -106,10 +106,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(
-    () => value === editingValue,
-    [value, editingValue]
-  )
+  const isDataLatest = useMemo(() => value === editingValue, [
+    value,
+    editingValue,
+  ])
 
   const isValid = useMemo(() => {
     try {
@@ -158,7 +158,7 @@ export function KeyEditor({ domain, dataKey }: Props) {
               ? 'Permission to edit this content has not been granted'
               : e.message
 
-          triggerToast(customMessage, 'error')
+          triggerToast(customMessage, { type: 'error' })
         }
 
         // Sync latest, will likely be the same

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import throttle from 'lodash/throttle'
 import { FsFile } from './types'
 import { downloadFileToBlob, saveBlobToMachine } from './download'
@@ -22,7 +22,7 @@ const defaultDownload = {
   promise: undefined,
 }
 
-export function useDownloads(activeNodePath: string, activeFile?: FsFile) {
+export function useDownloads(activeFile?: FsFile) {
   const [downloadMap, _setDownloadMap] = useState<{
     [filePath: string]: Download
   }>({})

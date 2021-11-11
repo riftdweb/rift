@@ -36,6 +36,12 @@ export function Header() {
       </CellText>
       <CellText
         onClick={() => toggleSort('data.size')}
+        css={{
+          display: 'none',
+          '@bp2': {
+            display: 'flex',
+          },
+        }}
         textCss={{
           fontWeight: sortKey === 'data.size' ? 500 : 400,
           color: sortKey === 'data.size' ? '$hiContrast' : '$gray11',
@@ -49,6 +55,12 @@ export function Header() {
       </CellText>
       <CellText
         onClick={() => toggleSort('data.type')}
+        css={{
+          display: 'none',
+          '@bp2': {
+            display: 'flex',
+          },
+        }}
         textCss={{
           fontWeight: sortKey === 'data.type' ? 500 : 400,
           color: sortKey === 'data.type' ? '$hiContrast' : '$gray11',
@@ -62,6 +74,12 @@ export function Header() {
       </CellText>
       <CellText
         flex={1}
+        css={{
+          display: 'none',
+          '@bp2': {
+            display: 'flex',
+          },
+        }}
         onClick={() => toggleSort('data.file.encryptionType')}
         textCss={{
           fontWeight: sortKey === 'data.file.encryptionType' ? 500 : 400,
@@ -76,6 +94,12 @@ export function Header() {
         Encryption
       </CellText>
       <CellText
+        css={{
+          display: 'none',
+          '@bp2': {
+            display: 'flex',
+          },
+        }}
         onClick={() => toggleSort('data.modified')}
         textCss={{
           textAlign: 'right',

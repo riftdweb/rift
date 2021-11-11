@@ -48,14 +48,25 @@ export function FileViewer() {
           </Flex>
         </Tooltip>
         <Flex css={{ flex: 1 }} />
-        <Tooltip content={`Mime type: ${mimeType}`}>
-          <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
-            <Box css={{ color: '$gray11' }}>
-              <QuestionMarkCircledIcon />
-            </Box>
-            <Text css={{ color: '$gray11' }}>{mimeType}</Text>
-          </Flex>
-        </Tooltip>
+        {mimeType && (
+          <Tooltip content={`Mime type: ${mimeType}`}>
+            <Flex
+              css={{
+                display: 'none',
+                '@bp2': {
+                  display: 'flex',
+                },
+                gap: '$1',
+                '&:hover': { color: '$hiContrast' },
+              }}
+            >
+              <Box css={{ color: '$gray11' }}>
+                <QuestionMarkCircledIcon />
+              </Box>
+              <Text css={{ color: '$gray11' }}>{mimeType}</Text>
+            </Flex>
+          </Tooltip>
+        )}
         <Tooltip content={`Encryption: ${encryption.type}`}>
           <Flex css={{ gap: '$1', '&:hover': { color: '$hiContrast' } }}>
             <Box css={{ color: '$gray11' }}>
@@ -73,9 +84,9 @@ export function FileViewer() {
           </Flex>
         </Tooltip>
       </Flex>
-      {activeFile.data.mimeType.startsWith('audio') ? (
+      {activeFile.data.mimeType?.startsWith('audio') ? (
         <AudioViewer file={activeFile} download={download} />
-      ) : activeFile.data.mimeType.startsWith('image') ? (
+      ) : activeFile.data.mimeType?.startsWith('image') ? (
         <ImageViewer file={activeFile} download={download} />
       ) : (
         <DefaultViewer file={activeFile} download={download} />

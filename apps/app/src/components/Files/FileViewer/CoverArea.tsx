@@ -48,17 +48,14 @@ export function CoverArea({ file, download, children }: Props) {
           </Flex>
         )}
       </Box>
-      {download.isDownloading ? (
-        download.progress < 1 && (
-          <Flex css={{ gap: '$1' }}>
-            <Text>
-              Downloading {`${(download.progress * 100).toFixed(0)}%`}
-            </Text>
-          </Flex>
-        )
-      ) : (
+      {download.isDownloading && download.progress < 1 && (
+        <Flex css={{ gap: '$1' }}>
+          <Text>Downloading {`${(download.progress * 100).toFixed(0)}%`}</Text>
+        </Flex>
+      )}
+      {download.isDownloading && download.progress === 1 && (
         <Box>
-          <Button onClick={() => startDownload(file)}>Download</Button>
+          <Button onClick={() => startDownload(file, true)}>Download</Button>
         </Box>
       )}
     </Flex>

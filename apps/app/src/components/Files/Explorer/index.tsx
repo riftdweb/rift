@@ -7,11 +7,16 @@ import { Header } from './Header'
 import { Drop } from './Drop'
 
 export function FileExplorer() {
-  const { activeNodePath, activeDirectoryPath, sortedIndex } = useFs()
+  const {
+    activeNodePath,
+    activeDirectoryPath,
+    sortedIndex,
+    isActiveNodeShared,
+  } = useFs()
 
   return (
     <Layout>
-      <Drop directoryPath={activeDirectoryPath}>
+      <Drop directoryPath={activeDirectoryPath} disabled={isActiveNodeShared}>
         <Box
           css={{
             position: 'relative',

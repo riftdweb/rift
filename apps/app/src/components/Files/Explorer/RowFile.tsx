@@ -13,7 +13,7 @@ type Props = {
 }
 
 export function FileItem({ file }: Props) {
-  const { activeNode } = useFs()
+  const { activeNode, isActiveNodeShared } = useFs()
   const { name, modified, mimeType } = file.data
   const { size } = file.data.file
 
@@ -28,7 +28,7 @@ export function FileItem({ file }: Props) {
   const encryption = useEncryptionData(file)
 
   return (
-    <Row>
+    <Row dropDisabled={isActiveNodeShared}>
       {!!file.upload?.progress && (
         <Box
           css={{
@@ -58,7 +58,11 @@ export function FileItem({ file }: Props) {
           }}
         >
           <Link
-            to={`/files/${[...activeNode, file.data.name].join('/')}`}
+            to={
+              file.status === undefined || file.status === 'complete'
+                ? `/files/${[...activeNode, file.data.name].join('/')}`
+                : `/files/${activeNode.join('/')}`
+            }
             css={{
               display: 'block',
               textOverflow: 'ellipsis',
@@ -79,16 +83,47 @@ export function FileItem({ file }: Props) {
             )}
           </Link>
         </Box>
-        <CellText>
+        <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
+        >
           {bytes(size, { unitSeparator: ' ', decimalPlaces: '1' })}
         </CellText>
-        <CellText>{mimeType}</CellText>
-        <Box css={{ flex: 1, color: '$gray11' }}>
+        <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
+        >
+          {mimeType}
+        </CellText>
+        <Box
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+            flex: 1,
+            color: '$gray11',
+          }}
+        >
           <Tooltip content={`Encryption: ${encryption.type}`}>
             <Badge>{encryption.label}</Badge>
           </Tooltip>
         </Box>
         <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
           textCss={{
             textAlign: 'right',
           }}

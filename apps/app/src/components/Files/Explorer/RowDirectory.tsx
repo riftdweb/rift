@@ -10,13 +10,13 @@ type Props = {
 }
 
 export function DirectoryItem({ file }: Props) {
-  const { activeNode } = useFs()
+  const { activeNode, isActiveNodeShared } = useFs()
   const { name, created } = file.data
 
   const fsPath = [...activeNode, file.data.name].join('/')
 
   return (
-    <Row directoryPath={fsPath}>
+    <Row directoryPath={fsPath} dropDisabled={isActiveNodeShared}>
       <Flex
         css={{
           position: 'relative',
@@ -50,10 +50,38 @@ export function DirectoryItem({ file }: Props) {
             {name}
           </Link>
         </Box>
-        <CellText />
-        <CellText />
-        <CellText flex={0.75} />
         <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
+        />
+        <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
+        />
+        <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
+          flex={0.75}
+        />
+        <CellText
+          css={{
+            display: 'none',
+            '@bp2': {
+              display: 'block',
+            },
+          }}
           textCss={{
             textAlign: 'right',
           }}

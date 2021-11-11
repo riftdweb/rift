@@ -39,7 +39,7 @@ export function TabNav() {
           </TabLink>
           <TabLink
             as={Link}
-            to="/files"
+            to="/files/home"
             active={route.split('/')[1] === 'files'}
           >
             <Box css={{ mr: '$1' }}>

@@ -3,9 +3,10 @@ import { useMemo } from 'react'
 import { usePortal } from './usePortal'
 
 export const useAvatarUrl = (profile?: IUserProfile) => {
-  const { portal } = usePortal()
+  const {portal} = usePortal()
   return useMemo(() => {
     const avatarUrl =
+
       profile && profile.avatar && profile.avatar.length
         ? profile.avatar[0].url
         : null

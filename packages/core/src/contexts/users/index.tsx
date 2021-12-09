@@ -158,10 +158,18 @@ export function UsersProvider({ children }: Props) {
   // Init step 1
   const usersMap = useSWR(
     getKey([appDomain, dataKeyUsers]),
-    () =>
-      fetchUsersMap(ref, {
+    async () => {
+      const data = await fetchUsersMap(ref, {
         priority: 4,
-      }),
+      })
+
+      if (data.updatedAt !== 0) {
+        return data
+      } else {
+        const { seedUsersMap } = await import('./seedDb')
+        return seedUsersMap
+      }
+    },
     {
       revalidateOnFocus: false,
     }

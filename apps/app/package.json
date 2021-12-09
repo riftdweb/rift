@@ -13,7 +13,7 @@
     "@riftdweb/core": "^1.0.0",
     "@riftdweb/design-system": "^2.0.0",
     "@riftdweb/types": "^1.0.0",
-    "@skynethub/userprofile-library": "^0.1.10-beta",
+    "@skynethub/userprofile-library": "^0.1.18-beta",
     "@visx/axis": "^1.8.0",
     "@visx/event": "^1.7.0",
     "@visx/group": "^1.7.0",

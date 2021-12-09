@@ -43,7 +43,7 @@ export function RateLimiter<T>(
   // metrics
   let completedTaskLog: [number, number][] = []
 
-  let interval = null
+  let interval: NodeJS.Timeout | null = null
 
   const getNextTaskIndex = (): number => {
     if (queue.length === 0) {
@@ -95,6 +95,11 @@ export function RateLimiter<T>(
     let isTerminating = false
 
     const task = popNextTask()
+
+    if (!task) {
+      return
+    }
+
     const id = task.id
 
     pendingQueue.push(task)
@@ -108,10 +113,10 @@ export function RateLimiter<T>(
 
     try {
       const result = await task.task()
-      task.resolve(result)
+      task.resolve!(result)
     } catch (e) {
       console.log(`'${name}' rateLimiter caught error`, e)
-      task.reject()
+      task.reject!()
     }
 
     completedTaskLog.push([new Date().getTime(), task.cost])

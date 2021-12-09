@@ -3281,14 +3281,14 @@
     webpack "^4.44.1"
     webpack-bundle-analyzer "^4.4.0"
 
-"@skynethub/userprofile-library@^0.1.10-beta":
-  version "0.1.10-beta"
-  resolved "https://registry.yarnpkg.com/@skynethub/userprofile-library/-/userprofile-library-0.1.10-beta.tgz#5be6eb90aec9e1b49eba56c9c1bd9a87cda873d0"
-  integrity sha512-0JG7Q98Zb1vVWIYBr/UaJb5GuK4Dm5+KtrR4inhO2fJO1/vAlRP+BHEMhIIOIzSygjVir2IlaXN128xx6pfToA==
+"@skynethub/userprofile-library@^0.1.18-beta":
+  version "0.1.18-beta"
+  resolved "https://registry.yarnpkg.com/@skynethub/userprofile-library/-/userprofile-library-0.1.18-beta.tgz#7743bb64fc81f69a93ba78ab28787d3f73273380"
+  integrity sha512-6YMfkcA9P/VZeZa6EmF941RfBCg7Js91ntRlUaApquDNCsx6QPaz3db3dBnT6xheNgvNui4XK7vmnT3RIqEMZA==
   dependencies:
     post-me "^0.4.5"
-    skynet-js "^4.0.6-beta"
-    skynet-mysky-utils "^0.1.0"
+    skynet-js "4.0.18-beta"
+    skynet-mysky-utils "^0.3.0"
 
 "@stitches/react@1.2.5":
   version "1.2.5"
@@ -5157,6 +5157,13 @@ axios@^0.21.0:
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
+
+axios@^0.21.1:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
+  dependencies:
+    follow-redirects "^1.14.0"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -8788,6 +8795,11 @@ follow-redirects@^1.0.0, follow-redirects@^1.10.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.0.tgz#f5d260f95c5f8c105894491feee5dc8993b402fe"
   integrity sha512-0vRwd7RKQBTt+mgu87mtYeofLFZpTas2S9zY+jIeuLJMNvudIgF52nr19q40HOwH5RrhWIPuj9puybzSJiRrVg==
+
+follow-redirects@^1.14.0:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -15688,6 +15700,28 @@ sjcl@^1.0.8:
   resolved "https://registry.yarnpkg.com/sjcl/-/sjcl-1.0.8.tgz#f2ec8d7dc1f0f21b069b8914a41a8f236b0e252a"
   integrity sha512-LzIjEQ0S0DpIgnxMEayM1rq9aGwGRG4OnZhCdjx7glTaJtf4zRfpg87ImfjSJjoW9vKpagd82McDOwbRT5kQKQ==
 
+skynet-js@4.0.18-beta:
+  version "4.0.18-beta"
+  resolved "https://registry.yarnpkg.com/skynet-js/-/skynet-js-4.0.18-beta.tgz#4683f0837ae552802f39c0e7081a1b978b79ef4a"
+  integrity sha512-7mE9xrejTpRacZfhhCqx+dm7k1y6ITLZMWZnsPp13D2N9CNroyzB75Yi7033qwPtdo9i6BEzIDolZl66j+uALw==
+  dependencies:
+    axios "^0.21.1"
+    base32-decode "^1.0.0"
+    base32-encode "^1.1.1"
+    base64-js "^1.3.1"
+    blakejs "^1.1.0"
+    buffer "^6.0.1"
+    mime "^2.5.2"
+    path-browserify "^1.0.1"
+    post-me "^0.4.5"
+    randombytes "^2.1.0"
+    sjcl "^1.0.8"
+    skynet-mysky-utils "^0.3.0"
+    tus-js-client "^2.2.0"
+    tweetnacl "^1.0.3"
+    url-join "^4.0.1"
+    url-parse "^1.5.1"
+
 skynet-js@^4.0.12-beta:
   version "4.0.12-beta"
   resolved "https://registry.yarnpkg.com/skynet-js/-/skynet-js-4.0.12-beta.tgz#fc612b6b5f4e0b6708cd9310a7abb95feaf914ac"
@@ -15731,27 +15765,7 @@ skynet-js@^4.0.3-beta:
     url-join "^4.0.1"
     url-parse "1.4.7"
 
-skynet-js@^4.0.6-beta:
-  version "4.0.6-beta"
-  resolved "https://registry.yarnpkg.com/skynet-js/-/skynet-js-4.0.6-beta.tgz#45532a45d989a587f216516e6618cfb6194f4dca"
-  integrity sha512-2dOmdOIwRgISWShyCePU5qJ1PPPN0vqb8WlQhBztQgJeZQwx0AGhZr9HWgboaItwK3iMb4KAjdq4wpoXbs2u+g==
-  dependencies:
-    axios "^0.21.0"
-    base32-encode "^1.1.1"
-    base64-js "^1.3.1"
-    blakejs "^1.1.0"
-    buffer "^6.0.1"
-    mime "^2.5.2"
-    path-browserify "^1.0.1"
-    post-me "^0.4.5"
-    randombytes "^2.1.0"
-    sjcl "^1.0.8"
-    skynet-mysky-utils "^0.2.2"
-    tweetnacl "^1.0.3"
-    url-join "^4.0.1"
-    url-parse "1.4.7"
-
-skynet-mysky-utils@^0.1.0, skynet-mysky-utils@^0.1.2:
+skynet-mysky-utils@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/skynet-mysky-utils/-/skynet-mysky-utils-0.1.2.tgz#1ca5e9cf69a71ac67dd805c90371fd71f622adc1"
   integrity sha512-ehPGwIIMldrG6S4ynkvElcqMeSrT85ignto1z/Nx3yFcHiiNDRLq5y6ZGXdSSNw2XfVSi8e66wjbL0qlNNCZog==

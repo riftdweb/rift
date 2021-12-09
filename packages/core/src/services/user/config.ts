@@ -26,6 +26,9 @@ const familiarLevelToConfig: Record<Level, Config> = {
       profile: daysToMs(2),
       following: daysToMs(2),
       meta: daysToMs(7),
+      // Ok to be low, because indexer prioritizes users and slowly queues.
+      // Eventually need to make this much lower so very recent updates appear in feed.
+      // TODO: revisit when integrating websockets.
       feed: hoursToMs(1),
     },
   },
@@ -36,7 +39,9 @@ const familiarLevelToConfig: Record<Level, Config> = {
       profile: daysToMs(2),
       following: daysToMs(2),
       meta: daysToMs(2),
-      feed: minutesToMs(20),
+      // -1 since indexer will eventually get to any user in render view and the indexer algo
+      // itself can handle strategically trying to prioritize more important users.
+      feed: -1,
     },
   },
   interact: {

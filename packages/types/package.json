@@ -10,7 +10,7 @@
     "publish": "yarn publish"
   },
   "dependencies": {
-    "@skynethub/userprofile-library": "^0.1.10-beta",
+    "@skynethub/userprofile-library": "^0.1.18-beta",
     "feed-dac-library": "^0.2.2"
   }
 }

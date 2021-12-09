@@ -21,7 +21,7 @@ export function DefaultViewer({ file, download }: ViewerProps) {
         <Box as="img" src={url} css={{ width: '100%' }} />
       ) : file.data.mimeType.startsWith('video') ? (
         <Box as="video" controls autoPlay css={{ width: '100%' }}>
-          <source src={url} type="video/mp4" />
+          <source src={url} type={file.data.mimeType} />
         </Box>
       ) : ['application/pdf'].includes(file.data.mimeType) ? (
         <Box css={{ width: '100%', height: '100vh' }}>

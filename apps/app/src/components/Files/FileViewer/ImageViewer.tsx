@@ -34,9 +34,7 @@ export function ImageViewer({ file, download }: ViewerProps) {
             alignItems: 'center',
           }}
         >
-          <Button onClick={() => startDownload(file)}>
-            Download and display
-          </Button>
+          <Button onClick={() => startDownload(file)}>Download</Button>
         </Box>
       )}
     </Flex>

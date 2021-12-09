@@ -44,7 +44,7 @@ export function TaskQueue<T>(
   // metrics
   let completedTaskLog: [number, number][] = []
 
-  let interval: ReturnType<typeof setInterval> | null = null
+  let interval: NodeJS.Timeout | null = null
 
   const getPendingTaskIndexByKey = (key: string): number => {
     if (pendingQueue.length === 0) {

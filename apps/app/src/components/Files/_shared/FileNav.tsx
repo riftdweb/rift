@@ -151,7 +151,7 @@ export function FileNav() {
       {activeFile ? (
         download.isDownloading ? (
           download.isComplete ? (
-            <Tooltip content="Download file">
+            <Tooltip content="Save to device">
               <Button
                 size="2"
                 onClick={() =>
@@ -162,14 +162,14 @@ export function FileNav() {
               </Button>
             </Tooltip>
           ) : (
-            <Tooltip content="Decrypting file">
+            <Tooltip content="Downloading">
               <Button size="2" disabled>
                 <SpinnerIcon />
               </Button>
             </Tooltip>
           )
         ) : (
-          <Tooltip content="Download file">
+          <Tooltip content="Download and save to device">
             <Button size="2" onClick={() => startDownload(activeFile, true)}>
               <DownloadIcon />
             </Button>

@@ -3281,7 +3281,7 @@
     webpack "^4.44.1"
     webpack-bundle-analyzer "^4.4.0"
 
-"@skynethub/userprofile-library@^0.1.10-beta":
+"@skynethub/userprofile-library@0.1.10-beta":
   version "0.1.10-beta"
   resolved "https://registry.yarnpkg.com/@skynethub/userprofile-library/-/userprofile-library-0.1.10-beta.tgz#5be6eb90aec9e1b49eba56c9c1bd9a87cda873d0"
   integrity sha512-0JG7Q98Zb1vVWIYBr/UaJb5GuK4Dm5+KtrR4inhO2fJO1/vAlRP+BHEMhIIOIzSygjVir2IlaXN128xx6pfToA==

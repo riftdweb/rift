@@ -15,7 +15,7 @@ import statusUrl from './images/status.png'
 
 export function LearnHow() {
   const dialogProps = useDialog()
-  const content = 'Learn how to set up a Handshake domain'
+  const content = 'Learn how to set up a domain'
   const triggerElement = 'Learn how to integrate with HNS/ENS/DNSLink'
   return (
     <Dialog

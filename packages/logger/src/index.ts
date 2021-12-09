@@ -10,8 +10,7 @@ const isBrowser = typeof self !== 'undefined'
 
 const isLoggerEnabled =
   isBrowser &&
-  (process.env.NODE_ENV === 'development' ||
-    localStorage?.getItem('isLoggerEnabled'))
+  (process.env.NODE_ENV === 'development' || getItem('isLoggerEnabled'))
 
 export function createLogger(namespace: string, params: LoggerParams = {}) {
   const rootNamespace = namespace
@@ -69,4 +68,15 @@ function intToRGB(i: number) {
 
 function getColor(workflowId: string) {
   return intToRGB(hashCode(workflowId))
+}
+
+// Inlined from core/shared/localStorage
+function getItem(key: string) {
+  const str = localStorage.getItem(key)
+
+  if (!str) {
+    return undefined
+  } else {
+    return JSON.parse(str)
+  }
 }

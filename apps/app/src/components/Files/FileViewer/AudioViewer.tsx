@@ -80,7 +80,7 @@ export function AudioViewer({ file, download }: ViewerProps) {
         )
       ) : (
         <Box>
-          <Button onClick={() => startDownload(file)}>Download and play</Button>
+          <Button onClick={() => startDownload(file)}>Download</Button>
         </Box>
       )}
     </Flex>

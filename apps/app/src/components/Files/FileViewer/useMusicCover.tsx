@@ -27,11 +27,25 @@ export function useMusicCover(file, size = defaultSize) {
 
   const element = useMemo(() => {
     if (url) {
-      return <Image src={url} width={size} height={size} />
+      return (
+        <Image
+          src={url}
+          width={size}
+          height={size}
+          css={{ objectFit: 'cover' }}
+        />
+      )
     }
 
     if (blurHashUrl) {
-      return <Image src={blurHashUrl} width={size} height={size} />
+      return (
+        <Image
+          src={blurHashUrl}
+          width={size}
+          height={size}
+          css={{ objectFit: 'cover' }}
+        />
+      )
     }
 
     return null

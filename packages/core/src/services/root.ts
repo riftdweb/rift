@@ -3,10 +3,9 @@ import { ControlRef } from '../contexts/skynet/ref'
 import { clearAllTokens } from './tokens'
 import { scheduleFeedAggregator } from './feedAggregator'
 import { scheduleUsersIndexer } from './usersIndexer'
+import { getItem } from '../shared/localStorage'
 
-const disableBackgroundServices = localStorage.getItem(
-  'disableBackgroundServices'
-)
+const disableBackgroundServices = getItem('disableBackgroundServices')
 
 const log = createLogger('root')
 

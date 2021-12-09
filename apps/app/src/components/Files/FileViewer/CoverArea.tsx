@@ -53,9 +53,16 @@ export function CoverArea({ file, download, children }: Props) {
           <Text>Downloading {`${(download.progress * 100).toFixed(0)}%`}</Text>
         </Flex>
       )}
+      {!download.isDownloading && (
+        <Box>
+          <Button onClick={() => startDownload(file)}>Download</Button>
+        </Box>
+      )}
       {download.isDownloading && download.progress === 1 && (
         <Box>
-          <Button onClick={() => startDownload(file, true)}>Download</Button>
+          <Button onClick={() => startDownload(file, true)}>
+            Save to device
+          </Button>
         </Box>
       )}
     </Flex>

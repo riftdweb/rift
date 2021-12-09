@@ -10,6 +10,7 @@
     "build:bots": "yarn packages:build && manypkg run @riftdweb/bots build",
     "format": "prettier --write './**/src/**/*.{ts,tsx}'",
     "format:app": "prettier --write 'apps/app/src/**/*.{ts,tsx}'",
+    "format:core": "prettier --write 'packages/core/src/**/*.{ts,tsx}'",
     "lint:core": "eslint 'packages/core/src/**/*.{ts,tsx}'",
     "clean": "rimraf '**/node_modules' '**/yarn-error.log' '**/build' '**/dist'",
     "fresh": "yarn clean && yarn",

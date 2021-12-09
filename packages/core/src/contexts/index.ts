@@ -6,7 +6,7 @@ export {
   SkynetProvider,
   useSkynet,
   feedDAC,
-  userProfileDAC,
+  // userProfileDAC,
   socialDAC,
   fileSystemDAC,
   useControlRef,

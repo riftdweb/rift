@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { FeedDAC } from 'feed-dac-library'
-import { UserProfileDAC } from '@skynethub/userprofile-library'
+// import { UserProfileDAC } from '@skynethub/userprofile-library'
 import { SocialDAC } from 'social-dac-library'
 import { FileSystemDAC } from 'fs-dac-library'
 import { clearAllTaskQueues } from '@riftdweb/queue'
@@ -26,14 +26,14 @@ const log = createLogger('contexts/skynet', {
 })
 
 export const feedDAC = new FeedDAC()
-export const userProfileDAC = new UserProfileDAC()
+// export const userProfileDAC = new UserProfileDAC()
 export const socialDAC = new SocialDAC()
 export const fileSystemDAC = new FileSystemDAC()
 
 // @ts-ignore
 window.dacs = {
   feedDAC,
-  userProfileDAC,
+  // userProfileDAC,
   socialDAC,
   fileSystemDAC,
 }
@@ -121,7 +121,7 @@ export function SkynetProvider({ children }: Props) {
         await _mySky.loadDacs(
           fileSystemDAC,
           feedDAC as any,
-          userProfileDAC as any,
+          // userProfileDAC as any,
           socialDAC as any
         )
 

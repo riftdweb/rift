@@ -1,4 +1,4 @@
-import { Container, Box, Flex } from '@riftdweb/design-system'
+import { Container, Box } from '@riftdweb/design-system'
 import { FileNav } from './FileNav'
 
 export function Layout({ children }) {

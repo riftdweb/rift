@@ -446,21 +446,31 @@ export function UsersProvider({ children }: Props) {
       }
     }
 
-    const randomUserIds = [
-      seedList[Math.floor(Math.random() * seedList.length)],
-      seedList[Math.floor(Math.random() * seedList.length)],
-      seedList[Math.floor(Math.random() * seedList.length)],
-      seedList[Math.floor(Math.random() * seedList.length)],
-      seedList[Math.floor(Math.random() * seedList.length)],
-    ]
-    const userIds = uniq([...randomUserIds, ...suggestionList]).filter(
-      (suggestionUserId) => {
-        if (suggestionUserId === myUserId) {
-          return false
-        }
-        const user = ref.current.getUser(suggestionUserId)
-        return !isFollowing(user)
-      }
+    let suggestionIds = suggestionList.filter((userId) => {
+      const foundUser = discoveredUsersIndex.find((u) => u.userId === userId)
+      return !foundUser || !isFollowing(foundUser)
+    })
+
+    if (suggestionIds.length < 5) {
+      const followers = discoveredUsersIndex.filter(
+        (user) => user.relationship.data === 'follower'
+      )
+      suggestionIds = suggestionIds.concat(
+        followers.slice(0, 5).map((user) => user.userId)
+      )
+    }
+
+    if (suggestionIds.length < 5) {
+      const other = discoveredUsersIndex.filter(
+        (user) => user.relationship.data === 'none'
+      )
+      suggestionIds = suggestionIds.concat(
+        other.slice(0, 5 - suggestionIds.length).map((user) => user.userId)
+      )
+    }
+
+    const userIds = uniq(suggestionIds).filter(
+      (suggestionUserId) => suggestionUserId !== myUserId
     )
 
     return {

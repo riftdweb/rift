@@ -1,12 +1,7 @@
-export { updateActivityFeed } from './activity'
-export {
-  addEntries,
-  clearEntriesBuffer,
-  scheduleFeedAggregator,
-} from './feedAggregator'
-export { updateTopFeed, scoreEntry } from './top'
-export { syncUser, checkIsUserUpToDate } from './user'
-export { scheduleUsersIndexer } from './usersIndexer'
+import { initSkynetService } from './account'
+
+export { scoreEntry } from './feeds/scoreEntries'
+export { syncUser, checkIsUserUpToDate } from './syncUser'
 export { startRoot } from './root'
 export {
   emptyFeed,
@@ -26,3 +21,8 @@ export {
   needsRefresh,
 } from './serviceApi'
 export { handleToken, clearAllTokens, clearToken } from './tokens'
+
+export async function initServices(userId = 'rift') {
+  await initSkynetService()
+  // await initUsersService()
+}

@@ -1,13 +1,14 @@
 import CAF from 'caf'
 import { createLogger } from '@riftdweb/logger'
-import { EntryFeed, UsersMap, TaskParams } from '@riftdweb/types'
-import { ControlRef } from '../../contexts/skynet/ref'
-import { clearToken, handleToken } from '../tokens'
-import { wait, waitFor } from '../../shared/wait'
-import { syncUser } from '../user'
-import { recomputeFollowers } from './utils'
+import { UsersMap, TaskParams } from '@riftdweb/types'
+import { clearToken, getToken, handleToken } from '../../../tokens'
+import { wait } from '../../../../shared/wait'
+import { recomputeFollowers } from '../users/utils'
+import { addNewUserIds, getPending } from '../users/api'
+import { IUserDoc } from '../../stores/user'
+import { syncUser } from '../syncUser'
 
-const FALSE_START_WAIT_INTERVAL = 1000 * 2
+// const FALSE_START_WAIT_INTERVAL = 1000 * 2
 const BATCH_SIZE = 5
 
 const tokenName = 'userIndexer'
@@ -15,47 +16,44 @@ export const log = createLogger('userIndexer')
 
 const cafUsersIndexer = CAF(function* (
   signal: any,
-  ref: ControlRef,
   params: TaskParams
-): Generator<Promise<EntryFeed | string[] | void | UsersMap>, any, any> {
-  let tasks = []
+): Generator<Promise<IUserDoc[] | string[] | void | UsersMap>, any, any> {
+  let tasks: Promise<IUserDoc>[] = []
   try {
     log('Running')
 
     while (true) {
-      const userIds = ref.current.getUsersPendingUpdate()
-      if (!userIds.length) {
+      const pendingUsers: IUserDoc[] = yield getPending()
+      if (!pendingUsers.length) {
         yield wait(5_000)
         continue
       }
-      log(`Users pending updates: ${userIds.length}`)
+      log(`Users pending updates: ${pendingUsers.length}`)
 
-      const batch = userIds.splice(0, BATCH_SIZE)
+      const batch = pendingUsers.splice(0, BATCH_SIZE)
       log('Batch', batch)
 
-      tasks = batch.map((userId) =>
-        syncUser(ref, userId, 'index', {
+      tasks = batch.map((user) =>
+        syncUser(user.userId, 'index', {
           workflowId: params.workflowId,
         })
       )
 
-      yield Promise.all(tasks)
+      const users = yield Promise.all(tasks)
       log('Batch complete')
 
-      // Index the discovered following
-      const updatedUsers = batch.map(ref.current.getUser)
-      log(updatedUsers)
       const userIdsToAdd = []
-      updatedUsers.forEach((newItem) => {
+
+      users.forEach((newItem) => {
         if (newItem) {
           userIdsToAdd.push(...newItem.following.data)
         }
       })
 
-      ref.current.addNewUserIds(userIdsToAdd)
+      addNewUserIds(userIdsToAdd)
 
       // Recompute followers
-      yield recomputeFollowers(ref)
+      yield recomputeFollowers()
     }
   } finally {
     log('Exiting, finally')
@@ -65,43 +63,40 @@ const cafUsersIndexer = CAF(function* (
   }
 })
 
-async function usersIndexer(
-  ref: ControlRef,
-  params: TaskParams = {}
-): Promise<any> {
-  const token = await handleToken(ref, tokenName)
+async function usersIndexer(params: TaskParams = {}): Promise<any> {
+  const token = await handleToken(tokenName)
   try {
-    await cafUsersIndexer(token.signal, ref, params)
+    await cafUsersIndexer(token.signal, params)
   } catch (e) {
     log('Error', e)
   } finally {
-    clearToken(ref, tokenName)
+    clearToken(tokenName)
   }
 }
 
 const logScheduler = createLogger('userIndexer/schedule')
 
-async function maybeRunUsersIndexer(ref: ControlRef): Promise<any> {
-  await waitFor(() => [ref.current.isInitUsersComplete], {
-    log: logScheduler,
-    resourceName: 'init users',
-    intervalTime: FALSE_START_WAIT_INTERVAL,
-  })
+async function maybeRunUsersIndexer(): Promise<any> {
+  // await waitFor(() => [ref.current.isInitUsersComplete], {
+  //   log: logScheduler,
+  //   resourceName: 'init users',
+  //   intervalTime: FALSE_START_WAIT_INTERVAL,
+  // })
 
   // If indexer is already running skip
-  if (ref.current.tokens[tokenName]) {
+  if (getToken(tokenName)) {
     logScheduler(`Indexer already running, skipping`)
   } else {
     logScheduler(`Indexer starting`)
-    usersIndexer(ref)
+    usersIndexer()
   }
 }
 
-export async function scheduleUsersIndexer(ref: ControlRef): Promise<any> {
+export async function scheduleUsersIndexer(): Promise<any> {
   logScheduler('Starting scheduler')
 
   // Give the page render requests a few seconds to complete
   await wait(3000)
 
-  maybeRunUsersIndexer(ref)
+  maybeRunUsersIndexer()
 }

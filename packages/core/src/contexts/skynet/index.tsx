@@ -18,7 +18,7 @@ import { useLocalRootSeed } from '../../hooks/useLocalRootSeed'
 import { usePortal } from '../../hooks/usePortal'
 import { buildApi } from './api'
 import { ControlRef, useControlRef } from './ref'
-import { clearEntriesBuffer } from '../../services/feedAggregator'
+import { clearEntriesBuffer } from '../../services/rx/services/feeds/buildFeeds'
 import { clearAllTokens } from '../../services/tokens'
 
 const log = createLogger('contexts/skynet', {

@@ -6,17 +6,27 @@ import {
   checkIsUserUpToDate,
   EntriesResponse,
 } from '@riftdweb/core'
+import { useObservableState } from 'observable-hooks'
+import { db } from '@riftdweb/core/src/services/rx'
+import { map } from 'rxjs'
+import { getAccount } from '@riftdweb/core/src/services/rx/services/account'
+import {
+  getFollowing,
+  getFriends,
+  getSuggestions,
+  getUsers,
+} from '@riftdweb/core/src/services/rx/services/users'
 
 export function DevIndexingManager() {
-  const { controlRef: ref } = useSkynet()
+  const account = useObservableState(
+    getAccount().$.pipe(map((d) => d.toJSON()))
+  )
   const [key, setKey] = useState<number>(Math.random())
-  const {
-    usersMap,
-    pendingUserIds,
-    friends,
-    following,
-    suggestions,
-  } = useUsers()
+  const users = useObservableState(getUsers().$)
+  const friends = useObservableState(getFriends().$)
+  const following = useObservableState(getFollowing().$)
+  const suggestions = useObservableState(getSuggestions().$)
+  const pendingUserIds = useObservableState(getPendingUserIds().$)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,7 +37,7 @@ export function DevIndexingManager() {
     }
   }, [])
 
-  if (!usersMap.data) {
+  if (!users || !users.length) {
     return null
   }
 
@@ -114,7 +124,7 @@ export function DevIndexingManager() {
                     )
                   }
                   const { isUpToDate, checks } = checkIsUserUpToDate(
-                    ref,
+                    account,
                     user,
                     {
                       level: 'index',

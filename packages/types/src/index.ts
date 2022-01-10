@@ -169,6 +169,13 @@ export type Feed<T> = {
 export type EntryFeed = Feed<Entry>
 export type ActivityFeed = Feed<Activity>
 
+export type FeedIndex = {
+  id: string
+  name: string
+  updatedAt: number
+  entryIds: string[]
+}
+
 export type TaskParams = {
   force?: boolean
   priority?: number

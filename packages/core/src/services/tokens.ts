@@ -1,45 +1,51 @@
 import CAF from 'caf'
 import { createLogger } from '@riftdweb/logger'
-import { ControlRef, ControlRefDefaults } from '../contexts/skynet/ref'
 
 const log = createLogger('clearToken')
 
-export async function handleToken(
-  ref: ControlRef,
-  tokenKey: keyof ControlRefDefaults['tokens']
-): Promise<any> {
-  await clearToken(ref, tokenKey)
+type TokenKey =
+  | 'feedAggregator'
+  | 'feedTopUpdate'
+  | 'feedActivityUpdate'
+  | 'userIndexer'
+  | string
+
+const tokens: Record<TokenKey, any> = {}
+
+export function getToken(tokenKey: TokenKey) {
+  return tokens[tokenKey]
+}
+
+export async function handleToken(tokenKey: TokenKey): Promise<any> {
+  await clearToken(tokenKey)
 
   const token = new CAF.cancelToken()
   // @ts-ignore
   window[tokenKey] = token
-  ref.current.tokens[tokenKey] = token
+  tokens[tokenKey] = token
   return token
 }
 
-export async function clearToken(
-  ref: ControlRef,
-  tokenKey: keyof ControlRefDefaults['tokens']
-): Promise<void> {
-  const existingToken = ref.current.tokens[tokenKey]
+export async function clearToken(tokenKey: TokenKey): Promise<void> {
+  const existingToken = tokens[tokenKey]
 
   try {
     if (existingToken) {
       // Abort any running task
       existingToken.abort()
       existingToken.discard()
-      ref.current.tokens[tokenKey] = null
-      delete ref.current.tokens[tokenKey]
+      tokens[tokenKey] = null
+      delete tokens[tokenKey]
     }
   } catch (e) {
     log('Error', e)
   }
 }
 
-export async function clearAllTokens(ref) {
-  const promises = Object.keys(ref.current.tokens).map((key) => {
+export async function clearAllTokens() {
+  const promises = Object.keys(tokens).map((key) => {
     log(`Clearing ${key}`)
-    return clearToken(ref, key)
+    return clearToken(key)
   })
   await Promise.all(promises)
 }

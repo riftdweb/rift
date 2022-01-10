@@ -7,8 +7,13 @@ import { buildApi } from './api'
 
 const log = createLogger('rx/account')
 
+export const fileSystemDAC = {} as any
+export const feedDAC = {} as any
+export const socialDAC = {} as any
+
 let mySky: MySky = null
-export let Api: ReturnType<typeof buildApi> = null
+export type IApi = ReturnType<typeof buildApi>
+export let Api: IApi = null
 let client: SkynetClient = null
 
 const state = {
@@ -33,9 +38,8 @@ export async function initSkynetService() {
       isReseting: false,
       myUserId: '',
       appDomain,
-      identityKey: 'key',
       portal,
-      localRootSeed: String(Math.random()),
+      // localRootSeed: String(Math.random()),
     })
     log('Not found, initialized', config.toJSON())
   } else {
@@ -86,12 +90,13 @@ async function initSkynet() {
     // Would these need to reinit if user changes?
     // Currently there is no way to switch users without a reload but
     // in the future this may need to be included in any reset process
-    // await mySky.loadDacs(
-    //   fileSystemDAC,
-    //   feedDAC as any,
-    //   // userProfileDAC as any,
-    //   socialDAC as any
-    // )
+    await mySky
+      .loadDacs
+      // fileSystemDAC,
+      // feedDAC as any,
+      // // userProfileDAC as any,
+      // socialDAC as any
+      ()
 
     // check if user is already logged in with permissions
     const loggedIn = await state.mySky.checkLogin()

@@ -10,11 +10,3 @@ export function useParamUserId(): string {
 
   return paramUserId
 }
-
-export function getViewingUserId(): string {
-  // manually get userId from route because provider is above Route switch
-  const pathParts = window.location.hash.split('/')
-  const paramUserId = (pathParts[1] === 'users' && pathParts[2]) || undefined
-
-  return paramUserId
-}

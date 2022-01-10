@@ -6,7 +6,7 @@ import { fileSystemDAC, FsFile } from '../..'
 import { formatUploads } from './formatUploads'
 import { getDirectoryIndex } from '../../contexts/files/fs'
 import { createUploadErrorMessage } from './utils'
-import { ControlRef } from '../../contexts/skynet/ref'
+import { ControlRef } from '../../ref'
 
 const logName = 'services/files/upload'
 

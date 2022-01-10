@@ -9,7 +9,6 @@ type Props = {
 }
 
 export function TaskItem({ task, color, dupeCount }: Props) {
-  const { controlRef: ref } = useSkynet()
   const { isInitUsersComplete } = useUsers()
 
   if (!isInitUsersComplete) {

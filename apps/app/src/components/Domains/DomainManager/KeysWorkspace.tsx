@@ -1,19 +1,15 @@
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Heading, Text } from '@riftdweb/design-system'
 import useLocalStorageState from 'use-local-storage-state'
-import {
-  useSkynet,
-  useDomainParams,
-  DragSizing,
-  LoadingState,
-} from '@riftdweb/core'
+import { useDomainParams, DragSizing, LoadingState } from '@riftdweb/core'
 import { AddDomain } from '../_shared/AddDomain'
 import { KeyEditor } from './KeyEditor'
 import { KeysTree } from './KeysTree'
 import { ViewingUser } from './ViewingUser'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 export function KeysWorkspace() {
-  const { isReady } = useSkynet()
+  const { isReady } = useAccount()
   const { domain, domainKey, viewingUserId } = useDomainParams()
   const [keysTreeWidth] = useLocalStorageState<string>('keysTreeWidth', '200px')
 

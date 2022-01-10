@@ -1,26 +1,17 @@
 import { Box, Flex, Panel, Heading, Text } from '@riftdweb/design-system'
 import { useEffect, useState } from 'react'
-import {
-  useSkynet,
-  useUsers,
-  checkIsUserUpToDate,
-  EntriesResponse,
-} from '@riftdweb/core'
+import { checkIsUserUpToDate, EntriesResponse } from '@riftdweb/core'
 import { useObservableState } from 'observable-hooks'
-import { db } from '@riftdweb/core/src/services/rx'
-import { map } from 'rxjs'
-import { getAccount } from '@riftdweb/core/src/services/rx/services/account'
 import {
   getFollowing,
   getFriends,
   getSuggestions,
   getUsers,
-} from '@riftdweb/core/src/services/rx/services/users'
+} from '@riftdweb/core/src/services/users/api'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 export function DevIndexingManager() {
-  const account = useObservableState(
-    getAccount().$.pipe(map((d) => d.toJSON()))
-  )
+  const account = useAccount()
   const [key, setKey] = useState<number>(Math.random())
   const users = useObservableState(getUsers().$)
   const friends = useObservableState(getFriends().$)

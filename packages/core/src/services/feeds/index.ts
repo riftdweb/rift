@@ -1,11 +1,15 @@
-// import { createLogger } from '@riftdweb/logger'
-import { db } from '../..'
+import { db } from '../../stores'
+import { Entry } from '@riftdweb/types'
+import { createLogger } from '@riftdweb/logger'
+import { v4 as uuid } from 'uuid'
+import { syncUserFeed } from '../syncUser/resources/feed'
+import { feedDAC, getAccount } from '../account'
 
-// const log = createLogger('rx/feeds')
+const log = createLogger('feed')
 
 export async function getFeedEntries(id: string) {
-  const feed = await db.feeds.findOne(id).exec()
-  const entries = await db.entries.findByIds(feed.entryIds)
+  const feed = await db.feedIndex.findOne(id).exec()
+  const entries = await db.entry.findByIds(feed.entryIds)
   const list = []
   entries.forEach((entry) => {
     list.push(entry)
@@ -13,173 +17,104 @@ export async function getFeedEntries(id: string) {
   return list
 }
 
-import { ActivityFeed, Entry, EntryFeed } from '@riftdweb/types'
-import { createLogger } from '@riftdweb/logger'
-import { SWRResponse } from 'swr'
-import useLocalStorageState from 'use-local-storage-state'
-import { v4 as uuid } from 'uuid'
-import { feedDAC, useSkynet } from '../skynet'
-import { startRoot } from '../../services/root'
-import { syncUserFeed } from '../../services/user/resources/feed'
-import { updateTopFeed } from '../../services/top'
-import { updateActivityFeed } from '../../services/activity'
-import { useParamUserId } from './useParamUserId'
-import { useFeedActivity } from './useFeedActivity'
-import { useFeedLatest } from './useFeedLatest'
-import { useFeedTop } from './useFeedTop'
-import { useFeedUser } from './useFeedUser'
+// const activity = useFeedActivity({ ref })
+// const top = useFeedTop({ ref })
+// const latest = useFeedLatest({ ref, pendingUserEntries })
+// const user = useFeedUser({ ref, pendingUserEntries, setPendingUserEntries })
 
-const log = createLogger('feed')
-
-const RESOURCE_DATA_KEY = 'feed'
-
-  // const activity = useFeedActivity({ ref })
-  // const top = useFeedTop({ ref })
-  // const latest = useFeedLatest({ ref, pendingUserEntries })
-  // const user = useFeedUser({ ref, pendingUserEntries, setPendingUserEntries })
-
-  export async function incrementKeywords(keywords) {
-    db
-
-      // setKeywords((state) => {
-      //   keywords.forEach((keyword) => {
-      //     const keywordCount = state[keyword] || 0
-      //     nextState[keyword] = keywordCount + 1
-      //   })
-      //   return nextState
-      // })
+export async function incrementKeywords(keywords) {
+  keywords.forEach(async (keyword) => {
+    const doc = await db.feedKeyword.findOne(keyword).exec()
+    if (doc) {
+      await doc.atomicPatch({
+        value: doc.value + 1,
+      })
+    } else {
+      await db.feedKeyword.atomicUpsert({
+        id: keyword,
+        value: 1,
+      })
     }
+  })
+}
 
-  const setKeywordValue = useCallback(
-    (keyword: string, value: number) => {
-      setKeywords((state) => {
-        const nextState = {
-          ...state,
-        }
-        nextState[keyword] = value
-        return nextState
-      })
-    },
-    [setKeywords]
-  )
+export function setKeywordValue(keyword: string, value: number) {
+  return db.feedKeyword.atomicUpsert({
+    id: keyword,
+    value,
+  })
+}
 
-  const incrementDomain = useCallback(
-    (domain) => {
-      setDomains((state) => {
-        const nextState = {
-          ...state,
-        }
-        const domainCount = state[domain] || 0
-        nextState[domain] = domainCount + 1
-        return nextState
-      })
-    },
-    [setDomains]
-  )
-
-  const decrementDomain = useCallback(
-    (domain) => {
-      setDomains((state) => {
-        const nextState = {
-          ...state,
-        }
-        const domainCount = state[domain] || 0
-        nextState[domain] = domainCount - 1
-        return nextState
-      })
-    },
-    [setDomains]
-  )
-
-  const createPost = useCallback(
-    ({ text }: { text: string }) => {
-      const localLog = log.createLogger('createPost')
-      const func = async () => {
-        const cid = uuid()
-        const pendingPost = ({
-          userId: myUserId,
-          post: {
-            // skystandards is number
-            id: cid,
-            content: {
-              text,
-            },
-            ts: new Date().getTime(),
-          },
-          isPending: true,
-        } as unknown) as Entry
-
-        try {
-          localLog('Optimistic updates')
-          // Incrementing this value prevents feeds from refetching
-          setPendingUserEntries((entries) => entries.concat([pendingPost]))
-
-          localLog('Feed DAC createPost')
-          // Create post
-          await feedDAC.createPost({ text })
-
-          localLog('Start user feed update')
-          await syncUserFeed(ref, myUserId, 4, 0)
-
-          setPendingUserEntries((entries) =>
-            entries.map((entry) => ({
-              ...entry,
-              isPending: false,
-            }))
-          )
-        } catch (e) {
-          localLog('Error', e)
-          // If an error occurs, remove the pending entries
-          setPendingUserEntries((entries) =>
-            entries.filter(
-              (entry) => ((entry.post.id as unknown) as string) !== cid
-            )
-          )
-        }
-      }
-      func()
-    },
-    [ref, myUserId, setPendingUserEntries]
-  )
-
-  const current = useMemo(() => (mode === 'latest' ? latest : top), [
-    mode,
-    latest,
-    top,
-  ])
-
-  const refreshCurrentFeed = useMemo(
-    () => (mode === 'latest' ? refreshLatestFeed : refreshTopFeed),
-    [mode, refreshLatestFeed, refreshTopFeed]
-  )
-
-  const value = {
-    current,
-    latest,
-    top,
-    activity,
-    user,
-    refreshCurrentFeed,
-    pendingUserEntries,
-    refreshTopFeed,
-    refreshLatestFeed,
-    refreshActivity,
-    userId: viewingUserId,
-    createPost,
-    keywords,
-    domains,
-    incrementKeywords,
-    setKeywordValue,
-    incrementDomain,
-    decrementDomain,
-    isVisibilityEnabled,
-    setIsVisibilityEnabled,
-    mode,
-    setMode,
+export async function incrementDomain(domain: string) {
+  const doc = await db.feedDomain.findOne(domain).exec()
+  if (doc) {
+    await doc.atomicPatch({
+      value: doc.value + 1,
+    })
+  } else {
+    await db.feedDomain.atomicUpsert({
+      id: domain,
+      value: 1,
+    })
   }
+}
 
-  // @ts-ignore
-  window.feed = value
+export async function decrementDomain(domain: string) {
+  const doc = await db.feedDomain.findOne(domain).exec()
+  if (doc) {
+    await doc.atomicPatch({
+      value: doc.value - 1,
+    })
+  } else {
+    await db.feedDomain.atomicUpsert({
+      id: domain,
+      value: 1,
+    })
+  }
+}
 
-  return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>
+export async function createPost(text: string) {
+  const localLog = log.createLogger('createPost')
+  const { myUserId } = await getAccount().exec()
+  const cid = uuid()
+  const pendingPost = ({
+    id: cid,
+    userId: myUserId,
+    post: {
+      // skystandards is number
+      id: cid,
+      content: {
+        text,
+      },
+      ts: new Date().getTime(),
+    },
+    isPending: true,
+  } as unknown) as Entry
+
+  try {
+    localLog('Optimistic updates')
+    db.pendingEntry.atomicUpsert(pendingPost)
+
+    localLog('Feed DAC createPost')
+    // Create post
+    await feedDAC.createPost({ text })
+
+    localLog('Start user feed update')
+    await syncUserFeed(myUserId, 4, 0)
+
+    // setPendingUserEntries((entries) =>
+    //   entries.map((entry) => ({
+    //     ...entry,
+    //     isPending: false,
+    //   }))
+    // )
+  } catch (e) {
+    localLog('Error', e)
+    // If an error occurs, remove the pending entries
+    // setPendingUserEntries((entries) =>
+    //   entries.filter(
+    //     (entry) => ((entry.post.id as unknown) as string) !== cid
+    //   )
+    // )
+  }
 }

@@ -2,7 +2,7 @@ import { createLogger } from '@riftdweb/logger'
 import { createRxDatabase, RxDatabase } from 'rxdb'
 import { getRxStoragePouch, addPouchPlugin } from 'rxdb/plugins/pouchdb'
 import { IAccountCollection, accountStore } from './account'
-import { feedDomainStore, IFeedDomain } from './feedDomain'
+import { feedDomainStore, IFeedDomainCollection } from './feedDomain'
 import { entryStore, IEntryCollection } from './entry'
 import { feedConfigStore, IFeedConfigCollection } from './feedConfig'
 import { feedStore, IFeedIndexCollection } from './feedIndex'
@@ -17,17 +17,17 @@ addPouchPlugin(require('pouchdb-adapter-memory'))
 const log = createLogger('rx')
 
 type ICollections = {
-  users: IUserCollection
+  user: IUserCollection
   account: IAccountCollection
-  entries: IEntryCollection
-  feeds: IFeedIndexCollection
+  entry: IEntryCollection
+  pendingEntry: IEntryCollection
+  feedIndex: IFeedIndexCollection
   feedConfig: IFeedConfigCollection
-  keyword: IFeedKeywordCollection
-  domain: IFeedDomain
+  feedKeyword: IFeedKeywordCollection
+  feedDomain: IFeedDomainCollection
 }
 
 type IStates = {
-  pendingEntries: IEntryCollection
   loaders: ILoaderCollection
 }
 

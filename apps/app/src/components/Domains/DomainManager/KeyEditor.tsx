@@ -3,13 +3,10 @@ import { Domain, DomainKey } from '@riftdweb/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import useSWR from 'swr'
-import {
-  useDomains,
-  useSkynet,
-  useDomainParams,
-  triggerToast,
-} from '@riftdweb/core'
+import { useDomains, useDomainParams, triggerToast } from '@riftdweb/core'
 import { KeysToolbar } from './KeysToolbar'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { Api } from '@riftdweb/core/src/services/account'
 
 const importConfigFiles = () => {
   return Promise.all([
@@ -33,11 +30,11 @@ export function KeyEditor({ domain, dataKey }: Props) {
   const [value, setValue] = useState<string>()
   const [skylink, setSkylink] = useState<string>('')
   const [isSaving, setIsSaving] = useState<boolean>(false)
-  const { Api, identityKey, myUserId } = useSkynet()
+  const { id, isReady, myUserId } = useAccount()
   const { removeKey } = useDomains()
   const { viewingUserId, isReadOnly } = useDomainParams()
   const key = [
-    myUserId === viewingUserId ? identityKey : viewingUserId,
+    myUserId === viewingUserId ? id : viewingUserId,
     domain.id,
     dataKey.id,
   ]
@@ -106,10 +103,10 @@ export function KeyEditor({ domain, dataKey }: Props) {
     setEditingValue(value)
   }, [setEditingValue, value])
 
-  const isDataLatest = useMemo(() => value === editingValue, [
-    value,
-    editingValue,
-  ])
+  const isDataLatest = useMemo(
+    () => value === editingValue,
+    [value, editingValue]
+  )
 
   const isValid = useMemo(() => {
     try {

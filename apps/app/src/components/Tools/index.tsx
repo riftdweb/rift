@@ -1,17 +1,9 @@
-import { db } from '@riftdweb/core/src/services/rx'
-import {
-  getAccount,
-  login,
-  logout,
-} from '@riftdweb/core/src/services/rx/services/account'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { login, logout } from '@riftdweb/core/src/services/account'
 import { Button, Flex, Text } from '@riftdweb/design-system'
-import { useObservableState } from 'observable-hooks'
-import { map } from 'rxjs'
 
 export function Tools() {
-  const account = useObservableState(
-    getAccount().$.pipe(map((v) => v.toJSON()))
-  )
+  const account = useAccount()
 
   return (
     <Flex css={{ py: '$3', flexDirection: 'column', gap: '$3' }}>

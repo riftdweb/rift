@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext } from 'react'
-import { DnsEntry } from '@riftdweb/types'
+import { Feed, DnsEntry } from '@riftdweb/types'
 import { createLogger } from '@riftdweb/logger'
-import { Feed } from '@riftdweb/types'
 import { TaskQueue } from '@riftdweb/queue'
 import { useHistory } from 'react-router-dom'
 import { parseSkylink } from 'skynet-js'
@@ -10,7 +9,8 @@ import { v4 as uuid } from 'uuid'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDns } from '../shared/dataKeys'
 import { triggerToast } from '../shared/toast'
-import { useSkynet } from './skynet'
+import { useAccount } from '../hooks/useAccount'
+import { Api } from '../services/account'
 
 const dataKeyDns = getDataKeyDns()
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -38,11 +38,11 @@ type Props = {
 }
 
 export function DnsProvider({ children }: Props) {
-  const { Api, getKey, appDomain } = useSkynet()
+  const { id, isReady } = useAccount()
   const history = useHistory()
 
   const dns = useSWR<DnsEntryFeed>(
-    getKey([appDomain, dataKeyDns]),
+    isReady ? [id, dataKeyDns] : null,
     async (): Promise<DnsEntryFeed> => {
       const result = await Api.getJSON<DnsEntryFeed>({
         path: dataKeyDns,

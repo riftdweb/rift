@@ -20,8 +20,10 @@ import debounce from 'lodash/debounce'
 import difference from 'lodash/difference'
 import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
-import { useDomains, useSkynet, SpinnerIcon, Link } from '@riftdweb/core'
+import { useDomains, SpinnerIcon, Link } from '@riftdweb/core'
 import { getDefaultPaths, SUGGESTED_DOMAINS } from './suggestedDomains'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { Api } from '@riftdweb/core/src/services/account'
 
 const dGetHnsData = debounce(
   async (Api: any, hnsDomain: string, resolve: any) => {
@@ -66,7 +68,7 @@ type Props = {
 
 export function AddDomainMySky({ closeDialog }: Props) {
   const { domains, addDomain } = useDomains()
-  const { Api, appDomain } = useSkynet()
+  const { appDomain } = useAccount()
 
   const onSubmit = useCallback(
     (vals) => {
@@ -96,7 +98,7 @@ export function AddDomainMySky({ closeDialog }: Props) {
 
   const validationSchema = useMemo(
     () => buildDomainSchema(Api, existingDataDomains),
-    [Api, existingDataDomains]
+    [existingDataDomains]
   )
 
   const formik = useFormik({

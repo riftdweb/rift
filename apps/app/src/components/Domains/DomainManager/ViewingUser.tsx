@@ -12,10 +12,12 @@ import { IUserProfile } from '@skynethub/userprofile-library/dist/types'
 import { useFormik } from 'formik'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import useSWR from 'swr'
-import { useSkynet, useAvatarUrl, useDomainParams } from '@riftdweb/core'
+import { useAvatarUrl, useDomainParams } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { Api } from '@riftdweb/core/src/services/account'
 
 export function ViewingUser() {
-  const { Api, myUserId } = useSkynet()
+  const { myUserId } = useAccount()
   const {
     viewingUserId,
     isViewingSelf,

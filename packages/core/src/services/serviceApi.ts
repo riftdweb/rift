@@ -8,7 +8,7 @@ import {
 } from '@riftdweb/types'
 import { getDataKeyFeeds, getDataKeyUsers } from '../shared/dataKeys'
 import { feedDAC } from '../contexts/skynet'
-import { ControlRef } from '../contexts/skynet/ref'
+import { ControlRef } from '../ref'
 import { apiLimiter } from '../contexts/skynet/api'
 
 export const emptyFeed: EntryFeed = {

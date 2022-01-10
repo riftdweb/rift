@@ -2,7 +2,7 @@ import { LockClosedIcon, Pencil2Icon, StackIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Tooltip } from '@riftdweb/design-system'
 import { useMemo, useState } from 'react'
 import { VelocityComponent } from 'velocity-react'
-import { useSkynet, SeedIcon } from '@riftdweb/core'
+import { SeedIcon } from '@riftdweb/core'
 import { ContextMenuDirectory } from '../ContextMenuDirectory'
 import { ContextMenuDomain } from '../ContextMenuDomain'
 import { ContextMenuFile } from '../ContextMenuFile'
@@ -15,6 +15,7 @@ import {
   TreeNodeFile,
   TreeNodeStatic,
 } from './transformKeys'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 type Props = {
   // customStyles?: {}
@@ -37,7 +38,7 @@ export function Container({
   animations,
   node,
 }: Props) {
-  const { appDomain } = useSkynet()
+  const { appDomain } = useAccount()
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const toggleElement = useMemo(() => {

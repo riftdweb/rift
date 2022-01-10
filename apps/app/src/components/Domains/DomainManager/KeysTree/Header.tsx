@@ -1,6 +1,5 @@
 import { Box } from '@riftdweb/design-system'
 import capitalize from 'lodash/capitalize'
-import React from 'react'
 import { TreeNode } from './transformKeys'
 
 type Props = {

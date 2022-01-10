@@ -4,8 +4,8 @@ import { TaskQueue } from '@riftdweb/queue'
 import debounce from 'lodash/debounce'
 import { useCallback, useEffect, useState } from 'react'
 import { getDataKeyFiles } from '../shared/dataKeys'
-import { useSkynet } from '../contexts/skynet'
-import { Api } from '../contexts/skynet/api'
+import { Api, IApi } from '../services/account'
+import { useAccount } from './useAccount'
 
 const dataKeyFiles = getDataKeyFiles()
 
@@ -15,7 +15,7 @@ const taskQueue = TaskQueue('skyfiles', {
 
 const log = createLogger('skyfiles')
 
-const debouncedSyncState = debounce(async (Api: Api, state) => {
+const debouncedSyncState = debounce(async (Api: IApi, state) => {
   log('Sync State task created')
   const task = async () => {
     try {
@@ -39,7 +39,7 @@ const debouncedSyncState = debounce(async (Api: Api, state) => {
 
 export const useSkyfilesState = () => {
   const [localState, setLocalState] = useState<Skyfile[]>([])
-  const { Api, identityKey } = useSkynet()
+  const { isReady } = useAccount()
 
   const fetchData = useCallback(() => {
     const func = async () => {
@@ -59,16 +59,16 @@ export const useSkyfilesState = () => {
       }
     }
     func()
-  }, [Api, setLocalState])
+  }, [setLocalState])
 
   // Only called successfully once on init, or when identity key changes
   useEffect(() => {
-    if (identityKey) {
+    if (isReady) {
       setLocalState([] as Skyfile[])
       fetchData()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [identityKey])
+  }, [isReady])
 
   const refetchSkyfiles = useCallback(() => {
     fetchData()

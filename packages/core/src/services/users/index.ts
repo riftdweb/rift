@@ -1,42 +1,22 @@
 import { createLogger } from '@riftdweb/logger'
 import { TaskQueue } from '@riftdweb/queue'
 import { uniq } from 'lodash'
-import { db } from '../..'
-import { socialDAC } from '../../../..'
 import { buildUser } from '../../stores/user/buildUser'
 import { recomputeFollowers } from './utils'
-import { IUserCollection, IUser, IUserDoc } from '../../stores/user'
-import { getAccount } from '../account'
+import { getAccount, socialDAC } from '../account'
 import { apiLimiter } from '../account/api'
 import { addNewUserIds, getUser, upsertUser } from './api'
 import { syncUser } from '../syncUser'
 import { syncUserFeed } from '../syncUser/resources/feed'
+import { db } from '../../stores'
 
 export const log = createLogger('rx/users')
 
 const taskQueue = TaskQueue('users')
 
 export async function initUsersService() {
-  // add a postInsert-hook
-  db.users.postInsert(
-    function (this: IUserCollection, _data: IUser, user: IUserDoc) {
-      console.log('insert to ' + this.name + '-collection: ' + user.userId)
-    },
-    false // not async
-  )
-
-  // insert a document
-  const user: IUserDoc = await db.users.insert(buildUser(String(Math.random())))
-
-  // access a property
-  console.log(user.feed)
-
-  // use a orm method
-  user.scream('AAH!')
-
-  // use a static orm method from the collection
-  const amount: number = await db.users.count()
-  log('count', amount)
+  const amount: number = await db.user.count()
+  log('User count', amount)
 }
 
 export async function initUsers() {

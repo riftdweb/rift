@@ -1,17 +1,19 @@
 import useSWR from 'swr'
-import { useSkynet } from '../contexts/skynet'
 import { IUser } from '@riftdweb/types'
-import { syncUser } from '../services/user'
+import { syncUser } from '../services/syncUser'
 import { getDataKeyUsers } from '../shared/dataKeys'
+import { useAccount } from './useAccount'
 
 export function useUser(userId?: string): IUser | undefined {
-  const { controlRef: ref, getKey } = useSkynet()
+  const { isReady } = useAccount()
+
   const { data: user } = useSWR(
-    userId && ref ? getKey([getDataKeyUsers(userId)]) : null,
-    () => syncUser(ref, userId, 'render'),
+    isReady && userId ? getDataKeyUsers(userId) : null,
+    () => syncUser(userId, 'render'),
     {
       revalidateOnFocus: false,
     }
   )
+
   return user
 }

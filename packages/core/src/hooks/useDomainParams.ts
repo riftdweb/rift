@@ -4,7 +4,7 @@ import { Domain, DomainKey } from '../../../../packages/types/src'
 import { triggerToast } from '../shared/toast'
 import { useDomains } from '../contexts/domains'
 import { usePath } from './path'
-import { useSkynet } from '../contexts/skynet'
+import { useAccount } from './useAccount'
 
 type Return = {
   domain: Domain
@@ -21,7 +21,7 @@ type Return = {
 export function useDomainParams(): Return {
   const history = useHistory()
   const { pathname } = useLocation()
-  const { myUserId, appDomain, isReady } = useSkynet()
+  const { myUserId, appDomain, isReady } = useAccount()
   const {
     viewingUserId,
     domainName: encodedDomainName,

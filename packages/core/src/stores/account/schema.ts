@@ -7,9 +7,8 @@ export type IAccount = {
   isReseting: boolean
   myUserId: string
   appDomain: string
-  identityKey: string
   portal: string
-  localRootSeed: string
+  localRootSeed?: string
 }
 
 export const schema: RxJsonSchema<IAccount> = {
@@ -38,9 +37,6 @@ export const schema: RxJsonSchema<IAccount> = {
     appDomain: {
       type: 'string',
     },
-    identityKey: {
-      type: 'string',
-    },
     portal: {
       type: 'string',
     },
@@ -55,8 +51,6 @@ export const schema: RxJsonSchema<IAccount> = {
     'isReseting',
     'myUserId',
     'appDomain',
-    'identityKey',
     'portal',
-    'localRootSeed',
   ],
 }

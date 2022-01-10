@@ -7,9 +7,10 @@ import { IUser, IUserDoc } from '../../stores/user'
 import { getAccount } from '../account'
 import { checkIsUserUpToDate } from '../syncUser'
 import { isFollowing, sortByRelationship } from './utils'
+import { from, map, pipe } from 'rxjs'
 
 export function getUser(userId: string): RxQuery<IUser, IUserDoc> {
-  return db.users.findOne(userId)
+  return db.user.findOne(userId)
 }
 
 export async function upsertUser(user: { userId: string } & Partial<IUser>) {
@@ -21,7 +22,7 @@ export async function upsertUser(user: { userId: string } & Partial<IUser>) {
     ...user,
     updatedAt: new Date().getTime(),
   }
-  return db.users.atomicUpsert(nextUser)
+  return db.user.atomicUpsert(nextUser)
 }
 
 export async function upsertUsers(users: IUser[]) {
@@ -29,19 +30,19 @@ export async function upsertUsers(users: IUser[]) {
 }
 
 export async function addNewUserIds(userIds: string[]) {
-  return db.users.bulkInsert(userIds.map(buildUser))
+  return db.user.bulkInsert(userIds.map(buildUser))
 }
 
 export async function removeUserIds(userIds: string[]) {
-  return db.users.bulkRemove(userIds)
+  return db.user.bulkRemove(userIds)
 }
 
 export function getUsers(): RxQuery<IUser, IUserDoc[]> {
-  return db.users.find()
+  return db.user.find()
 }
 
 export function getFriends(): RxQuery<IUser, IUserDoc[]> {
-  return db.users.find({
+  return db.user.find({
     selector: {
       eq: {
         relationship: {
@@ -53,7 +54,7 @@ export function getFriends(): RxQuery<IUser, IUserDoc[]> {
 }
 
 export function getFollowers(): RxQuery<IUser, IUserDoc[]> {
-  return db.users.find({
+  return db.user.find({
     selector: {
       in: {
         relationship: {
@@ -65,7 +66,7 @@ export function getFollowers(): RxQuery<IUser, IUserDoc[]> {
 }
 
 export function getFollowing(): RxQuery<IUser, IUserDoc[]> {
-  return db.users.find({
+  return db.user.find({
     selector: {
       in: {
         relationship: {
@@ -130,6 +131,16 @@ export async function getIndexedUsers() {
   return users
     .filter((user) => !!user && !!user.updatedAt)
     .sort(sortByRelationship)
+}
+
+export function getIndexedUsers$() {
+  return getUsers().$.pipe(
+    map((users) =>
+      users
+        .filter((user) => !!user && !!user.updatedAt)
+        .sort(sortByRelationship)
+    )
+  )
 }
 
 export async function getUserCounts() {

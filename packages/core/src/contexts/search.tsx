@@ -4,14 +4,13 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 import { IUser } from '@riftdweb/types'
-import { useUsers } from './users'
+import { useObservableState } from 'observable-hooks'
+import { getIndexedUsers$ } from '../services/users/api'
 
 type State = {
-  ref: React.MutableRefObject<any>
   searchValue: string
   setSearchValue: React.Dispatch<React.SetStateAction<string>>
   isFocused: boolean
@@ -33,7 +32,6 @@ export function SearchProvider({ children }: Props) {
   const [isFocused, setIsFocused] = useState<boolean>(false)
   const [dSearchValue, setDSearchValue] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>('')
-  const ref = useRef()
 
   const onChange = useCallback(
     (e) => {
@@ -65,7 +63,7 @@ export function SearchProvider({ children }: Props) {
 
   const isOpen = isFocused || !!searchValue
 
-  const { indexedUsersIndex } = useUsers()
+  const indexedUsersIndex = useObservableState(getIndexedUsers$())
 
   const userSearchResults = useMemo(
     () => filterItems(indexedUsersIndex, dSearchValue),
@@ -77,7 +75,6 @@ export function SearchProvider({ children }: Props) {
   ])
 
   const value = {
-    ref,
     isOpen,
     searchValue,
     setSearchValue,

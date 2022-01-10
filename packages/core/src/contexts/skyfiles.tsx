@@ -8,8 +8,8 @@ import React, {
 import { Skyfile } from '@riftdweb/types'
 import { parseISO, sub } from 'date-fns'
 import { mergeItem } from '../shared/collection'
-import { useSkynet } from './skynet'
 import { useSkyfilesState } from '../hooks/useSkyfilesState'
+import { useAccount } from '../hooks/useAccount'
 
 type State = {
   skyfiles: Skyfile[]
@@ -29,14 +29,14 @@ type Props = {
 export function SkyfilesProvider({ children }: Props) {
   const { skyfiles, setSkyfiles, refetchSkyfiles } = useSkyfilesState()
   const [hasCleanedData, setHasCleanedData] = useState<boolean>(false)
-  const { identityKey } = useSkynet()
+  const { isReady } = useAccount()
 
   // When identity changes reset data cleaning flag
   useEffect(() => {
-    if (identityKey) {
+    if (isReady) {
       setHasCleanedData(false)
     }
-  }, [identityKey])
+  }, [isReady])
 
   // On identity init, clean up stalled out uploads.
   // DANGER: this function deletes user data.

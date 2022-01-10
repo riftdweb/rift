@@ -15,7 +15,8 @@ import useSWR from 'swr'
 import { upsertItem } from '../shared/collection'
 import { getDataKeyDomains } from '../shared/dataKeys'
 import { DATA_MYSKY_BASE_PATH, usePath } from '../hooks/path'
-import { useSkynet } from './skynet'
+import { useAccount } from '../hooks/useAccount'
+import { Api } from '../services/account'
 
 const dataKeyDomains = getDataKeyDomains()
 const log = createLogger('domains')
@@ -48,11 +49,11 @@ const debouncedMutate = debounce((mutate) => {
 export function DomainsProvider({ children }: Props) {
   const [hasValidated, setHasValidated] = useState<boolean>(false)
   const [userHasNoDomains, setUserHasNoDomains] = useState<boolean>(false)
-  const { Api, getKey, appDomain } = useSkynet()
+  const { id, isReady } = useAccount()
   const history = useHistory()
 
   const { data, mutate, isValidating } = useSWR(
-    getKey([appDomain, dataKeyDomains]),
+    isReady ? [id, dataKeyDomains] : null,
     () =>
       Api.getJSON<Domain[]>({
         path: dataKeyDomains,

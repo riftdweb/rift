@@ -16,8 +16,6 @@ type BuildApi = {
   userId?: string
 }
 
-export type Api = ReturnType<typeof buildApi>
-
 const log = createLogger('api', {
   disable: true,
 })

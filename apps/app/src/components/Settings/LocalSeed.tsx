@@ -23,7 +23,6 @@ import {
   getDataKeyApps,
   getDataKeyFiles,
 } from '@riftdweb/core'
-import { exportData } from './_shared/exportData'
 
 const dataKeyDomains = getDataKeyDomains()
 const dataKeyApps = getDataKeyApps()
@@ -34,35 +33,6 @@ export function LocalSeed() {
   const { localRootSeed, regenerate } = useLocalRootSeed()
   const { addDomain } = useDomains()
   const history = useHistory()
-
-  // Fetch because if the app is logged into MySky the contexts do not contain local seed data
-  const { data: skyDbData } = useSWR([localRootSeed, dataKeyDomains], () =>
-    Api.getJSON<Domain[]>({
-      seed: localRootSeed,
-      path: dataKeyDomains,
-      priority: 4,
-    })
-  )
-  // Fetch because if the app is logged into MySky the contexts do not contain local seed data
-  const { data: skyfilesData } = useSWR([localRootSeed, dataKeyFiles], () =>
-    Api.getJSON<Skyfile[]>({
-      seed: localRootSeed,
-      path: dataKeyFiles,
-      priority: 4,
-    })
-  )
-  // Fetch because if the app is logged into MySky the contexts do not contain local seed data
-  const { data: appsData } = useSWR([localRootSeed, dataKeyApps], () =>
-    Api.getJSON<App[]>({
-      seed: localRootSeed,
-      path: dataKeyApps,
-      priority: 4,
-    })
-  )
-
-  const exportAllData = useCallback(() => {
-    exportData(skyfilesData.data, skyDbData.data, appsData.data)
-  }, [skyDbData, skyfilesData, appsData])
 
   const addLocalRootSeedToDomainsTool = useCallback(() => {
     // Disabled if logged in to MySKy
@@ -100,31 +70,6 @@ export function LocalSeed() {
           cached seed.{' '}
           {myUserId && 'Log out of MySky to switch back to this data.'}
         </Paragraph>
-        {DATA_PRIVATE_FEATURES && (
-          <Fragment>
-            <Text>
-              {appsData?.data?.length
-                ? `${appsData.data.length} App${
-                    appsData.data.length > 1 ? 's' : ''
-                  }`
-                : '0 Apps'}
-            </Text>
-            <Text>
-              {skyfilesData?.data?.length
-                ? `${skyfilesData.data.length} ${
-                    skyfilesData.data.length > 1 ? 'Files' : 'File'
-                  }`
-                : '0 Files'}
-            </Text>
-            <Text>
-              {skyDbData?.data?.length
-                ? `${skyDbData.data.length} ${
-                    skyDbData.data.length > 1 ? 'Domains' : 'Domain'
-                  }`
-                : '0 Domains'}
-            </Text>
-          </Fragment>
-        )}
         <Flex css={{ gap: '$1', alignItems: 'center', marginTop: '$2' }}>
           <Tooltip content="Copy local seed to clipboard">
             <Button
@@ -136,23 +81,6 @@ export function LocalSeed() {
               Copy seed to clipboard
             </Button>
           </Tooltip>
-          {DATA_PRIVATE_FEATURES && (
-            <Fragment>
-              <Tooltip content="Show local seed and data keys in the Data tool">
-                <Button onClick={() => addLocalRootSeedToDomainsTool()}>
-                  Add local metadata to Data
-                </Button>
-              </Tooltip>
-              <Tooltip content="Export all local user data">
-                <Button onClick={exportAllData}>
-                  <Box css={{ mr: '$1' }}>
-                    <DownloadIcon />
-                  </Box>
-                  Export all metadata
-                </Button>
-              </Tooltip>
-            </Fragment>
-          )}
           <Box css={{ flex: 1 }} />
           <Tooltip content="Regenerating Rift seed will clear all data">
             <Button

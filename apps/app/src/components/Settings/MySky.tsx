@@ -6,12 +6,12 @@ import {
   Paragraph,
   Tooltip,
 } from '@riftdweb/design-system'
-import React from 'react'
-import { useSkynet } from '@riftdweb/core'
 import { MySkyLoggedIn } from './MySkyLoggedIn'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { login } from '@riftdweb/core/src/services/account'
 
 export function MySky() {
-  const { myUserId, login } = useSkynet()
+  const { myUserId } = useAccount()
 
   if (myUserId) {
     return <MySkyLoggedIn />

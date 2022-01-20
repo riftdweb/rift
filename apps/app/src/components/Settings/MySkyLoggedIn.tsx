@@ -1,4 +1,4 @@
-import { ClipboardIcon, DownloadIcon } from '@radix-ui/react-icons'
+import { ClipboardIcon } from '@radix-ui/react-icons'
 import {
   Box,
   Button,
@@ -7,44 +7,12 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { Fragment, useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
-import {
-  useDomains,
-  DATA_MYSKY_BASE_PATH,
-  useSkynet,
-  useApps,
-  useSkyfiles,
-  copyToClipboard,
-  DATA_PRIVATE_FEATURES,
-  dataKeysExportList,
-  User,
-} from '@riftdweb/core'
-import { exportData } from './_shared/exportData'
+import { copyToClipboard, User } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { logout } from '@riftdweb/core/src/services/account'
 
 export function MySkyLoggedIn() {
-  const { myUserId, logout, appDomain } = useSkynet()
-  const history = useHistory()
-  const { domains, addDomain } = useDomains()
-  const { skyfiles } = useSkyfiles()
-  const { apps } = useApps()
-
-  const addToSkyDBTool = useCallback(() => {
-    addDomain({
-      name: appDomain,
-      dataDomain: appDomain,
-      addedAt: new Date().toISOString(),
-      keys: dataKeysExportList.map((key) => ({
-        id: key,
-        key,
-      })),
-    })
-    history.push(DATA_MYSKY_BASE_PATH)
-  }, [addDomain, appDomain, history])
-
-  const exportAllData = useCallback(() => {
-    exportData(skyfiles, domains, apps)
-  }, [domains, skyfiles, apps])
+  const { myUserId } = useAccount()
 
   return (
     <Box css={{ margin: '$3 0' }}>
@@ -62,27 +30,6 @@ export function MySkyLoggedIn() {
           <Text css={{ color: '$gray11' }}>Currently logged in as</Text>
           <User userId={myUserId} />
         </Flex>
-        {DATA_PRIVATE_FEATURES && (
-          <Fragment>
-            <Text>
-              {apps.length
-                ? `${apps.length} ${apps.length > 1 ? 'Apps' : 'App'}`
-                : '0 Apps'}
-            </Text>
-            <Text>
-              {skyfiles.length
-                ? `${skyfiles.length} ${skyfiles.length > 1 ? 'Files' : 'File'}`
-                : '0 Files'}
-            </Text>
-            <Text>
-              {domains.length
-                ? `${domains.length} ${
-                    domains.length > 1 ? 'Domains' : 'Domain'
-                  }`
-                : '0 Domains'}
-            </Text>
-          </Fragment>
-        )}
         <Flex css={{ gap: '$1', alignItems: 'center', marginTop: '$2' }}>
           <Tooltip content="Copy user ID to clipboard">
             <Button onClick={() => copyToClipboard(myUserId, 'user ID')}>
@@ -92,23 +39,6 @@ export function MySkyLoggedIn() {
               Copy user ID to clipboard
             </Button>
           </Tooltip>
-          {DATA_PRIVATE_FEATURES && (
-            <Fragment>
-              <Tooltip content="Show MySky data in the Data tool">
-                <Button onClick={() => addToSkyDBTool()}>
-                  Add MySky metadata to Data
-                </Button>
-              </Tooltip>
-              <Tooltip content="Export all MySky user data">
-                <Button onClick={exportAllData}>
-                  <Box css={{ mr: '$1' }}>
-                    <DownloadIcon />
-                  </Box>
-                  Export all metadata
-                </Button>
-              </Tooltip>
-            </Fragment>
-          )}
           <Box css={{ flex: 1 }} />
           <Tooltip content="Log out of MySky">
             <Button variant="red" onClick={() => logout()}>

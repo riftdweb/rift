@@ -20,7 +20,8 @@ import { useBeforeunload } from 'react-beforeunload'
 import { useDropzone } from 'react-dropzone'
 import useLocalStorageState from 'use-local-storage-state'
 import { v4 as uuid } from 'uuid'
-import { useSkynet, usePortal, getSize } from '@riftdweb/core'
+import { usePortal, getSize } from '@riftdweb/core'
+import { Api } from '@riftdweb/core/src/services/account'
 
 const taskQueue = TaskQueue('uploads', {
   poolSize: 5,
@@ -90,7 +91,6 @@ export function Uploader({
     false
   )
   const { portal } = usePortal()
-  const { Api } = useSkynet()
 
   useBeforeunload((e) => {
     if (areUploadsInProgress) {

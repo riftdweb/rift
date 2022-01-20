@@ -1,3 +1,4 @@
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -12,7 +13,6 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import React, { Fragment, useCallback, useMemo, useState } from 'react'
 import { useSkyfiles } from '@riftdweb/core'
 import { SkyfileItem } from './SkyfileItem'
 import { Uploader } from './Uploader'

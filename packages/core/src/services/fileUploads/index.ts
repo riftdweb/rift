@@ -2,11 +2,12 @@ import { createLogger } from '@riftdweb/logger'
 import { TaskQueue } from '@riftdweb/queue'
 import { StatusCodes } from 'http-status-codes'
 import { v4 as uuid } from 'uuid'
-import { fileSystemDAC, FsFile } from '../..'
+import { FsFile } from '../..'
 import { formatUploads } from './formatUploads'
 import { getDirectoryIndex } from '../../contexts/files/fs'
 import { createUploadErrorMessage } from './utils'
 import { ControlRef } from '../../ref'
+import { fileSystemDAC } from '../account'
 
 const logName = 'services/files/upload'
 

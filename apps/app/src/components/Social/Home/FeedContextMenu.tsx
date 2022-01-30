@@ -13,12 +13,11 @@ import {
 import { Fragment } from 'react'
 import { Link as RLink } from 'react-router-dom'
 import {
-  useFeed,
-  useSkynet,
   DATA_PRIVATE_FEATURES,
   getDataKeyFeeds,
   SpinnerIcon,
 } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 type Props = {
   variant?: ButtonVariant
@@ -27,12 +26,12 @@ type Props = {
 }
 
 export function FeedContextMenu({ variant, right = '0', size = '1' }: Props) {
-  const { myUserId, appDomain } = useSkynet()
-  const { refreshCurrentFeed, current } = useFeed()
+  const { myUserId, appDomain } = useAccount()
+  const loadingState = false
 
   return (
     <DropdownMenu>
-      <Tooltip align="end" content={current.loadingState || 'Open feed menu'}>
+      <Tooltip align="end" content={loadingState || 'Open feed menu'}>
         <DropdownMenuTrigger asChild>
           <Button
             variant={variant}
@@ -47,18 +46,18 @@ export function FeedContextMenu({ variant, right = '0', size = '1' }: Props) {
               },
             }}
           >
-            {current.loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+            {loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
           </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        {/* <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem
           // disabled={!!current.loadingState}
           onSelect={() => refreshCurrentFeed()}
         >
           Refresh
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         {DATA_PRIVATE_FEATURES && (
           <Fragment>
             <DropdownMenuSeparator />

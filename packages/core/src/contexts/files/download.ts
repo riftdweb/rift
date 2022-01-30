@@ -1,5 +1,5 @@
 import { DirectoryFile } from 'fs-dac-library/dist/cjs/skystandards'
-import { fileSystemDAC } from '..'
+import { fileSystemDAC } from '../../services/account'
 
 export async function downloadFileToBlob(
   file: DirectoryFile,

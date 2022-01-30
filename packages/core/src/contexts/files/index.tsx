@@ -12,7 +12,6 @@ import sortBy from 'lodash/sortBy'
 import uniqBy from 'lodash/uniqBy'
 import useSWR, { SWRResponse } from 'swr'
 import { usePathOutsideRouter } from '../../hooks/usePathOutsideRouter'
-import { fileSystemDAC, useSkynet } from '../skynet'
 import { useBeforeunload } from 'react-beforeunload'
 import { SortDir, useSort } from '../../hooks/useSort'
 import { EntriesResponse, upsertItem, useUser } from '../..'
@@ -21,6 +20,7 @@ import { FsNode, FsFile } from './types'
 import { getDirectoryIndex } from './fs'
 import { Download, useDownloads } from './useDownloads'
 import { buildFsDirectory, getNodePath } from './utils'
+import { useAccount } from '../../hooks/useAccount'
 
 const log = createLogger('files/context')
 
@@ -85,7 +85,7 @@ type Props = {
 }
 
 export function FsProvider({ children }: Props) {
-  const { myUserId, getKey, controlRef: ref } = useSkynet()
+  const { id, myUserId, isReady } = useAccount()
 
   const activeNode = useParamNode()
 
@@ -129,7 +129,7 @@ export function FsProvider({ children }: Props) {
   )
 
   const activeDirectory = useSWR(
-    getKey([...activeNode, 'directory']),
+    isReady ? [id, ...activeNode, 'directory'] : null,
     async (): Promise<string[]> => {
       const lastPart = activeNode[activeNode.length - 1]
 
@@ -161,7 +161,7 @@ export function FsProvider({ children }: Props) {
   const activeDirectoryPath = activeDirectory.data?.join('/') || ''
 
   const activeDirectoryIndex = useSWR(
-    activeDirectory.data ? getKey([...activeNode, 'index']) : null,
+    isReady && activeDirectory.data ? [id, ...activeNode, 'index'] : null,
     async (): Promise<Feed<FsNode>> => {
       const nodes = await getDirectoryIndex(getNodePath(activeDirectory.data))
 

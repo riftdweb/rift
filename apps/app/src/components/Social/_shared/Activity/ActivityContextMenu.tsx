@@ -6,17 +6,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
-import {
-  useFeed,
-  useSkynet,
-  getDataKeyFeeds,
-  SpinnerIcon,
-} from '@riftdweb/core'
+import { getDataKeyFeeds, SpinnerIcon } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 type Props = {
   variant?: ButtonVariant
@@ -29,14 +24,11 @@ export function ActivityContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, appDomain } = useSkynet()
-  const { activity, refreshActivity } = useFeed()
+  const { myUserId, appDomain } = useAccount()
+  const loadingState = false
   return (
     <DropdownMenu>
-      <Tooltip
-        align="end"
-        content={activity.loadingState || 'Open activity menu'}
-      >
+      <Tooltip align="end" content={loadingState || 'Open activity menu'}>
         <DropdownMenuTrigger asChild>
           <Button
             variant={variant}
@@ -51,19 +43,11 @@ export function ActivityContextMenu({
               },
             }}
           >
-            {activity.loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
+            {loadingState ? <SpinnerIcon /> : <DotsHorizontalIcon />}
           </Button>
         </DropdownMenuTrigger>
       </Tooltip>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          disabled={!!activity.loadingState}
-          onSelect={() => refreshActivity()}
-        >
-          Refresh
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuLabel>Data</DropdownMenuLabel>
         <DropdownMenuItem
           as={RLink}

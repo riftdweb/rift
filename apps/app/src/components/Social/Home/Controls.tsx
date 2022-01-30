@@ -1,22 +1,23 @@
 import { Box, Button, Flex, TextArea } from '@riftdweb/design-system'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useFeed, useSkynet } from '@riftdweb/core'
 import { ControlsInactive } from './ControlsInactive'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { login } from '@riftdweb/core/src/services/account'
+import { createPost } from '@riftdweb/core/src/services/feeds'
 
 export function Controls() {
-  const { myUserId, login } = useSkynet()
-  const { createPost, setMode } = useFeed()
+  const { myUserId } = useAccount()
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [value, setValue] = useState<string>('')
   const ref = useRef(null)
 
   const createPostAndNavigate = useCallback(
     (value: string) => {
-      createPost({ text: value })
-      setMode('latest')
+      createPost(value)
+      // setMode('latest')
       setIsEditing(false)
     },
-    [createPost, setMode, setIsEditing]
+    [setIsEditing]
   )
 
   useEffect(() => {

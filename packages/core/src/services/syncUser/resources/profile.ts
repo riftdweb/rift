@@ -6,7 +6,7 @@ import {
   IProfileIndex,
   IUserProfile,
 } from '@skynethub/userprofile-library/dist/types'
-import { clearToken, handleToken } from '../../../../tokens'
+import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
 import { getTokenName } from '../utils'
 import { getUser, upsertUser } from '../../users/api'

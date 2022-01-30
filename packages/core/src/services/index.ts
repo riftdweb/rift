@@ -1,4 +1,5 @@
 import { initSkynetService } from './account'
+import { initStores } from '../stores'
 
 export { scoreEntry } from './feeds/scoreEntries'
 export { syncUser, checkIsUserUpToDate } from './syncUser'
@@ -23,6 +24,7 @@ export {
 export { handleToken, clearAllTokens, clearToken } from './tokens'
 
 export async function initServices(userId = 'rift') {
+  await initStores()
   await initSkynetService()
   // await initUsersService()
 }

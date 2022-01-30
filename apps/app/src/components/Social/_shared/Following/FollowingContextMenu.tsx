@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
-import { useSkynet } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 type Props = {
   variant?: ButtonVariant
@@ -23,7 +23,7 @@ export function FollowingContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { myUserId, appDomain } = useSkynet()
+  const { myUserId, appDomain } = useAccount()
   return (
     <DropdownMenu>
       <Tooltip align="end" content="Open following menu">

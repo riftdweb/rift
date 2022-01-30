@@ -1,43 +1,35 @@
 import { Box, Flex, Panel, Heading, Text } from '@riftdweb/design-system'
-import { useEffect, useState } from 'react'
-import { checkIsUserUpToDate, EntriesResponse } from '@riftdweb/core'
+import { checkIsUserUpToDate } from '@riftdweb/core'
 import { useObservableState } from 'observable-hooks'
 import {
   getFollowing,
   getFriends,
-  getSuggestions,
-  getUsers,
+  getPending$,
+  getSuggestions$,
+  getUsers$,
 } from '@riftdweb/core/src/services/users/api'
 import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { IUserDoc } from '@riftdweb/core/src/stores/user'
+import { IUser } from '@riftdweb/types'
 
 export function DevIndexingManager() {
   const account = useAccount()
-  const [key, setKey] = useState<number>(Math.random())
-  const users = useObservableState(getUsers().$)
+  const users = useObservableState(getUsers$())
   const friends = useObservableState(getFriends().$)
   const following = useObservableState(getFollowing().$)
-  const suggestions = useObservableState(getSuggestions().$)
-  const pendingUserIds = useObservableState(getPendingUserIds().$)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setKey(Math.random())
-    }, 1000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
+  const suggestions = useObservableState(getSuggestions$())
+  const pending = useObservableState(getPending$())
 
   if (!users || !users.length) {
     return null
   }
 
-  const pendingUserIdsWithPos = pendingUserIds.map((userId, i) => ({
-    userId,
+  const pendingUsersWithPos = pending.map((user, i) => ({
+    user,
     position: i,
   }))
 
-  const groups: { name: string; users: EntriesResponse<string> }[] = [
+  const groups: { name: string; users: (IUserDoc | IUser)[] }[] = [
     {
       name: 'Friends',
       users: friends,
@@ -54,7 +46,6 @@ export function DevIndexingManager() {
 
   return (
     <Flex
-      key={key}
       css={{
         flexDirection: 'column',
         gap: '$3',
@@ -98,8 +89,7 @@ export function DevIndexingManager() {
                 </Heading>
               </Flex>
               <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-                {pendingUserIdsWithPos.map(({ userId, position }) => {
-                  const user = ref.current.getUser(userId)
+                {pendingUsersWithPos.map(({ user, position }) => {
                   if (!user) {
                     return (
                       <Box
@@ -109,7 +99,7 @@ export function DevIndexingManager() {
                           padding: '$1',
                         }}
                       >
-                        <Text>{userId.slice(0, 5)}</Text>
+                        <Text>{user.userId.slice(0, 5)}</Text>
                         <Text>New</Text>
                       </Box>
                     )
@@ -180,11 +170,11 @@ export function DevIndexingManager() {
                     </Heading>
                   </Flex>
                   <Flex css={{ flexDirection: 'column', gap: '$2' }}>
-                    {users.data?.entries
-                      .map((userId) => ({
-                        userId,
-                        position: pendingUserIds.findIndex(
-                          (pendingId) => pendingId === userId
+                    {users
+                      .map((user) => ({
+                        user,
+                        position: pending.findIndex(
+                          (pendingId) => pendingId === user
                         ),
                       }))
                       .sort((a, b) =>
@@ -196,14 +186,13 @@ export function DevIndexingManager() {
                           ? 1
                           : -1
                       )
-                      .map(({ userId, position }) => {
-                        const user = ref.current.getUser(userId)
+                      .map(({ user, position }) => {
                         if (!user) {
                           return null
                         }
 
                         const { isUpToDate, checks } = checkIsUserUpToDate(
-                          ref,
+                          account,
                           user,
                           {
                             level: 'index',
@@ -211,7 +200,7 @@ export function DevIndexingManager() {
                         )
                         return (
                           <Box
-                            key={userId}
+                            key={user.userId}
                             css={{
                               backgroundColor: isUpToDate ? '$gray5' : '$red10',
                               borderRadius: '$1',

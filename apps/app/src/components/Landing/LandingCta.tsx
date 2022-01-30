@@ -1,9 +1,7 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
-import { useSkynet } from '@riftdweb/core'
+import { login } from '@riftdweb/core/src/services/account'
 
 export function LandingCta() {
-  const { login } = useSkynet()
-
   return (
     <Flex css={{ flexDirection: 'column', gap: '$3', textAlign: 'center' }}>
       <Box>

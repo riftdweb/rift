@@ -14,11 +14,12 @@ import {
   Link,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useSkynet } from '../../../contexts/skynet'
 import { usePortal } from '../../../hooks/usePortal'
 import { useUser } from '../../../hooks/useUser'
 import { copyToClipboard } from '../../../shared/clipboard'
 import { Avatar } from '../../Avatar'
+import { useAccount } from '../../../hooks/useAccount'
+import { login, logout } from '../../../services/account'
 
 const pulse = keyframes({
   '0%': {
@@ -43,7 +44,7 @@ export function IdentityContextMenu({
   size = '1',
 }: Props) {
   const { portal } = usePortal()
-  const { myUserId, logout, login } = useSkynet()
+  const { myUserId } = useAccount()
   const myUser = useUser(myUserId)
   const [isOpen, setIsOpen] = useState<boolean>()
 

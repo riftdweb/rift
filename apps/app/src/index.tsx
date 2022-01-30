@@ -1,11 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { reportWebVitals } from '@riftdweb/core'
+import { initServices, reportWebVitals } from '@riftdweb/core'
 import { Rift } from './_app'
-import { rxRoot } from '@riftdweb/core/src/services/rx'
 
 async function init() {
-  await rxRoot()
+  await initServices()
 
   ReactDOM.render(
     <React.StrictMode>

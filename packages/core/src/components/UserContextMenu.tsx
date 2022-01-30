@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react'
+import { Fragment } from 'react'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import {
   Button,
@@ -13,15 +13,14 @@ import {
 } from '@riftdweb/design-system'
 import { copyToClipboard } from '../shared/clipboard'
 import { Link as RLink } from 'react-router-dom'
-import { useSkynet } from '../contexts/skynet'
-import { isFollowing } from '../contexts/users'
-import { useFeed } from '../contexts/feed'
+import { handleFollow, handleUnfollow } from '../services/users'
+import { syncUser } from '../services/syncUser'
+import { isFollowing } from '../services/users/utils'
 import { SpinnerIcon } from './_icons/SpinnerIcon'
-import { useUsers } from '../contexts/users'
 import { DATA_PRIVATE_FEATURES } from '../shared/config'
 import { getDataKeyFeeds } from '../shared/dataKeys'
 import { useUser } from '../hooks/useUser'
-import { syncUser } from '../services/user'
+import { useAccount } from '../hooks/useAccount'
 
 type Props = {
   userId: string
@@ -36,23 +35,12 @@ export function UserContextMenu({
   right = '0',
   size = '1',
 }: Props) {
-  const { controlRef: ref, myUserId, appDomain } = useSkynet()
+  const { myUserId, appDomain } = useAccount()
   const user = useUser(userId)
   const profile = user?.profile
-  const { user: feedUser, userId: viewingUserId } = useFeed()
-  const { handleFollow, handleUnfollow } = useUsers()
 
   const isMyself = userId === myUserId
-  const isViewingUser = userId === viewingUserId
-
-  const loadingState = useMemo(() => feedUser.getLoadingState(userId), [
-    feedUser,
-    userId,
-  ])
-
-  const combinedLoadingState =
-    loadingState ||
-    (isViewingUser && feedUser.response.isValidating && 'Fetching feed')
+  const combinedLoadingState = false
 
   return (
     <DropdownMenu>
@@ -107,7 +95,7 @@ export function UserContextMenu({
         )}
         <DropdownMenuItem
           disabled={!!combinedLoadingState}
-          onSelect={() => syncUser(ref, userId, 'refresh')}
+          onSelect={() => syncUser(userId, 'refresh')}
         >
           Refresh
         </DropdownMenuItem>

@@ -1,12 +1,9 @@
-import { useSkynet } from '../skynet'
 import { useDropzone } from 'react-dropzone'
-import { handleUploads } from '../../services/files'
+import { handleUploads } from '../../services/fileUploads'
 
 export function useDrop(directoryPath: string) {
-  const { controlRef: ref } = useSkynet()
-
   const onDrop = async (droppedFiles, _, e) => {
-    handleUploads(ref, directoryPath, droppedFiles)
+    handleUploads(directoryPath, droppedFiles)
   }
 
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({

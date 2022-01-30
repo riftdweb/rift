@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useFs, useSkynet, fileSystemDAC } from '@riftdweb/core'
+import { useFs } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { fileSystemDAC } from '@riftdweb/core/src/services/account'
 
 export function useSharingData() {
-  const { isReady } = useSkynet()
+  const { isReady } = useAccount()
   const { activeNode, isActiveNodeShared } = useFs()
 
   const [shareReadLink, setShareReadLink] = useState<string>()

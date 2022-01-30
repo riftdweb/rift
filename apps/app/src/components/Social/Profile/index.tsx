@@ -2,16 +2,15 @@ import { useParams } from 'react-router-dom'
 import { Box, Button, Flex } from '@riftdweb/design-system'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useEffect } from 'react'
-import { Link, UserProfile, syncUser, useSkynet } from '@riftdweb/core'
+import { Link, syncUser, UserProfile } from '@riftdweb/core'
 import { Feed } from './Feed'
 import { Layout } from '../Layout'
 
 export function SocialProfile() {
-  const { controlRef: ref } = useSkynet()
   const { userId } = useParams()
 
   useEffect(() => {
-    syncUser(ref, userId, 'interact')
+    syncUser(userId, 'interact')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 

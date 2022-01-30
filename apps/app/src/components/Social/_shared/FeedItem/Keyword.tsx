@@ -1,6 +1,7 @@
 import { Box, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback } from 'react'
-import { useFeed } from '@riftdweb/core'
+import { useObservableState } from 'observable-hooks'
+import { getKeywords$ } from '@riftdweb/core/src/services/feeds'
 
 const textStyles: any = {
   lineHeight: '25px',
@@ -15,7 +16,7 @@ type Props = {
 }
 
 export function Keyword({ value, stem, isHovering }: Props) {
-  const { keywords } = useFeed()
+  const keywords = useObservableState(getKeywords$())
   const score = keywords[stem] ? keywords[stem] : 0
 
   // TODO: normalize into a min/max value fetched from user count data

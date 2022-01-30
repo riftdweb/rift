@@ -2,7 +2,7 @@ import { IUser, RelationshipType } from '@riftdweb/types'
 import { uniq } from 'lodash'
 import { log } from '.'
 import { getAccount } from '../account'
-import { getUser, getUsers } from './api'
+import { getUser, getUsers, getUsers$ } from './api'
 
 export function isFollowing(user?: IUser) {
   return !!user && ['friend', 'following'].includes(user.relationship.data)
@@ -67,7 +67,7 @@ export async function recomputeFollowers(): Promise<void> {
 
   const updatedAt = new Date().getTime()
 
-  let users = await getUsers().exec()
+  let users = await getUsers()
 
   users.forEach(async (user) => {
     // Update users followers
@@ -85,8 +85,8 @@ export async function recomputeFollowers(): Promise<void> {
   })
 
   // Update relationship for all users
-  users = await getUsers().exec()
-  const { myUserId } = await getAccount().exec()
+  users = await getUsers()
+  const { myUserId } = await getAccount()
   users.forEach(async (user) => {
     user.atomicPatch({
       relationship: {

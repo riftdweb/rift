@@ -1,3 +1,4 @@
+import { useObservableState } from 'observable-hooks'
 import {
   ClockIcon,
   EyeClosedIcon,
@@ -14,22 +15,23 @@ import {
   Text,
   Tooltip,
 } from '@riftdweb/design-system'
-import { useFeed, Link } from '@riftdweb/core'
+import { Link } from '@riftdweb/core'
 import { RelativeTime } from '../_shared/RelativeTime'
 import { FeedContextMenu } from './FeedContextMenu'
+import { getFeed$, getFeedEntries$ } from '@riftdweb/core/src/services/feeds'
+import { useState } from 'react'
 
 type Props = {
   setEditing: () => void
 }
 
 export function ControlsInactive({ setEditing }: Props) {
-  const {
-    current,
-    mode,
-    setMode,
-    isVisibilityEnabled,
-    setIsVisibilityEnabled,
-  } = useFeed()
+  const [mode, setMode] = useState<any>()
+  const [isVisibilityEnabled, setIsVisibilityEnabled] = useState<any>()
+
+  const current = 'top'
+  const feed = useObservableState(getFeed$(current))
+  const loadingState = false
 
   return (
     <Flex css={{ flexDirection: 'column' }}>
@@ -50,15 +52,12 @@ export function ControlsInactive({ setEditing }: Props) {
             '@bp1': { display: 'block' },
           }}
         >
-          {current.loadingState ? (
+          {loadingState ? (
             <Text size="1" css={{ color: '$gray11' }}>
-              {current.loadingState}...
+              {loadingState}...
             </Text>
           ) : (
-            <RelativeTime
-              time={current.response.data?.updatedAt}
-              prefix="Feed generated"
-            />
+            <RelativeTime time={feed.updatedAt} prefix="Feed generated" />
           )}
         </Box>
         <Box css={{ flex: 1, display: 'none', '@bp1': { display: 'block' } }} />

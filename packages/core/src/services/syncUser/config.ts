@@ -1,3 +1,4 @@
+import { IUser } from '@riftdweb/types'
 import { isFollowing } from '../users/utils'
 import { IAccount } from '../../stores/account'
 import { getAccount } from '../account'
@@ -131,14 +132,18 @@ const unfamiliarLevelToConfig: Record<Level, Config> = {
 }
 
 export async function getConfig(user: IUserDoc, level: Level) {
-  const account = await getAccount().exec()
+  const account = await getAccount()
   const isSelf = account.myUserId === user.userId
   return isSelf || isFollowing(user)
     ? familiarLevelToConfig[level]
     : unfamiliarLevelToConfig[level]
 }
 
-export function getConfigSync(account: IAccount, user: IUserDoc, level: Level) {
+export function getConfigSync(
+  account: IAccount,
+  user: IUserDoc | IUser,
+  level: Level
+) {
   const isSelf = account.myUserId === user.userId
   return isSelf || isFollowing(user)
     ? familiarLevelToConfig[level]

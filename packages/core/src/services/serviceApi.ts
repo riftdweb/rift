@@ -7,9 +7,8 @@ import {
   UsersMap,
 } from '@riftdweb/types'
 import { getDataKeyFeeds, getDataKeyUsers } from '../shared/dataKeys'
-import { feedDAC } from '../contexts/skynet'
-import { ControlRef } from '../ref'
-import { apiLimiter } from '../contexts/skynet/api'
+import { Api, feedDAC } from './account'
+import { apiLimiter } from './account/api'
 
 export const emptyFeed: EntryFeed = {
   updatedAt: 0,
@@ -32,12 +31,10 @@ const defaultParams = {
 }
 
 export async function cacheUserEntries(
-  ref: ControlRef,
   userId: string,
   entries: Entry[],
   params: Params = defaultParams
 ): Promise<void> {
-  const { Api } = ref.current
   await Api.setJSON({
     path: getDataKeyFeeds(`entries/${userId}`),
     json: {
@@ -65,10 +62,8 @@ export function upsertAllEntries(
 }
 
 export async function fetchAllEntries(
-  ref: ControlRef,
   params: Params = defaultParams
 ): Promise<EntryFeed> {
-  const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries'),
     priority: params.priority,
@@ -84,11 +79,9 @@ export async function fetchAllEntries(
 }
 
 export async function fetchUserEntries(
-  ref: ControlRef,
   userId: string,
   params: Params = defaultParams
 ): Promise<EntryFeed> {
-  const { Api } = ref.current
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds(`entries/${userId}`),
     priority: params.priority,
@@ -97,10 +90,8 @@ export async function fetchUserEntries(
 }
 
 export async function fetchTopEntries(
-  ref: ControlRef,
   params: Params = defaultParams
 ): Promise<EntryFeed> {
-  const Api = ref.current.Api
   let { data: feed } = await Api.getJSON<EntryFeed>({
     path: getDataKeyFeeds('entries/top'),
     priority: params.priority,
@@ -109,10 +100,8 @@ export async function fetchTopEntries(
 }
 
 export async function fetchActivity(
-  ref: ControlRef,
   params: Params = defaultParams
 ): Promise<ActivityFeed> {
-  const { Api } = ref.current
   let { data: feed } = await Api.getJSON<ActivityFeed>({
     path: getDataKeyFeeds('activity'),
     priority: params.priority,
@@ -121,11 +110,9 @@ export async function fetchActivity(
 }
 
 export async function cacheAllEntries(
-  ref: ControlRef,
   entries: Entry[],
   params: Params = defaultParams
 ) {
-  const { Api } = ref.current
   return await Api.setJSON({
     path: getDataKeyFeeds('entries'),
     json: {
@@ -172,11 +159,9 @@ export async function compileUserEntries(
 }
 
 export async function cacheTopEntries(
-  ref: ControlRef,
   entries: Entry[],
   params: Params = defaultParams
 ): Promise<void> {
-  const { Api } = ref.current
   await Api.setJSON({
     path: getDataKeyFeeds('entries/top'),
     json: {
@@ -188,11 +173,9 @@ export async function cacheTopEntries(
 }
 
 export async function cacheActivity(
-  ref: ControlRef,
   activities: Activity[],
   params: Params = defaultParams
 ): Promise<void> {
-  const { Api } = ref.current
   await Api.setJSON({
     path: getDataKeyFeeds('activity'),
     json: {
@@ -204,10 +187,9 @@ export async function cacheActivity(
 }
 
 export async function fetchUsersMap(
-  ref: ControlRef,
   params: Params = defaultParams
 ): Promise<UsersMap> {
-  const response = await ref.current.Api.getJSON<UsersMap>({
+  const response = await Api.getJSON<UsersMap>({
     path: getDataKeyUsers('usersMap'),
     priority: params.priority,
   })
@@ -220,11 +202,9 @@ export async function fetchUsersMap(
 }
 
 export async function cacheUsersMap(
-  ref: ControlRef,
   usersMap: UsersMap,
   params: Params = defaultParams
 ): Promise<void> {
-  const { Api } = ref.current
   await Api.setJSON({
     path: getDataKeyUsers('usersMap'),
     json: usersMap,

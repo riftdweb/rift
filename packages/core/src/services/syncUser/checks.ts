@@ -72,7 +72,7 @@ type IsUserUpToDateParams = {
 
 export function checkIsUserUpToDate(
   account: IAccount,
-  user: IUserDoc | undefined,
+  user: IUserDoc | IUser | undefined,
   params: IsUserUpToDateParams = {}
 ) {
   const { verbose = false, log = console.log, level = 'index' } = params

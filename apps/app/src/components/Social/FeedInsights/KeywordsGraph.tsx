@@ -1,5 +1,9 @@
 import { Cross1Icon } from '@radix-ui/react-icons'
 import {
+  getKeywords$,
+  setKeywordValue,
+} from '@riftdweb/core/src/services/feeds'
+import {
   Box,
   Button,
   ControlGroup,
@@ -13,8 +17,8 @@ import { scaleBand, scaleLinear } from '@visx/scale'
 import { Bar } from '@visx/shape'
 import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import throttle from 'lodash/throttle'
+import { useObservableState } from 'observable-hooks'
 import { useCallback, useMemo, useState } from 'react'
-import { useFeed } from '@riftdweb/core'
 
 const verticalMargin = 120
 
@@ -32,15 +36,15 @@ type Props = {
 }
 
 export function KeywordsGraph({ width, height }: Props) {
-  const { keywords, setKeywordValue } = useFeed()
+  const keywords = useObservableState(getKeywords$())
 
   const [filterValue, setFilterValue] = useState<string>()
 
   const allData: KeywordItem[] = useMemo(() => {
-    return Object.entries(keywords)
-      .map(([stem, count]) => ({
-        stem,
-        count,
+    return keywords
+      .map((keyword) => ({
+        stem: keyword.id,
+        count: keyword.value,
       }))
       .sort((a, b) => (a.count > b.count ? 1 : -1))
   }, [keywords])
@@ -87,19 +91,13 @@ export function KeywordsGraph({ width, height }: Props) {
 
   const selectedData = tooltipData as KeywordItem | undefined
 
-  const handleReduceScore = useCallback(
-    (item: KeywordItem) => {
-      setKeywordValue(item.stem, Math.floor(item.count / 2))
-    },
-    [setKeywordValue]
-  )
+  const handleReduceScore = useCallback((item: KeywordItem) => {
+    setKeywordValue(item.stem, Math.floor(item.count / 2))
+  }, [])
 
-  const handleBoostScore = useCallback(
-    (item: KeywordItem) => {
-      setKeywordValue(item.stem, Math.floor(item.count * 2))
-    },
-    [setKeywordValue]
-  )
+  const handleBoostScore = useCallback((item: KeywordItem) => {
+    setKeywordValue(item.stem, Math.floor(item.count * 2))
+  }, [])
 
   const handleMouseMove = useMemo(
     () =>

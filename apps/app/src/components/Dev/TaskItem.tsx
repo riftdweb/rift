@@ -1,6 +1,7 @@
 import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
-import { useUsers } from '@riftdweb/core'
 import { Task } from '@riftdweb/queue'
+import { useObservableState } from 'observable-hooks'
+import { getUser } from '@riftdweb/core/src/services/users/api'
 
 type Props = {
   task: Task<any>
@@ -9,13 +10,7 @@ type Props = {
 }
 
 export function TaskItem({ task, color, dupeCount }: Props) {
-  const { isInitUsersComplete } = useUsers()
-
-  if (!isInitUsersComplete) {
-    return null
-  }
-
-  const user = ref.current.getUser(task.meta.id)
+  const user = useObservableState(getUser(task.meta.id).$)
 
   const { shareCount } = task
 

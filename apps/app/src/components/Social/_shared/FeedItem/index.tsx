@@ -2,10 +2,14 @@ import { Link1Icon, TriangleUpIcon } from '@radix-ui/react-icons'
 import { Box, Card, Flex, Image, Text, Tooltip } from '@riftdweb/design-system'
 import { useCallback, useMemo, useState } from 'react'
 import { Entry } from '@riftdweb/types'
-import { useFeed, useLink, Link, User } from '@riftdweb/core'
+import { useLink, Link, User } from '@riftdweb/core'
 import { Keyword } from './Keyword'
 import { Status } from './Status'
 import { PostTime } from '../PostTime'
+import {
+  incrementDomain,
+  incrementKeywords,
+} from '@riftdweb/core/src/services/feeds'
 // import { People } from './People'
 // import { Reactions } from './Reactions'
 
@@ -18,7 +22,8 @@ type Props = { entry: Entry; index?: number }
 
 export function FeedItem({ entry, index }: Props) {
   const [isHovering, setIsHovering] = useState<boolean>(false)
-  const { incrementKeywords, incrementDomain, isVisibilityEnabled } = useFeed()
+
+  const isVisibilityEnabled = false
 
   const { post } = entry
   const { link, hostname, hnsDomain } = useLink(post.content.link)
@@ -93,7 +98,7 @@ export function FeedItem({ entry, index }: Props) {
     if (hostname) {
       incrementDomain(hostname)
     }
-  }, [entry, hostname, incrementKeywords, incrementDomain])
+  }, [entry, hostname])
 
   const userId = entry.userId
 

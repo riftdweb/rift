@@ -15,12 +15,13 @@ import { useHistory } from 'react-router-dom'
 import useSWR, { SWRResponse } from 'swr'
 import { upsertItem } from '../../shared/collection'
 import { getDataKeyDocs } from '../../shared/dataKeys'
-import { useSkynet } from '../skynet'
 import { useEditor } from '@tiptap/react'
 import { useParamId } from './useParamId'
 import { defaultContent } from './defaultContent'
 import { extensions } from './extensions'
 import { TaskQueue } from '@riftdweb/queue'
+import { useAccount } from '../../hooks/useAccount'
+import { Api } from '../../services/account'
 
 const log = createLogger('docs')
 
@@ -112,13 +113,13 @@ function updateDocDataNetwork(docId: string, update: () => void) {
 
 export function DocsProvider({ children }: Props) {
   const openDocId = useParamId()
-  const { Api, isReady, appDomain, getKey } = useSkynet()
+  const { id, isReady } = useAccount()
   const history = useHistory()
 
   const [menuMode, setMenuMode] = useState<MenuMode>('kbd')
 
   const docList = useSWR<Feed<Doc>>(
-    getKey([appDomain, dataKeyDocList]),
+    isReady ? [id, dataKeyDocList] : null,
     async () => {
       const response = await Api.getJSON<Doc[]>({
         path: dataKeyDocList,
@@ -169,7 +170,7 @@ export function DocsProvider({ children }: Props) {
       }
       func()
     },
-    [Api, docList]
+    [docList]
   )
 
   const addDoc = useCallback(
@@ -280,7 +281,7 @@ export function DocsProvider({ children }: Props) {
 
   const isInitializing = !docList.data || docState.isFetching
   const currentDocPath = getDataKeyDocs(openDocId)
-  const currentDocFetchKey = getKey(['docs', openDocId])
+  const currentDocFetchKey = isReady ? [id, 'docs', openDocId] : null
   const currentDocFetchDeps = currentDocFetchKey || [null, null, null]
 
   useEffect(
@@ -384,7 +385,7 @@ export function DocsProvider({ children }: Props) {
         })
       })
     },
-    [Api, openDocId, currentDocPath, upsertDocState]
+    [openDocId, currentDocPath, upsertDocState]
   )
 
   const ref = useRef<any>({})

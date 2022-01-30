@@ -20,7 +20,7 @@ export async function initUsersService() {
 }
 
 export async function initUsers() {
-  const { myUserId, isReady, appDomain } = await getAccount().exec()
+  const { myUserId, isReady, appDomain } = await getAccount()
 
   // const data = await fetchUsersMap(ref, {
   //   priority: 4,
@@ -31,7 +31,7 @@ export async function initUsers() {
 }
 
 export async function initUser() {
-  const { myUserId } = await getAccount().exec()
+  const { myUserId } = await getAccount()
   const task = async () => {
     // Sync myUser
     const user = await syncUser(myUserId, 'read')
@@ -53,7 +53,7 @@ export async function initUser() {
 
 // TODO: Add offline update queue, task queue feature?
 export async function handleFollow(userId: string) {
-  const { myUserId } = await getAccount().exec()
+  const { myUserId } = await getAccount()
 
   if (!myUserId) {
     return
@@ -121,7 +121,7 @@ export async function handleFollow(userId: string) {
 }
 
 export async function handleUnfollow(userId: string) {
-  const { myUserId } = await getAccount().exec()
+  const { myUserId } = await getAccount()
 
   if (!myUserId) {
     return

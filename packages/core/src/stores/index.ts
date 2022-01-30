@@ -1,5 +1,5 @@
 import { createLogger } from '@riftdweb/logger'
-import { createRxDatabase, RxDatabase } from 'rxdb'
+import { createRxDatabase, removeRxDatabase, RxDatabase } from 'rxdb'
 import { getRxStoragePouch, addPouchPlugin } from 'rxdb/plugins/pouchdb'
 import { IAccountCollection, accountStore } from './account'
 import { feedDomainStore, IFeedDomainCollection } from './feedDomain'
@@ -20,11 +20,11 @@ type ICollections = {
   user: IUserCollection
   account: IAccountCollection
   entry: IEntryCollection
-  pendingEntry: IEntryCollection
-  feedIndex: IFeedIndexCollection
-  feedConfig: IFeedConfigCollection
-  feedKeyword: IFeedKeywordCollection
-  feedDomain: IFeedDomainCollection
+  pendingentry: IEntryCollection
+  feedindex: IFeedIndexCollection
+  feedconfig: IFeedConfigCollection
+  feedkeyword: IFeedKeywordCollection
+  feeddomain: IFeedDomainCollection
 }
 
 type IStates = {
@@ -61,11 +61,11 @@ async function initDb(userId = 'rift') {
     user: userStore,
     account: accountStore,
     entry: entryStore,
-    pendingEntries: entryStore,
-    feedIndex: feedStore,
-    feedConfig: feedConfigStore,
-    feedDomain: feedDomainStore,
-    feedKeyword: feedKeywordStore,
+    pendingentries: entryStore,
+    feedindex: feedStore,
+    feedconfig: feedConfigStore,
+    feeddomain: feedDomainStore,
+    feedkeyword: feedKeywordStore,
   })
 }
 
@@ -85,6 +85,4 @@ async function initState() {
 export async function initStores(userId = 'rift') {
   await initDb(userId)
   await initState()
-  // await initSkynetService()
-  // await initUsersService()
 }

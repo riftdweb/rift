@@ -1,13 +1,11 @@
 import { processEntries } from './processEntries'
 import { Entry } from '@riftdweb/types'
+import { IFeedKeywordDoc } from '../../stores/feedKeyword'
+import { IFeedDomainDoc } from '../../stores/feedDomain'
 
 type ScoreData = {
-  keywords: {
-    [keyword: string]: number
-  }
-  domains: {
-    [domain: string]: number
-  }
+  keywords: IFeedKeywordDoc[]
+  domains: IFeedDomainDoc[]
 }
 
 const c_weight = 0.5
@@ -91,8 +89,8 @@ export function scoreEntry({
   const p = 0
   const c = 0
   const v = 0
-  const r_data = Object.entries(keywords).reduce(
-    (acc, [keyword, count]) => {
+  const r_data = keywords.reduce(
+    (acc, { id: keyword, value: count }) => {
       if (titleKeywordStems.includes(keyword.toLowerCase())) {
         return {
           totalScore: acc.totalScore + count,
@@ -109,9 +107,7 @@ export function scoreEntry({
     } as any
   )
   const r = r_data.matchCount > 0 ? r_data.totalScore : 0 // / r_data.matchCount : 0
-  const d_data = Object.entries(domains).find(
-    ([domain, count]) => hostname === domain
-  )
+  const d_data = domains.find(({ id: domain }) => hostname === domain)
   const d = d_data ? d_data[1] : 0
   const t_now = rankTime
 

@@ -1,15 +1,25 @@
 import { Box, Button, Flex, Text } from '@riftdweb/design-system'
 import { Fragment } from 'react'
-import { useSkynet, useUsers, EntriesState, ScrollArea } from '@riftdweb/core'
+import { EntriesState, ScrollArea } from '@riftdweb/core'
 import { FollowingContextMenu } from './FollowingContextMenu'
 import { StickySection } from '../StickySection'
 import { StickyHeading } from '../StickyHeading'
 import { Follow } from './Follow'
 import { SuggestedFollow } from './SuggestedFollow'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
+import { login } from '@riftdweb/core/src/services/account'
+import { useObservableState } from 'observable-hooks'
+import {
+  getFollowing,
+  getFriends,
+  getSuggestions$,
+} from '@riftdweb/core/src/services/users/api'
 
 export function Following() {
-  const { myUserId, login } = useSkynet()
-  const { friends, following, suggestions } = useUsers()
+  const { myUserId } = useAccount()
+  const friends = useObservableState(getFriends().$)
+  const following = useObservableState(getFollowing().$)
+  const suggestions = useObservableState(getSuggestions$())
 
   if (!myUserId) {
     return (
@@ -64,14 +74,10 @@ export function Following() {
               gap: '$2',
             }}
           >
-            {!!friends.data?.entries.length && (
+            {!!friends.length && (
               <Fragment>
                 <StickyHeading
-                  title={
-                    friends.data
-                      ? `Friends (${friends.data?.entries.length})`
-                      : 'Friends'
-                  }
+                  title={friends ? `Friends (${friends.length})` : 'Friends'}
                   css={{
                     marginRight: '$3',
                   }}
@@ -86,22 +92,22 @@ export function Following() {
                     flexShrink: 1,
                   }}
                 >
-                  <EntriesState
+                  {/* <EntriesState
                     response={friends}
                     validatingMessage="Loading"
                     emptyMessage="No friends."
-                  >
-                    {friends.data?.entries.map((userId) => (
-                      <Follow key={userId} userId={userId} />
-                    ))}
-                  </EntriesState>
+                  > */}
+                  {friends.map((user) => (
+                    <Follow key={user.userId} userId={user.userId} />
+                  ))}
+                  {/* </EntriesState> */}
                 </Flex>
               </Fragment>
             )}
             <StickyHeading
               title={
-                following.data
-                  ? `Following (${following.data?.entries.length})`
+                following.length
+                  ? `Following (${following.length})`
                   : 'Following'
               }
               contextMenu={<FollowingContextMenu />}
@@ -119,17 +125,17 @@ export function Following() {
                 flexShrink: 1,
               }}
             >
-              <EntriesState
+              {/* <EntriesState
                 response={following}
                 validatingMessage="Loading your user lists"
                 emptyMessage="Not following anyone yet."
-              >
-                {following.data?.entries.map((userId) => (
-                  <Follow key={userId} userId={userId} />
-                ))}
-              </EntriesState>
+              > */}
+              {following.map((user) => (
+                <Follow key={user.userId} userId={user.userId} />
+              ))}
+              {/* </EntriesState> */}
             </Flex>
-            {!!suggestions.data?.entries.length && (
+            {!!suggestions.length && (
               <Fragment>
                 <StickyHeading
                   title="Suggestions"
@@ -147,15 +153,15 @@ export function Following() {
                     flexShrink: 1,
                   }}
                 >
-                  <EntriesState
+                  {/* <EntriesState
                     response={suggestions}
                     validatingMessage="Loading"
                     emptyMessage="No suggestions."
-                  >
-                    {suggestions.data?.entries.map((userId) => (
-                      <SuggestedFollow key={userId} userId={userId} />
-                    ))}
-                  </EntriesState>
+                  > */}
+                  {suggestions.map((user) => (
+                    <SuggestedFollow key={user.userId} userId={user.userId} />
+                  ))}
+                  {/* </EntriesState> */}
                 </Flex>
               </Fragment>
             )}

@@ -16,9 +16,15 @@ import { TooltipWithBounds, useTooltip } from '@visx/tooltip'
 import { format, formatDistance } from 'date-fns'
 import throttle from 'lodash/throttle'
 import { useCallback, useMemo, useState } from 'react'
-import { useFeed, scoreEntry } from '@riftdweb/core'
+import { scoreEntry } from '@riftdweb/core'
 import { Entry } from '@riftdweb/types'
 import { PostTime } from '../_shared/PostTime'
+import { useObservableState } from 'observable-hooks'
+import {
+  getDomains$,
+  getFeedEntries$,
+  getKeywords$,
+} from '@riftdweb/core/src/services/feeds'
 
 const margin = { top: 20, bottom: 20, left: 20, right: 20 }
 
@@ -45,21 +51,20 @@ type Props = {
 }
 
 export function ScoreGraph({ width, height }: Props) {
-  const { top, keywords, domains } = useFeed()
+  const top = useObservableState(getFeedEntries$('top'))
+  const keywords = useObservableState(getKeywords$())
+  const domains = useObservableState(getDomains$())
 
   const xMax = useMemo(() => width - margin.left - margin.right, [width])
   const yMax = useMemo(() => height - margin.top - margin.bottom, [height])
 
   const timePoints = useMemo(() => generateTimePoints(-10, 10), [])
-  const entries = useMemo(() => top.response.data?.entries || [], [
-    top.response,
-  ])
 
   const [filterValue, setFilterValue] = useState<string>()
 
   const allData = useMemo(
     () =>
-      entries.map((entry) => {
+      top.map((entry) => {
         const isMatch =
           !filterValue ||
           entry.post.content.title?.includes(filterValue) ||
@@ -86,7 +91,7 @@ export function ScoreGraph({ width, height }: Props) {
             .filter(({ y }) => !!y),
         }
       }),
-    [entries, keywords, domains, timePoints, filterValue]
+    [top, keywords, domains, timePoints, filterValue]
   )
 
   const data = useMemo(() => {

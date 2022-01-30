@@ -16,9 +16,9 @@ import {
 } from '@riftdweb/design-system'
 import { Link as RLink } from 'react-router-dom'
 import { DATA_MYSKY_BASE_PATH } from '../../../hooks/path'
-import { useSkynet } from '../../../contexts/skynet'
 import { useTheme } from '../../../contexts/theme'
 import { usePortal } from '../../../hooks/usePortal'
+import { useAccount } from '../../../hooks/useAccount'
 import { SkynetIcon } from '../../_icons/SkynetIcon'
 import { Link } from '../../Link'
 import { IdentityContextMenu } from './IdentityContextMenu'
@@ -29,7 +29,7 @@ import { LogoIcon } from '../../_icons/LogoIcon'
 export function Navbar() {
   const { toggleTheme } = useTheme()
   const { portal, portals, setDevPortal } = usePortal()
-  const { appDomain } = useSkynet()
+  const { appDomain } = useAccount()
   const { isOpen } = useSearch()
 
   const handleChangePortal = useCallback(

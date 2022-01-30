@@ -30,7 +30,7 @@ export async function initSkynetService() {
     const hostname =
       typeof window !== 'undefined' ? window.location.hostname : ''
     const appDomain = hostname === 'localhost' ? 'localhost' : 'riftapp.hns'
-    const portal = 'siasky.net'
+    const portal = 'skynetpro.net'
     config = await db.account.insert({
       id: configKey,
       isReady: false,
@@ -83,14 +83,14 @@ async function initSkynet() {
     log('App domain: ', appDomain)
 
     state.mySky = await state.client.loadMySky(appDomain, {
-      // dev: true,
-      // debug: true,
+      dev: true,
+      debug: true,
     })
 
     // Would these need to reinit if user changes?
     // Currently there is no way to switch users without a reload but
     // in the future this may need to be included in any reset process
-    await mySky
+    await state.mySky
       .loadDacs
       // fileSystemDAC,
       // feedDAC as any,
@@ -186,5 +186,9 @@ export async function logout() {
 }
 
 export function getAccount() {
-  return db.account.findOne(configKey)
+  return db.account.findOne(configKey).exec()
+}
+
+export function getAccount$() {
+  return db.account.findOne(configKey).$
 }

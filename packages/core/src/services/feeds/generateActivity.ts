@@ -1,9 +1,9 @@
 import { Activity, Entry } from '@riftdweb/types'
-import { getAccount } from '../account'
 
-export async function generateActivity(entries: Entry[]): Promise<Activity[]> {
-  const { myUserId } = await getAccount().exec()
-
+export function generateActivity(
+  myUserId: string,
+  entries: Entry[]
+): Activity[] {
   const stats = entries.reduce(
     (acc, entry) => {
       const userId = entry.userId

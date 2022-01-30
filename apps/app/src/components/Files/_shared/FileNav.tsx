@@ -10,7 +10,6 @@ import { Fragment } from 'react'
 import {
   useFs,
   Link,
-  useSkynet,
   Avatar,
   SpinnerIcon,
   saveBlobToMachine,
@@ -24,9 +23,10 @@ import {
 } from '@radix-ui/react-icons'
 import { useSharingData } from './useSharingData'
 import { copyToClipboardCustom } from '@riftdweb/core'
+import { useAccount } from '@riftdweb/core/src/hooks/useAccount'
 
 export function FileNav() {
-  const { myUserId: userId } = useSkynet()
+  const { myUserId: userId } = useAccount()
   const {
     activeNode,
     activeNodeOwner,

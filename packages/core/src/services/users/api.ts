@@ -4,10 +4,10 @@ import { db } from '../../stores'
 import { suggestionList } from './suggestionList'
 import { buildUser } from '../../stores/user/buildUser'
 import { IUser, IUserDoc } from '../../stores/user'
-import { getAccount } from '../account'
+import { getAccount, getAccount$ } from '../account'
 import { checkIsUserUpToDate } from '../syncUser'
 import { isFollowing, sortByRelationship } from './utils'
-import { from, map, pipe } from 'rxjs'
+import { combineLatest, from, map, Observable, pipe } from 'rxjs'
 
 export function getUser(userId: string): RxQuery<IUser, IUserDoc> {
   return db.user.findOne(userId)
@@ -37,8 +37,13 @@ export async function removeUserIds(userIds: string[]) {
   return db.user.bulkRemove(userIds)
 }
 
-export function getUsers(): RxQuery<IUser, IUserDoc[]> {
-  return db.user.find()
+export async function getUsers(userIds: string[] = []) {
+  const users = await db.user.findByIds(userIds)
+  return [...users.values()]
+}
+
+export function getUsers$(userIds: string[] = []) {
+  return db.user.findByIds$(userIds).pipe(map((users) => [...users.values()]))
 }
 
 export function getFriends(): RxQuery<IUser, IUserDoc[]> {
@@ -77,10 +82,8 @@ export function getFollowing(): RxQuery<IUser, IUserDoc[]> {
   })
 }
 
-export async function getPending(): Promise<IUserDoc[]> {
-  const account = await getAccount().exec()
-  const users = await getUsers().exec()
-  return (
+export function getPending() {
+  return Promise.all([getAccount(), getUsers()]).then(([account, users]) =>
     users
       // Filter out any thing that is fully up to date
       .filter((user) => {
@@ -94,47 +97,52 @@ export async function getPending(): Promise<IUserDoc[]> {
   )
 }
 
-export async function getSuggestions() {
-  const account = await getAccount().exec()
-  const users = await getUsers().exec()
-
-  let suggestionIds = suggestionList.filter((userId) => {
-    const foundUser = users.find((u) => u.userId === userId)
-    return !foundUser || !isFollowing(foundUser)
-  })
-
-  if (suggestionIds.length < 5) {
-    const followers = users.filter(
-      (user) => user.relationship.data === 'follower'
+export function getPending$(): Observable<IUserDoc[]> {
+  return combineLatest([getAccount$(), getUsers$()]).pipe(
+    map(([account, users]) =>
+      users
+        // Filter out any thing that is fully up to date
+        .filter((user) => {
+          const check = checkIsUserUpToDate(account, user, {
+            level: 'index',
+          })
+          return !check.isUpToDate
+        })
+        // Filter out any thing that is fully up to date
+        .sort((a, b) => sortByRelationship(a, b))
     )
-    suggestionIds = suggestionIds.concat(
-      followers.slice(0, 5).map((user) => user.userId)
-    )
-  }
-
-  if (suggestionIds.length < 5) {
-    const other = users.filter((user) => user.relationship.data === 'none')
-    suggestionIds = suggestionIds.concat(
-      other.slice(0, 5 - suggestionIds.length).map((user) => user.userId)
-    )
-  }
-
-  const userIds = uniq(suggestionIds).filter(
-    (suggestionUserId) => suggestionUserId !== account.myUserId
   )
-
-  return userIds
 }
 
-export async function getIndexedUsers() {
-  const users = await getUsers().exec()
-  return users
-    .filter((user) => !!user && !!user.updatedAt)
-    .sort(sortByRelationship)
+export function getSuggestions$() {
+  return combineLatest([getAccount$(), getUsers$()]).pipe(
+    map(([account, users]) => {
+      let suggestions = suggestionList
+        .map((id) => buildUser(id))
+        .filter(({ userId }) => {
+          const foundUser = users.find((u) => u.userId === userId)
+          return !foundUser || !isFollowing(foundUser)
+        })
+
+      if (suggestions.length < 5) {
+        const followers = users.filter(
+          (user) => user.relationship.data === 'follower'
+        )
+        suggestions = suggestions.concat(followers.slice(0, 5))
+      }
+
+      if (suggestions.length < 5) {
+        const other = users.filter((user) => user.relationship.data === 'none')
+        suggestions = suggestions.concat(other.slice(0, 5 - suggestions.length))
+      }
+
+      return uniq(suggestions).filter((sug) => sug.userId !== account.myUserId)
+    })
+  )
 }
 
 export function getIndexedUsers$() {
-  return getUsers().$.pipe(
+  return getUsers$().pipe(
     map((users) =>
       users
         .filter((user) => !!user && !!user.updatedAt)
@@ -143,20 +151,21 @@ export function getIndexedUsers$() {
   )
 }
 
-export async function getUserCounts() {
-  const users = await getUsers().exec()
-  const indexed = await getIndexedUsers()
-  const pending = await getPending()
-  const discoveredUsersCount = users.length
-  const indexedUsersCount = indexed.length
-  const pendingIndexingUsersCount = pending.length
-  const neverBeenIndexed = discoveredUsersCount - indexedUsersCount
+export function getUserCounts$() {
+  return combineLatest([getUsers$(), getIndexedUsers$(), getPending$()]).pipe(
+    map(([users, indexed, pending]) => {
+      const discoveredUsersCount = users.length
+      const indexedUsersCount = indexed.length
+      const pendingIndexingUsersCount = pending.length
+      const neverBeenIndexed = discoveredUsersCount - indexedUsersCount
 
-  return {
-    discovered: discoveredUsersCount,
-    hasBeenIndexed: indexedUsersCount,
-    neverBeenIndexed: discoveredUsersCount - indexedUsersCount,
-    pendingReindexing: pendingIndexingUsersCount - neverBeenIndexed,
-    pendingIndexing: pendingIndexingUsersCount,
-  }
+      return {
+        discovered: discoveredUsersCount,
+        hasBeenIndexed: indexedUsersCount,
+        neverBeenIndexed: discoveredUsersCount - indexedUsersCount,
+        pendingReindexing: pendingIndexingUsersCount - neverBeenIndexed,
+        pendingIndexing: pendingIndexingUsersCount,
+      }
+    })
+  )
 }

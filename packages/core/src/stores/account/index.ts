@@ -1,4 +1,4 @@
-import { RxCollection, RxDocument, RxQuery } from 'rxdb'
+import { RxCollection, RxDocument } from 'rxdb'
 import { IAccount, schema } from './schema'
 
 export const configKey = 'v1'

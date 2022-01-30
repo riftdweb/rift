@@ -3,34 +3,38 @@ import { Entry } from '@riftdweb/types'
 import { createLogger } from '@riftdweb/logger'
 import { v4 as uuid } from 'uuid'
 import { syncUserFeed } from '../syncUser/resources/feed'
-import { feedDAC, getAccount } from '../account'
+import { feedDAC, getAccount, getAccount$ } from '../account'
+import { combineLatest, concatMap, from, map } from 'rxjs'
+import { generateActivity } from './generateActivity'
 
 const log = createLogger('feed')
 
-export async function getFeedEntries(id: string) {
-  const feed = await db.feedIndex.findOne(id).exec()
-  const entries = await db.entry.findByIds(feed.entryIds)
-  const list = []
-  entries.forEach((entry) => {
-    list.push(entry)
-  })
-  return list
+export function getFeed$(id: string) {
+  return db.feedindex.findOne(id).$
 }
 
-// const activity = useFeedActivity({ ref })
-// const top = useFeedTop({ ref })
-// const latest = useFeedLatest({ ref, pendingUserEntries })
-// const user = useFeedUser({ ref, pendingUserEntries, setPendingUserEntries })
+export function getFeedEntries$(id: string) {
+  return db.feedindex.findOne(id).$.pipe(
+    concatMap((feed) => from(db.entry.findByIds(feed.entryIds))),
+    map((val) => [...val.values()])
+  )
+}
+
+export function getActivity$() {
+  return combineLatest([getAccount$(), db.entry.find().$]).pipe(
+    map(([account, entries]) => generateActivity(account.myUserId, entries))
+  )
+}
 
 export async function incrementKeywords(keywords) {
   keywords.forEach(async (keyword) => {
-    const doc = await db.feedKeyword.findOne(keyword).exec()
+    const doc = await db.feedkeyword.findOne(keyword).exec()
     if (doc) {
       await doc.atomicPatch({
         value: doc.value + 1,
       })
     } else {
-      await db.feedKeyword.atomicUpsert({
+      await db.feedkeyword.atomicUpsert({
         id: keyword,
         value: 1,
       })
@@ -39,20 +43,24 @@ export async function incrementKeywords(keywords) {
 }
 
 export function setKeywordValue(keyword: string, value: number) {
-  return db.feedKeyword.atomicUpsert({
+  return db.feedkeyword.atomicUpsert({
     id: keyword,
     value,
   })
 }
 
+export function getKeywords$() {
+  return db.feedkeyword.find().$
+}
+
 export async function incrementDomain(domain: string) {
-  const doc = await db.feedDomain.findOne(domain).exec()
+  const doc = await db.feeddomain.findOne(domain).exec()
   if (doc) {
     await doc.atomicPatch({
       value: doc.value + 1,
     })
   } else {
-    await db.feedDomain.atomicUpsert({
+    await db.feeddomain.atomicUpsert({
       id: domain,
       value: 1,
     })
@@ -60,22 +68,26 @@ export async function incrementDomain(domain: string) {
 }
 
 export async function decrementDomain(domain: string) {
-  const doc = await db.feedDomain.findOne(domain).exec()
+  const doc = await db.feeddomain.findOne(domain).exec()
   if (doc) {
     await doc.atomicPatch({
       value: doc.value - 1,
     })
   } else {
-    await db.feedDomain.atomicUpsert({
+    await db.feeddomain.atomicUpsert({
       id: domain,
       value: 1,
     })
   }
 }
 
+export function getDomains$() {
+  return db.feeddomain.find().$
+}
+
 export async function createPost(text: string) {
   const localLog = log.createLogger('createPost')
-  const { myUserId } = await getAccount().exec()
+  const { myUserId } = await getAccount()
   const cid = uuid()
   const pendingPost = ({
     id: cid,

@@ -4,14 +4,14 @@ import { TaskQueue } from '@riftdweb/queue'
 import CAF from 'caf'
 import { v4 as uuid } from 'uuid'
 import { getUser, upsertUser } from '../../users/api'
-import { compileUserEntries } from '../../../../serviceApi'
-import { clearToken, handleToken } from '../../../../tokens'
+import { compileUserEntries } from '../../serviceApi'
+import { clearToken, handleToken } from '../../tokens'
 import { checkIsUpToDate } from '../checks'
 import { getLogName, getTokenName } from '../utils'
 import { IUserDoc } from '../../../stores/user'
-import { db, state } from '../../..'
 import { IEntryDoc } from '../../../stores/entry'
 import { RxStorageBulkWriteError } from 'rxdb/dist/types/types'
+import { db, state } from '../../../stores'
 
 const resourceName = 'feed'
 // Keep pool a little bigger than the indexer batch size
@@ -55,7 +55,7 @@ const cafSyncUserFeed = CAF(function* (
     let compiledUserEntries: Entry[] = yield compileUserEntries(userId, params)
 
     // Add directly to feed db
-    yield db.entries.bulkInsert(compiledUserEntries)
+    yield db.entry.bulkInsert(compiledUserEntries)
 
     // Update metadata
     yield upsertUser({

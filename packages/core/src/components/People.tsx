@@ -1,19 +1,15 @@
 import React from 'react'
+import { useObservableState } from 'observable-hooks'
 import { Flex, Box } from '@riftdweb/design-system'
-import { useUsers } from '../contexts/users'
 import { Avatar } from './Avatar'
+import { getUsers$ } from '../services/users/api'
 
 type Props = {
   userIds: string[]
 }
 
 export function People({ userIds }: Props) {
-  const { usersMap } = useUsers()
-
-  const userItems = userIds.map((userId) => {
-    const userItem = usersMap.data?.entries[userId]
-    return userItem
-  })
+  const userItems = useObservableState(getUsers$(userIds))
 
   return (
     <Flex

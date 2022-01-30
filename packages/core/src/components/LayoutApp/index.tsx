@@ -1,17 +1,23 @@
 import React from 'react'
 import { Box, Container } from '@riftdweb/design-system'
 import { Route, Switch } from 'react-router-dom'
-import { useSkynet } from '../../contexts/skynet'
 import { Footer } from './Footer'
 import { Navbar } from './Navbar'
 import { TabNav } from './TabNav'
+import { useAccount } from '../../hooks/useAccount'
 
 type Props = {
   children: React.ReactNode
 }
 
 export function LayoutApp({ children }: Props) {
-  const { myUserId, isReady } = useSkynet()
+  const account = useAccount()
+
+  if (!account) {
+    return null
+  }
+
+  const { isReady, myUserId } = account
 
   return (
     <Box

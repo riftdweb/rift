@@ -1,14 +1,17 @@
 import React, { Fragment } from 'react'
+import { useObservableState } from 'observable-hooks'
 import { Box, Button, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import intersection from 'lodash/intersection'
 import { User } from './User'
 import { ChatBubbleIcon, GlobeIcon } from '@radix-ui/react-icons'
 import { useUser } from '../hooks/useUser'
 import { UserContextMenu } from './UserContextMenu'
-import { isFollower, isFollowing, isFriend, useUsers } from '../contexts/users'
+import { isFollower, isFollowing, isFriend } from '../services/users/utils'
+import { handleFollow } from '../services/users'
 import { IUser } from '@riftdweb/types'
 import { People } from './People'
-import { useSkynet } from '../contexts/skynet'
+import { useAccount } from '../hooks/useAccount'
+import { getFollowers, getFollowing } from '../services/users/api'
 
 type size = '1' | '2' | '3'
 
@@ -35,11 +38,10 @@ export function UserProfile({
   onClick,
   version = 'regular',
 }: Props) {
-  const { myUserId } = useSkynet()
+  const { myUserId } = useAccount()
   const userId = userIdParam || userParam.userId
   const user = useUser(userId)
   const profile = user?.profile
-  const { handleFollow, allFollowing } = useUsers()
   const isMyself = userId === myUserId
 
   const verticalGap = versionToGap[version]
@@ -73,10 +75,10 @@ export function UserProfile({
     )
   }
 
-  const knownFollowedByUserIds = intersection(
-    allFollowing.data?.entries || [],
-    user ? user.followers.data : []
-  )
+  const following = useObservableState(getFollowing().$)
+  const followers = useObservableState(getFollowers().$)
+
+  const knownFollowedByUsers = intersection(following, followers)
   // const knownFollowedByUserIds = userItem ? userItem.followerIds : []
 
   const contentOffset = version === 'compact' ? '30px' : '0'
@@ -178,7 +180,7 @@ export function UserProfile({
               </Tooltip>
             )}
             <Box css={{ flex: 1 }} />
-            {!!knownFollowedByUserIds.length && (
+            {!!knownFollowedByUsers.length && (
               <Flex css={{ alignItems: 'center', gap: '$1' }}>
                 <Text
                   size="1"
@@ -187,11 +189,15 @@ export function UserProfile({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  Followed by {knownFollowedByUserIds.length}{' '}
-                  {knownFollowedByUserIds.length === 1 ? 'user' : 'users'} you
+                  Followed by {knownFollowedByUsers.length}{' '}
+                  {knownFollowedByUsers.length === 1 ? 'user' : 'users'} you
                   follow
                 </Text>
-                <People userIds={knownFollowedByUserIds.slice(0, 5)} />
+                <People
+                  userIds={knownFollowedByUsers
+                    .slice(0, 5)
+                    .map((user) => user.userId)}
+                />
               </Flex>
             )}
           </Flex>

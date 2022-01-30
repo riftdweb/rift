@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react'
 import { Box, Flex, Text, Tooltip } from '@riftdweb/design-system'
 import { useSearch } from '../../contexts/search'
-import { useUsers } from '../../contexts/users'
 import { SpinnerIcon } from '../_icons/SpinnerIcon'
 import { UserProfile } from '../UserProfile'
+import { getUserCounts$ } from '../../services/users/api'
+import { useObservableState } from 'observable-hooks'
 
 export function UserResults({ searchValue, onSelect }) {
   const { userSearchResultsPage, userSearchResultsCount } = useSearch()
-  const { userCounts } = useUsers()
+  const userCounts = useObservableState(getUserCounts$())
 
   const hasIndexingStarted = userCounts.discovered !== 0
 

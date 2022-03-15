@@ -26,7 +26,8 @@ const providers = [
 export function Rift() {
   return (
     <App name="Rift" providers={providers}>
-      <AppRoutes />
+      {/* <AppRoutes /> */}
+      hello world
     </App>
   )
 }

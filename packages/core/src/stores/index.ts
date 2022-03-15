@@ -1,7 +1,7 @@
 import { createLogger } from '@riftdweb/logger'
 import { createRxDatabase, removeRxDatabase, RxDatabase } from 'rxdb'
 import { getRxStoragePouch, addPouchPlugin } from 'rxdb/plugins/pouchdb'
-import { IAccountCollection, accountStore } from './account'
+import { IAccountCollection, accountStore, configKey } from './account'
 import { feedDomainStore, IFeedDomainCollection } from './feedDomain'
 import { entryStore, IEntryCollection } from './entry'
 import { feedConfigStore, IFeedConfigCollection } from './feedConfig'
@@ -85,4 +85,8 @@ async function initState() {
 export async function initStores(userId = 'rift') {
   await initDb(userId)
   await initState()
+  // @ts-ignore
+  window.a = await db.account.findOne(configKey).exec()
+  db.account.findOne(configKey).$.subscribe((i) => i)
+  db.$.subscribe((i) => i)
 }

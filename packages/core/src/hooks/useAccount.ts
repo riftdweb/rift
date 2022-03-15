@@ -1,9 +1,9 @@
 import { useObservableState } from 'observable-hooks'
 import { getAccount$ } from '../services/account'
-import { map } from 'rxjs'
 
 export function useAccount() {
-  const account = useObservableState(getAccount$().pipe(map((v) => v.toJSON())))
+  const account = useObservableState(getAccount$())
+  console.log('Account', account)
   return (
     account || {
       id: '',

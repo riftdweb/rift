@@ -50,6 +50,9 @@ export async function initSkynetService() {
   state.client = new SkynetClient(`https://${portal}`)
 
   await initSkynet()
+  // await config.atomicPatch({
+  //   isInitializing: false,
+  // })
 }
 
 // // When portal changes rebuild client

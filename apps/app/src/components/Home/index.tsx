@@ -5,7 +5,6 @@ import { SocialHome } from '../Social/Home'
 
 export function Home() {
   const { myUserId, isReady } = useAccount()
-  console.log('home', myUserId)
   if (!isReady) {
     return (
       <LoadingState

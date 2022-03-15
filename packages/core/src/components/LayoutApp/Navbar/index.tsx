@@ -29,8 +29,10 @@ import { LogoIcon } from '../../_icons/LogoIcon'
 export function Navbar() {
   const { toggleTheme } = useTheme()
   const { portal, portals, setDevPortal } = usePortal()
-  const { appDomain } = useAccount()
+  const account = useAccount()
   const { isOpen } = useSearch()
+
+  const appDomain = account?.appDomain
 
   const handleChangePortal = useCallback(
     (newPortal: string) => {

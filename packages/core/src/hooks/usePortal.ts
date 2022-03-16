@@ -4,7 +4,7 @@ import { portals as defaultPortals } from '../shared/portals'
 
 export const useSelectedDevPortal = createLocalStorageStateHook<string>(
   'v0/devPortal',
-  'siasky.net'
+  'fileportal.org'
 )
 
 export function usePortal() {
@@ -13,6 +13,7 @@ export function usePortal() {
     const hostname = window.location.hostname
     if (
       hostname === 'localhost' ||
+      hostname === 'riftapp' ||
       hostname.endsWith('.eth.link') ||
       hostname.endsWith('.eth')
     ) {
@@ -23,6 +24,10 @@ export function usePortal() {
     //        hash.siasky.net
     //         www.siasky.net/hash
     //             siasky.net/hash
+
+    if (parts.length === 1) {
+      return devPortal
+    }
     return parts.slice(parts.length - 2, parts.length).join('.')
   }, [devPortal])
 

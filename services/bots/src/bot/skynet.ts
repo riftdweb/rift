@@ -20,7 +20,7 @@ import {
 import { phraseToSeed } from './mysky';
 import { genKeyPairFromSeed } from './mysky/utils';
 
-const client = new SkynetClient('https://siasky.net');
+const client = new SkynetClient('https://fileportal.org');
 
 /**
  * Sets Discoverable JSON at the given path through MySky, if the user has given Write permissions to do so.

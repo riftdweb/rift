@@ -4,7 +4,7 @@ import { portals as defaultPortals } from '../shared/portals'
 
 export const useSelectedDevPortal = createLocalStorageStateHook<string>(
   'v0/devPortal',
-  'fileportal.org'
+  'web3portal.com'
 )
 
 export function usePortal() {

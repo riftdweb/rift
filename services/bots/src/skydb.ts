@@ -44,10 +44,10 @@ export async function writePosts(section: SectionData) {
   console.log(`userId: ${publicKey}`);
   console.log(`${section.posts.length} posts`);
   console.log(
-    `https://riftapp.hns.fileportal.org/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/index.json`
+    `https://riftapp.hns.web3portal.com/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/index.json`
   );
   console.log(
-    `https://riftapp.hns.fileportal.org/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/page_0.json`
+    `https://riftapp.hns.web3portal.com/#/data/mysky/${publicKey}/${feedDacPostsBasePath}/page_0.json`
   );
   console.log('');
 }

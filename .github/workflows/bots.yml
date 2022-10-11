@@ -1,7 +1,7 @@
 name: Run Skynet Bots
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    - cron: '0 0 1 1 *'
 jobs:
   preview:
     runs-on: ubuntu-latest
